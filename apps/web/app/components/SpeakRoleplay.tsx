@@ -54,7 +54,7 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
         score: Math.floor(Math.random() * 15) + 85, // 85-99
         pitch: (Math.random() * 1.5 + 8.5).toFixed(1),
         fluency: (Math.random() * 1.5 + 8.5).toFixed(1),
-        feedback: 'Excellent pronunciation! Watch the double consonant vowel length.'
+        feedback: 'Great pronunciation. Work on vowel length.'
       });
     }, 2500);
   };
@@ -64,22 +64,22 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
   };
 
   return (
-    <div className="speak-roleplay-view page-enter" style={{ padding: 'var(--space-4)' }}>
+    <div className="speak-roleplay-view page-transition" style={{ padding: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
-        <button className="btn btn-ghost btn-sm" onClick={selectedScenario ? () => setSelectedScenario(null) : onBack}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-5)' }}>
+        <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={selectedScenario ? () => setSelectedScenario(null) : onBack}>
           ← Back
         </button>
-        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🗣️ Phrase Speaking & Roleplay</h2>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🗣️ Speak Mode</h2>
       </div>
 
       {!selectedScenario ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+          <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
             Choose a situational scenario to practice conversational speaking with real-time AI pronunciation feedback.
-          </p>
+          </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
             {SCENARIOS.map((scenario) => (
               <div 
                 key={scenario.id}
@@ -89,33 +89,33 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                   setRecorded(false);
                   setAnalysisResult(null);
                 }}
-                className="card-glass hover-card"
-                style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 'var(--space-4)', borderRadius: 'var(--radius-lg)', cursor: 'pointer' }}
+                className="card card-interactive"
+                style={{ padding: 'var(--sp-4)', cursor: 'pointer' }}
               >
-                <h3 style={{ fontWeight: 'bold', fontSize: 'var(--text-md)' }}>{scenario.title}</h3>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{scenario.context}</p>
+                <h3 style={{ fontWeight: 'bold', fontSize: 'var(--text-base)' }}>{scenario.title}</h3>
+                <p style={{ fontSize: '12px', color: 'var(--text-3)', marginTop: '4px' }}>{scenario.context}</p>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)', alignItems: 'center', width: '100%' }}>
           {/* Conversation Lane */}
-          <div className="card-glass" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 'var(--space-5)', borderRadius: 'var(--radius-xl)', width: '100%', maxWidth: '400px' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>SCENARIO: {selectedScenario.title}</span>
+          <div className="card" style={{ padding: 'var(--sp-5)', width: '100%' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-3)', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.04em' }}>SCENARIO: {selectedScenario.title}</span>
 
             {/* AI speaking line */}
-            <div style={{ display: 'flex', gap: 'var(--space-3)', margin: 'var(--space-4) 0 var(--space-6)' }}>
+            <div style={{ display: 'flex', gap: 'var(--sp-3)', margin: 'var(--sp-4) 0 var(--sp-6)' }}>
               <span style={{ fontSize: '32px' }}>{selectedScenario.dialogue[0].avatar}</span>
-              <div style={{ background: 'rgba(255,255,255,0.02)', padding: 'var(--space-3) var(--space-4)', borderRadius: '0 var(--radius-md) var(--radius-md) var(--radius-md)', border: '1px solid var(--border)', position: 'relative', flex: 1 }}>
+              <div style={{ background: 'var(--surface-2)', padding: 'var(--sp-3) var(--sp-4)', borderRadius: '0 var(--radius) var(--radius) var(--radius)', border: '1px solid var(--border)', position: 'relative', flex: 1 }}>
                 <p style={{ fontFamily: 'var(--font-ja)', fontSize: '16px', fontWeight: 'bold' }}>{selectedScenario.dialogue[0].text}</p>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px' }}>{selectedScenario.dialogue[0].romaji}</p>
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', borderTop: '1px solid var(--border)', marginTop: '6px', paddingTop: '4px' }}>
+                <p style={{ fontSize: '12px', color: 'var(--text-3)', marginTop: '4px' }}>{selectedScenario.dialogue[0].romaji}</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-3)', borderTop: '1px solid var(--border)', marginTop: '6px', paddingTop: '4px' }}>
                   {selectedScenario.dialogue[0].translation}
                 </p>
                 <button 
                   onClick={() => handlePlayAudio(selectedScenario.dialogue[0].text)}
-                  style={{ position: 'absolute', right: '8px', top: '8px', border: 'none', background: 'transparent', color: 'var(--green-400)', cursor: 'pointer' }}
+                  style={{ position: 'absolute', right: '12px', top: '12px', border: 'none', background: 'transparent', color: 'var(--primary)', cursor: 'pointer' }}
                 >
                   <Volume2 size={16} />
                 </button>
@@ -123,8 +123,8 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
             </div>
 
             {/* Choose reply */}
-            <h4 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 'var(--space-3)' }}>Your Response:</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 'var(--sp-3)', textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--text-3)' }}>Select Your Response:</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
               {selectedScenario.replies.map((reply: any, rIdx: number) => (
                 <div 
                   key={rIdx}
@@ -133,17 +133,18 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                     setRecorded(false);
                     setAnalysisResult(null);
                   }}
+                  className="card-interactive"
                   style={{
-                    padding: 'var(--space-3)',
-                    borderRadius: 'var(--radius-md)',
-                    border: `1px solid ${selectedReply?.text === reply.text ? 'var(--blue)' : 'var(--border)'}`,
-                    background: selectedReply?.text === reply.text ? 'rgba(14, 165, 233, 0.08)' : 'rgba(255,255,255,0.01)',
+                    padding: 'var(--sp-3) var(--sp-4)',
+                    borderRadius: 'var(--radius)',
+                    border: `2px solid ${selectedReply?.text === reply.text ? 'var(--primary)' : 'var(--border)'}`,
+                    background: selectedReply?.text === reply.text ? 'var(--primary-light)' : 'var(--surface-2)',
                     cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    transition: 'var(--t-fast)'
                   }}
                 >
                   <p style={{ fontSize: '14px', fontWeight: 'bold', fontFamily: 'var(--font-ja)' }}>{reply.text}</p>
-                  <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{reply.translation}</p>
+                  <p style={{ fontSize: '11px', color: 'var(--text-3)' }}>{reply.translation}</p>
                 </div>
               ))}
             </div>
@@ -151,76 +152,82 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
 
           {/* Record button */}
           {selectedReply && (
-            <div className="card-glass" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: 'var(--space-5)', borderRadius: 'var(--radius-xl)', width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-4)' }}>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>
+            <div className="card" style={{ padding: 'var(--sp-5)', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-4)' }}>
+              <p style={{ fontSize: '12px', color: 'var(--text-2)', textAlign: 'center', fontWeight: '600' }}>
                 Press mic, and read your selected response aloud:
               </p>
 
               {recording ? (
-                <div className="flex flex-col items-center" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)' }}>
                   <div 
-                    className="animate-pulse" 
                     style={{
-                      width: '60px',
-                      height: '60px',
+                      width: '64px',
+                      height: '64px',
                       borderRadius: '50%',
-                      background: 'rgba(239, 68, 68, 0.2)',
-                      border: '2px solid var(--red)',
+                      background: 'rgba(239, 68, 68, 0.15)',
+                      border: '2px solid var(--error)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      animation: 'pop 1s infinite'
                     }}
                   >
-                    <Mic size={24} color="var(--red)" />
+                    <Mic size={24} color="var(--error)" />
                   </div>
-                  <span style={{ fontSize: '11px', color: 'var(--red)', fontWeight: 'bold' }}>Recording... Read now!</span>
+                  <span style={{ fontSize: '12px', color: 'var(--error)', fontWeight: 'bold' }}>Recording... Read now!</span>
                 </div>
               ) : (
                 <button 
                   onClick={startRecording}
                   style={{
-                    width: '60px',
-                    height: '60px',
+                    width: '64px',
+                    height: '64px',
                     borderRadius: '50%',
-                    background: 'rgba(14, 165, 233, 0.15)',
-                    border: '2px solid var(--blue)',
+                    background: 'var(--primary-light)',
+                    border: '2px solid var(--primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    transition: 'var(--t-fast)',
+                    boxShadow: '0 0 16px rgba(99, 102, 241, 0.35)'
                   }}
+                  className="card-interactive"
                 >
-                  <Mic size={24} color="var(--blue)" />
+                  <Mic size={24} color="var(--primary)" />
                 </button>
               )}
 
               {/* Analysis Result */}
               {analysisResult && (
-                <div style={{ width: '100%', borderTop: '1px solid var(--border)', paddingTop: 'var(--space-4)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-                    <span style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Sparkles size={16} color="var(--blue)" /> Pronunciation Score:
+                <div style={{ width: '100%', borderTop: '1px solid var(--border)', paddingTop: 'var(--sp-4)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-3)' }}>
+                    <span style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-sm)' }}>
+                      <Sparkles size={16} color="var(--primary)" /> Pronunciation Score:
                     </span>
-                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--green-400)' }}>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--success)' }}>
                       {analysisResult.score}%
                     </span>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)', marginBottom: 'var(--space-3)' }}>
-                    <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border)', padding: 'var(--space-2)', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>PITCH ACCENT</span>
-                      <p style={{ fontWeight: 'bold', color: 'var(--blue)' }}>{analysisResult.pitch} / 10</p>
+                  <div className="lesson-progress-bar" style={{ height: '8px', marginBottom: 'var(--sp-4)', background: 'var(--surface-2)' }}>
+                    <div className="lesson-progress-fill" style={{ width: `${analysisResult.score}%`, background: 'var(--success)' }} />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+                    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2)', borderRadius: 'var(--radius)', textAlign: 'center' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>PITCH ACCENT</span>
+                      <p style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{analysisResult.pitch} / 10</p>
                     </div>
-                    <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border)', padding: 'var(--space-2)', borderRadius: 'var(--radius-sm)', textAlign: 'center' }}>
-                      <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>FLUENCY</span>
-                      <p style={{ fontWeight: 'bold', color: 'var(--blue)' }}>{analysisResult.fluency} / 10</p>
+                    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2)', borderRadius: 'var(--radius)', textAlign: 'center' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>FLUENCY</span>
+                      <p style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{analysisResult.fluency} / 10</p>
                     </div>
                   </div>
 
-                  <p style={{ fontSize: '11px', color: 'var(--text-secondary)', background: 'rgba(255,255,255,0.02)', padding: '8px', borderRadius: '4px', textAlign: 'center' }}>
-                    {analysisResult.feedback}
-                  </p>
+                  <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', textAlign: 'center', margin: 0 }}>
+                    <strong>AI Feedback: </strong> {analysisResult.feedback}
+                  </div>
                 </div>
               )}
             </div>

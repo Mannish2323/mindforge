@@ -13,6 +13,7 @@ interface SmartReviewProps {
 export function SmartReview({ srsData, onReviewCardUpdate, onBack }: SmartReviewProps) {
   const cards = Object.values(srsData).filter((c: any) => new Date(c.dueDate) <= new Date());
   
+  const [sessionStarted, setSessionStarted] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [reviewCount, setReviewCount] = useState(0);
@@ -41,11 +42,64 @@ export function SmartReview({ srsData, onReviewCardUpdate, onBack }: SmartReview
     }
   };
 
+  const totalQueue = Object.keys(srsData).length;
+  const weakItems = Object.values(srsData).filter((c: any) => (c.errorCount || 0) > 1 || c.ease < 1.8).length;
+  const mistakes = Object.values(srsData).filter((c: any) => (c.errorCount || 0) > 0).length;
+
+  // 1. Landing Screen (Not started yet)
+  if (!sessionStarted && !sessionDone) {
+    return (
+      <div className="smart-review-view page-transition flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)', maxWidth: '520px', margin: '0 auto' }}>
+        {/* Header */}
+        <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-2)' }}>
+          <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={onBack}>
+            ← Back
+          </button>
+          <h2 className="text-xl font-black">🧠 Smart Review & SRS</h2>
+        </div>
+
+        <div className="card flex animate-fadein" style={{ flexDirection: 'column', gap: 'var(--sp-5)' }}>
+          <div style={{ textAlign: 'center', padding: 'var(--sp-2) 0' }}>
+            <CheckCircle size={44} className="text-green" style={{ margin: '0 auto var(--sp-3)' }} />
+            <h3 className="text-2xl font-black">Due Today: {cards.length}</h3>
+            <p className="text-muted text-sm mt-1">Strengthen your memory with regular spaced repetition checks.</p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: 'var(--sp-4)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>📋 Review Queue</span>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--primary)' }}>{totalQueue} total items</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: 'var(--sp-4)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>⚠️ Weak Items</span>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--warn)' }}>{weakItems} cards</span>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: 'var(--sp-4)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+              <span style={{ fontWeight: 600, fontSize: 'var(--text-sm)' }}>❌ Mistakes Review</span>
+              <span style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--error)' }}>{mistakes} items</span>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => cards.length > 0 && setSessionStarted(true)}
+            className="btn-primary"
+            style={{ width: '100%', background: 'linear-gradient(135deg, var(--primary), var(--accent-violet))', border: 'none', margin: 0 }}
+            disabled={cards.length === 0}
+          >
+            {cards.length > 0 ? 'Start Review' : 'No Reviews Due'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="smart-review-view animate-fadein" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+    <div className="smart-review-view page-transition" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
       {/* Header */}
       <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-2)' }}>
-        <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius-pill)' }} onClick={onBack}>
+        <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={onBack}>
           ← Back
         </button>
         <h2 className="text-xl font-black">🧠 Smart Review & Spaced Repetition</h2>
@@ -62,7 +116,7 @@ export function SmartReview({ srsData, onReviewCardUpdate, onBack }: SmartReview
             <button 
               onClick={onBack}
               className="btn-primary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', margin: 0 }}
             >
               Back to Home
             </button>

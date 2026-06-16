@@ -1692,7 +1692,7 @@ export default function EVLOApp() {
 
   return (
     <>
-      {/* Sidebar - Desktop only */}
+      {/* Sidebar - Tablet & Desktop */}
       {activeSubView === 'none' && (
         <aside className="sidebar">
           <div className="sidebar-logo">
@@ -1709,23 +1709,39 @@ export default function EVLOApp() {
             </button>
             <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')}>
               <BookOpen size={20} />
-              <span>Path</span>
-            </button>
-            <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')}>
-              <Sparkles size={20} />
-              <span>Script</span>
-            </button>
-            <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')}>
-              <Mic size={20} />
-              <span>Speak</span>
-            </button>
-            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')}>
-              <Trophy size={20} />
-              <span>JLPT</span>
+              <span>Learn Path</span>
             </button>
             <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')}>
               <RotateCcw size={20} />
               <span>Review</span>
+            </button>
+            <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')}>
+              <Mic size={20} />
+              <span>Speak Mode</span>
+            </button>
+            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')}>
+              <Trophy size={20} />
+              <span>JLPT Prep</span>
+            </button>
+            <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')}>
+              <Sparkles size={20} />
+              <span>Script Lab</span>
+            </button>
+            <button className={cn({ active: activeTab === 'social' })} onClick={() => setActiveTab('social')}>
+              <Users size={20} />
+              <span>Social & Duels</span>
+            </button>
+            <button className={cn({ active: activeTab === 'analytics' })} onClick={() => setActiveTab('analytics')}>
+              <BarChart2 size={20} />
+              <span>Analytics</span>
+            </button>
+            <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')}>
+              <User size={20} />
+              <span>Profile</span>
+            </button>
+            <button className={cn({ active: activeTab === 'settings' })} onClick={() => setActiveTab('settings')}>
+              <Settings size={20} />
+              <span>Settings</span>
             </button>
           </nav>
         </aside>
@@ -1737,11 +1753,11 @@ export default function EVLOApp() {
           <div className="topbar-logo" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <span style={{ cursor: 'pointer', fontWeight: 900 }} onClick={() => setActiveTab('home')}>Velmorth</span>
             <div style={{ display: 'flex', gap: '12px', marginLeft: '16px', borderLeft: '1px solid var(--border)', paddingLeft: '16px' }}>
-              <button title="Leagues" onClick={() => setActiveTab('leaderboard')} style={{ border: 'none', background: 'transparent', color: activeTab === 'leaderboard' ? 'var(--green-400)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trophy size={16} /></button>
-              <button title="Social" onClick={() => setActiveTab('social')} style={{ border: 'none', background: 'transparent', color: activeTab === 'social' ? 'var(--green-400)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Users size={16} /></button>
-              <button title="Analytics" onClick={() => setActiveTab('analytics')} style={{ border: 'none', background: 'transparent', color: activeTab === 'analytics' ? 'var(--green-400)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><BarChart2 size={16} /></button>
-              <button title="Profile" onClick={() => setActiveTab('profile')} style={{ border: 'none', background: 'transparent', color: activeTab === 'profile' ? 'var(--green-400)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><User size={16} /></button>
-              <button title="Settings" onClick={() => setActiveTab('settings')} style={{ border: 'none', background: 'transparent', color: activeTab === 'settings' ? 'var(--green-400)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Settings size={16} /></button>
+              <button title="Leagues" onClick={() => setActiveTab('leaderboard')} style={{ border: 'none', background: 'transparent', color: activeTab === 'leaderboard' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trophy size={16} /></button>
+              <button title="Social" onClick={() => setActiveTab('social')} style={{ border: 'none', background: 'transparent', color: activeTab === 'social' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Users size={16} /></button>
+              <button title="Analytics" onClick={() => setActiveTab('analytics')} style={{ border: 'none', background: 'transparent', color: activeTab === 'analytics' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><BarChart2 size={16} /></button>
+              <button title="Profile" onClick={() => setActiveTab('profile')} style={{ border: 'none', background: 'transparent', color: activeTab === 'profile' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><User size={16} /></button>
+              <button title="Settings" onClick={() => setActiveTab('settings')} style={{ border: 'none', background: 'transparent', color: activeTab === 'settings' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Settings size={16} /></button>
             </div>
           </div>
           <div className="topbar-stats">
@@ -1789,10 +1805,100 @@ export default function EVLOApp() {
 
       {/* Page Content */}
       <main id="page-content" className="main-content" style={{ paddingTop: activeSubView !== 'none' ? '0px' : 'var(--topbar-height)' }}>
-        {renderActiveTab()}
+        {activeSubView === 'none' && ['home', 'learn'].includes(activeTab) ? (
+          <div className="dashboard-three-col">
+            <div className="center-content-column">
+              {renderActiveTab()}
+            </div>
+            <aside className="stats-panel-card">
+              {/* 1. Streak */}
+              <div className="streak-card" style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', cursor: 'pointer' }} onClick={() => setActiveTab('profile')}>
+                <span className="streak-flame" style={{ fontSize: '32px' }}>🔥</span>
+                <div>
+                  <div className="streak-count" style={{ fontSize: 'var(--text-2xl)', color: 'var(--xp-gold)' }}>{activeState.streak} Days</div>
+                  <div className="streak-label" style={{ fontSize: 'var(--text-xs)' }}>ACTIVE STREAK</div>
+                </div>
+              </div>
+
+              {/* 2. Daily Goal Progress */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', fontWeight: 'bold' }}>
+                  <span style={{ color: 'var(--xp-gold)' }}>DAILY GOAL</span>
+                  <span>{activeState.xp % 50} / 50 XP</span>
+                </div>
+                <div className="lesson-progress-bar" style={{ height: '8px', marginBottom: '4px' }}>
+                  <div className="lesson-progress-fill" style={{ width: `${Math.min(100, ((activeState.xp % 50) / 50) * 100)}%` }} />
+                </div>
+                <span style={{ fontSize: '11px', color: 'var(--text-3)', textAlign: 'right' }}>
+                  {Math.min(100, Math.round(((activeState.xp % 50) / 50) * 100))}% Completed
+                </span>
+              </div>
+
+              {/* 3. XP Progress */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+                <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>XP PROGRESS</h4>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: 'var(--sp-3)', borderRadius: 'var(--radius)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Trophy size={16} style={{ color: 'var(--xp-gold)' }} />
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>Total Earned</span>
+                  </div>
+                  <span style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--xp-gold)' }}>{activeState.xp} XP</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', padding: 'var(--sp-3)', borderRadius: 'var(--radius)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Trophy size={16} style={{ color: 'var(--primary)' }} />
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>Current Level</span>
+                  </div>
+                  <span style={{ fontSize: 'var(--text-sm)', fontWeight: 800, color: 'var(--primary)' }}>Level {Math.floor((activeState.xp || 0) / 100) + 1}</span>
+                </div>
+              </div>
+
+              {/* 4. Weekly Goal Progress Graph */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
+                <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>WEEKLY PROGRESS</h4>
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'flex-end', height: '60px', padding: '0 4px' }}>
+                  {[12, 24, 0, 45, 10, 50, 15].map((xp, index) => {
+                    const pct = Math.min(100, (xp / 50) * 100);
+                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    return (
+                      <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, height: '100%', justifyContent: 'flex-end', gap: '4px' }}>
+                        <div style={{ width: '100%', height: `${pct || 8}%`, background: xp >= 50 ? 'var(--success)' : xp > 0 ? 'var(--primary)' : 'var(--surface-2)', borderRadius: '4px' }} title={`${xp} XP`} />
+                        <span style={{ fontSize: '9px', color: 'var(--text-3)' }}>{days[index]}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 5. Leaderboard Summary */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }} onClick={() => setActiveTab('leaderboard')}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>LEADERBOARD</h4>
+                  <span style={{ fontSize: '11px', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}>View All</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>🏆 Velmorth</span>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--xp-gold)' }}>1,240 XP</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>⚡ Mannish</span>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-2)' }}>1,120 XP</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>⭐ Tanaka</span>
+                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: '#cd7c2f' }}>980 XP</span>
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        ) : (
+          renderActiveTab()
+        )}
       </main>
 
-      {/* Bottom Navbar — 6 tabs for core learning loops (Mobile only) */}
+      {/* Bottom Navbar — 5 tabs for core learning loops (Mobile only) */}
       {activeSubView === 'none' && (
         <nav className="bottom-nav">
           <button className={cn({ active: activeTab === 'home' })} onClick={() => setActiveTab('home')}>
@@ -1801,23 +1907,19 @@ export default function EVLOApp() {
           </button>
           <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')}>
             <BookOpen size={20} />
-            <span>Path</span>
+            <span>Learn</span>
           </button>
-          <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')}>
-            <Sparkles size={20} />
-            <span>Script</span>
+          <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')}>
+            <RotateCcw size={20} />
+            <span>Review</span>
           </button>
           <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')}>
             <Mic size={20} />
             <span>Speak</span>
           </button>
-          <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')}>
-            <Trophy size={20} />
-            <span>JLPT</span>
-          </button>
-          <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')}>
-            <RotateCcw size={20} />
-            <span>Review</span>
+          <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')}>
+            <User size={20} />
+            <span>Profile</span>
           </button>
         </nav>
       )}

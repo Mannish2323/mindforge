@@ -50,11 +50,11 @@ export function HomeDashboard({ state, onNavigate, onContinueLesson, onActivateS
   return (
     <div className="animate-fadein flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)' }}>
       
-      {/* 1. Greeting & Daily Goal Card */}
-      <div className="card animate-fadein delay-100 flex-between flex" style={{ gap: 'var(--sp-4)', flexWrap: 'wrap' }}>
+      {/* 1. Greeting / Welcome Back Card */}
+      <div className="card animate-fadein delay-100 flex-between flex" style={{ gap: 'var(--sp-4)', flexWrap: 'wrap', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04))', border: '1px solid var(--border)' }}>
         <div>
-          <h2 className="text-xl font-black">Konnichiwa, {username}! 👋</h2>
-          <p className="text-muted text-sm mt-2">Let's crush today's Japanese learning target.</p>
+          <h2 className="text-xl font-black">👋 Welcome Back, {username}!</h2>
+          <p className="text-muted text-sm mt-2">Level {Math.floor((state.xp || 0) / 100) + 1} • {state.xp || 0} XP total</p>
         </div>
         <div className="flex" style={{ flexDirection: 'column', gap: 'var(--sp-1)', minWidth: '150px' }}>
           <div className="flex-between flex text-xs font-bold">
@@ -64,82 +64,66 @@ export function HomeDashboard({ state, onNavigate, onContinueLesson, onActivateS
           <div className="lesson-progress-bar" style={{ marginBottom: 0, height: '8px' }}>
             <div className="lesson-progress-fill" style={{ width: `${dailyGoalProgress}%`, background: 'var(--primary)' }} />
           </div>
-          <span className="text-muted text-xs align-right" style={{ textAlign: 'right' }}>{dailyGoalProgress}% Completed</span>
+          <span className="text-muted text-xs" style={{ textAlign: 'right' }}>{dailyGoalProgress}% Completed</span>
         </div>
       </div>
 
-      {/* 2. Spaced Repetition Due Alert */}
-      {dueReviewsCount > 0 && (
-        <div 
-          onClick={() => onNavigate('review')}
-          className="feedback-panel correct flex-between flex card-interactive"
-          style={{ cursor: 'pointer', margin: 0 }}
-        >
-          <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
-            <RotateCcw className="loader-sm" style={{ animation: 'spin 4s linear infinite', borderTopColor: 'var(--success)' }} />
-            <div>
-              <h4 className="font-bold">Reviews Due</h4>
-              <p className="text-sm">You have {dueReviewsCount} items waiting to be reviewed. Keep your streak alive!</p>
-            </div>
-          </div>
-          <ArrowRight size={18} />
+      {/* 2. Fixed Streak Card near top */}
+      <div className="streak-card animate-fadein delay-100 card-interactive" onClick={() => onNavigate('profile')}>
+        <span className="streak-flame">🔥</span>
+        <div>
+          <h3 className="font-black text-lg" style={{ color: 'var(--xp-gold)' }}>{state.streak} Day Streak</h3>
+          <p className="text-xs text-muted">Keep learning every day to protect your streak!</p>
         </div>
-      )}
+      </div>
 
-      {/* 3. Recommended Path / Continue Learning */}
+      {/* 3. Continue Learning / Recommended Path Card */}
       <div className="continue-card card-interactive animate-fadein delay-200" onClick={onContinueLesson}>
         <div>
-          <span className="sr-only">Recommended</span>
-          <h3 className="font-black">Continue Your Path</h3>
-          <p className="text-sm mt-2">Master greetings, common vocabulary, and grammar rules for JLPT N5.</p>
+          <span className="text-xs font-bold text-green uppercase tracking-wider">Recommended Lesson</span>
+          <h3 className="font-black mt-1">Continue Learning</h3>
+          <p className="text-sm text-muted mt-2">Unit 3 Lesson 5 • Master grammar patterns & expressions</p>
         </div>
-        <button className="btn-primary" style={{ width: 'auto', marginTop: 0, padding: '10px 20px' }}>
+        <button className="btn-primary" style={{ width: 'auto', marginTop: 0, padding: '12px 24px', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)' }}>
           Resume <ArrowRight size={16} style={{ marginLeft: '8px' }} />
         </button>
       </div>
 
-      {/* 4. Stats Grid */}
-      <div className="home-grid animate-fadein delay-300">
-        
-        {/* Streak Flame Card */}
-        <div className="streak-card card-interactive" onClick={() => onNavigate('profile')}>
-          <span className="streak-flame">🔥</span>
-          <div>
-            <div className="streak-count">{state.streak}</div>
-            <div className="streak-label">DAY STREAK</div>
+      {/* 4. Due Reviews Alert Card */}
+      {dueReviewsCount > 0 && (
+        <div 
+          onClick={() => onNavigate('review')}
+          className="card card-interactive animate-fadein delay-200 flex-between flex"
+          style={{ cursor: 'pointer', border: '1px solid rgba(34, 197, 94, 0.3)', background: 'rgba(34, 197, 94, 0.05)' }}
+        >
+          <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
+            <RotateCcw className="loader-sm" style={{ animation: 'spin 6s linear infinite', borderTopColor: 'var(--success)', borderLeftColor: 'transparent', borderBottomColor: 'transparent', borderRightColor: 'transparent' }} />
+            <div>
+              <h4 className="font-bold text-green">Due Reviews: {dueReviewsCount}</h4>
+              <p className="text-xs text-muted mt-1">Keep your memory fresh by practicing today's review list.</p>
+            </div>
           </div>
+          <button className="btn-primary" style={{ width: 'auto', marginTop: 0, padding: '8px 16px', background: 'var(--success)' }}>
+            Start Review
+          </button>
         </div>
+      )}
 
-        {/* XP Summary Card */}
-        <div className="card card-interactive flex" style={{ flexDirection: 'column', justifyContent: 'center', gap: 'var(--sp-1)' }} onClick={() => onNavigate('analytics')}>
-          <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-2)' }}>
-            <Trophy size={18} className="text-gold" />
-            <span className="text-xs text-muted font-bold">TOTAL XP</span>
-          </div>
-          <p className="text-2xl font-black text-gold numeric">{state.xp || 0}</p>
-          <span className="text-xs text-muted">Level {Math.floor((state.xp || 0) / 100) + 1}</span>
+      {/* 5. Weekly Progress Card */}
+      <div className="card animate-fadein delay-300 flex" style={{ flexDirection: 'column', gap: 'var(--sp-3)' }}>
+        <h4 className="font-bold text-sm">Weekly Progress</h4>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-between', alignItems: 'flex-end', height: '80px', padding: 'var(--sp-2) 0' }}>
+          {[12, 24, 0, 45, 10, 50, 15].map((xp, index) => {
+            const pct = Math.min(100, (xp / 50) * 100);
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            return (
+              <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, height: '100%', justifyContent: 'flex-end', gap: 'var(--sp-1)' }}>
+                <div style={{ width: '100%', height: `${pct || 8}%`, background: xp >= 50 ? 'var(--success)' : xp > 0 ? 'var(--primary)' : 'var(--surface-3)', borderRadius: 'var(--radius-xs)' }} title={`${xp} XP`} />
+                <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>{days[index]}</span>
+              </div>
+            );
+          })}
         </div>
-
-        {/* Spaced Repetition Due Card */}
-        <div className="card card-interactive flex" style={{ flexDirection: 'column', justifyContent: 'center', gap: 'var(--sp-1)' }} onClick={() => onNavigate('review')}>
-          <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-2)' }}>
-            <RotateCcw size={18} className="text-green" />
-            <span className="text-xs text-muted font-bold">DUE REVIEWS</span>
-          </div>
-          <p className="text-2xl font-black text-green numeric">{dueReviewsCount}</p>
-          <span className="text-xs text-muted">Active queue</span>
-        </div>
-
-        {/* JLPT Countdown Card */}
-        <div className="card card-interactive flex" style={{ flexDirection: 'column', justifyContent: 'center', gap: 'var(--sp-1)' }} onClick={() => onNavigate('jlpt')}>
-          <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-2)' }}>
-            <Trophy size={18} style={{ color: 'var(--accent-ai)' }} />
-            <span className="text-xs text-muted font-bold">JLPT COUNTDOWN</span>
-          </div>
-          <p className="text-2xl font-black numeric" style={{ color: 'var(--accent-ai)' }}>{diffDays}</p>
-          <span className="text-xs text-muted">Days to Dec Exam</span>
-        </div>
-
       </div>
 
       {/* 5. Today's Focus / Micro Modes Grid */}
