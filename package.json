@@ -1,21 +1,19 @@
 {
-  "name": "learn-with-velmorth",
-  "version": "1.0.0",
-  "description": "<<<<<<< HEAD\r # 🌿 Learn With Velmorth",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/manish63018-sketch/learn-with-velmorth.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "name": "learn-with-velmorth-monorepo",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Learn Japanese with Velmorth — Full-stack Monorepo",
   "type": "module",
-  "bugs": {
-    "url": "https://github.com/manish63018-sketch/learn-with-velmorth/issues"
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
   },
-  "homepage": "https://github.com/manish63018-sketch/learn-with-velmorth#readme"
+  "devDependencies": {
+    "turbo": "^2.0.4"
+  },
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }

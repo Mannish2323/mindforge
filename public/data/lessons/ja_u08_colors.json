@@ -1,0 +1,190 @@
+{
+  "unit_id": "ja_u08_colors",
+  "unit_title": "Colors",
+  "lessons": [
+    {
+      "lesson_id": "ja_u08_l01_basic_colors",
+      "lesson_title": "Basic Colors",
+      "difficulty": "beginner-1",
+      "is_premium": false,
+      "xp_reward": 10,
+      "lesson_goal": "Name primary colors in Japanese.",
+      "vocabulary": [
+        {
+          "vocab_id": "ja_vocab_aka",
+          "kanji": "赤",
+          "kana": "あか",
+          "romaji": "aka",
+          "meaning_en": "red",
+          "meaning_hi": "लाल",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "colors"
+          ],
+          "frequency": 5,
+          "notes": "Used widely."
+        },
+        {
+          "vocab_id": "ja_vocab_ao",
+          "kanji": "青",
+          "kana": "あお",
+          "romaji": "ao",
+          "meaning_en": "blue",
+          "meaning_hi": "नीला",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "colors"
+          ],
+          "frequency": 5,
+          "notes": "Historically could mean green too."
+        },
+        {
+          "vocab_id": "ja_vocab_shiro",
+          "kanji": "白",
+          "kana": "しろ",
+          "romaji": "shiro",
+          "meaning_en": "white",
+          "meaning_hi": "सफेद",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "colors"
+          ],
+          "frequency": 5,
+          "notes": "Pure color."
+        }
+      ],
+      "grammar_point": {
+        "grammar_id": "ja_gram_color_noun",
+        "title": "Colors as nouns",
+        "structure": "[Color Noun] です",
+        "romaji_structure": "[Color Noun] desu",
+        "short_explanation_en": "State the color directly. E.g. 'aka desu' means it is red.",
+        "short_explanation_hi": "सीधे रंग का नाम बताएं। उदा. 'aka desu' का अर्थ है कि यह लाल है।",
+        "focus_examples": [
+          "これは赤です。"
+        ],
+        "focus_examples_romaji": [
+          "Kore wa aka desu."
+        ],
+        "notes": "Colors here are nouns."
+      },
+      "pronunciation": {
+        "tips_en": [
+          "Keep the 'a' sound in 'aka' short and crisp."
+        ],
+        "tips_hi": [
+          "'aka' में 'a' की ध्वनि को छोटा और स्पष्ट रखें।"
+        ],
+        "audio_ids": []
+      },
+      "examples": [
+        {
+          "example_id": "ja_u08_l01_ex_sentence_1",
+          "japanese": "これは青です。",
+          "romaji": "Kore wa ao desu.",
+          "translation_en": "This is blue.",
+          "translation_hi": "यह नीला है।",
+          "highlight_vocab_ids": [
+            "ja_vocab_ao"
+          ],
+          "context_note": "Describing a color."
+        }
+      ],
+      "review_words": [
+        "ja_vocab_aka"
+      ],
+      "unlock_requirement": {
+        "requires_lessons": [
+          "ja_u07_l02_restaurant_phrases"
+        ],
+        "min_xp_total": 160,
+        "requires_premium": false
+      }
+    },
+    {
+      "lesson_id": "ja_u08_l02_colors_with_objects",
+      "lesson_title": "Colors with Objects",
+      "difficulty": "beginner-2",
+      "is_premium": true,
+      "xp_reward": 12,
+      "lesson_goal": "Modify objects with color adjectives.",
+      "vocabulary": [
+        {
+          "vocab_id": "ja_vocab_akai",
+          "kanji": "赤い",
+          "kana": "あかい",
+          "romaji": "akai",
+          "meaning_en": "red (adjective)",
+          "meaning_hi": "लाल (विशेषण)",
+          "part_of_speech": "adjective",
+          "topic_tags": [
+            "colors"
+          ],
+          "frequency": 5,
+          "notes": "Add 'i' to aka to make it a pre-noun adjective."
+        },
+        {
+          "vocab_id": "ja_vocab_aoi",
+          "kanji": "青い",
+          "kana": "あおい",
+          "romaji": "aoi",
+          "meaning_en": "blue (adjective)",
+          "meaning_hi": "नीला (विशेषण)",
+          "part_of_speech": "adjective",
+          "topic_tags": [
+            "colors"
+          ],
+          "frequency": 5,
+          "notes": "Add 'i' to ao."
+        }
+      ],
+      "grammar_point": {
+        "grammar_id": "ja_gram_color_adj",
+        "title": "Color Adjectives (-i)",
+        "structure": "[Color Adjective] ＋ [Noun]",
+        "romaji_structure": "[Color Adjective] + [Noun]",
+        "short_explanation_en": "Certain color words end in 'i' to modify nouns directly. E.g. 'akai hon' means 'red book'.",
+        "short_explanation_hi": "संज्ञा को सीधे संशोधित करने के लिए कुछ रंगवाचक शब्दों के अंत में 'i' आता है। जैसे 'akai hon' का अर्थ 'लाल पुस्तक' है।",
+        "focus_examples": [
+          "赤い本です。"
+        ],
+        "focus_examples_romaji": [
+          "Akai hon desu."
+        ],
+        "notes": "Only four basic colors (red, blue, white, black) do this directly with -i."
+      },
+      "pronunciation": {
+        "tips_en": [
+          "Draw out the final 'i' vowel smoothly."
+        ],
+        "tips_hi": [
+          "अंतिम 'i' स्वर को सुचारू रूप से खींचें।"
+        ],
+        "audio_ids": []
+      },
+      "examples": [
+        {
+          "example_id": "ja_u08_l02_ex_sentence_1",
+          "japanese": "これは青いペンです。",
+          "romaji": "Kore wa aoi pen desu.",
+          "translation_en": "This is a blue pen.",
+          "translation_hi": "यह एक नीला पेन है।",
+          "highlight_vocab_ids": [
+            "ja_vocab_aoi"
+          ],
+          "context_note": "Describing a pen."
+        }
+      ],
+      "review_words": [
+        "ja_vocab_akai"
+      ],
+      "unlock_requirement": {
+        "requires_lessons": [
+          "ja_u08_l01_basic_colors"
+        ],
+        "min_xp_total": 170,
+        "requires_premium": true
+      }
+    }
+  ]
+}

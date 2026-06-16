@@ -1,0 +1,11 @@
+[project]
+name = "python-ai"
+version = "0.1.0"
+dependencies = [
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "pydantic>=2.7.0"
+]
+
+[tool.uv]
+dev-dependencies = []

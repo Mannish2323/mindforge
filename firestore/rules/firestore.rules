@@ -1,0 +1,72 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      // Custom claim or special admin role document
+      return isAuthenticated() && 
+        (request.auth.token.role == 'admin' || 
+         exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    // === Users collection ===
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if isOwner(userId) && 
+        // Prevent users from granting themselves premium role arbitrarily
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['isPremium']) || isAdmin());
+      allow delete: if isAdmin();
+
+      // Scoped Sub-collection: progress (user-specific lesson progress)
+      match /progress/{lessonId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      // Scoped Sub-collection: srs (spaced-repetition flashcards)
+      match /srs/{cardId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      // Scoped Sub-collection: settings (themes, preferences)
+      match /settings/{settingsId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // === Usernames reservations ===
+    match /usernames/{username} {
+      allow read: if true; // Allowed for availability checks
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.uid == request.auth.uid;
+    }
+
+    // === Flat Progress collection ===
+    // Document ID: {uid}_{lessonId}
+    match /progress/{progressId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated() && progressId.matches(request.auth.uid + '_.*');
+      allow delete: if isAdmin();
+    }
+
+    // === Lessons collection (Curriculum) ===
+    match /lessons/{lessonId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin(); // Curated lessons only editable by admin roles
+    }
+
+    // Deny all other access by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

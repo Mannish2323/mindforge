@@ -1,0 +1,176 @@
+{
+  "unit_id": "ja_u06_family",
+  "unit_title": "Family",
+  "lessons": [
+    {
+      "lesson_id": "ja_u06_l01_family_words_basic",
+      "lesson_title": "Family Words Basic",
+      "difficulty": "beginner-2",
+      "is_premium": true,
+      "xp_reward": 12,
+      "lesson_goal": "Refer to immediate family members.",
+      "vocabulary": [
+        {
+          "vocab_id": "ja_vocab_chichi",
+          "kanji": "父",
+          "kana": "ちち",
+          "romaji": "chichi",
+          "meaning_en": "father (my)",
+          "meaning_hi": "पिता (मेरे)",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "family"
+          ],
+          "frequency": 5,
+          "notes": "Used when talking about your own father to others."
+        },
+        {
+          "vocab_id": "ja_vocab_haha",
+          "kanji": "母",
+          "kana": "はは",
+          "romaji": "haha",
+          "meaning_en": "mother (my)",
+          "meaning_hi": "माता (मेरी)",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "family"
+          ],
+          "frequency": 5,
+          "notes": "Used when talking about your own mother to others."
+        }
+      ],
+      "grammar_point": {
+        "grammar_id": "ja_gram_my_family",
+        "title": "Humble family terms",
+        "structure": "私の [Family Term] です",
+        "romaji_structure": "Watashi no [Family Term] desu",
+        "short_explanation_en": "Use 'chichi' and 'haha' for your own parents when talking to others. It is humble.",
+        "short_explanation_hi": "दूसरों से अपने माता-पिता के बारे में बात करते समय 'chichi' और 'haha' का प्रयोग करें। यह विनम्र रूप है।",
+        "focus_examples": [
+          "私の父です。"
+        ],
+        "focus_examples_romaji": [
+          "Watashi no chichi desu."
+        ],
+        "notes": "Do not use 'otousan' for your own father when talking to outsiders."
+      },
+      "pronunciation": {
+        "tips_en": [
+          "Pronounce 'chichi' with a clean 'ch' sound."
+        ],
+        "tips_hi": [
+          "'chichi' का उच्चारण साफ 'च' ध्वनि के साथ करें।"
+        ],
+        "audio_ids": []
+      },
+      "examples": [
+        {
+          "example_id": "ja_u06_l01_ex_sentence_1",
+          "japanese": "これは私の母です。",
+          "romaji": "Kore wa watashi no haha desu.",
+          "translation_en": "This is my mother.",
+          "translation_hi": "यह मेरी माताजी हैं।",
+          "highlight_vocab_ids": [
+            "ja_vocab_haha"
+          ],
+          "context_note": "Introducing your mother."
+        }
+      ],
+      "review_words": [
+        "ja_vocab_chichi"
+      ],
+      "unlock_requirement": {
+        "requires_lessons": [
+          "ja_u05_l02_clock_basic"
+        ],
+        "min_xp_total": 120,
+        "requires_premium": true
+      }
+    },
+    {
+      "lesson_id": "ja_u06_l02_my_family_sentences",
+      "lesson_title": "My Family Sentences",
+      "difficulty": "beginner-2",
+      "is_premium": true,
+      "xp_reward": 12,
+      "lesson_goal": "Introduce family members and describe relationships.",
+      "vocabulary": [
+        {
+          "vocab_id": "ja_vocab_kazoku",
+          "kanji": "家族",
+          "kana": "かぞく",
+          "romaji": "kazoku",
+          "meaning_en": "family",
+          "meaning_hi": "परिवार",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "family"
+          ],
+          "frequency": 5,
+          "notes": "Used standardly."
+        },
+        {
+          "vocab_id": "ja_vocab_otouto",
+          "kanji": "弟",
+          "kana": "おとうと",
+          "romaji": "otouto",
+          "meaning_en": "younger brother",
+          "meaning_hi": "छोटा भाई",
+          "part_of_speech": "noun",
+          "topic_tags": [
+            "family"
+          ],
+          "frequency": 4,
+          "notes": "Humble term."
+        }
+      ],
+      "grammar_point": {
+        "grammar_id": "ja_gram_family_count",
+        "title": "Stating quantity of people",
+        "structure": "[Number] ＋ 人 家族 です",
+        "romaji_structure": "[Number] + nin kazoku desu",
+        "short_explanation_en": "Use this to say 'We are a family of [Number]'. Use 'hitori' (1), 'futari' (2), then '[Number] + nin'.",
+        "short_explanation_hi": "यह बताने के लिए प्रयोग करें कि 'हम [Number] लोगों का परिवार हैं'। १ के लिए 'hitori', २ के लिए 'futari' और आगे '[Number] + nin' का प्रयोग करें।",
+        "focus_examples": [
+          "三人家族です。"
+        ],
+        "focus_examples_romaji": [
+          "Sannin kazoku desu."
+        ],
+        "notes": "Three people family."
+      },
+      "pronunciation": {
+        "tips_en": [
+          "Otouto has double 'o' vowel length, pronounced 'otooto'."
+        ],
+        "tips_hi": [
+          "Otouto में डबल 'o' स्वर लंबाई होती है, जिसका उच्चारण 'otooto' होता है।"
+        ],
+        "audio_ids": []
+      },
+      "examples": [
+        {
+          "example_id": "ja_u06_l02_ex_sentence_1",
+          "japanese": "私たちは三人家族です。",
+          "romaji": "Watashitachi wa sannin kazoku desu.",
+          "translation_en": "We are a family of three.",
+          "translation_hi": "हमारा तीन लोगों का परिवार है।",
+          "highlight_vocab_ids": [
+            "ja_vocab_kazoku"
+          ],
+          "context_note": "Describing family size."
+        }
+      ],
+      "review_words": [
+        "ja_vocab_kazoku"
+      ],
+      "unlock_requirement": {
+        "requires_lessons": [
+          "ja_u06_l01_family_words_basic"
+        ],
+        "min_xp_total": 130,
+        "requires_premium": true
+      }
+    }
+  ]
+}

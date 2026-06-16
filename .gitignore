@@ -106,3 +106,12 @@ test_credentials.txt
 build*.txt
 build_output.txt
 
+
+# ─── 🚀 MONOREPO & BUILD TOOLS ─────────────────────────────
+.next/
+dist/
+target/
+.turbo/
+out/
+
+
