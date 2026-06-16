@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Head from 'next/head';
+import { AuthProvider } from './context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Velmorth — Learn Japanese',
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body>
         <div id="root">
           <div id="app-shell">
-            {children}
+            <AuthProvider>
+              {children}
+            </AuthProvider>
           </div>
         </div>
       </body>

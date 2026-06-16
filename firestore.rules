@@ -1,48 +1,42 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // === Users collection ===
-    // Users can only read/write their own document.
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-
-      // Sub-collection: progress (user-scoped lesson progress)
-      match /progress/{lessonId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
-      }
-
-      // Sub-collection: srs (spaced-repetition cards)
-      match /srs/{cardId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+    
+    // User Profile Document Access
+    match /users/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+      
+      // Allow progress and srs subcollections reads/writes
+      match /{allSubcollections=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
       }
     }
-
-    // === Settings collection ===
-    // Users can only read/write their own settings document.
-    match /settings/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    
+    // Username Reservation Checking
+    match /usernames/{username} {
+      allow read: if true; // Public check for availability during signup
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
-
-    // === Progress collection (top-level) ===
-    // Document ID format: {uid}_{lessonId}
-    // Only the owning user can read/write their progress entries.
-    match /progress/{progressId} {
-      allow read, write: if request.auth != null
-        && progressId.matches(request.auth.uid + '_.*');
+    
+    // Flat Lesson Completion Tracking
+    match /progress/{compositeId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
-
-    // === Lessons collection ===
-    // All authenticated users can READ lesson metadata.
-    // Seeding allows authenticated writes here for MVP.
+    
+    // Settings Preferences Syncing
+    match /settings/{uid} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    
+    // Lessons Syllabus - Read-only for authenticated clients
     match /lessons/{lessonId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-
-    // === Deny all other access ===
-    match /{document=**} {
-      allow read, write: if false;
+      allow write: if false; // Only manageable via Admin SDK or Firebase Console
     }
   }
 }
