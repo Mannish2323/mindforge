@@ -1,10 +1,9 @@
 packages:
   - 'apps/*'
-    - 'services/*'
-      - 'packages/*'
+  - 'services/*'
+  - 'packages/*'
 
-      allowBuilds:
-        '@firebase/util': true
-          protobufjs: true
-            unrs-resolver: true
-            
+allowBuilds:
+  '@firebase/util': true
+  protobufjs: true
+  unrs-resolver: true
