@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Crown, Check, X, Shield, CreditCard, Clock, Zap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface Plan {
   id: string;
@@ -84,6 +85,7 @@ declare global {
 }
 
 export function BillingView() {
+  const { session } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<string>('pro_monthly');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -117,7 +119,10 @@ export function BillingView() {
             // Verify payment
             const verifyRes = await fetch('/api/billing/verify', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session?.access_token || ''}`
+              },
               body: JSON.stringify({ ...response, planId: selectedPlan }),
             });
             if (verifyRes.ok) {

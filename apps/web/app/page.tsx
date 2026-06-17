@@ -177,6 +177,13 @@ export default function EVLOApp() {
     }
   }, [isLoaded, state.theme]);
 
+  // Show premium modal automatically for free users on load
+  useEffect(() => {
+    if (profile && !profile.isPremium) {
+      setShowPremiumModal(true);
+    }
+  }, [profile]);
+
   if (!isLoaded || loadingLessons) {
     return (
       <div id="splash-screen">
@@ -2142,7 +2149,12 @@ export default function EVLOApp() {
           </button>
         </nav>
       )}
-      {showPremiumModal && <PremiumModal onClose={() => setShowPremiumModal(false)} />}
+      {showPremiumModal && (
+        <PremiumModal
+          onClose={() => setShowPremiumModal(false)}
+          onUpgrade={() => setActiveTab('billing')}
+        />
+      )}
     </>
   );
 }
