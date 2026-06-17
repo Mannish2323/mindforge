@@ -47,7 +47,7 @@ export function SmartReview({ srsData, onReviewCardUpdate, onBack }: SmartReview
   const mistakes = Object.values(srsData).filter((c: any) => (c.errorCount || 0) > 0).length;
 
   // 1. Landing Screen (Not started yet)
-  if (!sessionStarted && !sessionDone) {
+  if (!sessionStarted && !sessionDone && cards.length > 0) {
     return (
       <div className="smart-review-view page-transition flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)', maxWidth: '520px', margin: '0 auto' }}>
         {/* Header */}

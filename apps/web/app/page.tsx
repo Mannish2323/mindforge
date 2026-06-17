@@ -23,6 +23,14 @@ import {
   Flame,
   LogOut,
   BarChart2,
+  Home,
+  PenLine,
+  Medal,
+  Crown,
+  Star,
+  Zap,
+  CreditCard,
+  Bell,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { QuestsView } from './components/QuestsView';
@@ -42,6 +50,7 @@ import { AuthView } from './components/AuthView';
 import { Leaderboard } from './components/Leaderboard';
 import { PremiumModal } from './components/PremiumModal';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { BillingView } from './components/BillingView';
 import { usePushNotifications } from './hooks/usePushNotifications';
 
 export default function EVLOApp() {
@@ -69,7 +78,7 @@ export default function EVLOApp() {
     activateStreakShield,
   } = useStore();
 
-  const { user, profile, loading: authLoading, updateProfileStats, logout } = useAuth();
+  const { user, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails } = useAuth();
 
   const activeState = React.useMemo(() => {
     if (user && profile) {
@@ -84,7 +93,7 @@ export default function EVLOApp() {
     return state;
   }, [state, user, profile]);
 
-  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings' | 'billing'>('home');
   const [activeSubView, setActiveSubView] = useState<'none' | 'hiragana' | 'jlpt-plan' | 'phrases' | 'lesson-player' | 'script-lab' | 'stories' | 'ai-chat' | 'quests' | 'badges'>('none');
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const { permission: notifPermission, requestPermission: requestNotifPermission } = usePushNotifications(user?.id || null);
@@ -110,6 +119,12 @@ export default function EVLOApp() {
   const [reviewSessionActive, setReviewSessionActive] = useState(false);
   const [reviewResults, setReviewResults] = useState<{hard:number,ok:number,easy:number}>({hard:0,ok:0,easy:0});
   const [reviewDone, setReviewDone] = useState(false);
+
+  // Profile editing states
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editDisplayName, setEditDisplayName] = useState('');
+  const [editBio, setEditBio] = useState('');
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
 
   // Listen & pick: currently playing
   const [listenPlaying, setListenPlaying] = useState(false);
@@ -1387,144 +1402,213 @@ export default function EVLOApp() {
 
     const heatmap = getHeatmapList();
     const unlockedBadges = (state.badges || []).filter(b => b.unlockedAt !== null).slice(0, 6);
-    const activeQuests = (state.quests || []).filter(q => q.status !== 'claimed');
+    const completedLessons = Object.values(state?.lessonProgress || {}).filter((l: any) => l.completed).length;
+
+    const AVATARS = ['🐼', '🦊', '🐸', '🐺', '🦁', '🐻', '🐯', '🦉'];
+
+    const handleStartEdit = () => {
+      setEditDisplayName(profile?.name || '');
+      setEditBio(profile?.bio || '');
+      setIsEditingProfile(true);
+    };
+
+    const handleSaveProfile = async () => {
+      try {
+        await updateProfileDetails(editDisplayName, editBio, profile?.avatarUrl || '🦊');
+        setIsEditingProfile(false);
+      } catch (err) {
+        console.error('Error saving profile:', err);
+      }
+    };
+
+    const handleSelectAvatar = async (avatar: string) => {
+      try {
+        await updateProfileDetails(profile?.name || 'Learner', profile?.bio || '', avatar);
+        setShowAvatarPicker(false);
+      } catch (err) {
+        console.error('Error saving avatar:', err);
+      }
+    };
 
     return (
-      <div className="page-home page-enter" style={{ padding: 'var(--space-5)' }}>
-        <div className="home-header">
-          <h2>Profile Stats</h2>
-          <p>Track your Japanese learning metrics</p>
-        </div>
+      <div className="page-home page-enter" style={{ padding: 'var(--space-5)', maxWidth: '600px', margin: '0 auto' }}>
+        
+        {/* Profile Header (Avatar + Name + Bio) */}
+        <Card style={{ padding: 'var(--space-5)', marginBottom: 'var(--space-4)', position: 'relative' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 'var(--space-3)' }}>
+            
+            {/* Avatar Circle */}
+            <div 
+              onClick={() => setShowAvatarPicker(v => !v)}
+              style={{
+                width: '90px',
+                height: '90px',
+                borderRadius: '50%',
+                background: 'var(--surface-2)',
+                border: '3px solid var(--primary)',
+                display: 'grid',
+                placeItems: 'center',
+                fontSize: '44px',
+                cursor: 'pointer',
+                position: 'relative',
+                boxShadow: 'var(--shadow-md)',
+                transition: 'transform var(--t-fast)'
+              }}
+              className="card-interactive"
+              title="Click to change avatar"
+            >
+              {profile?.avatarUrl || '🦊'}
+              <div style={{ position: 'absolute', bottom: 0, right: 0, background: 'var(--primary)', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'grid', placeItems: 'center', fontSize: '11px', fontWeight: 'bold' }}>
+                ✏️
+              </div>
+            </div>
+
+            {/* Avatar Picker Modal/Popover */}
+            {showAvatarPicker && (
+              <div className="card" style={{ padding: 'var(--space-3)', position: 'absolute', top: '110px', zIndex: 100, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', border: '1px solid var(--primary)' }}>
+                {AVATARS.map(av => (
+                  <button
+                    key={av}
+                    onClick={() => handleSelectAvatar(av)}
+                    style={{ fontSize: '24px', background: 'var(--surface-3)', border: 'none', borderRadius: 'var(--radius)', width: '40px', height: '40px', cursor: 'pointer' }}
+                  >
+                    {av}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Editing State */}
+            {isEditingProfile ? (
+              <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <input 
+                  type="text" 
+                  value={editDisplayName} 
+                  placeholder="Display Name"
+                  onChange={e => setEditDisplayName(e.target.value)}
+                  style={{ width: '100%', margin: 0 }}
+                />
+                <textarea 
+                  value={editBio} 
+                  placeholder="Tell us about your learning goal..."
+                  onChange={e => setEditBio(e.target.value)}
+                  style={{ width: '100%', height: '60px', margin: 0, resize: 'none' }}
+                />
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                  <button className="btn-secondary" onClick={() => setIsEditingProfile(false)} style={{ margin: 0, minHeight: 'unset', padding: '6px 16px' }}>Cancel</button>
+                  <button className="btn-primary" onClick={handleSaveProfile} style={{ margin: 0, minHeight: 'unset', padding: '6px 16px', background: 'var(--primary)' }}>Save</button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ width: '100%' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: 800 }}>
+                  {profile?.name || 'Learner'}
+                </h2>
+                <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-3)' }}>
+                  @{profile?.username || 'learner'}
+                </p>
+                <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-2)', marginTop: '8px', maxWidth: '360px', marginLeft: 'auto', marginRight: 'auto' }}>
+                  {profile?.bio || 'No bio set yet. Click Edit to add one!'}
+                </p>
+                <button 
+                  className="btn-ghost" 
+                  onClick={handleStartEdit}
+                  style={{ padding: '4px 10px', fontSize: '11px', marginTop: '10px', border: '1px solid var(--border)', borderRadius: 'var(--radius)' }}
+                >
+                  Edit Profile
+                </button>
+              </div>
+            )}
+          </div>
+        </Card>
+
+        {/* Level and XP Progress Card */}
+        <Card style={{ padding: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', fontWeight: 'bold', marginBottom: '6px' }}>
+            <span style={{ color: 'var(--primary)' }}>LEVEL {Math.floor((activeState.xp || 0) / 100) + 1}</span>
+            <span>{activeState.xp % 100} / 100 XP</span>
+          </div>
+          <div className="lesson-progress-bar" style={{ height: '10px', marginBottom: 0 }}>
+            <div className="lesson-progress-fill" style={{ width: `${activeState.xp % 100}%`, background: 'var(--primary)' }} />
+          </div>
+        </Card>
 
         {/* Stats grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
-          <Card style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-            <h4 style={{ color: 'var(--text-muted)', fontSize: '11px' }}>TOTAL XP</h4>
-            <h2 style={{ fontSize: '24px', color: 'var(--amber)', fontWeight: 'bold', marginTop: '4px' }}>{activeState.xp}</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-2)', marginBottom: 'var(--space-4)' }}>
+          <Card style={{ textAlign: 'center', padding: 'var(--space-3) var(--space-1)' }}>
+            <h4 style={{ color: 'var(--text-muted)', fontSize: '9px', fontWeight: 'bold' }}>TOTAL XP</h4>
+            <h2 style={{ fontSize: '18px', color: 'var(--amber)', fontWeight: 'black', marginTop: '4px' }}>{activeState.xp}</h2>
           </Card>
-          <Card style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-            <h4 style={{ color: 'var(--text-muted)', fontSize: '11px' }}>STREAK</h4>
-            <h2 style={{ fontSize: '24px', color: 'var(--orange)', fontWeight: 'bold', marginTop: '4px' }}>{activeState.streak} 🔥</h2>
+          <Card style={{ textAlign: 'center', padding: 'var(--space-3) var(--space-1)' }}>
+            <h4 style={{ color: 'var(--text-muted)', fontSize: '9px', fontWeight: 'bold' }}>STREAK</h4>
+            <h2 style={{ fontSize: '18px', color: 'var(--orange)', fontWeight: 'black', marginTop: '4px' }}>{activeState.streak} 🔥</h2>
           </Card>
-          <Card style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
-            <h4 style={{ color: 'var(--text-muted)', fontSize: '11px' }}>BADGES</h4>
-            <h2 style={{ fontSize: '24px', color: 'var(--purple)', fontWeight: 'bold', marginTop: '4px' }}>{unlockedBadges.length}</h2>
+          <Card style={{ textAlign: 'center', padding: 'var(--space-3) var(--space-1)' }}>
+            <h4 style={{ color: 'var(--text-muted)', fontSize: '9px', fontWeight: 'bold' }}>LESSONS</h4>
+            <h2 style={{ fontSize: '18px', color: 'var(--primary)', fontWeight: 'black', marginTop: '4px' }}>{completedLessons}</h2>
+          </Card>
+          <Card style={{ textAlign: 'center', padding: 'var(--space-3) var(--space-1)' }}>
+            <h4 style={{ color: 'var(--text-muted)', fontSize: '9px', fontWeight: 'bold' }}>BADGES</h4>
+            <h2 style={{ fontSize: '18px', color: 'var(--purple)', fontWeight: 'black', marginTop: '4px' }}>{unlockedBadges.length}</h2>
           </Card>
         </div>
 
-        {/* Badge preview */}
+        {/* Badges Display */}
         {unlockedBadges.length > 0 && (
-          <Card style={{ marginBottom: 'var(--space-5)' }}>
+          <Card style={{ marginBottom: 'var(--space-4)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-              <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'bold' }}>🏅 Badges</h3>
-              <button className="btn btn-ghost btn-sm" onClick={() => setActiveSubView('badges')} id="view-all-badges-btn">View All</button>
+              <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 'bold' }}>🏅 Unlocked Badges</h3>
+              <button className="btn-ghost" style={{ fontSize: '11px', padding: '2px 8px' }} onClick={() => setActiveSubView('badges')}>View All</button>
             </div>
-            <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               {unlockedBadges.map(badge => (
-                <div key={badge.badge_id} title={badge.title} style={{ fontSize: '28px' }}>{badge.icon}</div>
+                <div key={badge.badge_id} title={badge.description} style={{ fontSize: '28px', cursor: 'help' }}>
+                  {badge.icon}
+                </div>
               ))}
             </div>
           </Card>
         )}
 
-        {/* Active quests preview */}
-        {activeQuests.length > 0 && (
-          <Card style={{ marginBottom: 'var(--space-5)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-3)' }}>
-              <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'bold' }}>🎯 Daily Quests</h3>
-              <button className="btn btn-ghost btn-sm" onClick={() => setActiveSubView('quests')} id="view-quests-btn">View All</button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-              {activeQuests.slice(0, 3).map(q => {
-                const pct = Math.min(100, Math.round((q.progress / q.target) * 100));
-                return (
-                  <div key={q.quest_id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                    <span style={{ fontSize: '20px' }}>{q.icon}</span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 'var(--text-xs)', fontWeight: 600, marginBottom: '3px' }}>{q.title}</div>
-                      <div style={{ height: '6px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-full)', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${pct}%`, background: 'var(--grad-primary)', borderRadius: 'var(--radius-full)' }} />
-                      </div>
-                    </div>
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>{q.progress}/{q.target}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
-        )}
-
-        {/* Streak shield */}
-        <Card style={{ marginBottom: 'var(--space-5)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-              <span style={{ fontSize: '28px' }}>🛡️</span>
-              <div>
-                <h4 style={{ fontWeight: 700 }}>Streak Shield</h4>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  {activeState.streakShield?.active
-                    ? `Active — ${activeState.streakShield.uses_remaining} use(s) remaining`
-                    : 'Protects your streak for 1 missed day'}
-                </p>
-              </div>
-            </div>
-            {!activeState.streakShield?.active && (
-              <button
-                className="btn btn-sm"
-                style={{ background: 'var(--grad-gold)', color: '#000', fontWeight: 700 }}
-                onClick={activateStreakShield}
-                id="activate-shield-btn"
-              >
-                10 💎
-              </button>
-            )}
-            {activeState.streakShield?.active && (
-              <span style={{ color: 'var(--green-400)', fontWeight: 700, fontSize: 'var(--text-sm)' }}>✓ Active</span>
-            )}
-          </div>
-        </Card>
-
         {/* Activity heatmap */}
-        <Card style={{ marginBottom: 'var(--space-5)' }}>
-          <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 'bold', marginBottom: 'var(--space-4)' }}>Activity Heatmap</h3>
+        <Card style={{ marginBottom: 'var(--space-4)' }}>
+          <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 'bold', marginBottom: 'var(--space-4)' }}>Activity Heatmap (Last 90 Days)</h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(14, 1fr)', gap: '4px' }}>
             {heatmap.slice(-98).map((h, i) => (
               <div
                 key={i}
                 title={`${h.date}: ${h.sessions} sessions`}
                 style={{
-                  height: '16px',
+                  height: '14px',
                   borderRadius: '2px',
-                  backgroundColor: h.sessions > 0 ? `rgba(74, 222, 128, ${0.2 + h.level * 0.2})` : 'var(--bg-surface)'
+                  backgroundColor: h.sessions > 0 ? `rgba(22, 163, 74, ${0.15 + h.level * 0.2})` : 'var(--surface-3)'
                 }}
               />
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-3)', marginTop: '8px' }}>
             <span>98 days ago</span>
             <span>Today</span>
           </div>
         </Card>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-          <Button variant="secondary" fullWidth onClick={triggerJavaSync}>
-            💼 Sync stats to enterprise (Java backend)
-          </Button>
-
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', marginTop: 'var(--space-3)' }}>
-            Logged in as <strong style={{ color: 'var(--text-secondary)' }}>{user.email}</strong>
+        {/* Account and Sign Out */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', marginTop: 'var(--space-5)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center' }}>
+            Logged in as <strong style={{ color: 'var(--text-secondary)' }}>{user.email}</strong> • Joined {profile?.createdAt ? formatDate(profile.createdAt) : 'Recently'}
           </div>
-          <Button 
-            variant="ghost" 
-            fullWidth 
+          <Button
+            variant="ghost"
+            fullWidth
             onClick={logout}
-            style={{ 
-              border: '1px solid var(--border)', 
-              color: 'var(--red)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '8px' 
+            style={{
+              border: '1px solid var(--border)',
+              color: 'var(--red)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              minHeight: '40px'
             }}
           >
             <LogOut size={16} /> Sign Out
@@ -1534,72 +1618,154 @@ export default function EVLOApp() {
     );
   };
 
-
   const renderSettingsTab = () => {
     return (
-      <div className="page-home page-enter" style={{ padding: 'var(--space-5)' }}>
-        <div className="home-header">
-          <h2>Settings</h2>
-          <p>Customize your learn preferences</p>
-        </div>
+      <div className="settings-page page-enter">
+        <h1>Settings</h1>
 
-        <Card>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
-            {/* Theme */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h4 style={{ fontWeight: 'bold' }}>Dark Mode</h4>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Toggle dark/light appearance</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(state.theme === 'dark' ? 'light' : 'dark')}
-              >
-                {state.theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
-              </Button>
+        {/* APPEARANCE — 3-chip theme toggle */}
+        <div className="settings-section">
+          <h2>APPEARANCE</h2>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Theme</div>
+              <div className="settings-row-sub">Controls the color scheme of the app</div>
             </div>
-
-            {/* Language */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h4 style={{ fontWeight: 'bold' }}>Tutor Interface Language</h4>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Switch explanatory translations</p>
-              </div>
-              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                <Button
-                  variant={state.uiLang === 'en' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setUILang('en')}
+            <div className="theme-toggle" role="group" aria-label="Theme selector">
+              {(['system', 'light', 'dark'] as const).map(t => (
+                <button
+                  key={t}
+                  className={`theme-toggle-btn${(state.theme ?? 'dark') === t ? ' active' : ''}`}
+                  onClick={() => setTheme(t)}
+                  aria-pressed={(state.theme ?? 'dark') === t}
                 >
-                  EN
-                </Button>
-                <Button
-                  variant={state.uiLang === 'hi' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setUILang('hi')}
-                >
-                  हिन्दी
-                </Button>
-              </div>
-            </div>
-
-            {/* Speech */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <h4 style={{ fontWeight: 'bold' }}>Text-to-Speech (TTS)</h4>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Automatically speak Japanese text</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleTTS}
-              >
-                {state.ttsEnabled ? '🔊 Enabled' : '🔇 Disabled'}
-              </Button>
+                  {t.charAt(0).toUpperCase() + t.slice(1)}
+                </button>
+              ))}
             </div>
           </div>
-        </Card>
+        </div>
+
+        {/* LEARNING */}
+        <div className="settings-section">
+          <h2>LEARNING</h2>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Daily Goal</div>
+              <div className="settings-row-sub">Minutes of study per day</div>
+            </div>
+            <div className="chip-group" style={{ flexWrap: 'nowrap', gap: 'var(--sp-1)' }}>
+              {[5, 10, 15, 20, 30].map(m => (
+                <button
+                  key={m}
+                  className={`chip${(state.goalMinutes ?? 10) === m ? ' active' : ''}`}
+                  style={{ padding: '6px 10px', fontSize: 'var(--text-xs)' }}
+                >
+                  {m}m
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Text-to-Speech</div>
+              <div className="settings-row-sub">Auto-play Japanese audio in lessons</div>
+            </div>
+            <label className="toggle-switch">
+              <input type="checkbox" checked={!!state.ttsEnabled} onChange={toggleTTS} />
+              <span className="toggle-slider" />
+            </label>
+          </div>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">UI Language</div>
+              <div className="settings-row-sub">Language for explanations and hints</div>
+            </div>
+            <div className="chip-group" style={{ flexWrap: 'nowrap', gap: 'var(--sp-1)' }}>
+              {(['en', 'hi'] as const).map(l => (
+                <button
+                  key={l}
+                  className={`chip${state.uiLang === l ? ' active' : ''}`}
+                  style={{ padding: '6px 12px', fontSize: 'var(--text-xs)' }}
+                  onClick={() => setUILang(l)}
+                >
+                  {l === 'en' ? 'English' : 'हिन्दी'}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ACCOUNT */}
+        <div className="settings-section">
+          <h2>ACCOUNT</h2>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Email</div>
+              <div className="settings-row-sub">{user?.email ?? '—'}</div>
+            </div>
+          </div>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Username</div>
+              <div className="settings-row-sub">@{profile?.name ?? '—'}</div>
+            </div>
+            <button className="btn-ghost" style={{ minHeight: 36, fontSize: 'var(--text-xs)' }}>Edit</button>
+          </div>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Subscription</div>
+              <div className="settings-row-sub">
+                {profile?.isPremium ? '✨ Velmorth Pro — Active' : 'Free Plan'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DANGER ZONE */}
+        <div className="settings-section">
+          <h2 style={{ color: 'var(--error)' }}>DANGER ZONE</h2>
+          <div className="settings-row">
+            <div>
+              <div className="settings-row-label">Sign Out</div>
+              <div className="settings-row-sub">You can sign back in anytime</div>
+            </div>
+            <button
+              className="btn-ghost"
+              onClick={logout}
+              style={{ minHeight: 36, fontSize: 'var(--text-xs)', color: 'var(--error)', borderColor: 'rgba(239,68,68,.4)' }}
+            >
+              Sign Out
+            </button>
+          </div>
+          <div className="settings-row" style={{ borderBottom: 'none' }}>
+            <div>
+              <div className="settings-row-label">Delete Account</div>
+              <div className="settings-row-sub">Permanently delete all your data. Irreversible.</div>
+            </div>
+            <button
+              className="btn-ghost"
+              style={{ minHeight: 36, fontSize: 'var(--text-xs)', color: 'var(--error)', borderColor: 'rgba(239,68,68,.4)' }}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+
+        {/* Legal links */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--sp-2)', justifyContent: 'center', marginTop: 'var(--sp-6)', fontSize: 'var(--text-xs)', color: 'var(--text-3)' }}>
+          <span style={{ cursor: 'pointer' }}>Privacy Policy</span>
+          <span>·</span>
+          <span style={{ cursor: 'pointer' }}>Terms of Service</span>
+          <span>·</span>
+          <span style={{ cursor: 'pointer' }}>Refund Policy</span>
+          <span>·</span>
+          <span style={{ cursor: 'pointer' }}>Cookie Policy</span>
+        </div>
+
+        <div style={{ textAlign: 'center', fontSize: 'var(--text-xs)', color: 'var(--text-3)', marginTop: 'var(--sp-3)', paddingBottom: 'var(--sp-8)' }}>
+          Learn with Velmorth v3 · Velmorth Labs · Founder: Mannish
+        </div>
       </div>
     );
   };
@@ -1673,7 +1839,7 @@ export default function EVLOApp() {
       case 'speak':
         return <SpeakRoleplay onBack={() => setActiveTab('home')} />;
       case 'jlpt':
-        return <JlptPrep onBack={() => setActiveTab('home')} />;
+        return <JlptPrep state={activeState} onBack={() => setActiveTab('home')} />;
       case 'review':
         return (
           <SmartReview
@@ -1687,6 +1853,7 @@ export default function EVLOApp() {
       case 'social': return renderSocialTab();
       case 'profile': return renderProfileTab();
       case 'settings': return renderSettingsTab();
+      case 'billing': return <BillingView />;
     }
   };
 
@@ -1703,100 +1870,116 @@ export default function EVLOApp() {
             </div>
           </div>
           <nav className="sidebar-nav">
-            <button className={cn({ active: activeTab === 'home' })} onClick={() => setActiveTab('home')}>
-              <Flame size={20} />
+            <button className={cn({ active: activeTab === 'home' })} onClick={() => setActiveTab('home')} aria-label="Home">
+              <Home size={18} />
               <span>Home</span>
             </button>
-            <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')}>
-              <BookOpen size={20} />
+            <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')} aria-label="Learn Path">
+              <BookOpen size={18} />
               <span>Learn Path</span>
             </button>
-            <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')}>
-              <RotateCcw size={20} />
-              <span>Review</span>
-            </button>
-            <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')}>
-              <Mic size={20} />
-              <span>Speak Mode</span>
-            </button>
-            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')}>
-              <Trophy size={20} />
-              <span>JLPT Prep</span>
-            </button>
-            <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')}>
-              <Sparkles size={20} />
+            <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')} aria-label="Script Lab">
+              <PenLine size={18} />
               <span>Script Lab</span>
             </button>
-            <button className={cn({ active: activeTab === 'social' })} onClick={() => setActiveTab('social')}>
-              <Users size={20} />
-              <span>Social & Duels</span>
+            <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')} aria-label="Speak Mode">
+              <Mic size={18} />
+              <span>Speak Mode</span>
             </button>
-            <button className={cn({ active: activeTab === 'analytics' })} onClick={() => setActiveTab('analytics')}>
-              <BarChart2 size={20} />
+            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')} aria-label="JLPT Prep">
+              <Medal size={18} />
+              <span>JLPT Prep</span>
+            </button>
+            <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')} aria-label="Review">
+              <RotateCcw size={18} />
+              <span>Review</span>
+            </button>
+            <div className="sidebar-divider" />
+            <button className={cn({ active: activeTab === 'social' })} onClick={() => setActiveTab('social')} aria-label="Social">
+              <Users size={18} />
+              <span>Social</span>
+            </button>
+            <button className={cn({ active: activeTab === 'leaderboard' })} onClick={() => setActiveTab('leaderboard')} aria-label="Leaderboard">
+              <Trophy size={18} />
+              <span>Leaderboard</span>
+            </button>
+            <button className={cn({ active: activeTab === 'analytics' })} onClick={() => setActiveTab('analytics')} aria-label="Analytics">
+              <BarChart2 size={18} />
               <span>Analytics</span>
             </button>
-            <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')}>
-              <User size={20} />
+            <div className="sidebar-divider" />
+            <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')} aria-label="Profile">
+              <User size={18} />
               <span>Profile</span>
             </button>
-            <button className={cn({ active: activeTab === 'settings' })} onClick={() => setActiveTab('settings')}>
-              <Settings size={20} />
+            <button className={cn({ active: activeTab === 'settings' })} onClick={() => setActiveTab('settings')} aria-label="Settings">
+              <Settings size={18} />
               <span>Settings</span>
             </button>
           </nav>
+          {/* Upgrade CTA — only for free users */}
+          {!profile?.isPremium && (
+            <div className="sidebar-upgrade">
+              <button
+                className="sidebar-upgrade-btn"
+                onClick={() => setActiveTab('billing')}
+                aria-label="Upgrade to Pro"
+              >
+                <Crown size={16} />
+                <span>Upgrade to Pro</span>
+              </button>
+            </div>
+          )}
         </aside>
       )}
 
       {/* Topbar */}
       {activeSubView === 'none' && (
         <header id="topbar" className="topbar">
-          <div className="topbar-logo" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ cursor: 'pointer', fontWeight: 900 }} onClick={() => setActiveTab('home')}>Velmorth</span>
-            <div style={{ display: 'flex', gap: '12px', marginLeft: '16px', borderLeft: '1px solid var(--border)', paddingLeft: '16px' }}>
-              <button title="Leagues" onClick={() => setActiveTab('leaderboard')} style={{ border: 'none', background: 'transparent', color: activeTab === 'leaderboard' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Trophy size={16} /></button>
-              <button title="Social" onClick={() => setActiveTab('social')} style={{ border: 'none', background: 'transparent', color: activeTab === 'social' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Users size={16} /></button>
-              <button title="Analytics" onClick={() => setActiveTab('analytics')} style={{ border: 'none', background: 'transparent', color: activeTab === 'analytics' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><BarChart2 size={16} /></button>
-              <button title="Profile" onClick={() => setActiveTab('profile')} style={{ border: 'none', background: 'transparent', color: activeTab === 'profile' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><User size={16} /></button>
-              <button title="Settings" onClick={() => setActiveTab('settings')} style={{ border: 'none', background: 'transparent', color: activeTab === 'settings' ? 'var(--primary)' : 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}><Settings size={16} /></button>
-            </div>
-          </div>
+          {/* Left: Logo + Wordmark */}
+          <button
+            className="topbar-logo"
+            onClick={() => setActiveTab('home')}
+            aria-label="Go to Home"
+            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+          >
+            <div className="logo-mark">V</div>
+            <span className="topbar-wordmark">Velmorth</span>
+          </button>
+
+          {/* Right: Stats strip */}
           <div className="topbar-stats">
-            <div className="stat-pill xp" title="Total XP balance">
-              <span className="icon">🏆</span>
-              <span>{activeState.xp}</span>
+            <div className="stat-pill xp" title={`${activeState.xp} XP total`}>
+              <span className="icon">⭐</span>
+              <span>{activeState.xp ?? 0}</span>
             </div>
-            <div className="stat-pill streak" title="Daily active streak">
-              <span className="icon">🔥</span>
-              <span>{activeState.streak}</span>
-              {activeState.streakShield?.active && <span className="shield-micro">🛡️</span>}
+            <div className="stat-pill streak" title={`${activeState.streak} day streak`}>
+              <span className="icon" style={{ animation: 'flame-rise 2.4s ease-in-out infinite', display: 'inline-block', transformOrigin: 'bottom center' }}>🔥</span>
+              <span>{activeState.streak ?? 0}</span>
             </div>
-            <div className="stat-pill hearts" title="Refill hearts balance">
+            <div className="stat-pill hearts" title="Hearts remaining">
               <span className="icon">❤️</span>
-              <span>{activeState.hearts}</span>
+              <span>{activeState.hearts ?? 5}</span>
             </div>
-            <div className="stat-pill gems" title="Shop currency gems">
+            <div className="stat-pill gems" title="Gems">
               <span className="icon">💎</span>
-              <span>{activeState.gems}</span>
+              <span>{activeState.gems ?? 0}</span>
             </div>
-            {!profile?.isPremium && (
+            {profile?.isPremium ? (
+              <div className="pro-badge" title="Velmorth Pro">
+                <Crown size={12} />
+                PRO
+              </div>
+            ) : (
               <button
                 id="btn-upgrade-premium"
-                onClick={() => setShowPremiumModal(true)}
-                style={{
-                  background: 'linear-gradient(135deg,#fbbf24,#f59e0b)',
-                  color: '#000',
-                  border: 'none',
-                  borderRadius: 'var(--radius-pill)',
-                  padding: '4px 10px',
-                  fontWeight: 800,
-                  fontSize: 11,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
+                className="pro-badge"
+                onClick={() => setActiveTab('billing')}
+                title="Upgrade to Pro"
+                style={{ border: 'none' }}
               >
-                👑 PRO
+                <Crown size={12} />
+                PRO
               </button>
             )}
           </div>
@@ -1898,28 +2081,62 @@ export default function EVLOApp() {
         )}
       </main>
 
-      {/* Bottom Navbar — 5 tabs for core learning loops (Mobile only) */}
+      {/* Bottom Nav — 6 core tabs (Mobile only, matches spec exactly) */}
       {activeSubView === 'none' && (
-        <nav className="bottom-nav">
-          <button className={cn({ active: activeTab === 'home' })} onClick={() => setActiveTab('home')}>
-            <Flame size={20} />
+        <nav className="bottom-nav" role="navigation" aria-label="Main navigation">
+          <button
+            className={cn({ active: activeTab === 'home' })}
+            onClick={() => setActiveTab('home')}
+            aria-label="Home"
+            aria-current={activeTab === 'home' ? 'page' : undefined}
+          >
+            <Home size={20} />
             <span>Home</span>
           </button>
-          <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')}>
+          <button
+            className={cn({ active: activeTab === 'learn' })}
+            onClick={() => setActiveTab('learn')}
+            aria-label="Learn Path"
+            aria-current={activeTab === 'learn' ? 'page' : undefined}
+          >
             <BookOpen size={20} />
-            <span>Learn</span>
+            <span>Path</span>
           </button>
-          <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')}>
-            <RotateCcw size={20} />
-            <span>Review</span>
+          <button
+            className={cn({ active: activeTab === 'script' })}
+            onClick={() => setActiveTab('script')}
+            aria-label="Script Lab"
+            aria-current={activeTab === 'script' ? 'page' : undefined}
+          >
+            <PenLine size={20} />
+            <span>Script</span>
           </button>
-          <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')}>
+          <button
+            className={cn({ active: activeTab === 'speak' })}
+            onClick={() => setActiveTab('speak')}
+            aria-label="Speak Mode"
+            aria-current={activeTab === 'speak' ? 'page' : undefined}
+          >
             <Mic size={20} />
             <span>Speak</span>
           </button>
-          <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')}>
-            <User size={20} />
-            <span>Profile</span>
+          <button
+            className={cn({ active: activeTab === 'jlpt' })}
+            onClick={() => setActiveTab('jlpt')}
+            aria-label="JLPT Prep"
+            aria-current={activeTab === 'jlpt' ? 'page' : undefined}
+          >
+            <Medal size={20} />
+            <span>JLPT</span>
+          </button>
+          <button
+            className={cn({ active: activeTab === 'review' })}
+            onClick={() => setActiveTab('review')}
+            aria-label="Review"
+            aria-current={activeTab === 'review' ? 'page' : undefined}
+          >
+            <RotateCcw size={20} />
+            <span>Review</span>
           </button>
         </nav>
       )}

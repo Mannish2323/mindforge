@@ -1,12 +1,22 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Head from 'next/head';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './components/ThemeProvider';
 
 export const metadata: Metadata = {
-  title: 'Velmorth — Learn Japanese',
-  description: 'Interactive and gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring and spaced-repetition flashcards.',
+  title: 'Learn with Velmorth — Japanese Made Effortless',
+  description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice. Built by Velmorth Labs.',
   manifest: '/manifest.json',
+  keywords: ['Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji', 'Velmorth'],
+  authors: [{ name: 'Velmorth Labs', url: 'https://withvelmorth.web.app' }],
+  openGraph: {
+    title: 'Learn with Velmorth',
+    description: 'Learn Japanese the smart way — AI + SRS + Speaking',
+    url: 'https://withvelmorth.web.app',
+    siteName: 'Velmorth',
+    locale: 'en_US',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -15,19 +25,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
+          rel="stylesheet"
+        />
         <link rel="icon" href="/icons/icon-192.png" />
+        {/* Inline theme script to prevent flash of wrong theme */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem('velmorth_theme') || 'dark';
+                  document.documentElement.setAttribute('data-theme', t);
+                } catch(e) {}
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
         <div id="root">
           <div id="app-shell">
-            <AuthProvider>
-              {children}
-            </AuthProvider>
+            <ThemeProvider>
+              <AuthProvider>
+                {children}
+              </AuthProvider>
+            </ThemeProvider>
           </div>
         </div>
       </body>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Lock, Star, ShieldAlert, Award, MessageCircle, AlertCircle, Play } from 'lucide-react';
+import { Lock, Star, ShieldAlert, Award, MessageCircle, AlertCircle, Play, Check } from 'lucide-react';
 
 interface LearnPathProps {
   state: any;
@@ -13,6 +13,7 @@ interface LearnPathProps {
 
 export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }: LearnPathProps) {
   const [selectedNode, setSelectedNode] = useState<any | null>(null);
+  const [activeCategory, setActiveCategory] = useState<'All' | 'Greetings' | 'Numbers' | 'Time' | 'Food' | 'Verbs'>('All');
 
   const getCompletedCount = (unit: any) => {
     const lessons = lessonsCache[unit.unit_id]?.lessons || [];
@@ -24,7 +25,6 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
     
     const currentUnitLessons = lessonsCache[units[unitIndex].unit_id]?.lessons || [];
     
-    // Check if previous lesson in this unit or previous unit's last lesson is complete
     if (lessonIndex > 0) {
       const prevLessonId = currentUnitLessons[lessonIndex - 1]?.lesson_id;
       return !state.lessonProgress[prevLessonId]?.completed;
@@ -36,42 +36,93 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
     }
   };
 
-  const getNodeIcon = (type: string) => {
-    switch (type) {
-      case 'boss': return <ShieldAlert size={24} color="var(--error)" />;
-      case 'review': return <Award size={22} color="var(--warn)" />;
-      case 'story': return <MessageCircle size={22} color="var(--accent-violet)" />;
-      default: return <Star size={20} color="var(--primary)" />;
+  // Find the current active/in-progress lesson (first unlocked incomplete lesson)
+  const findInProgressLesson = () => {
+    for (let uIdx = 0; uIdx < units.length; uIdx++) {
+      const lessons = lessonsCache[units[uIdx].unit_id]?.lessons || [];
+      for (let lIdx = 0; lIdx < lessons.length; lIdx++) {
+        const lesson = lessons[lIdx];
+        if (!state.lessonProgress[lesson.lesson_id]?.completed && !isLessonLocked(lIdx, uIdx)) {
+          return lesson;
+        }
+      }
+    }
+    return null;
+  };
+
+  const inProgressLesson = findInProgressLesson();
+
+  const getNodeIcon = (nodeType: string, isCompleted: boolean, isLocked: boolean, isInProgress: boolean) => {
+    if (isCompleted) return <Check size={20} />;
+    if (isLocked) return <Lock size={18} />;
+    
+    switch (nodeType) {
+      case 'boss': return <ShieldAlert size={22} />;
+      case 'review': return <Award size={20} />;
+      case 'story': return <MessageCircle size={20} />;
+      default: return isInProgress ? <Star size={20} /> : <Play size={18} style={{ marginLeft: '2px' }} />;
     }
   };
 
   const getOffsetStyle = (index: number, scaleUp: boolean) => {
     const cycle = index % 8;
     let offset = 0;
-    if (cycle === 1 || cycle === 7) offset = 28;
-    else if (cycle === 2 || cycle === 6) offset = 56;
-    else if (cycle === 3 || cycle === 5) offset = 28;
+    if (cycle === 1 || cycle === 7) offset = 35;
+    else if (cycle === 2 || cycle === 6) offset = 70;
+    else if (cycle === 3 || cycle === 5) offset = 35;
     else if (cycle === 4) offset = 0;
     
     const shift = cycle > 4 ? -offset : offset;
     return {
-      transform: `translateX(${shift}px)${scaleUp ? ' scale(1.05)' : ''}`,
+      transform: `translateX(${shift}px)${scaleUp ? ' scale(1.1)' : ''}`,
     };
   };
 
+  const filteredUnits = units.filter(unit => {
+    if (activeCategory === 'All') return true;
+    const uid = unit.unit_id.toLowerCase();
+    if (activeCategory === 'Greetings') return uid.includes('greetings') || uid.includes('self_intro');
+    if (activeCategory === 'Numbers') return uid.includes('numbers') || uid.includes('colors');
+    if (activeCategory === 'Time') return uid.includes('time') || uid.includes('locations');
+    if (activeCategory === 'Food') return uid.includes('food');
+    if (activeCategory === 'Verbs') return uid.includes('verbs') || uid.includes('objects');
+    return true;
+  });
+
+  const CATEGORIES = ['All', 'Greetings', 'Numbers', 'Time', 'Food', 'Verbs'] as const;
+
   return (
-    <div className="learn-path-view page-transition" style={{ padding: 'var(--sp-4)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-5)' }}>
+    <div className="learn-path-view page-transition animate-fadein" style={{ padding: 'var(--sp-4)' }}>
+      {/* Top Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
         <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={onBack}>← Back</button>
         <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🗺️ Japanese N5 Roadmap</h2>
       </div>
 
+      {/* Category Chips */}
+      <div className="chip-group" style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: 'var(--sp-3)', marginBottom: 'var(--sp-5)' }}>
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            className={`chip${activeCategory === cat ? ' active' : ''}`}
+            onClick={() => setActiveCategory(cat)}
+            style={{ whiteSpace: 'nowrap' }}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Path List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-6)' }}>
-        {units.map((unit, uIdx) => {
+        {filteredUnits.map((unit, uIdx) => {
           const lessons = lessonsCache[unit.unit_id]?.lessons || [];
           const completedCount = getCompletedCount(unit);
           const totalCount = lessons.length;
           const pct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+          // Find the real index of this unit in the original units array for lock calculations
+          const originalUnitIndex = units.findIndex(u => u.unit_id === unit.unit_id);
 
           return (
             <div key={unit.unit_id} className="card" style={{ padding: 'var(--sp-5)' }}>
@@ -92,11 +143,13 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
               </div>
 
               {/* Lesson path nodes chain - vertical winding path */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)', padding: 'var(--sp-4) 0', alignItems: 'center', position: 'relative' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)', padding: 'var(--sp-4) 0', alignItems: 'center', position: 'relative' }}>
                 {lessons.map((lesson: any, lIdx: number) => {
-                  const locked = isLessonLocked(lIdx, uIdx);
-                  const completed = state.lessonProgress[lesson.lesson_id]?.completed;
-                  
+                  const locked = isLessonLocked(lIdx, originalUnitIndex);
+                  const completed = !!state.lessonProgress[lesson.lesson_id]?.completed;
+                  const isInProgress = !completed && !locked && lesson.lesson_id === inProgressLesson?.lesson_id;
+                  const isAvailable = !completed && !locked && !isInProgress;
+
                   // Simple classification for node types
                   const isBoss = lIdx === lessons.length - 1;
                   const isStory = lesson.lesson_title.toLowerCase().includes('story') || lesson.is_premium;
@@ -104,30 +157,18 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
                   const nodeType = isBoss ? 'boss' : isStory ? 'story' : isReview ? 'review' : 'normal';
 
                   return (
-                    <div 
-                      key={lesson.lesson_id} 
-                      className={`path-node ${locked ? 'locked' : ''} ${completed ? 'completed' : ''}`}
-                      onClick={() => !locked && setSelectedNode({ ...lesson, nodeType })}
+                    <div
+                      key={lesson.lesson_id}
+                      onClick={() => !locked && setSelectedNode({ ...lesson, nodeType, isInProgress })}
+                      className={`node-icon ${completed ? 'completed' : locked ? 'locked' : isInProgress ? 'in-progress' : 'available'}`}
                       style={{
-                        width: '60px',
-                        height: '60px',
-                        borderRadius: '50%',
-                        background: completed 
-                          ? 'linear-gradient(135deg, var(--primary), var(--accent-violet))' 
-                          : locked 
-                          ? 'var(--surface-2)' 
-                          : 'var(--primary-light)',
-                        border: `3px solid ${completed ? 'var(--primary)' : locked ? 'var(--border)' : 'var(--primary)'}`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        width: '56px',
+                        height: '56px',
                         cursor: locked ? 'not-allowed' : 'pointer',
-                        transition: 'var(--t-base)',
-                        boxShadow: !locked && !completed ? '0 0 16px rgba(99, 102, 241, 0.4)' : 'none',
-                        ...getOffsetStyle(lIdx, !locked && !completed)
+                        ...getOffsetStyle(lIdx, isInProgress)
                       }}
                     >
-                      {locked ? <Lock size={18} color="var(--text-3)" /> : getNodeIcon(nodeType)}
+                      {getNodeIcon(nodeType, completed, locked, isInProgress)}
                     </div>
                   );
                 })}
@@ -135,14 +176,34 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
             </div>
           );
         })}
+
+        {filteredUnits.length === 0 && (
+          <div style={{ textAlign: 'center', padding: 'var(--sp-10)', color: 'var(--text-muted)' }}>
+            No units found in this category.
+          </div>
+        )}
       </div>
+
+      {/* Current Lesson Preview Card at Bottom */}
+      {inProgressLesson && activeCategory === 'All' && (
+        <div className="card" style={{ marginTop: 'var(--sp-6)', border: '1px solid rgba(22, 163, 74, 0.3)', background: 'var(--primary-light)', padding: 'var(--sp-4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Lesson</span>
+            <h4 style={{ fontSize: 'var(--text-base)', fontWeight: 'bold', marginTop: '2px' }}>{inProgressLesson.lesson_title}</h4>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-2)' }}>⚡ {inProgressLesson.xp_reward} XP • ❤️ 1 Heart</p>
+          </div>
+          <button className="btn-primary" style={{ width: 'auto', margin: 0, padding: '8px 20px', background: 'var(--primary)' }} onClick={() => setSelectedNode({ ...inProgressLesson, nodeType: 'normal', isInProgress: true })}>
+            Resume
+          </button>
+        </div>
+      )}
 
       {/* Pre-lesson Preview Modal */}
       {selectedNode && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(2,6,23,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 'var(--sp-4)', backdropFilter: 'blur(8px)' }} className="animate-fadein">
           <div className="card" style={{ maxWidth: '400px', width: '100%', textAlign: 'center', padding: 'var(--sp-8)', boxShadow: 'var(--shadow-lg)' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--sp-4)' }}>
-              {getNodeIcon(selectedNode.nodeType)}
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--sp-4)', color: 'var(--primary)' }}>
+              {getNodeIcon(selectedNode.nodeType, false, false, selectedNode.isInProgress)}
             </div>
             
             <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>{selectedNode.lesson_title}</h3>
@@ -177,7 +238,7 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
                   onStartLesson(selectedNode.lesson_id);
                   setSelectedNode(null);
                 }}
-                style={{ flex: 1, margin: 0, minHeight: '44px', background: 'linear-gradient(135deg, var(--primary), var(--accent-violet))', border: 'none' }}
+                style={{ flex: 1, margin: 0, minHeight: '44px', background: 'var(--primary)', border: 'none' }}
               >
                 Start
               </button>

@@ -51,20 +51,26 @@ export function HomeDashboard({ state, onNavigate, onContinueLesson, onActivateS
     <div className="animate-fadein flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)' }}>
       
       {/* 1. Greeting / Welcome Back Card */}
-      <div className="card animate-fadein delay-100 flex-between flex" style={{ gap: 'var(--sp-4)', flexWrap: 'wrap', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.04))', border: '1px solid var(--border)' }}>
-        <div>
-          <h2 className="text-xl font-black">👋 Welcome Back, {username}!</h2>
-          <p className="text-muted text-sm mt-2">Level {Math.floor((state.xp || 0) / 100) + 1} • {state.xp || 0} XP total</p>
-        </div>
-        <div className="flex" style={{ flexDirection: 'column', gap: 'var(--sp-1)', minWidth: '150px' }}>
-          <div className="flex-between flex text-xs font-bold">
-            <span className="text-gold">DAILY GOAL</span>
-            <span>{currentDailyXP} / {dailyGoal} XP</span>
+      <div className="welcome-card animate-fadein delay-100">
+        <div className="flex-between flex" style={{ flexWrap: 'wrap', gap: 'var(--sp-4)' }}>
+          <div>
+            <div className="level-badge">
+              ⭐ Level {Math.floor((state.xp || 0) / 100) + 1}
+            </div>
+            <h2 className="welcome-greeting">👋 {state.xp === 0 ? 'Welcome,' : 'Welcome back,'} {username}!</h2>
+            <p className="welcome-sub">{state.xp === 0 ? 'Start your Japanese journey today.' : `${state.xp} XP earned so far`}</p>
           </div>
-          <div className="lesson-progress-bar" style={{ marginBottom: 0, height: '8px' }}>
-            <div className="lesson-progress-fill" style={{ width: `${dailyGoalProgress}%`, background: 'var(--primary)' }} />
+          <div className="flex" style={{ flexDirection: 'column', gap: 'var(--sp-1)', minWidth: '160px', flex: 1 }}>
+            <div className="xp-bar-wrap">
+              <div className="xp-bar-label">
+                <span className="text-gold">DAILY GOAL</span>
+                <span>{currentDailyXP}/{dailyGoal} XP</span>
+              </div>
+              <div className="xp-bar">
+                <div className="xp-bar-fill" style={{ width: `${dailyGoalProgress}%` }} />
+              </div>
+            </div>
           </div>
-          <span className="text-muted text-xs" style={{ textAlign: 'right' }}>{dailyGoalProgress}% Completed</span>
         </div>
       </div>
 
@@ -80,13 +86,11 @@ export function HomeDashboard({ state, onNavigate, onContinueLesson, onActivateS
       {/* 3. Continue Learning / Recommended Path Card */}
       <div className="continue-card card-interactive animate-fadein delay-200" onClick={onContinueLesson}>
         <div>
-          <span className="text-xs font-bold text-green uppercase tracking-wider">Recommended Lesson</span>
+          <span className="text-xs font-bold text-green uppercase" style={{ letterSpacing: '0.06em' }}>Recommended Lesson</span>
           <h3 className="font-black mt-1">Continue Learning</h3>
-          <p className="text-sm text-muted mt-2">Unit 3 Lesson 5 • Master grammar patterns & expressions</p>
+          <p className="text-sm text-muted mt-2">Pick up where you left off &amp; earn XP</p>
         </div>
-        <button className="btn-primary" style={{ width: 'auto', marginTop: 0, padding: '12px 24px', boxShadow: '0 4px 14px rgba(99, 102, 241, 0.4)' }}>
-          Resume <ArrowRight size={16} style={{ marginLeft: '8px' }} />
-        </button>
+        <span className="continue-badge">📖</span>
       </div>
 
       {/* 4. Due Reviews Alert Card */}
@@ -109,17 +113,23 @@ export function HomeDashboard({ state, onNavigate, onContinueLesson, onActivateS
         </div>
       )}
 
-      {/* 5. Weekly Progress Card */}
+      {/* 5. Weekly Progress Chart */}
       <div className="card animate-fadein delay-300 flex" style={{ flexDirection: 'column', gap: 'var(--sp-3)' }}>
         <h4 className="font-bold text-sm">Weekly Progress</h4>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'space-between', alignItems: 'flex-end', height: '80px', padding: 'var(--sp-2) 0' }}>
-          {[12, 24, 0, 45, 10, 50, 15].map((xp, index) => {
-            const pct = Math.min(100, (xp / 50) * 100);
-            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        <div className="weekly-chart">
+          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((day, index) => {
+            // Use real weekly data if available, otherwise show empty bars
+            const weeklyData = state.weeklyXpData || [0,0,0,0,0,0,0];
+            const xp = weeklyData[index] || 0;
+            const pct = Math.min(100, (xp / (state.goalXp || 50)) * 100);
             return (
-              <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, height: '100%', justifyContent: 'flex-end', gap: 'var(--sp-1)' }}>
-                <div style={{ width: '100%', height: `${pct || 8}%`, background: xp >= 50 ? 'var(--success)' : xp > 0 ? 'var(--primary)' : 'var(--surface-3)', borderRadius: 'var(--radius-xs)' }} title={`${xp} XP`} />
-                <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>{days[index]}</span>
+              <div key={index} className="weekly-bar-wrap">
+                <div
+                  className={`weekly-bar${xp > 0 ? (xp >= (state.goalXp || 50) ? ' goal-met' : ' has-data') : ''}`}
+                  style={{ height: `${Math.max(4, pct)}%` }}
+                  title={`${day}: ${xp} XP`}
+                />
+                <span className="weekly-day">{day.slice(0,2)}</span>
               </div>
             );
           })}

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Award, BookOpen, Clock, Play, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react';
+import { Award, BookOpen, Clock, Play, CheckCircle, AlertCircle, ArrowRight, Lock, Headphones, BookOpenText } from 'lucide-react';
 
 interface JlptPrepProps {
+  state: any;
   onBack: () => void;
 }
 
@@ -31,7 +32,7 @@ const DRILL_QUESTIONS = [
   }
 ];
 
-export function JlptPrep({ onBack }: JlptPrepProps) {
+export function JlptPrep({ state, onBack }: JlptPrepProps) {
   const [selectedLevel, setSelectedLevel] = useState<'N5' | 'N4' | 'N3' | 'N2' | 'N1'>('N5');
   const [drillActive, setDrillActive] = useState(false);
   const [drillIdx, setDrillIdx] = useState(0);
@@ -41,6 +42,7 @@ export function JlptPrep({ onBack }: JlptPrepProps) {
   const [drillFinished, setDrillFinished] = useState(false);
 
   const startDrill = () => {
+    if (selectedLevel !== 'N5') return; // Locked
     setDrillActive(true);
     setDrillIdx(0);
     setDrillScore(0);
@@ -69,11 +71,15 @@ export function JlptPrep({ onBack }: JlptPrepProps) {
     }
   };
 
+  // Compute readiness from real state (lessons completed out of 30 N5 lessons)
+  const completedLessonsCount = Object.values(state?.lessonProgress || {}).filter((l: any) => l.completed).length;
+  const readinessPercentage = Math.min(100, Math.round((completedLessonsCount / 30) * 100));
+
   return (
-    <div className="jlpt-prep-view animate-fadein" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
+    <div className="jlpt-prep-view animate-fadein" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
       {/* Header */}
       <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-2)' }}>
-        <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius-pill)' }} onClick={drillActive ? () => setDrillActive(false) : onBack}>
+        <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={drillActive ? () => setDrillActive(false) : onBack}>
           ← Back
         </button>
         <h2 className="text-xl font-black">🏆 JLPT Prep Center</h2>
@@ -82,62 +88,120 @@ export function JlptPrep({ onBack }: JlptPrepProps) {
       {!drillActive ? (
         <div className="flex" style={{ flexDirection: 'column', gap: 'var(--sp-5)' }}>
           {/* Level selector tabs */}
-          <div className="flex gap-2" style={{ background: 'var(--surface-2)', padding: '6px', borderRadius: 'var(--radius-pill)', border: '1px solid var(--border)', flexWrap: 'wrap' }}>
+          <div className="flex gap-2" style={{ background: 'var(--surface-2)', padding: '6px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', flexWrap: 'wrap' }}>
             {(['N5', 'N4', 'N3', 'N2', 'N1'] as const).map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setSelectedLevel(lvl)}
                 className={`toggle-btn ${selectedLevel === lvl ? 'active' : ''}`}
-                style={{ flex: 1, textAlign: 'center', padding: '8px 0', border: 'none' }}
+                style={{ flex: 1, textAlign: 'center', padding: '8px 0', border: 'none', borderRadius: 'var(--radius)' }}
               >
                 {lvl}
               </button>
             ))}
           </div>
 
-          {/* Daily Roadmap Planner card */}
-          <div className="card animate-fadein">
-            <span style={{ fontSize: '10px', color: 'var(--text-3)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' }}>PLANNER</span>
-            <h3 className="font-bold mt-2">Your Daily {selectedLevel} Goal</h3>
-            <p className="text-muted text-sm mt-2 mb-4">
-              Complete 1 mini mock test and review 5 grammar points to stay on track for your target exam.
-            </p>
-            <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-2)' }}>
-              <div className="lesson-progress-bar" style={{ flex: 1, marginBottom: 0, height: '8px' }}>
-                <div className="lesson-progress-fill" style={{ width: '40%', background: 'var(--xp-gold)' }} />
+          {selectedLevel === 'N5' ? (
+            <>
+              {/* N5 Readiness progress card */}
+              <div className="card animate-fadein">
+                <span style={{ fontSize: '10px', color: 'var(--text-3)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em' }}>READINESS SCORE</span>
+                <h3 className="font-bold mt-2">JLPT N5 Exam Readiness</h3>
+                <p className="text-muted text-sm mt-1 mb-4">
+                  Calculated based on your completed lessons, vocabulary knowledge, and grammar mastery.
+                </p>
+                <div className="flex" style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
+                  <div className="lesson-progress-bar" style={{ flex: 1, marginBottom: 0, height: '8px' }}>
+                    <div className="lesson-progress-fill" style={{ width: `${readinessPercentage}%`, background: 'var(--success)' }} />
+                  </div>
+                  <span className="font-bold text-sm" style={{ color: 'var(--success)' }}>{readinessPercentage}%</span>
+                </div>
               </div>
-              <span className="text-gold font-bold text-sm">40%</span>
-            </div>
-          </div>
 
-          {/* Exam modules selection */}
-          <div className="grid gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 'var(--sp-4)' }}>
-            
-            {/* Vocab & Grammar Drill Card */}
-            <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
-              <BookOpen size={28} className="text-gold" />
-              <h4 className="font-bold mt-1">Grammar & Vocabulary Drills</h4>
-              <p className="text-muted text-xs">
-                Targeted practice sets matching standard {selectedLevel} question formats.
-              </p>
-              <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto' }}>
-                Start Drill
+              {/* 4 Category blocks */}
+              <h3 className="text-base font-bold mt-1">Study Categories</h3>
+              <div className="grid gap-3" style={{ gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)' }}>
+                {/* Vocabulary Block */}
+                <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BookOpen size={20} className="text-green" />
+                    <h4 className="font-bold">Vocabulary</h4>
+                  </div>
+                  <p className="text-muted text-xs">Practice 800+ N5 words and kanji.</p>
+                  <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto', padding: '6px 12px', minHeight: 'unset', fontSize: '12px' }}>
+                    Practice
+                  </button>
+                </div>
+
+                {/* Grammar Block */}
+                <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Award size={20} className="text-gold" />
+                    <h4 className="font-bold">Grammar</h4>
+                  </div>
+                  <p className="text-muted text-xs">Master particle rules and N5 structures.</p>
+                  <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto', padding: '6px 12px', minHeight: 'unset', fontSize: '12px' }}>
+                    Practice
+                  </button>
+                </div>
+
+                {/* Listening Block */}
+                <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Headphones size={20} style={{ color: 'var(--accent-ai)' }} />
+                    <h4 className="font-bold">Listening</h4>
+                  </div>
+                  <p className="text-muted text-xs">Audio question drills for N5 listening exam.</p>
+                  <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto', padding: '6px 12px', minHeight: 'unset', fontSize: '12px' }}>
+                    Practice
+                  </button>
+                </div>
+
+                {/* Reading Block */}
+                <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BookOpenText size={20} style={{ color: 'var(--gem)' }} />
+                    <h4 className="font-bold">Reading</h4>
+                  </div>
+                  <p className="text-muted text-xs">Read comprehension texts and short essays.</p>
+                  <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto', padding: '6px 12px', minHeight: 'unset', fontSize: '12px' }}>
+                    Practice
+                  </button>
+                </div>
+              </div>
+
+              {/* Mock test card */}
+              <div className="card animate-fadein" style={{ border: '1px solid rgba(22, 163, 74, 0.3)', background: 'var(--primary-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 'var(--sp-4)', marginTop: 'var(--sp-2)' }}>
+                <div>
+                  <h4 className="font-black">⏰ Full N5 Mock Exam</h4>
+                  <p className="text-muted text-xs mt-1">Simulate real exam rules under strict timers.</p>
+                </div>
+                <button onClick={startDrill} className="btn-primary" style={{ width: 'auto', margin: 0, padding: '8px 20px', background: 'var(--primary)' }}>
+                  Start Mock
+                </button>
+              </div>
+            </>
+          ) : (
+            /* Locked level display */
+            <div className="card animate-fadein flex" style={{ flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: 'var(--sp-10)', gap: 'var(--sp-4)' }}>
+              <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                <Lock size={28} />
+              </div>
+              <div>
+                <h3 className="text-lg font-black">Level {selectedLevel} Locked</h3>
+                <p className="text-muted text-sm mt-2" style={{ maxWidth: '300px' }}>
+                  Complete the JLPT N5 study path and score 80% or higher on the mock exam to unlock the next level.
+                </p>
+              </div>
+              <button 
+                onClick={() => setSelectedLevel('N5')}
+                className="btn-primary"
+                style={{ width: 'auto', margin: 0, padding: '8px 20px', background: 'var(--primary)' }}
+              >
+                Go back to N5
               </button>
             </div>
-
-            {/* Mock Listening Card */}
-            <div className="card card-interactive flex" style={{ flexDirection: 'column', gap: 'var(--sp-2)' }}>
-              <Clock size={28} style={{ color: 'var(--accent-ai)' }} />
-              <h4 className="font-bold mt-1">Mock Mini-Test</h4>
-              <p className="text-muted text-xs">
-                10-question timed set to evaluate your overall level capability.
-              </p>
-              <button onClick={startDrill} className="btn-secondary" style={{ width: '100%', marginTop: 'auto' }}>
-                Begin Mock
-              </button>
-            </div>
-            
-          </div>
+          )}
         </div>
       ) : (
         /* DRILL PLAYING STATE */
@@ -197,7 +261,7 @@ export function JlptPrep({ onBack }: JlptPrepProps) {
                   <button
                     onClick={handleNext}
                     className="btn-primary"
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--primary)' }}
                   >
                     Next Question <ArrowRight size={16} />
                   </button>
@@ -215,7 +279,7 @@ export function JlptPrep({ onBack }: JlptPrepProps) {
               <button
                 onClick={() => setDrillActive(false)}
                 className="btn-primary"
-                style={{ width: '100%' }}
+                style={{ width: '100%', background: 'var(--primary)' }}
               >
                 Back to Prep Center
               </button>

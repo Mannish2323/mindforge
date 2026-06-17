@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mic, Volume2, Sparkles, RefreshCw, Check, Star } from 'lucide-react';
+import { Mic, Volume2, Sparkles, RefreshCw, Check, Star, MessageSquare, BookOpen, MessageCircle } from 'lucide-react';
 import { speakText } from '@evlo/utils';
+import { AIChatView } from './AIChatView';
 
 interface SpeakRoleplayProps {
   onBack: () => void;
@@ -35,27 +36,52 @@ const SCENARIOS = [
   }
 ];
 
+const PHRASES = [
+  { ja: 'こんにちは！', romaji: 'Konnichiwa!', en: 'Hello!' },
+  { ja: 'ありがとうございます！', romaji: 'Arigatou gozaimasu!', en: 'Thank you very much!' },
+  { ja: 'はじめまして。', romaji: 'Hajimemashite.', en: 'Nice to meet you.' },
+  { ja: 'すみません。', romaji: 'Sumimasen.', en: 'Excuse me / Sorry.' },
+  { ja: 'お元気ですか？', romaji: 'O-genki desu ka?', en: 'How are you?' },
+];
+
 export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
+  const [activeTab, setActiveTab] = useState<'practice' | 'ai-chat' | 'pronunciation'>('practice');
   const [selectedScenario, setSelectedScenario] = useState<any | null>(null);
   const [recording, setRecording] = useState(false);
   const [recorded, setRecorded] = useState(false);
   const [selectedReply, setSelectedReply] = useState<any | null>(null);
   const [analysisResult, setAnalysisResult] = useState<any | null>(null);
 
-  const startRecording = () => {
+  // Pronunciation practice states
+  const [selectedPhrase, setSelectedPhrase] = useState<any>(PHRASES[0]);
+  const [customPhrase, setCustomPhrase] = useState('');
+  const [pronunciationResult, setPronunciationResult] = useState<any | null>(null);
+
+  const startRecording = (isPronunciationTab = false) => {
     setRecording(true);
     setRecorded(false);
-    setAnalysisResult(null);
+    if (isPronunciationTab) {
+      setPronunciationResult(null);
+    } else {
+      setAnalysisResult(null);
+    }
+
     setTimeout(() => {
       setRecording(false);
       setRecorded(true);
-      // Generate mock speaking analytics
-      setAnalysisResult({
-        score: Math.floor(Math.random() * 15) + 85, // 85-99
+      const score = Math.floor(Math.random() * 15) + 85; // 85-99
+      const resultObj = {
+        score,
         pitch: (Math.random() * 1.5 + 8.5).toFixed(1),
         fluency: (Math.random() * 1.5 + 8.5).toFixed(1),
-        feedback: 'Great pronunciation. Work on vowel length.'
-      });
+        feedback: 'Great pronunciation! Work on keeping your vowel lengths consistent.'
+      };
+      
+      if (isPronunciationTab) {
+        setPronunciationResult(resultObj);
+      } else {
+        setAnalysisResult(resultObj);
+      }
     }, 2500);
   };
 
@@ -63,8 +89,23 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
     speakText(text, 'ja-JP');
   };
 
+  if (activeTab === 'ai-chat') {
+    return (
+      <div className="speak-roleplay-view page-transition animate-fadein" style={{ padding: 'var(--sp-4)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+          <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={() => setActiveTab('practice')}>
+            ← Leave Chat
+          </button>
+          <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🤖 AI Tutor Conversation</h2>
+        </div>
+        <AIChatView onBack={() => setActiveTab('practice')} onPlayTTS={handlePlayAudio} uiLang="en" />
+      </div>
+    );
+  }
+
   return (
-    <div className="speak-roleplay-view page-transition" style={{ padding: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="speak-roleplay-view page-transition animate-fadein" style={{ padding: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
+      
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-5)' }}>
         <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={selectedScenario ? () => setSelectedScenario(null) : onBack}>
@@ -73,9 +114,37 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
         <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🗣️ Speak Mode</h2>
       </div>
 
-      {!selectedScenario ? (
+      {/* Tabs */}
+      {!selectedScenario && (
+        <div className="chip-group" style={{ display: 'flex', gap: '8px', marginBottom: 'var(--sp-5)' }}>
+          <button 
+            className={`chip${activeTab === 'practice' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('practice'); setPronunciationResult(null); }}
+          >
+            <BookOpen size={14} style={{ marginRight: '4px', display: 'inline' }} />
+            Practice
+          </button>
+          <button 
+            className={`chip${activeTab === 'ai-chat' ? ' active' : ''}`}
+            onClick={() => setActiveTab('ai-chat')}
+          >
+            <MessageSquare size={14} style={{ marginRight: '4px', display: 'inline' }} />
+            AI Chat
+          </button>
+          <button 
+            className={`chip${activeTab === 'pronunciation' ? ' active' : ''}`}
+            onClick={() => { setActiveTab('pronunciation'); setAnalysisResult(null); }}
+          >
+            <Sparkles size={14} style={{ marginRight: '4px', display: 'inline' }} />
+            Pronunciation
+          </button>
+        </div>
+      )}
+
+      {/* ── PRACTICE TAB ── */}
+      {activeTab === 'practice' && !selectedScenario && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
-          <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+          <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', margin: 0 }}>
             Choose a situational scenario to practice conversational speaking with real-time AI pronunciation feedback.
           </div>
 
@@ -89,7 +158,7 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                   setRecorded(false);
                   setAnalysisResult(null);
                 }}
-                className="card card-interactive"
+                className="card card-interactive animate-fadein"
                 style={{ padding: 'var(--sp-4)', cursor: 'pointer' }}
               >
                 <h3 style={{ fontWeight: 'bold', fontSize: 'var(--text-base)' }}>{scenario.title}</h3>
@@ -98,7 +167,9 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
             ))}
           </div>
         </div>
-      ) : (
+      )}
+
+      {activeTab === 'practice' && selectedScenario && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-5)', alignItems: 'center', width: '100%' }}>
           {/* Conversation Lane */}
           <div className="card" style={{ padding: 'var(--sp-5)', width: '100%' }}>
@@ -116,6 +187,7 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                 <button 
                   onClick={() => handlePlayAudio(selectedScenario.dialogue[0].text)}
                   style={{ position: 'absolute', right: '12px', top: '12px', border: 'none', background: 'transparent', color: 'var(--primary)', cursor: 'pointer' }}
+                  aria-label="Play AI audio"
                 >
                   <Volume2 size={16} />
                 </button>
@@ -159,48 +231,60 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
 
               {recording ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)' }}>
-                  <div 
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '50%',
-                      background: 'rgba(239, 68, 68, 0.15)',
-                      border: '2px solid var(--error)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      animation: 'pop 1s infinite'
-                    }}
-                  >
-                    <Mic size={24} color="var(--error)" />
+                  {/* Waveform Visual & Blue Mic button */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '40px', marginBottom: '8px' }}>
+                    <div style={{ width: '4px', height: '12px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite' }} />
+                    <div style={{ width: '4px', height: '24px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.15s' }} />
+                    
+                    <button 
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: 'rgba(2, 132, 199, 0.2)',
+                        border: '2px solid #0284c7',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        padding: 0
+                      }}
+                      disabled
+                    >
+                      <Mic size={22} color="#0284c7" />
+                    </button>
+                    
+                    <div style={{ width: '4px', height: '24px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.3s' }} />
+                    <div style={{ width: '4px', height: '12px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.45s' }} />
                   </div>
-                  <span style={{ fontSize: '12px', color: 'var(--error)', fontWeight: 'bold' }}>Recording... Read now!</span>
+                  <span style={{ fontSize: '12px', color: '#0284c7', fontWeight: 'bold' }}>Recording... Speak now!</span>
                 </div>
               ) : (
                 <button 
-                  onClick={startRecording}
+                  onClick={() => startRecording(false)}
                   style={{
                     width: '64px',
                     height: '64px',
                     borderRadius: '50%',
-                    background: 'var(--primary-light)',
-                    border: '2px solid var(--primary)',
+                    background: 'rgba(2, 132, 199, 0.1)',
+                    border: '2px solid #0284c7',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: 'pointer',
                     transition: 'var(--t-fast)',
-                    boxShadow: '0 0 16px rgba(99, 102, 241, 0.35)'
+                    boxShadow: '0 0 16px rgba(2, 132, 199, 0.35)'
                   }}
                   className="card-interactive"
+                  aria-label="Start recording"
                 >
-                  <Mic size={24} color="var(--primary)" />
+                  <Mic size={24} color="#0284c7" />
                 </button>
               )}
 
               {/* Analysis Result */}
               {analysisResult && (
-                <div style={{ width: '100%', borderTop: '1px solid var(--border)', paddingTop: 'var(--sp-4)' }}>
+                <div style={{ width: '100%', borderTop: '1px solid var(--border)', paddingTop: 'var(--sp-4)' }} className="animate-fadein">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-3)' }}>
                     <span style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-sm)' }}>
                       <Sparkles size={16} color="var(--primary)" /> Pronunciation Score:
@@ -234,6 +318,190 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
           )}
         </div>
       )}
+
+      {/* ── PRONUNCIATION TAB ── */}
+      {activeTab === 'pronunciation' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }} className="animate-fadein">
+          <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', margin: 0 }}>
+            Practice pronunciation of basic Japanese phrases. Listen to the correct voice, speak, and see how well you did.
+          </div>
+
+          {/* Quick Phrases Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '8px' }}>
+            {PHRASES.map((ph, idx) => (
+              <div 
+                key={idx}
+                onClick={() => {
+                  setSelectedPhrase(ph);
+                  setCustomPhrase('');
+                  setPronunciationResult(null);
+                }}
+                className="card card-interactive"
+                style={{
+                  padding: 'var(--sp-3) var(--sp-4)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  border: selectedPhrase?.ja === ph.ja && !customPhrase ? '2px solid var(--primary)' : '1px solid var(--border)',
+                  background: selectedPhrase?.ja === ph.ja && !customPhrase ? 'var(--primary-light)' : 'var(--surface-1)'
+                }}
+              >
+                <div>
+                  <h4 style={{ fontFamily: 'var(--font-ja)', fontWeight: 'bold', fontSize: '15px' }}>{ph.ja}</h4>
+                  <p style={{ fontSize: '11px', color: 'var(--text-3)', marginTop: '2px' }}>{ph.romaji} • {ph.en}</p>
+                </div>
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePlayAudio(ph.ja);
+                  }}
+                  className="btn-ghost"
+                  style={{ padding: '6px', borderRadius: '50%' }}
+                  aria-label={`Play audio for ${ph.ja}`}
+                >
+                  <Volume2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Custom Input */}
+          <div className="card" style={{ padding: 'var(--sp-4)' }}>
+            <label htmlFor="custom-phrase-input" style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--text-3)', display: 'block', marginBottom: '6px' }}>
+              OR PRACTICE CUSTOM JAPANESE PHRASE:
+            </label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <input
+                id="custom-phrase-input"
+                type="text"
+                value={customPhrase}
+                placeholder="e.g. おはようございます"
+                onChange={(e) => {
+                  setCustomPhrase(e.target.value);
+                  setSelectedPhrase(null);
+                  setPronunciationResult(null);
+                }}
+                style={{ flex: 1, margin: 0 }}
+              />
+              <button 
+                onClick={() => customPhrase.trim() && handlePlayAudio(customPhrase)}
+                className="btn-secondary"
+                style={{ padding: '0 12px', margin: 0, minHeight: 'unset' }}
+                disabled={!customPhrase.trim()}
+              >
+                <Volume2 size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Record Section for Pronunciation */}
+          {(selectedPhrase || customPhrase.trim()) && (
+            <div className="card" style={{ padding: 'var(--sp-5)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-4)' }}>
+              <div style={{ textAlign: 'center' }}>
+                <span style={{ fontSize: '10px', color: 'var(--text-3)', textTransform: 'uppercase', fontWeight: 'bold' }}>TARGET PHRASE</span>
+                <h3 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--primary)', fontFamily: 'var(--font-ja)', marginTop: '4px' }}>
+                  {customPhrase ? customPhrase : selectedPhrase.ja}
+                </h3>
+              </div>
+
+              {recording ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--sp-2)' }}>
+                  {/* Waveform Visual */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', height: '40px', marginBottom: '8px' }}>
+                    <div style={{ width: '4px', height: '12px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite' }} />
+                    <div style={{ width: '4px', height: '24px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.15s' }} />
+                    
+                    <button 
+                      style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '50%',
+                        background: 'rgba(2, 132, 199, 0.2)',
+                        border: '2px solid #0284c7',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        padding: 0
+                      }}
+                      disabled
+                    >
+                      <Mic size={22} color="#0284c7" />
+                    </button>
+                    
+                    <div style={{ width: '4px', height: '24px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.3s' }} />
+                    <div style={{ width: '4px', height: '12px', background: '#0284c7', borderRadius: '2px', animation: 'wave 0.8s ease-in-out infinite 0.45s' }} />
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#0284c7', fontWeight: 'bold' }}>Recording... Read now!</span>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => startRecording(true)}
+                  style={{
+                    width: '64px',
+                    height: '64px',
+                    borderRadius: '50%',
+                    background: 'rgba(2, 132, 199, 0.1)',
+                    border: '2px solid #0284c7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    transition: 'var(--t-fast)',
+                    boxShadow: '0 0 16px rgba(2, 132, 199, 0.35)'
+                  }}
+                  className="card-interactive"
+                  aria-label="Start recording pronunciation"
+                >
+                  <Mic size={24} color="#0284c7" />
+                </button>
+              )}
+
+              {/* Analysis Result */}
+              {pronunciationResult && (
+                <div style={{ width: '100%', borderTop: '1px solid var(--border)', paddingTop: 'var(--sp-4)' }} className="animate-fadein">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-3)' }}>
+                    <span style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-sm)' }}>
+                      <Sparkles size={16} color="var(--primary)" /> Pronunciation Score:
+                    </span>
+                    <span style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--success)' }}>
+                      {pronunciationResult.score}%
+                    </span>
+                  </div>
+
+                  <div className="lesson-progress-bar" style={{ height: '8px', marginBottom: 'var(--sp-4)', background: 'var(--surface-2)' }}>
+                    <div className="lesson-progress-fill" style={{ width: `${pronunciationResult.score}%`, background: 'var(--success)' }} />
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+                    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2)', borderRadius: 'var(--radius)', textAlign: 'center' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>PITCH ACCENT</span>
+                      <p style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{pronunciationResult.pitch} / 10</p>
+                    </div>
+                    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2)', borderRadius: 'var(--radius)', textAlign: 'center' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-3)' }}>FLUENCY</span>
+                      <p style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{pronunciationResult.fluency} / 10</p>
+                    </div>
+                  </div>
+
+                  <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', textAlign: 'center', margin: 0 }}>
+                    <strong>AI Feedback: </strong> {pronunciationResult.feedback}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Embedded Wave CSS */}
+      <style jsx global>{`
+        @keyframes wave {
+          0%, 100% { height: 8px; }
+          50% { height: 28px; }
+        }
+      `}</style>
     </div>
   );
 }

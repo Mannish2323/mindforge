@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Friend, Duel, StudyCircle } from '@evlo/types';
 import { cn } from '@evlo/utils';
+import { Trash2, UserPlus, Trophy, Users, ShieldAlert, Sparkles } from 'lucide-react';
 
 interface SocialTabProps {
   friends: Friend[];
@@ -17,7 +18,6 @@ interface SocialTabProps {
 
 type SocialSubTab = 'friends' | 'duels' | 'circles';
 
-// Mock function to generate time-since string
 function timeSince(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -28,9 +28,9 @@ function timeSince(dateStr: string): string {
 }
 
 export function SocialTab({
-  friends,
-  duels,
-  circles,
+  friends: initialFriends,
+  duels: initialDuels,
+  circles: initialCircles,
   onNudgeFriend,
   onChallengeDuel,
   onJoinCircle,
@@ -41,81 +41,176 @@ export function SocialTab({
   const [addInput, setAddInput] = useState('');
   const [showAddField, setShowAddField] = useState(false);
 
+  // Local state for interactive friend removal and duel additions
+  const [friendsList, setFriendsList] = useState<Friend[]>(initialFriends);
+  const [duelsList, setDuelsList] = useState<Duel[]>(initialDuels);
+  const [circlesList, setCirclesList] = useState<StudyCircle[]>(initialCircles);
+
+  // Sync state if props change
+  React.useEffect(() => {
+    setFriendsList(initialFriends);
+  }, [initialFriends]);
+
+  React.useEffect(() => {
+    setDuelsList(initialDuels);
+  }, [initialDuels]);
+
+  React.useEffect(() => {
+    setCirclesList(initialCircles);
+  }, [initialCircles]);
+
+  const handleRemoveFriend = (friendId: string) => {
+    setFriendsList(prev => prev.filter(f => f.friend_id !== friendId));
+  };
+
+  const handleChallenge = (friendId: string) => {
+    onChallengeDuel(friendId);
+    
+    // Add to local duels list for instant UI feedback
+    const friend = friendsList.find(f => f.friend_id === friendId);
+    if (friend) {
+      const newDuel: Duel = {
+        duel_id: `d_temp_${Date.now()}`,
+        challenger_id: myUserId,
+        challenger_name: 'You',
+        challenger_avatar: '🦊',
+        opponent_id: friend.friend_id,
+        opponent_name: friend.username,
+        opponent_avatar: friend.avatar,
+        lesson_id: 'ja_u01_l01_hello_basic',
+        challenger_score: 0,
+        opponent_score: null,
+        status: 'pending',
+        winner_id: null,
+        xp_stake: 50,
+        createdAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+      };
+      setDuelsList(prev => [newDuel, ...prev]);
+    }
+  };
+
+  const handleJoinLocalCircle = (circleId: string) => {
+    onJoinCircle(circleId);
+    setCirclesList(prev => prev.map(c => c.circle_id === circleId ? { ...c, is_member: true, member_count: c.member_count + 1 } : c));
+  };
+
+  const handleNudgeLocal = (friendId: string) => {
+    onNudgeFriend(friendId);
+    setFriendsList(prev => prev.map(f => f.friend_id === friendId ? { ...f, nudged_today: true } : f));
+  };
+
+  const handleAddLocalFriend = () => {
+    if (!addInput.trim()) return;
+    onAddFriend(addInput);
+    
+    // Add new friend to local list for immediate visual confirmation
+    const newFriend: Friend = {
+      friend_id: `f_temp_${Date.now()}`,
+      username: addInput,
+      avatar: '🐼',
+      xp: 0,
+      streak: 0,
+      status: 'pending',
+      lastActive: new Date().toISOString(),
+      nudged_today: false,
+    };
+    setFriendsList(prev => [...prev, newFriend]);
+    setAddInput('');
+    setShowAddField(false);
+  };
+
   const renderFriends = () => (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
-        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>{friends.filter(f => f.status === 'accepted').length} friends</p>
+    <div className="animate-fadein">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-4)' }}>
+        <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>{friendsList.filter(f => f.status === 'accepted').length} friends</p>
         <button
-          className="btn btn-ghost btn-sm"
+          className="btn-secondary"
           onClick={() => setShowAddField(v => !v)}
-          id="add-friend-toggle-btn"
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: 'var(--text-xs)', margin: 0, minHeight: 'unset' }}
         >
-          + Add Friend
+          <UserPlus size={14} /> Add Friend
         </button>
       </div>
 
       {showAddField && (
-        <div className="add-friend-form">
+        <div className="card animate-fadein" style={{ padding: 'var(--sp-4)', marginBottom: 'var(--sp-4)', display: 'flex', gap: '8px' }}>
           <input
             type="text"
-            className="add-friend-input"
-            placeholder="Enter username..."
+            style={{ flex: 1, margin: 0 }}
+            placeholder="Enter friend's username..."
             value={addInput}
             onChange={e => setAddInput(e.target.value)}
-            id="add-friend-input"
           />
           <button
-            className="btn btn-primary btn-sm"
-            onClick={() => { onAddFriend(addInput); setAddInput(''); setShowAddField(false); }}
-            id="add-friend-submit-btn"
+            className="btn-primary"
+            onClick={handleAddLocalFriend}
+            style={{ width: 'auto', margin: 0, padding: '0 16px', background: 'var(--primary)' }}
           >
-            Send
+            Add
           </button>
         </div>
       )}
 
-      {friends.length === 0 ? (
-        <div className="social-empty">
-          <div style={{ fontSize: '48px' }}>👥</div>
-          <h3>No friends yet</h3>
-          <p>Add friends to compare progress, send nudges, and duel!</p>
+      {friendsList.length === 0 ? (
+        <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>👥</div>
+          <h3 className="font-bold">No friends yet</h3>
+          <p className="text-muted text-sm mt-1">Add friends to compare progress, send nudges, and duel!</p>
         </div>
       ) : (
-        <div className="friend-list">
-          {friends.map(friend => (
-            <div key={friend.friend_id} className={`friend-card ${friend.status}`} id={`friend-${friend.friend_id}`}>
-              <div className="friend-avatar">{friend.avatar}</div>
-              <div className="friend-info">
-                <div className="friend-name">{friend.username}</div>
-                <div className="friend-stats">
-                  <span className="friend-stat xp">⚡ {friend.xp.toLocaleString()}</span>
-                  <span className="friend-stat streak">🔥 {friend.streak}d</span>
-                  <span className="friend-last-active">{timeSince(friend.lastActive)}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {friendsList.map(friend => (
+            <div key={friend.friend_id} className="card" style={{ padding: 'var(--sp-4)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ fontSize: '32px', width: '48px', height: '48px', borderRadius: '50%', background: 'var(--surface-2)', display: 'grid', placeItems: 'center' }}>
+                  {friend.avatar}
+                </div>
+                <div>
+                  <h4 className="font-bold">{friend.username}</h4>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: 'var(--text-3)', marginTop: '2px' }}>
+                    <span>⭐ {friend.xp} XP</span>
+                    <span>•</span>
+                    <span>🔥 {friend.streak}d streak</span>
+                    <span>•</span>
+                    <span>{timeSince(friend.lastActive)}</span>
+                  </div>
                 </div>
               </div>
-              {friend.status === 'accepted' ? (
-                <div className="friend-actions">
-                  <button
-                    className={cn('btn btn-sm', friend.nudged_today ? 'btn-ghost' : 'btn-secondary')}
-                    disabled={friend.nudged_today}
-                    onClick={() => onNudgeFriend(friend.friend_id)}
-                    id={`nudge-${friend.friend_id}`}
-                    title="Send a nudge to motivate your friend"
-                  >
-                    {friend.nudged_today ? '👋 Sent' : '👋 Nudge'}
-                  </button>
-                  <button
-                    className="btn btn-sm btn-ghost"
-                    onClick={() => onChallengeDuel(friend.friend_id)}
-                    id={`duel-${friend.friend_id}`}
-                    title="Challenge to a lesson duel"
-                  >
-                    ⚔️
-                  </button>
-                </div>
-              ) : (
-                <span className="friend-pending-badge">Pending</span>
-              )}
+              
+              <div className="friend-actions">
+                {friend.status === 'accepted' ? (
+                  <>
+                    <button
+                      className={`btn-ghost ${friend.nudged_today ? 'disabled' : ''}`}
+                      disabled={friend.nudged_today}
+                      onClick={() => handleNudgeLocal(friend.friend_id)}
+                      style={{ padding: '6px 12px', fontSize: '11px', minHeight: 'unset', background: friend.nudged_today ? 'var(--surface-3)' : 'var(--primary-light)', color: friend.nudged_today ? 'var(--text-3)' : 'var(--primary)', border: 'none', borderRadius: 'var(--radius)' }}
+                    >
+                      {friend.nudged_today ? '👋 Sent' : '👋 Nudge'}
+                    </button>
+                    <button
+                      className="btn-ghost"
+                      onClick={() => handleChallenge(friend.friend_id)}
+                      style={{ padding: '6px', borderRadius: 'var(--radius)', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)' }}
+                      title="Challenge to a duel"
+                    >
+                      ⚔️
+                    </button>
+                  </>
+                ) : (
+                  <span style={{ fontSize: '11px', color: 'var(--text-3)', background: 'var(--surface-2)', padding: '4px 8px', borderRadius: '4px' }}>Pending</span>
+                )}
+                
+                <button
+                  className="btn-ghost"
+                  onClick={() => handleRemoveFriend(friend.friend_id)}
+                  style={{ padding: '6px', borderRadius: 'var(--radius)', color: 'var(--text-3)' }}
+                  title="Remove friend"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -124,16 +219,47 @@ export function SocialTab({
   );
 
   const renderDuels = () => (
-    <div>
-      {duels.length === 0 ? (
-        <div className="social-empty">
-          <div style={{ fontSize: '48px' }}>⚔️</div>
-          <h3>No active duels</h3>
-          <p>Challenge a friend to a lesson duel. Whoever scores higher wins!</p>
+    <div className="animate-fadein">
+      {/* Challenge Card inside Duels tab */}
+      <div className="card" style={{ padding: 'var(--sp-4)', marginBottom: 'var(--sp-5)' }}>
+        <h3 className="font-bold" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Trophy size={18} className="text-gold" /> Challenge a Friend
+        </h3>
+        <p className="text-muted text-xs mt-1 mb-4">
+          Challenge any of your accepted friends to a 24-hour Japanese vocabulary duel!
+        </p>
+        
+        {friendsList.filter(f => f.status === 'accepted').length === 0 ? (
+          <p className="text-xs text-muted">You need to have accepted friends to start a duel.</p>
+        ) : (
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+            {friendsList.filter(f => f.status === 'accepted').map(friend => (
+              <button
+                key={friend.friend_id}
+                onClick={() => handleChallenge(friend.friend_id)}
+                className="btn-secondary"
+                style={{ padding: '6px 12px', fontSize: '12px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px', margin: 0, minHeight: 'unset' }}
+              >
+                <span>{friend.avatar}</span>
+                <span>Challenge {friend.username}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Duels List */}
+      <h3 className="text-base font-bold mb-3">Active Duels</h3>
+      
+      {duelsList.length === 0 ? (
+        <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>⚔️</div>
+          <h3 className="font-bold">No active duels</h3>
+          <p className="text-muted text-sm mt-1">Challenge a friend to a lesson duel. Whoever scores higher wins!</p>
         </div>
       ) : (
-        <div className="duel-list">
-          {duels.map(duel => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {duelsList.map(duel => {
             const isChallenger = duel.challenger_id === myUserId;
             const myScore = isChallenger ? duel.challenger_score : duel.opponent_score;
             const oppScore = isChallenger ? duel.opponent_score : duel.challenger_score;
@@ -141,45 +267,32 @@ export function SocialTab({
             const oppAvatar = isChallenger ? duel.opponent_avatar : duel.challenger_avatar;
 
             return (
-              <div key={duel.duel_id} className={`duel-card ${duel.status}`} id={`duel-card-${duel.duel_id}`}>
-                <div className="duel-players">
-                  <div className="duel-player you">
-                    <div className="duel-player-avatar">😊</div>
-                    <div className="duel-player-name">You</div>
-                    <div className="duel-player-score">
-                      {myScore !== null ? myScore : '—'}
+              <div key={duel.duel_id} className="card" style={{ padding: 'var(--sp-5)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 'var(--sp-4)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px' }}>🦊</div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-2)', fontWeight: 'bold' }}>You</span>
+                      <p style={{ fontSize: '16px', fontWeight: 900, marginTop: '2px' }}>{myScore !== null ? myScore : '—'}</p>
                     </div>
-                  </div>
-                  <div className="duel-vs">
-                    <span className="duel-vs-text">VS</span>
-                    <span className="duel-stake">±{duel.xp_stake} XP</span>
-                  </div>
-                  <div className="duel-player opp">
-                    <div className="duel-player-avatar">{oppAvatar}</div>
-                    <div className="duel-player-name">{oppName}</div>
-                    <div className="duel-player-score">
-                      {oppScore !== null ? oppScore : '—'}
+                    
+                    <div style={{ padding: '0 12px', textAlign: 'center' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--error)' }}>VS</span>
+                      <p style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '2px', background: 'var(--surface-3)', padding: '2px 6px', borderRadius: '4px' }}>
+                        {duel.xp_stake} XP
+                      </p>
                     </div>
-                  </div>
-                </div>
 
-                <div className="duel-footer">
-                  <span className={`duel-status-badge ${duel.status}`}>
-                    {duel.status === 'pending' && '⏳ Waiting'}
-                    {duel.status === 'active' && '⚡ Active'}
-                    {duel.status === 'completed' && (duel.winner_id === myUserId ? '🏆 You Won!' : '😤 Opponent Won')}
-                    {duel.status === 'expired' && '⌛ Expired'}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '24px' }}>{oppAvatar}</div>
+                      <span style={{ fontSize: '11px', color: 'var(--text-2)', fontWeight: 'bold' }}>{oppName}</span>
+                      <p style={{ fontSize: '16px', fontWeight: 900, marginTop: '2px' }}>{oppScore !== null ? oppScore : '—'}</p>
+                    </div>
+                  </div>
+
+                  <span style={{ fontSize: '11px', fontWeight: 'bold', color: duel.status === 'completed' ? 'var(--success)' : 'var(--primary)', background: duel.status === 'completed' ? 'var(--success-light)' : 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px', textTransform: 'capitalize' }}>
+                    {duel.status === 'pending' ? '⏳ Pending' : duel.status === 'active' ? '⚡ Active' : duel.status}
                   </span>
-                  {duel.status === 'pending' && isChallenger && (
-                    <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
-                      Waiting for {duel.opponent_name} to accept
-                    </span>
-                  )}
-                  {duel.status === 'active' && myScore === null && (
-                    <button className="btn btn-primary btn-sm">
-                      Play Now
-                    </button>
-                  )}
                 </div>
               </div>
             );
@@ -190,49 +303,60 @@ export function SocialTab({
   );
 
   const renderCircles = () => (
-    <div>
-      <div style={{ marginBottom: 'var(--space-4)' }}>
+    <div className="animate-fadein">
+      <div style={{ marginBottom: 'var(--sp-4)' }}>
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
-          Study circles are groups that tackle weekly learning missions together.
+          Study circles are groups that tackle weekly learning missions together. Join one to collaborate!
         </p>
       </div>
-      {circles.length === 0 ? (
-        <div className="social-empty">
-          <div style={{ fontSize: '48px' }}>🔵</div>
-          <h3>No circles yet</h3>
-          <p>Join a study circle to collaborate on weekly missions.</p>
+
+      {circlesList.length === 0 ? (
+        <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
+          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔵</div>
+          <h3 className="font-bold">No circles yet</h3>
+          <p className="text-muted text-sm mt-1">Join a study circle to collaborate on weekly missions.</p>
         </div>
       ) : (
-        <div className="circle-list">
-          {circles.map(circle => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {circlesList.map(circle => {
             const missionPct = Math.round((circle.mission_progress / circle.mission_target) * 100);
             return (
-              <div key={circle.circle_id} className={`circle-card${circle.is_member ? ' member' : ''}`} id={`circle-${circle.circle_id}`}>
-                <div className="circle-avatar">{circle.avatar}</div>
-                <div className="circle-info">
-                  <div className="circle-name">{circle.name}</div>
-                  <div className="circle-desc">{circle.description}</div>
-                  <div className="circle-stats-row">
-                    <span className="circle-stat">👥 {circle.member_count}</span>
-                    <span className="circle-stat">⚡ {circle.weekly_xp.toLocaleString()} this week</span>
+              <div key={circle.circle_id} className="card" style={{ padding: 'var(--sp-4)', display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flex: 1 }}>
+                  <div style={{ fontSize: '36px', width: '54px', height: '54px', borderRadius: '12px', background: 'var(--surface-2)', display: 'grid', placeItems: 'center' }}>
+                    {circle.avatar}
                   </div>
-                  <div style={{ marginTop: 'var(--space-2)' }}>
-                    <div style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      Mission: {circle.current_mission} — {missionPct}%
+                  <div style={{ flex: 1 }}>
+                    <h4 className="font-bold">{circle.name}</h4>
+                    <p style={{ fontSize: '12px', color: 'var(--text-2)', marginTop: '2px' }}>{circle.description}</p>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: 'var(--text-3)', marginTop: '6px' }}>
+                      <span>👥 {circle.member_count} members</span>
+                      <span>•</span>
+                      <span>⚡ {circle.weekly_xp} weekly XP</span>
                     </div>
-                    <div className="circle-mission-bar">
-                      <div className="circle-mission-fill" style={{ width: `${missionPct}%` }} />
+
+                    <div style={{ marginTop: '8px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 'bold', color: 'var(--text-3)', marginBottom: '4px' }}>
+                        <span>Mission: {circle.current_mission}</span>
+                        <span>{missionPct}%</span>
+                      </div>
+                      <div className="lesson-progress-bar" style={{ height: '6px', marginBottom: 0 }}>
+                        <div className="lesson-progress-fill" style={{ width: `${missionPct}%`, background: 'var(--primary)' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
+                
                 <div>
                   {circle.is_member ? (
-                    <span className="circle-member-badge">✓ Member</span>
+                    <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--success)', background: 'var(--success-light)', padding: '6px 12px', borderRadius: 'var(--radius)' }}>
+                      ✓ Member
+                    </span>
                   ) : (
                     <button
-                      className="btn btn-sm btn-secondary"
-                      onClick={() => onJoinCircle(circle.circle_id)}
-                      id={`join-circle-${circle.circle_id}`}
+                      className="btn-primary"
+                      onClick={() => handleJoinLocalCircle(circle.circle_id)}
+                      style={{ padding: '6px 16px', fontSize: '12px', width: 'auto', margin: 0, minHeight: 'unset', background: 'var(--primary)' }}
                     >
                       Join
                     </button>
@@ -247,20 +371,20 @@ export function SocialTab({
   );
 
   return (
-    <div className="page-home page-enter" style={{ padding: 'var(--space-5)' }}>
-      <div className="home-header">
-        <h2>👥 Social</h2>
-        <p>Friends, duels, and study circles</p>
+    <div className="social-view page-transition animate-fadein" style={{ padding: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
+      <div className="home-header" style={{ marginBottom: 'var(--sp-4)' }}>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>👥 Social Hub</h2>
+        <p style={{ color: 'var(--text-2)', fontSize: 'var(--text-sm)', marginTop: '2px' }}>Friends, duels, and study circles</p>
       </div>
 
       {/* Sub-tab switcher */}
-      <div className="social-sub-tabs">
+      <div className="flex gap-2" style={{ background: 'var(--surface-2)', padding: '6px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', marginBottom: 'var(--sp-5)' }}>
         {(['friends', 'duels', 'circles'] as SocialSubTab[]).map(tab => (
           <button
             key={tab}
-            className={cn('social-sub-tab', { active: subTab === tab })}
+            className={`toggle-btn ${subTab === tab ? 'active' : ''}`}
             onClick={() => setSubTab(tab)}
-            id={`social-subtab-${tab}`}
+            style={{ flex: 1, textAlign: 'center', padding: '8px 0', border: 'none', borderRadius: 'var(--radius)', textTransform: 'capitalize' }}
           >
             {tab === 'friends' && '👫 Friends'}
             {tab === 'duels' && '⚔️ Duels'}
