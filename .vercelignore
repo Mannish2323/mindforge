@@ -12,14 +12,14 @@ node_modules
 **/.turbo
 
 # Android / non-web code
-app/
-services/
-build/
-gradle/
-.gradle/
-.kotlin/
-.idea/
-src/
+/app/
+/services/
+/build/
+/gradle/
+/.gradle/
+/.kotlin/
+/.idea/
+/src/
 *.apk
 *.aab
 *.keystore
