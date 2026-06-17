@@ -88,7 +88,39 @@
   --warn-bg:        rgba(245, 158, 11, 0.12);
   --text-muted:     #94A3B8;
   --text-secondary: #94A3B8;
+  --text-primary:   var(--text);
+  --text-1:         var(--text);
+  --text-ja-md:     20px;
   --grad-gold:      linear-gradient(135deg, #f59e0b, #fbbf24);
+  --grad-primary:   linear-gradient(135deg, #16a34a, #4ade80);
+  --grad-hero:      linear-gradient(135deg, rgba(22,163,74,.18) 0%, rgba(14,165,233,.12) 100%);
+
+  /* Radius aliases */
+  --radius-sm:   6px;
+  --radius-md:   var(--radius);
+  --radius-full: var(--radius-pill);
+
+  /* Shadow alias */
+  --shadow-md: var(--shadow);
+
+  /* Color palette tokens */
+  --red:            #ef4444;
+  --blue:           #3b82f6;
+  --orange:         #f97316;
+  --purple:         #a855f7;
+  --amber:          #f59e0b;
+  --green-400:      #4ade80;
+  --green-500:      #22c55e;
+  --accent-violet:  #8b5cf6;
+  --gem:            #06b6d4;
+
+  /* Surface / bg aliases */
+  --surface-1:  var(--surface);
+  --bg-surface: var(--surface);
+  --bg-card:    var(--surface);
+
+  /* Shell alias */
+  --topbar-height: var(--topbar-h);
 
   /* Japanese font stack */
   --font-ja: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
