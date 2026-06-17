@@ -76,6 +76,7 @@ export default function EVLOApp() {
     joinCircle,
     completeStory,
     activateStreakShield,
+    setGoalMinutes,
   } = useStore();
 
   const { user, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails } = useAuth();
@@ -1660,6 +1661,7 @@ export default function EVLOApp() {
                   key={m}
                   className={`chip${(state.goalMinutes ?? 10) === m ? ' active' : ''}`}
                   style={{ padding: '6px 10px', fontSize: 'var(--text-xs)' }}
+                  onClick={() => setGoalMinutes(m)}
                 >
                   {m}m
                 </button>

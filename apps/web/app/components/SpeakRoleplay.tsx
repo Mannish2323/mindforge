@@ -46,6 +46,7 @@ const PHRASES = [
 
 export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
   const [activeTab, setActiveTab] = useState<'practice' | 'ai-chat' | 'pronunciation'>('practice');
+  const currentTab = activeTab; // keeps the full union type for JSX comparisons
   const [selectedScenario, setSelectedScenario] = useState<any | null>(null);
   const [recording, setRecording] = useState(false);
   const [recorded, setRecorded] = useState(false);
@@ -118,21 +119,21 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
       {!selectedScenario && (
         <div className="chip-group" style={{ display: 'flex', gap: '8px', marginBottom: 'var(--sp-5)' }}>
           <button 
-            className={`chip${activeTab === 'practice' ? ' active' : ''}`}
+            className={`chip${currentTab === 'practice' ? ' active' : ''}`}
             onClick={() => { setActiveTab('practice'); setPronunciationResult(null); }}
           >
             <BookOpen size={14} style={{ marginRight: '4px', display: 'inline' }} />
             Practice
           </button>
           <button 
-            className={`chip${activeTab === 'ai-chat' ? ' active' : ''}`}
+            className={`chip${currentTab === 'ai-chat' ? ' active' : ''}`}
             onClick={() => setActiveTab('ai-chat')}
           >
             <MessageSquare size={14} style={{ marginRight: '4px', display: 'inline' }} />
             AI Chat
           </button>
           <button 
-            className={`chip${activeTab === 'pronunciation' ? ' active' : ''}`}
+            className={`chip${currentTab === 'pronunciation' ? ' active' : ''}`}
             onClick={() => { setActiveTab('pronunciation'); setAnalysisResult(null); }}
           >
             <Sparkles size={14} style={{ marginRight: '4px', display: 'inline' }} />

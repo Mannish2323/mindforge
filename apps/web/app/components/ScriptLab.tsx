@@ -54,7 +54,7 @@ const KATAKANA_DATA = [
   { id: 'k_to', char: 'ト', romaji: 'to', type: 'Katakana', hints: 'Looks like a totem pole.' },
 ];
 
-const KANJI_DATA = [
+const KANJI_DATA: KanjiItem[] = [
   { id: 'kn_1', char: '一', romaji: 'ichi', meaning: 'One', type: 'Kanji', hints: 'A single horizontal line.' },
   { id: 'kn_2', char: '二', romaji: 'ni', meaning: 'Two', type: 'Kanji', hints: 'Two horizontal lines.' },
   { id: 'kn_3', char: '三', romaji: 'san', meaning: 'Three', type: 'Kanji', hints: 'Three horizontal lines.' },
@@ -67,13 +67,17 @@ const KANJI_DATA = [
   { id: 'kn_10', char: '十', romaji: 'juu', meaning: 'Ten', type: 'Kanji', hints: 'A cross representing ten directions.' },
 ];
 
+type KanaItem  = { id: string; char: string; romaji: string; type: string; hints: string; meaning?: undefined };
+type KanjiItem = { id: string; char: string; romaji: string; type: string; hints: string; meaning: string };
+type ScriptItem = KanaItem | KanjiItem;
+
 export function ScriptLab({ onBack }: ScriptLabProps) {
   const [activeTab, setActiveTab] = useState<'hiragana' | 'katakana' | 'kanji'>('hiragana');
   const [mode, setMode] = useState<'study' | 'quiz'>('study');
   
   // Studied IDs set to keep track of progress (starts empty -> 0% progress)
   const [studiedIds, setStudiedIds] = useState<string[]>([]);
-  const [selectedChar, setSelectedChar] = useState<any>(null);
+  const [selectedChar, setSelectedChar] = useState<ScriptItem | null>(null);
 
   // Quiz states
   const [quizIdx, setQuizIdx] = useState(0);
@@ -129,8 +133,11 @@ export function ScriptLab({ onBack }: ScriptLabProps) {
   };
 
   const generateQuizOptions = (idx: number) => {
-    const correct = activeTab === 'kanji' ? dataset[idx].meaning : dataset[idx].romaji;
-    const pool = dataset.filter((_, i) => i !== idx).map(k => activeTab === 'kanji' ? k.meaning : k.romaji);
+    const item = dataset[idx] as ScriptItem;
+    const correct = activeTab === 'kanji' ? (item as KanjiItem).meaning : item.romaji;
+    const pool = (dataset as ScriptItem[]).filter((_, i) => i !== idx).map(k =>
+      activeTab === 'kanji' ? (k as KanjiItem).meaning ?? k.romaji : k.romaji
+    );
     
     // Shuffle pool and take 3 random options
     const wrongOptions = pool.sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -145,7 +152,8 @@ export function ScriptLab({ onBack }: ScriptLabProps) {
     setSelectedOption(option);
     setIsAnswered(true);
     
-    const correct = activeTab === 'kanji' ? dataset[quizIdx].meaning : dataset[quizIdx].romaji;
+    const item = dataset[quizIdx] as ScriptItem;
+    const correct = activeTab === 'kanji' ? (item as KanjiItem).meaning : item.romaji;
     if (option === correct) {
       setQuizScore(prev => prev + 1);
     }
@@ -302,7 +310,8 @@ export function ScriptLab({ onBack }: ScriptLabProps) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             {shuffledOptions.map((opt) => {
-              const correct = activeTab === 'kanji' ? dataset[quizIdx].meaning : dataset[quizIdx].romaji;
+              const qItem = dataset[quizIdx] as ScriptItem;
+              const correct = activeTab === 'kanji' ? (qItem as KanjiItem).meaning : qItem.romaji;
               const isSelected = selectedOption === opt;
               let classState = '';
 

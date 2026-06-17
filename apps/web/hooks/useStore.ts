@@ -134,6 +134,7 @@ const DEFAULT_STATE = {
   dailyReviewsDone: 0,
   duelsWon: 0,
   storiesCompleted: 0,
+  goalMinutes: 10,
 };
 
 export function useStore() {
@@ -351,10 +352,14 @@ export function useStore() {
     save({ ...state, srsData, dailyReviewsDone: newDailyReviews, quests: updatedQuests });
   };
 
-  const setTheme = (theme: 'dark' | 'light') => {
+  const setTheme = (theme: 'dark' | 'light' | 'system') => {
     const updated = { ...state, theme };
     save(updated);
-    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'system') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
   };
 
   const setUILang = (uiLang: 'en' | 'hi') => {
@@ -489,6 +494,10 @@ export function useStore() {
     return false;
   };
 
+  const setGoalMinutes = (minutes: number) => {
+    save({ ...state, goalMinutes: minutes });
+  };
+
   return {
     state,
     isLoaded,
@@ -512,5 +521,6 @@ export function useStore() {
     joinCircle,
     completeStory,
     activateStreakShield,
+    setGoalMinutes,
   };
 }
