@@ -15,7 +15,13 @@ try {
   }
 
   console.log('Running next build...');
-  execSync('next build', { stdio: 'inherit' });
+  execSync('next build', {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      NEXT_PUBLIC_STATIC_EXPORT: 'true'
+    }
+  });
 } catch (error) {
   console.error('Build failed:', error);
   process.exitCode = 1;
