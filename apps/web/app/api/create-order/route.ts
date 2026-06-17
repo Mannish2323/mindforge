@@ -1,11 +1,24 @@
 import { NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 
-// Server-side only — KEY_SECRET never reaches the browser
-const razorpay = new Razorpay({
-  key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+// Initialize Razorpay instance lazily to prevent build-time crashes if environment variables are not set
+let razorpayInstance: Razorpay | null = null;
+function getRazorpay() {
+  if (!razorpayInstance) {
+    const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret) {
+      throw new Error('Razorpay credentials are not fully configured in environment variables.');
+    }
+
+    razorpayInstance = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    });
+  }
+  return razorpayInstance;
+}
 
 export async function POST(request: Request) {
   try {
@@ -20,6 +33,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const razorpay = getRazorpay();
     const order = await razorpay.orders.create({
       amount,            // in paise
       currency,
