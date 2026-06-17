@@ -1,5 +1,4 @@
 {
-  "rootDirectory": "apps/web",
   "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install --frozen-lockfile"
 }
