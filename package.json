@@ -20,7 +20,7 @@
     "onlyBuiltDependencies": [
       "@firebase/util",
       "protobufjs",
-      "unrs-resolver"
+            "undici-types"
     ]
   }
 }
