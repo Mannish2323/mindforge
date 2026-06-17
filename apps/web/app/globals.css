@@ -87,9 +87,21 @@
   --success-light:  rgba(34, 197, 94, 0.12);
   --warn-bg:        rgba(245, 158, 11, 0.12);
   --text-muted:     #94A3B8;
+  --text-secondary: #94A3B8;
+  --grad-gold:      linear-gradient(135deg, #f59e0b, #fbbf24);
 
   /* Japanese font stack */
   --font-ja: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+
+  /* Legacy spacing aliases (--space-N = --sp-N) */
+  --space-1: var(--sp-1);
+  --space-2: var(--sp-2);
+  --space-3: var(--sp-3);
+  --space-4: var(--sp-4);
+  --space-5: var(--sp-5);
+  --space-6: var(--sp-6);
+  --space-8: var(--sp-8);
+  --space-10: var(--sp-10);
 }
 
 /* ── Light Theme ── */
@@ -2054,10 +2066,268 @@ textarea { resize: vertical; min-height: 88px; }
   margin-bottom: var(--sp-5);
 }
 
-/* Page animations */
-.page-enter { animation: fadeup 280ms ease both; }
-.page-enter-delay { animation: fadeup 280ms 80ms ease both; }
-.page-transition { animation: fadein 260ms ease both; }
+/* ============================================================
+   LEGACY / SHARED BUTTON SYSTEM (for older components)
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: inherit;
+  font-weight: 600;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+  white-space: nowrap;
+  padding: 9px 18px;
+  font-size: var(--text-sm);
+  text-align: center;
+}
+.btn:active { transform: scale(.97); }
+.btn-sm    { padding: 5px 12px; font-size: var(--text-xs); }
+.btn-lg    { padding: 14px 28px; font-size: var(--text-base); }
+.btn-full  { width: 100%; }
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-primary:hover { background: #15803d; }
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  border-color: var(--border);
+}
+.btn-ghost:hover { background: var(--surface-2); color: var(--text); }
+
+/* page-home — generic page container used by QuestsView, BadgesView, StoriesView */
+.page-home {
+  padding-bottom: calc(var(--bottom-nav-h) + var(--sp-4));
+}
+
+/* ============================================================
+   AI CHAT — full styles
+   ============================================================ */
+.ai-chat-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--sp-4);
+  gap: var(--sp-3);
+  padding-bottom: calc(var(--bottom-nav-h) + var(--sp-4));
+}
+.ai-chat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding-bottom: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ai-chat-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex: 1;
+}
+.ai-chat-avatar {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--accent-ai), #0284c7);
+  display: grid; place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.ai-chat-xp {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--xp-gold);
+  background: var(--primary-light);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+.ai-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  max-height: 55vh;
+}
+.ai-chat-input-area {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+  padding-top: var(--sp-3);
+  border-top: 1px solid var(--border);
+}
+.ai-chat-input {
+  flex: 1;
+  margin: 0 !important;
+}
+.ai-chat-send {
+  flex-shrink: 0;
+  padding: 0 16px;
+  margin: 0;
+  min-height: 44px;
+  background: var(--primary);
+  border: none;
+  color: #fff;
+  border-radius: var(--radius);
+}
+.ai-chat-send:disabled { opacity: .5; cursor: not-allowed; }
+
+/* AI Topic picker */
+.ai-topic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+@media (max-width: 400px) { .ai-topic-grid { grid-template-columns: 1fr; } }
+.ai-topic-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-1);
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--t-fast), transform var(--t-fast), border-color var(--t-fast);
+  text-align: left;
+}
+.ai-topic-card:hover { background: var(--surface-2); transform: translateY(-2px); border-color: var(--primary); }
+.ai-topic-label { font-size: var(--text-sm); font-weight: 700; }
+.ai-topic-prompt { font-size: var(--text-xs); color: var(--text-2); }
+
+/* Chat bubbles */
+.chat-bubble-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-2);
+}
+.chat-bubble-wrap.user { flex-direction: row-reverse; }
+.chat-ai-avatar {
+  width: 28px; height: 28px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, var(--accent-ai), #0284c7);
+  display: grid; place-items: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  align-self: flex-end;
+}
+.chat-bubble-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--sp-1);
+}
+.chat-ja {
+  font-family: var(--font-ja);
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.chat-romaji { font-size: var(--text-xs); color: var(--text-2); margin-bottom: 2px; }
+.chat-en     { font-size: var(--text-sm); color: var(--text-2); }
+.chat-hint   { font-size: var(--text-xs); color: var(--accent-ai); margin-top: var(--sp-1); font-style: italic; }
+.chat-user-text { font-size: var(--text-sm); }
+.chat-typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--sp-3);
+  min-width: 60px;
+}
+.typing-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-2);
+  animation: typing-bounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typing-bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: .4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================================
+   BADGES VIEW
+   ============================================================ */
+.badge-rarity-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--sp-1);
+}
+.badge-summary {
+  display: flex;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-5);
+  flex-wrap: wrap;
+}
+.badge-summary-num {
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  display: block;
+  line-height: 1;
+}
+.badge-summary-label {
+  font-size: var(--text-xs);
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   QUESTS VIEW
+   ============================================================ */
+.quest-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  transition: box-shadow var(--t-fast);
+}
+.quest-card:hover { box-shadow: var(--shadow); }
+.quest-card.completed { border-color: rgba(34,197,94,.3); background: rgba(34,197,94,.05); }
+.quest-card.claimed   { opacity: .6; }
+
+/* ============================================================
+   STORIES VIEW
+   ============================================================ */
+.story-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  cursor: pointer;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), border-color var(--t-fast);
+}
+.story-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--border-strong); }
+.story-card.locked { opacity: .6; cursor: not-allowed; }
+.story-tts-btn {
+  padding: 4px 8px;
+  font-size: var(--text-xs);
+  border-radius: var(--radius);
+}
+
 
 /* ============================================================
    TOGGLE BUTTONS (tab-switcher style)
@@ -2134,3 +2404,14 @@ textarea { resize: vertical; min-height: 88px; }
     padding-bottom: calc(var(--bottom-nav-h) + var(--sp-6));
   }
 }
+
+/* ============================================================
+   PAGE ANIMATIONS
+   ============================================================ */
+.page-enter        { animation: fadeup 280ms ease both; }
+.page-enter-delay  { animation: fadeup 280ms 80ms ease both; }
+.page-transition   { animation: fadein 260ms ease both; }
+.animate-fadein    { animation: fadein 260ms ease both; }
+.delay-100         { animation-delay: 100ms; }
+.delay-200         { animation-delay: 200ms; }
+.delay-300         { animation-delay: 300ms; }
