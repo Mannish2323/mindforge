@@ -106,80 +106,87 @@ class LessonsFragment : Fragment() {
         // Track which category is expanded (null = all collapsed)
         var expandedCategoryId by remember { mutableStateOf<String?>(null) }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // ── Header ────────────────────────────────────────────────────────
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(headerGradient)
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Column {
-                    Text(
-                        "Course Path",
-                        fontSize   = 26.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color      = Color.White
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        "🇯🇵 ${prefsManager.selectedLanguage.replaceFirstChar { it.uppercase() }} · " +
-                        "${completedSet.size} lessons completed",
-                        fontSize = 13.sp,
-                        color    = headerSubtitleColor.copy(alpha = 0.9f)
-                    )
+                // ── Header ────────────────────────────────────────────────────────
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(headerGradient)
+                        .padding(horizontal = 20.dp, vertical = 20.dp)
+                ) {
+                    Column {
+                        Text(
+                            "Course Path",
+                            fontSize   = 26.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color      = Color.White
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(
+                            "🇯🇵 ${prefsManager.selectedLanguage.replaceFirstChar { it.uppercase() }} · " +
+                            "${completedSet.size} lessons completed",
+                            fontSize = 13.sp,
+                            color    = headerSubtitleColor.copy(alpha = 0.9f)
+                        )
+                    }
                 }
-            }
 
-            Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
-            if (categories.isEmpty()) {
-                // Fallback to unit view if categories not loaded
-                FallbackUnitView(progress.currentLesson, completedSet)
-            } else {
-                // ── Category cards ────────────────────────────────────────────
-                categories.forEach { category ->
-                    val categoryLessons = categoryRepository.getLessonsForCategory(category)
-                    val isExpanded      = expandedCategoryId == category.categoryId
-                    val completedInCat  = categoryLessons.count { it.id in completedSet }
+                if (categories.isEmpty()) {
+                    // Fallback to unit view if categories not loaded
+                    FallbackUnitView(progress.currentLesson, completedSet)
+                } else {
+                    // ── Category cards ────────────────────────────────────────────
+                    categories.forEach { category ->
+                        val categoryLessons = categoryRepository.getLessonsForCategory(category)
+                        val isExpanded      = expandedCategoryId == category.categoryId
+                        val completedInCat  = categoryLessons.count { it.id in completedSet }
 
-                    CategorySection(
-                        category        = category,
-                        lessons         = categoryLessons,
-                        isExpanded      = isExpanded,
-                        completedCount  = completedInCat,
-                        completedSet    = completedSet,
-                        currentLessonId = progress.currentLesson,
-                        isPremium       = isPremium,
-                        isHindi         = isHindi,
-                        onToggle        = {
-                            expandedCategoryId =
-                                if (isExpanded) null else category.categoryId
-                        },
-                        onLessonClick   = { lesson ->
-                            when {
-                                lesson.isPremium && !isPremium ->
-                                    Toast.makeText(requireContext(),
-                                        "🔒 Premium lesson — upgrade to unlock!", Toast.LENGTH_SHORT).show()
-                                else -> startActivity(
-                                    Intent(requireContext(), LessonPlayerActivity::class.java).apply {
-                                        putExtra("LESSON_ID", lesson.id)
-                                    }
-                                )
+                        CategorySection(
+                            category        = category,
+                            lessons         = categoryLessons,
+                            isExpanded      = isExpanded,
+                            completedCount  = completedInCat,
+                            completedSet    = completedSet,
+                            currentLessonId = progress.currentLesson,
+                            isPremium       = isPremium,
+                            isHindi         = isHindi,
+                            onToggle        = {
+                                expandedCategoryId =
+                                    if (isExpanded) null else category.categoryId
+                            },
+                            onLessonClick   = { lesson ->
+                                when {
+                                    lesson.isPremium && !isPremium ->
+                                        Toast.makeText(requireContext(),
+                                            "🔒 Premium lesson — upgrade to unlock!", Toast.LENGTH_SHORT).show()
+                                    else -> startActivity(
+                                        Intent(requireContext(), LessonPlayerActivity::class.java).apply {
+                                            putExtra("LESSON_ID", lesson.id)
+                                        }
+                                    )
+                                }
                             }
-                        }
-                    )
+                        )
 
-                    Spacer(Modifier.height(12.dp))
+                        Spacer(Modifier.height(12.dp))
+                    }
                 }
-            }
 
-            Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(24.dp))
+            }
         }
     }
 

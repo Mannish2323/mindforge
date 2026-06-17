@@ -142,11 +142,13 @@ class PremiumActivity : ComponentActivity() {
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(listOf(BgDeep, BgDark, BgMid))
-                )
+                ),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier            = Modifier
-                    .fillMaxSize()
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
                     .verticalScroll(rememberScrollState())
                     .padding(bottom = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally

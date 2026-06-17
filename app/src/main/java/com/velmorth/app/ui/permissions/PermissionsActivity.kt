@@ -164,12 +164,18 @@ fun PermissionsScreen(onComplete: () -> Unit) {
         Toast.makeText(context, "Permissions processed successfully!", Toast.LENGTH_SHORT).show()
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F5EE)) // Warm cream background
-            .padding(24.dp)
+            .background(Color(0xFFF8F5EE)), // Warm cream background
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(24.dp)
+        ) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Title Header
@@ -342,5 +348,6 @@ fun PermissionsScreen(onComplete: () -> Unit) {
         }
         
         Spacer(modifier = Modifier.height(16.dp))
+        }
     }
 }

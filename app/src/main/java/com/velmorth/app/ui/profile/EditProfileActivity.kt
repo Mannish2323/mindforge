@@ -235,338 +235,345 @@ class EditProfileActivity : ComponentActivity() {
         }
 
         // ── Main Screen Layout ───────────────────────────────────────────────
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(EPBgCream)
-                .verticalScroll(rememberScrollState())
+                .background(EPBgCream),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // Header bar
-            Box(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        Brush.verticalGradient(listOf(EPDarkGreen, EPPrimaryGreen))
-                    )
-                    .padding(top = 16.dp, bottom = 32.dp, start = 20.dp, end = 20.dp)
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = { finish() }) {
-                            Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
-                        }
-                        Text(
-                            "Edit Profile",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
+                // Header bar
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(listOf(EPDarkGreen, EPPrimaryGreen))
                         )
-                        Spacer(Modifier.width(48.dp))
-                    }
-
-                    Spacer(Modifier.height(20.dp))
-
-                    // ── Avatar picker ────────────────────────────────────────
-                    Box(contentAlignment = Alignment.BottomEnd) {
-                        // Avatar circle
-                        Box(
-                            modifier = Modifier
-                                .size(100.dp)
-                                .shadow(8.dp, CircleShape)
-                                .clip(CircleShape)
-                                .background(Brush.linearGradient(listOf(EPLightGreen, EPAccentGreen)))
-                                .border(3.dp, Color.White, CircleShape)
-                                .clickable { showPhotoDialog = true },
-                            contentAlignment = Alignment.Center
+                        .padding(top = 16.dp, bottom = 32.dp, start = 20.dp, end = 20.dp)
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            val selectedUri = selectedPhotoUri
-                            var bitmap by remember(selectedUri, currentPhotoUrl) { mutableStateOf<android.graphics.Bitmap?>(null) }
-                            LaunchedEffect(selectedUri, currentPhotoUrl) {
-                                val uriToLoad = selectedUri ?: currentPhotoUrl.takeIf { it.isNotEmpty() }?.let { Uri.parse(it) }
-                                if (uriToLoad != null) {
-                                    val uriStr = uriToLoad.toString()
-                                    if (uriStr.startsWith("http://") || uriStr.startsWith("https://")) {
-                                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                            IconButton(onClick = { finish() }) {
+                                Icon(Icons.Default.ArrowBack, "Back", tint = Color.White)
+                            }
+                            Text(
+                                "Edit Profile",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Spacer(Modifier.width(48.dp))
+                        }
+
+                        Spacer(Modifier.height(20.dp))
+
+                        // ── Avatar picker ────────────────────────────────────────
+                        Box(contentAlignment = Alignment.BottomEnd) {
+                            // Avatar circle
+                            Box(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .shadow(8.dp, CircleShape)
+                                    .clip(CircleShape)
+                                    .background(Brush.linearGradient(listOf(EPLightGreen, EPAccentGreen)))
+                                    .border(3.dp, Color.White, CircleShape)
+                                    .clickable { showPhotoDialog = true },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val selectedUri = selectedPhotoUri
+                                var bitmap by remember(selectedUri, currentPhotoUrl) { mutableStateOf<android.graphics.Bitmap?>(null) }
+                                LaunchedEffect(selectedUri, currentPhotoUrl) {
+                                    val uriToLoad = selectedUri ?: currentPhotoUrl.takeIf { it.isNotEmpty() }?.let { Uri.parse(it) }
+                                    if (uriToLoad != null) {
+                                        val uriStr = uriToLoad.toString()
+                                        if (uriStr.startsWith("http://") || uriStr.startsWith("https://")) {
+                                            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                                runCatching {
+                                                    java.net.URL(uriStr).openStream()?.use { stream ->
+                                                        android.graphics.BitmapFactory.decodeStream(stream)
+                                                    }
+                                                }.getOrNull()
+                                            }?.let { bmp ->
+                                                bitmap = bmp
+                                            }
+                                        } else {
                                             runCatching {
-                                                java.net.URL(uriStr).openStream()?.use { stream ->
+                                                context.contentResolver.openInputStream(uriToLoad)?.use { stream ->
                                                     android.graphics.BitmapFactory.decodeStream(stream)
                                                 }
-                                            }.getOrNull()
-                                        }?.let { bmp ->
-                                            bitmap = bmp
+                                            }.getOrNull()?.let { bmp ->
+                                                bitmap = bmp
+                                            }
                                         }
                                     } else {
-                                        runCatching {
-                                            context.contentResolver.openInputStream(uriToLoad)?.use { stream ->
-                                                android.graphics.BitmapFactory.decodeStream(stream)
-                                            }
-                                        }.getOrNull()?.let { bmp ->
-                                            bitmap = bmp
-                                        }
+                                        bitmap = null
                                     }
+                                }
+
+                                val bmp = bitmap
+                                if (bmp != null) {
+                                    Image(
+                                        bitmap = bmp.asImageBitmap(),
+                                        contentDescription = "Profile Photo",
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
                                 } else {
-                                    bitmap = null
+                                    Text(
+                                        text = displayName.take(1).uppercase().ifEmpty { "?" },
+                                        fontSize = 40.sp,
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = EPDarkGreen
+                                    )
                                 }
                             }
 
-                            val bmp = bitmap
-                            if (bmp != null) {
-                                Image(
-                                    bitmap = bmp.asImageBitmap(),
-                                    contentDescription = "Profile Photo",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Text(
-                                    text = displayName.take(1).uppercase().ifEmpty { "?" },
-                                    fontSize = 40.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = EPDarkGreen
-                                )
+                            // Edit badge
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(EPGoldXP)
+                                    .border(2.dp, Color.White, CircleShape)
+                                    .clickable { showPhotoDialog = true },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Edit, "Edit Photo", tint = Color.White, modifier = Modifier.size(16.dp))
                             }
                         }
 
-                        // Edit badge
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(EPGoldXP)
-                                .border(2.dp, Color.White, CircleShape)
-                                .clickable { showPhotoDialog = true },
-                            contentAlignment = Alignment.Center
+                        Spacer(Modifier.height(12.dp))
+
+                        Text(
+                            "Tap avatar to change photo",
+                            fontSize = 12.sp,
+                            color = EPLightGreen.copy(alpha = 0.8f)
+                        )
+
+                        // Show "photo selected" indicator
+                        AnimatedVisibility(
+                            visible = selectedPhotoUri != null,
+                            enter = fadeIn(animationSpec = tween(300))
                         ) {
-                            Icon(Icons.Default.Edit, "Edit Photo", tint = Color.White, modifier = Modifier.size(16.dp))
-                        }
-                    }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    Text(
-                        "Tap avatar to change photo",
-                        fontSize = 12.sp,
-                        color = EPLightGreen.copy(alpha = 0.8f)
-                    )
-
-                    // Show "photo selected" indicator
-                    AnimatedVisibility(
-                        visible = selectedPhotoUri != null,
-                        enter = fadeIn(animationSpec = tween(300))
-                    ) {
-                        Spacer(Modifier.height(8.dp))
-                        Surface(
-                            shape = RoundedCornerShape(20.dp),
-                            color = Color.White.copy(alpha = 0.2f)
-                        ) {
-                            Text(
-                                "✓ New photo selected — save to upload",
-                                fontSize = 11.sp,
-                                color = Color.White,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                            )
+                            Spacer(Modifier.height(8.dp))
+                            Surface(
+                                shape = RoundedCornerShape(20.dp),
+                                color = Color.White.copy(alpha = 0.2f)
+                            ) {
+                                Text(
+                                    "✓ New photo selected — save to upload",
+                                    fontSize = 11.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // ── Fields card ──────────────────────────────────────────────────
-            Card(
-                shape     = RoundedCornerShape(24.dp),
-                colors    = CardDefaults.cardColors(containerColor = EPCardWhite),
-                elevation = CardDefaults.cardElevation(4.dp),
-                modifier  = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .offset(y = (-20).dp)
-            ) {
-                Column(modifier = Modifier.padding(24.dp)) {
+                // ── Fields card ──────────────────────────────────────────────────
+                Card(
+                    shape     = RoundedCornerShape(24.dp),
+                    colors    = CardDefaults.cardColors(containerColor = EPCardWhite),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    modifier  = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .offset(y = (-20).dp)
+                ) {
+                    Column(modifier = Modifier.padding(24.dp)) {
 
-                    // Display Name
-                    Text(
-                        "Display Name",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = EPTextMuted,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    OutlinedTextField(
-                        value          = displayName,
-                        onValueChange  = { displayName = it },
-                        singleLine     = true,
-                        modifier       = Modifier.fillMaxWidth(),
-                        shape          = RoundedCornerShape(14.dp),
-                        leadingIcon    = {
-                            Icon(Icons.Default.Person, null, tint = EPAccentGreen, modifier = Modifier.size(20.dp))
-                        },
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor   = EPPrimaryGreen,
-                            unfocusedBorderColor = Color(0xFFE5E7EB),
-                            focusedLabelColor    = EPPrimaryGreen
+                        // Display Name
+                        Text(
+                            "Display Name",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = EPTextMuted,
+                            modifier = Modifier.padding(bottom = 6.dp)
                         )
-                    )
-
-                    Spacer(Modifier.height(20.dp))
-
-                    // Native Language dropdown
-                    Text(
-                        "Native Language",
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = EPTextMuted,
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    ExposedDropdownMenuBox(
-                        expanded = isExpanded,
-                        onExpandedChange = { isExpanded = !isExpanded }
-                    ) {
                         OutlinedTextField(
-                            value         = nativeLanguage,
-                            onValueChange = {},
-                            readOnly      = true,
-                            trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
-                            leadingIcon   = {
-                                Icon(Icons.Default.Language, null, tint = EPAccentGreen, modifier = Modifier.size(20.dp))
+                            value          = displayName,
+                            onValueChange  = { displayName = it },
+                            singleLine     = true,
+                            modifier       = Modifier.fillMaxWidth(),
+                            shape          = RoundedCornerShape(14.dp),
+                            leadingIcon    = {
+                                Icon(Icons.Default.Person, null, tint = EPAccentGreen, modifier = Modifier.size(20.dp))
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                            shape  = RoundedCornerShape(14.dp),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor   = EPPrimaryGreen,
-                                unfocusedBorderColor = Color(0xFFE5E7EB)
+                                unfocusedBorderColor = Color(0xFFE5E7EB),
+                                focusedLabelColor    = EPPrimaryGreen
                             )
                         )
-                        ExposedDropdownMenu(
-                            expanded          = isExpanded,
-                            onDismissRequest  = { isExpanded = false }
+
+                        Spacer(Modifier.height(20.dp))
+
+                        // Native Language dropdown
+                        Text(
+                            "Native Language",
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = EPTextMuted,
+                            modifier = Modifier.padding(bottom = 6.dp)
+                        )
+                        ExposedDropdownMenuBox(
+                            expanded = isExpanded,
+                            onExpandedChange = { isExpanded = !isExpanded }
                         ) {
-                            languages.forEach { lang ->
-                                DropdownMenuItem(
-                                    text = { Text(lang) },
-                                    onClick = {
-                                        nativeLanguage = lang
-                                        isExpanded = false
-                                    }
+                            OutlinedTextField(
+                                value         = nativeLanguage,
+                                onValueChange = {},
+                                readOnly      = true,
+                                trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+                                leadingIcon   = {
+                                    Icon(Icons.Default.Language, null, tint = EPAccentGreen, modifier = Modifier.size(20.dp))
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .menuAnchor(),
+                                shape  = RoundedCornerShape(14.dp),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor   = EPPrimaryGreen,
+                                    unfocusedBorderColor = Color(0xFFE5E7EB)
                                 )
+                            )
+                            ExposedDropdownMenu(
+                                expanded          = isExpanded,
+                                onDismissRequest  = { isExpanded = false }
+                            ) {
+                                languages.forEach { lang ->
+                                    DropdownMenuItem(
+                                        text = { Text(lang) },
+                                        onClick = {
+                                            nativeLanguage = lang
+                                            isExpanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    Spacer(Modifier.height(32.dp))
+                        Spacer(Modifier.height(32.dp))
 
-                    // Upload progress indicator
-                    if (isUploading) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        // Upload progress indicator
+                        if (isUploading) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CircularProgressIndicator(
+                                    color    = EPPrimaryGreen,
+                                    modifier = Modifier.size(36.dp),
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    "Uploading photo…",
+                                    fontSize = 13.sp,
+                                    color    = EPTextMuted
+                                )
+                                Spacer(Modifier.height(16.dp))
+                            }
+                        }
+
+                        // Save button
+                        Button(
+                            onClick = {
+                                if (displayName.trim().isEmpty()) {
+                                    Toast.makeText(context, "Display name cannot be empty", Toast.LENGTH_SHORT).show()
+                                    return@Button
+                                }
+
+                                val finalSave = { photoUrlToSave: String ->
+                                    prefsManager.photoUrl = photoUrlToSave
+                                    userRepository.updateProfile(displayName.trim(), nativeLanguage)
+                                    FirestoreProgressRepository.syncUserProfile(
+                                        name          = displayName.trim(),
+                                        nativeLanguage = nativeLanguage,
+                                        profileImage  = photoUrlToSave
+                                    )
+                                    Toast.makeText(context, "Profile updated! ✅", Toast.LENGTH_SHORT).show()
+                                    finish()
+                                }
+
+                                val photoUri = selectedPhotoUri
+                                if (photoUri != null && NetworkUtils.isOnline(context)) {
+                                    // Upload to Firebase Storage first
+                                    isUploading = true
+                                    FirestoreProgressRepository.uploadProfilePhoto(
+                                        imageUri  = photoUri,
+                                        onSuccess = { downloadUrl ->
+                                            isUploading = false
+                                            // Also persist local URI for offline viewing
+                                            finalSave(downloadUrl)
+                                        },
+                                        onFailure = { errMsg ->
+                                            isUploading = false
+                                            // Fallback: save local URI so profile still shows the photo
+                                            Toast.makeText(context, "Photo saved locally (upload failed: $errMsg)", Toast.LENGTH_LONG).show()
+                                            finalSave(photoUri.toString())
+                                        }
+                                    )
+                                } else if (photoUri != null) {
+                                    // Offline: save local URI
+                                    finalSave(photoUri.toString())
+                                } else {
+                                    // No new photo selected
+                                    finalSave(currentPhotoUrl)
+                                }
+                            },
+                            enabled  = !isUploading,
+                            colors   = ButtonDefaults.buttonColors(containerColor = EPPrimaryGreen),
+                            shape    = RoundedCornerShape(16.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(52.dp)
                         ) {
-                            CircularProgressIndicator(
-                                color    = EPPrimaryGreen,
-                                modifier = Modifier.size(36.dp),
-                                strokeWidth = 3.dp
-                            )
-                            Spacer(Modifier.height(8.dp))
+                            Icon(Icons.Default.Save, null, tint = Color.White, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
-                                "Uploading photo…",
-                                fontSize = 13.sp,
-                                color    = EPTextMuted
+                                "Save Changes",
+                                fontSize   = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color      = Color.White
                             )
-                            Spacer(Modifier.height(16.dp))
                         }
-                    }
 
-                    // Save button
-                    Button(
-                        onClick = {
-                            if (displayName.trim().isEmpty()) {
-                                Toast.makeText(context, "Display name cannot be empty", Toast.LENGTH_SHORT).show()
-                                return@Button
-                            }
+                        Spacer(Modifier.height(12.dp))
 
-                            val finalSave = { photoUrlToSave: String ->
-                                prefsManager.photoUrl = photoUrlToSave
-                                userRepository.updateProfile(displayName.trim(), nativeLanguage)
-                                FirestoreProgressRepository.syncUserProfile(
-                                    name          = displayName.trim(),
-                                    nativeLanguage = nativeLanguage,
-                                    profileImage  = photoUrlToSave
-                                )
-                                Toast.makeText(context, "Profile updated! ✅", Toast.LENGTH_SHORT).show()
-                                finish()
-                            }
-
-                            val photoUri = selectedPhotoUri
-                            if (photoUri != null && NetworkUtils.isOnline(context)) {
-                                // Upload to Firebase Storage first
-                                isUploading = true
-                                FirestoreProgressRepository.uploadProfilePhoto(
-                                    imageUri  = photoUri,
-                                    onSuccess = { downloadUrl ->
-                                        isUploading = false
-                                        // Also persist local URI for offline viewing
-                                        finalSave(downloadUrl)
-                                    },
-                                    onFailure = { errMsg ->
-                                        isUploading = false
-                                        // Fallback: save local URI so profile still shows the photo
-                                        Toast.makeText(context, "Photo saved locally (upload failed: $errMsg)", Toast.LENGTH_LONG).show()
-                                        finalSave(photoUri.toString())
-                                    }
-                                )
-                            } else if (photoUri != null) {
-                                // Offline: save local URI
-                                finalSave(photoUri.toString())
-                            } else {
-                                // No new photo selected
-                                finalSave(currentPhotoUrl)
-                            }
-                        },
-                        enabled  = !isUploading,
-                        colors   = ButtonDefaults.buttonColors(containerColor = EPPrimaryGreen),
-                        shape    = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp)
-                    ) {
-                        Icon(Icons.Default.Save, null, tint = Color.White, modifier = Modifier.size(18.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            "Save Changes",
-                            fontSize   = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color      = Color.White
-                        )
-                    }
-
-                    Spacer(Modifier.height(12.dp))
-
-                    // Cancel button
-                    OutlinedButton(
-                        onClick  = { finish() },
-                        enabled  = !isUploading,
-                        shape    = RoundedCornerShape(16.dp),
-                        colors   = ButtonDefaults.outlinedButtonColors(contentColor = EPTextMuted),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(48.dp)
-                    ) {
-                        Text(
-                            "Cancel",
-                            fontSize   = 15.sp,
-                            fontWeight = FontWeight.Medium,
-                            color      = EPTextMuted
-                        )
+                        // Cancel button
+                        OutlinedButton(
+                            onClick  = { finish() },
+                            enabled  = !isUploading,
+                            shape    = RoundedCornerShape(16.dp),
+                            colors   = ButtonDefaults.outlinedButtonColors(contentColor = EPTextMuted),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(48.dp)
+                        ) {
+                            Text(
+                                "Cancel",
+                                fontSize   = 15.sp,
+                                fontWeight = FontWeight.Medium,
+                                color      = EPTextMuted
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(Modifier.height(32.dp))
+                Spacer(Modifier.height(32.dp))
+            }
         }
     }
 

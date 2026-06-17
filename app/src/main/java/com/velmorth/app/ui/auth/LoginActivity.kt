@@ -174,6 +174,7 @@ fun AuthScreen(onAuthSuccess: (Boolean) -> Unit) {
     ) {
         Column(
             modifier = Modifier
+                .widthIn(max = 480.dp)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp, vertical = 32.dp),

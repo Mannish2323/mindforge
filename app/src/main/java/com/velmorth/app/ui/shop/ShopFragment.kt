@@ -187,46 +187,53 @@ class ShopFragment : Fragment() {
             )
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-
-            // ── Hero header ───────────────────────────────────────────────────
-            ShopHeader(leaves = leaves)
-
-            Spacer(Modifier.height(20.dp))
-
-            // ── How to earn leaves ────────────────────────────────────────────
-            SectionLabel("🌿  How to Earn Leaves")
-            EarnGuideCard()
-
-            Spacer(Modifier.height(20.dp))
-
-            // ── Shop catalog ──────────────────────────────────────────────────
-            SectionLabel("🛒  Spend Your Leaves")
-
             Column(
-                modifier            = Modifier.padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
-                SHOP_CATALOG.forEach { item ->
-                    val owned = item.id in ownedItems
-                    ShopItemCard(
-                        item       = item,
-                        isOwned    = owned,
-                        canAfford  = leaves >= item.costLeaves,
-                        isHindi    = isHindi,
-                        onBuy      = {
-                            if (!owned) pendingItem = item
-                        }
-                    )
-                }
-            }
 
-            Spacer(Modifier.height(32.dp))
+                // ── Hero header ───────────────────────────────────────────────────
+                ShopHeader(leaves = leaves)
+
+                Spacer(Modifier.height(20.dp))
+
+                // ── How to earn leaves ────────────────────────────────────────────
+                SectionLabel("🌿  How to Earn Leaves")
+                EarnGuideCard()
+
+                Spacer(Modifier.height(20.dp))
+
+                // ── Shop catalog ──────────────────────────────────────────────────
+                SectionLabel("🛒  Spend Your Leaves")
+
+                Column(
+                    modifier            = Modifier.padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    SHOP_CATALOG.forEach { item ->
+                        val owned = item.id in ownedItems
+                        ShopItemCard(
+                            item       = item,
+                            isOwned    = owned,
+                            canAfford  = leaves >= item.costLeaves,
+                            isHindi    = isHindi,
+                            onBuy      = {
+                                if (!owned) pendingItem = item
+                            }
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(32.dp))
+            }
         }
     }
 }

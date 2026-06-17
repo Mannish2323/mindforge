@@ -194,14 +194,17 @@ class HomeFragment : Fragment() {
                     isRefreshing = false
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
                     .verticalScroll(rememberScrollState())
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 24.dp)
+                    .align(Alignment.TopCenter),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // ── Header ────────────────────────────────────────────────────────

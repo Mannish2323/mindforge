@@ -81,103 +81,110 @@ fun LicensesScreen(onBack: () -> Unit) {
         )
     )
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF8F5EE)) // Warm cream background
+            .background(Color(0xFFF8F5EE)),
+        contentAlignment = Alignment.TopCenter
     ) {
-        // Premium Header
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF1B4332)) // Forest green header
-                .padding(horizontal = 8.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                    tint = Color.White
-                )
-            }
-            Text(
-                text = "Open-Source Licenses",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-
-        // Scrollable content
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
         ) {
-            Text(
-                text = "We are incredibly grateful for the contributions of the open-source developer ecosystem! Below are details for third-party tools integrated within Velmorth.",
-                fontSize = 13.sp,
-                color = Color(0xFF6B7280),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                lineHeight = 17.sp
-            )
-
-            items.forEach { item ->
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .background(Color(0xFFE3F0E9), RoundedCornerShape(8.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Terminal,
-                                    contentDescription = null,
-                                    tint = Color(0xFF2D6A4F),
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = item.name,
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = Color(0xFF1C1C1E)
-                            )
-                        }
-                        
-                        Spacer(modifier = Modifier.height(10.dp))
-                        
-                        Text(
-                            text = item.description,
-                            fontSize = 12.sp,
-                            color = Color(0xFF4B5563),
-                            lineHeight = 16.sp
-                        )
-                        
-                        Spacer(modifier = Modifier.height(12.dp))
-                        
-                        Text(
-                            text = "${item.copyright}\nLicensed under ${item.license}",
-                            fontSize = 10.sp,
-                            color = Color(0xFF9CA3AF),
-                            lineHeight = 13.sp
-                        )
-                    }
+            // Premium Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF1B4332)) // Forest green header
+                    .padding(horizontal = 8.dp, vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
                 }
+                Text(
+                    text = "Open-Source Licenses",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            // Scrollable content
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "We are incredibly grateful for the contributions of the open-source developer ecosystem! Below are details for third-party tools integrated within Velmorth.",
+                    fontSize = 13.sp,
+                    color = Color(0xFF6B7280),
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                    lineHeight = 17.sp
+                )
+
+                items.forEach { item ->
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(Color(0xFFE3F0E9), RoundedCornerShape(8.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Terminal,
+                                        contentDescription = null,
+                                        tint = Color(0xFF2D6A4F),
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = item.name,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1C1C1E)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            Text(
+                                text = item.description,
+                                fontSize = 12.sp,
+                                color = Color(0xFF4B5563),
+                                lineHeight = 16.sp
+                            )
+
+                            Spacer(modifier = Modifier.height(12.dp))
+
+                            Text(
+                                text = "${item.copyright}\nLicensed under ${item.license}",
+                                fontSize = 10.sp,
+                                color = Color(0xFF9CA3AF),
+                                lineHeight = 13.sp
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
     }
 }

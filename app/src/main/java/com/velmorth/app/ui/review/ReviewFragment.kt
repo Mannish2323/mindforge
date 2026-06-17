@@ -87,91 +87,98 @@ class ReviewFragment : Fragment() {
             }
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Spacer(Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column {
-                    Text(
-                        text       = "Review Garden",
-                        fontSize   = 28.sp,
-                        fontWeight = FontWeight.Bold,
-                        color      = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text     = "Water your skills to keep them evergreen",
-                        fontSize = 13.sp,
-                        color    = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                // Due-word count badge — show after loading
-                if (!isLoading) {
-                    val dueCount = if (isOnline) srsCards.size else localQueue.size
-                    Surface(
-                        shape = RoundedCornerShape(20.dp),
-                        color = if (dueCount > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
-                    ) {
+                Spacer(Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
                         Text(
-                            text = if (dueCount > 0) "$dueCount due" else "All done",
-                            fontSize = 13.sp,
+                            text       = "Review Garden",
+                            fontSize   = 28.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (dueCount > 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            color      = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text     = "Water your skills to keep them evergreen",
+                            fontSize = 13.sp,
+                            color    = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                }
-            }
-
-            Spacer(Modifier.height(28.dp))
-
-            when {
-                isLoading -> {
-                    CircularProgressIndicator(
-                        color    = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = 48.dp)
-                    )
-                }
-                sessionDone -> SessionCompleteCard()
-
-                // Firestore SRS cards available → SM-2 review mode
-                isOnline && srsCards.isNotEmpty() && currentIdx < srsCards.size -> {
-                    SRSProgressBar(current = currentIdx, total = srsCards.size)
-                    Spacer(Modifier.height(20.dp))
-                    SRSReviewCard(
-                        card    = srsCards[currentIdx],
-                        onRate  = { rating ->
-                            val updatedCard = SRSManager.calculateNextReview(srsCards[currentIdx], rating)
-                            FirestoreSRSRepository.updateCard(updatedCard)
-                            AnalyticsManager.logSRSReview(updatedCard.vocabId, rating, updatedCard.status)
-                            if (currentIdx + 1 >= srsCards.size) {
-                                sessionDone = true
-                            } else {
-                                currentIdx++
-                            }
+                    // Due-word count badge — show after loading
+                    if (!isLoading) {
+                        val dueCount = if (isOnline) srsCards.size else localQueue.size
+                        Surface(
+                            shape = RoundedCornerShape(20.dp),
+                            color = if (dueCount > 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                        ) {
+                            Text(
+                                text = if (dueCount > 0) "$dueCount due" else "All done",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = if (dueCount > 0) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            )
                         }
-                    )
+                    }
                 }
 
-                // Offline fallback — local lesson review queue
-                !isOnline && localQueue.isNotEmpty() -> {
-                    OfflineBanner()
-                    Spacer(Modifier.height(16.dp))
-                    ActiveReviewList(localQueue)
-                }
+                Spacer(Modifier.height(28.dp))
 
-                // No cards due — garden is watered
-                else -> ZeroStateGarden()
+                when {
+                    isLoading -> {
+                        CircularProgressIndicator(
+                            color    = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 48.dp)
+                        )
+                    }
+                    sessionDone -> SessionCompleteCard()
+
+                    // Firestore SRS cards available → SM-2 review mode
+                    isOnline && srsCards.isNotEmpty() && currentIdx < srsCards.size -> {
+                        SRSProgressBar(current = currentIdx, total = srsCards.size)
+                        Spacer(Modifier.height(20.dp))
+                        SRSReviewCard(
+                            card    = srsCards[currentIdx],
+                            onRate  = { rating ->
+                                val updatedCard = SRSManager.calculateNextReview(srsCards[currentIdx], rating)
+                                FirestoreSRSRepository.updateCard(updatedCard)
+                                AnalyticsManager.logSRSReview(updatedCard.vocabId, rating, updatedCard.status)
+                                if (currentIdx + 1 >= srsCards.size) {
+                                    sessionDone = true
+                                } else {
+                                    currentIdx++
+                                }
+                            }
+                        )
+                    }
+
+                    // Offline fallback — local lesson review queue
+                    !isOnline && localQueue.isNotEmpty() -> {
+                        OfflineBanner()
+                        Spacer(Modifier.height(16.dp))
+                        ActiveReviewList(localQueue)
+                    }
+
+                    // No cards due — garden is watered
+                    else -> ZeroStateGarden()
+                }
             }
         }
     }

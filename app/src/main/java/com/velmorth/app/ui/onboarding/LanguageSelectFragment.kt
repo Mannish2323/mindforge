@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -101,14 +103,20 @@ fun LanguageSelectScreen(onLanguageSelected: (String) -> Unit) {
 
     var selectedLangName by remember { mutableStateOf("Japanese") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // Cream background
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier = Modifier.height(32.dp))
             Text(
@@ -190,6 +198,7 @@ fun LanguageSelectScreen(onLanguageSelected: (String) -> Unit) {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+        }
     }
 }
 
@@ -215,14 +224,20 @@ class WelcomeOnboardingFragment : Fragment() {
 
 @Composable
 fun WelcomeScreen(onNext: () -> Unit) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f),
@@ -268,6 +283,7 @@ fun WelcomeScreen(onNext: () -> Unit) {
                 color = MaterialTheme.colorScheme.onPrimary
             )
         }
+        }
     }
 }
 
@@ -312,14 +328,20 @@ fun GoalScreen(onFinish: (Int, String) -> Unit) {
     var nativeLang by remember { mutableStateOf("English") }
     var isExpanded by remember { mutableStateOf(false) }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 600.dp)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(1f)
@@ -458,6 +480,7 @@ fun GoalScreen(onFinish: (Int, String) -> Unit) {
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
             )
+        }
         }
     }
 }

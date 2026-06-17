@@ -177,12 +177,18 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // ── Layout ────────────────────────────────────────────────────────────
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BgCream)
-                .verticalScroll(rememberScrollState())
+                .background(BgCream),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
 
             // Top bar
             SettingsTopBar(onBack = { finish() })
@@ -474,6 +480,7 @@ class SettingsActivity : AppCompatActivity() {
             }
 
             Spacer(Modifier.height(40.dp))
+            }
         }
     }
 

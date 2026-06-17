@@ -190,13 +190,19 @@ class LessonPlayerActivity : ComponentActivity() {
             listOf("Overview", "Vocabulary", "Grammar", "Pronunciation", "Examples")
         }
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF8F5EE))
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(Color(0xFFF8F5EE)),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
             // Header
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -288,6 +294,7 @@ class LessonPlayerActivity : ComponentActivity() {
                 }
             }
         }
+    }
     }
 
     @Composable
@@ -742,15 +749,21 @@ class LessonPlayerActivity : ComponentActivity() {
         // Auto grade if correct in MATCH
         val isMatchCompleted = currentExercise.type == "match" && matchedPairs.size == currentExercise.pairsJapanese.size && currentExercise.pairsJapanese.isNotEmpty()
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
+                    .padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
             // Header stats
             Column {
                 Row(
@@ -1101,6 +1114,7 @@ class LessonPlayerActivity : ComponentActivity() {
                 }
             }
         }
+    }
     }
 
     @Composable

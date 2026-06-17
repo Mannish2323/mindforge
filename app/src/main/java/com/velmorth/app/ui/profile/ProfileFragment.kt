@@ -144,108 +144,115 @@ class ProfileFragment : Fragment() {
         val googleUser = FirebaseAuth.getInstance().currentUser
         val isGoogleLinked = googleUser?.providerData?.any { it.providerId == "google.com" } == true
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BgCream)
-                .verticalScroll(rememberScrollState())
+                .background(BgCream),
+            contentAlignment = Alignment.TopCenter
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .widthIn(max = 600.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
 
-            // ── Hero Header ───────────────────────────────────────────────────
-            HeroHeader(
-                displayName   = userState.name,
-                username      = username,
-                isPremium     = userState.isPremium,
-                streak        = userState.streak,
-                leaves        = userState.leafBalance,
-                xp            = userState.xp,
-                joinedAt      = userState.joinedAt,
-                photoUrl      = userState.photoUrl,
-                onSettings    = {
-                    startActivity(Intent(requireContext(), SettingsActivity::class.java))
-                },
-                onEditProfile = {
-                    startActivity(Intent(requireContext(), EditProfileActivity::class.java))
-                }
-            )
+                // ── Hero Header ───────────────────────────────────────────────────
+                HeroHeader(
+                    displayName   = userState.name,
+                    username      = username,
+                    isPremium     = userState.isPremium,
+                    streak        = userState.streak,
+                    leaves        = userState.leafBalance,
+                    xp            = userState.xp,
+                    joinedAt      = userState.joinedAt,
+                    photoUrl      = userState.photoUrl,
+                    onSettings    = {
+                        startActivity(Intent(requireContext(), SettingsActivity::class.java))
+                    },
+                    onEditProfile = {
+                        startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+                    }
+                )
 
-            Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(20.dp))
 
-            // ── Account Card ──────────────────────────────────────────────────
-            SectionHeader("👤  Account")
-            AccountCard(
-                email          = userState.email.ifBlank { googleUser?.email ?: "—" },
-                isGoogleLinked = isGoogleLinked,
-                googleEmail    = if (isGoogleLinked) googleUser?.email else null,
-                googlePhotoUrl = if (isGoogleLinked) googleUser?.photoUrl?.toString() else null,
-                onEditProfile  = {
-                    startActivity(Intent(requireContext(), EditProfileActivity::class.java))
-                }
-            )
+                // ── Account Card ──────────────────────────────────────────────────
+                SectionHeader("👤  Account")
+                AccountCard(
+                    email          = userState.email.ifBlank { googleUser?.email ?: "—" },
+                    isGoogleLinked = isGoogleLinked,
+                    googleEmail    = if (isGoogleLinked) googleUser?.email else null,
+                    googlePhotoUrl = if (isGoogleLinked) googleUser?.photoUrl?.toString() else null,
+                    onEditProfile  = {
+                        startActivity(Intent(requireContext(), EditProfileActivity::class.java))
+                    }
+                )
 
-            Spacer(Modifier.height(20.dp))
+                Spacer(Modifier.height(20.dp))
 
-            // ── Language Settings ─────────────────────────────────────────────
-            SectionHeader("🌍  Learning Course Settings")
-            LanguageCard(
-                selectedLang = selectedLang,
-                onLanguageSelected = { lang ->
-                    localeViewModel.setSelectedLanguage(lang)
-                }
-            )
+                // ── Language Settings ─────────────────────────────────────────────
+                SectionHeader("🌍  Learning Course Settings")
+                LanguageCard(
+                    selectedLang = selectedLang,
+                    onLanguageSelected = { lang ->
+                        localeViewModel.setSelectedLanguage(lang)
+                    }
+                )
 
-            Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(16.dp))
 
-            // ── App Language Settings ─────────────────────────────────────────
-            SectionHeader("🗣️  App Translation Language")
-            AppLanguageCard(
-                currentLangTag = nativeLangState.localeTag,
-                onLanguageSelected = { tag ->
-                    val matchedLang = LocaleViewModel.SUPPORTED_NATIVE_LANGUAGES.firstOrNull { it.localeTag == tag }
-                    if (matchedLang != null) {
-                        localeViewModel.setNativeLanguage(matchedLang.id)
+                // ── App Language Settings ─────────────────────────────────────────
+                SectionHeader("🗣️  App Translation Language")
+                AppLanguageCard(
+                    currentLangTag = nativeLangState.localeTag,
+                    onLanguageSelected = { tag ->
+                        val matchedLang = LocaleViewModel.SUPPORTED_NATIVE_LANGUAGES.firstOrNull { it.localeTag == tag }
+                        if (matchedLang != null) {
+                            localeViewModel.setNativeLanguage(matchedLang.id)
+                        }
+                    }
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                // ── My Progress ───────────────────────────────────────────────────
+                SectionHeader("📊  My Progress")
+                ProgressCard(
+                    language         = "${languageToFlag(selectedLang)} ${selectedLang.replaceFirstChar { it.uppercase() }}",
+                    progressFraction = progressFraction,
+                    progressPercent  = progressPercent,
+                    completedCount   = completedCount,
+                    totalLessons     = totalLessons
+                )
+
+                Spacer(Modifier.height(20.dp))
+
+                // ── Badges ────────────────────────────────────────────────────────
+                SectionHeader("🏆  Badges — $earnedCount earned")
+                BadgesGrid(earnedBadges)
+
+                Spacer(Modifier.height(20.dp))
+
+                // ── Support ───────────────────────────────────────────────────────
+                SectionHeader("💬  Support")
+                SupportCard(
+                    onInstagram = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/velmorth"))
+                        startActivity(intent)
+                    }
+                )
+
+                // ── Premium banner ────────────────────────────────────────────────
+                if (!userState.isPremium) {
+                    Spacer(Modifier.height(20.dp))
+                    PremiumBanner {
+                        startActivity(Intent(requireContext(), PremiumActivity::class.java))
                     }
                 }
-            )
 
-            Spacer(Modifier.height(20.dp))
-
-            // ── My Progress ───────────────────────────────────────────────────
-            SectionHeader("📊  My Progress")
-            ProgressCard(
-                language         = "${languageToFlag(selectedLang)} ${selectedLang.replaceFirstChar { it.uppercase() }}",
-                progressFraction = progressFraction,
-                progressPercent  = progressPercent,
-                completedCount   = completedCount,
-                totalLessons     = totalLessons
-            )
-
-            Spacer(Modifier.height(20.dp))
-
-            // ── Badges ────────────────────────────────────────────────────────
-            SectionHeader("🏆  Badges — $earnedCount earned")
-            BadgesGrid(earnedBadges)
-
-            Spacer(Modifier.height(20.dp))
-
-            // ── Support ───────────────────────────────────────────────────────
-            SectionHeader("💬  Support")
-            SupportCard(
-                onInstagram = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/velmorth"))
-                    startActivity(intent)
-                }
-            )
-
-            // ── Premium banner ────────────────────────────────────────────────
-            if (!userState.isPremium) {
-                Spacer(Modifier.height(20.dp))
-                PremiumBanner {
-                    startActivity(Intent(requireContext(), PremiumActivity::class.java))
-                }
+                Spacer(Modifier.height(40.dp))
             }
-
-            Spacer(Modifier.height(40.dp))
         }
     }
 
