@@ -141,54 +141,38 @@ Jaeger — Distributed tracing
 
 ```
 learn-with-velmorth/
-├── docs/                    # This documentation
-│   ├── 01_PRODUCT_VISION.md
-│   ├── 02_SYSTEM_ARCHITECTURE.md
-│   ├── 03_FRONTEND_ARCHITECTURE.md
-│   ├── 04_UI_UX_DESIGN_SYSTEM.md
-│   ├── 05_USER_FLOW.md
-│   ├── 06_LEARNING_ENGINE.md
-│   ├── 07_GAMIFICATION.md
-│   ├── 08_AI_SYSTEM.md
-│   ├── 09_DATABASE_ARCHITECTURE.md
-│   ├── 10_API_ARCHITECTURE.md
-│   ├── 11_BACKEND_ARCHITECTURE.md
-│   └── 12-17_SECURITY_ANALYTICS_MONETIZATION_DEPLOYMENT_FUTURE_PROMPT.md
-├── velmorth-mobile/         # Flutter mobile app (to be created)
-├── velmorth-backend/        # NestJS microservices (to be created)
-├── velmorth-ai/             # Python AI service (to be created)
-├── velmorth-web/            # Next.js web app (to be created)
+├── app/                     # Native Android App (Kotlin, Jetpack Compose, Firebase)
+├── apps/
+│   └── web/                 # Next.js Web Application (AIChat, Billing, Admin dashboard)
+├── packages/                # Shared monorepo packages (analytics, core-logic, design-tokens, types, ui, utils)
+├── services/                # Backend and Microservices (rust-core, python-ai, java-legacy)
+├── docs/                    # System Design documentation blueprints and web portal
+│   ├── 01_PRODUCT_VISION.md ...
+│   ├── index.html           # Developer Portal & Doc Index
+│   └── privacy.html         # Privacy Policy
 └── README.md                # This file
 ```
 
 ---
 
-## ⚡ Quick Start (Future Development)
+## ⚡ Quick Start
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/learn-with-velmorth
+git clone https://github.com/manish63018-sketch/learn-with-velmorth.git
+cd learn-with-velmorth
 
-# Start local infrastructure
-docker compose -f docker/docker-compose.yml up -d
+# Install dependencies (uses pnpm workspaces)
+pnpm install
 
-# Start backend services
-cd velmorth-backend
-npm install && npm run dev:all
+# Run the local development server for all services
+pnpm dev
 
-# Start AI service
-cd velmorth-ai
-pip install -r requirements.txt && uvicorn main:app --reload
-
-# Start mobile app
-cd velmorth-mobile
-flutter pub get && flutter run
-
-# Start web app
-cd velmorth-web
-npm install && npm run dev
+# Build all applications and packages
+pnpm build
 ```
 
 ---
 
 *Learn With Velmorth — Built to serve 100 million learners. Designed to change lives.*
+
