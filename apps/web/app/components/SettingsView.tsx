@@ -31,6 +31,7 @@ export function SettingsView({
     setDeleteError(null);
     try {
       await deleteAccount();
+      onNavigate('home');
     } catch (err: any) {
       setDeleteError(err.message || 'Failed to delete account');
       setDeleting(false);
@@ -49,7 +50,8 @@ export function SettingsView({
     setLoggingOut(true);
     try {
       await logout();
-    } catch {
+      onNavigate('home');
+    } catch (code) {
       setLoggingOut(false);
     }
   };
