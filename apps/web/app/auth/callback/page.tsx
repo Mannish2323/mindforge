@@ -10,12 +10,33 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const errParam = urlParams.get('error');
+        const errDesc = urlParams.get('error_description');
+
+        if (errParam) {
+          console.error('Auth error from provider:', errParam, errDesc);
+          setStatus('error');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+          return;
+        }
+
+        if (!code) {
+          console.error('No authorization code found in URL search parameters');
+          setStatus('error');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+          return;
+        }
+
         // Exchange the code in the URL for a session
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          window.location.search
-        );
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
         if (error) {
-          console.error('Auth callback error:', error);
+          console.error('Auth callback error during code exchange:', error);
           setStatus('error');
           setTimeout(() => {
             window.location.href = '/';

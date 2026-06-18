@@ -13,7 +13,14 @@ export interface UserProfile {
   level: number; // computed from xp
   streak: number; // user_streaks.streak
   leafBalance: number; // gems_balance
-  isPremium: boolean; // entitlements status
+  isPremium: boolean; // true for starter/plus/pro/yearly
+  planId: string;           // 'free' | 'starter' | 'plus' | 'pro'
+  planStatus: string;       // 'free' | 'starter' | 'plus' | 'pro' | 'yearly' | 'cancelled'
+  heartsLimit: number;      // 5 | 25 | 50 | 100
+  aiLimitDaily: number;     // 5 | 15 | 30 | 99
+  lessonsLimitDaily: number;// 5 | 15 | 30 | 99
+  adsEnabled: boolean;      // true for Free, false for paid
+  isAdmin: boolean;         // true if in admin_roles table
   avatarUrl: string;
   bio: string;
   theme: 'dark' | 'light' | 'system';
@@ -21,6 +28,12 @@ export interface UserProfile {
   tts_enabled: boolean;
   goal_minutes: number;
   notifications: boolean;
+  jlpt_target: string; // N5 | N4 | N3 | N2 | N1
+  kanji_learned: number;
+  speak_sessions: number;
+  words_learned: number;
+  lessons_done: number;
+  reviews_done: number;
   createdAt: string;
 }
 
@@ -137,11 +150,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (entErr || !entitlementsData) {
         const { data: newEnt } = await supabase
           .from('entitlements')
-          .insert({ user_id: supabaseUser.id, plan_id: 'free', status: 'free' })
+          .insert({
+            user_id: supabaseUser.id,
+            plan_id: 'free',
+            status: 'free',
+            hearts_limit: 5,
+            ai_limit_daily: 5,
+            lessons_limit_daily: 5,
+            ads_enabled: true,
+          })
           .select()
           .single();
-        entitlementsData = newEnt || { status: 'free' };
+        entitlementsData = newEnt || { status: 'free', plan_id: 'free', hearts_limit: 5, ai_limit_daily: 5, lessons_limit_daily: 5, ads_enabled: true };
       }
+
+      // 6. Check admin_roles
+      const { data: adminData } = await supabase
+        .from('admin_roles')
+        .select('role')
+        .eq('user_id', supabaseUser.id)
+        .maybeSingle();
 
       const mergedProfile: UserProfile = {
         uid: supabaseUser.id,
@@ -152,7 +180,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         level: Math.floor((statsData.xp_total ?? 0) / 100) + 1,
         streak: streakData.streak ?? 0,
         leafBalance: statsData.gems_balance ?? 5,
-        isPremium: entitlementsData.status === 'pro' || entitlementsData.status === 'yearly',
+        isPremium: ['starter', 'plus', 'pro', 'yearly'].includes(entitlementsData.status),
+        planId: entitlementsData.plan_id || 'free',
+        planStatus: entitlementsData.status || 'free',
+        heartsLimit: entitlementsData.hearts_limit ?? 5,
+        aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
+        lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
+        adsEnabled: entitlementsData.ads_enabled ?? true,
+        isAdmin: !!adminData,
         avatarUrl: profileData.avatar_url || '🦊',
         bio: profileData.bio || '',
         theme: settingsData.theme || 'dark',
@@ -160,6 +195,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         tts_enabled: settingsData.tts_enabled ?? true,
         goal_minutes: settingsData.goal_minutes ?? 10,
         notifications: settingsData.notifications ?? true,
+        jlpt_target: settingsData.jlpt_target || 'N5',
+        kanji_learned: statsData.kanji_learned ?? 0,
+        speak_sessions: statsData.speak_sessions ?? 0,
+        words_learned: statsData.words_learned ?? 0,
+        lessons_done: statsData.lessons_done ?? 0,
+        reviews_done: statsData.reviews_done ?? 0,
         createdAt: profileData.created_at || new Date().toISOString(),
       };
 
@@ -207,7 +248,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         options: {
           redirectTo:
             typeof window !== 'undefined'
-              ? `${window.location.origin}/auth/callback/`
+              ? `${window.location.origin}/auth/callback`
               : undefined,
         },
       });

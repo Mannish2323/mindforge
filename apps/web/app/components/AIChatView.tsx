@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Volume2, Send, ArrowLeft, Zap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { createClient } from '../lib/supabase';
 
 interface AIChatViewProps {
   onBack: () => void;
   onPlayTTS: (text: string) => void;
   uiLang: string;
+  onLimitReached?: (featureName: string) => void;
 }
 
 const CONVERSATION_TOPICS = [
@@ -35,20 +37,38 @@ interface Message {
   hint?: string;
 }
 
-export function AIChatView({ onBack, onPlayTTS, uiLang }: AIChatViewProps) {
+export function AIChatView({ onBack, onPlayTTS, uiLang, onLimitReached }: AIChatViewProps) {
+  const { user, session, profile } = useAuth();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [totalXP, setTotalXP] = useState(0);
-  const [chatHistory, setChatHistory] = useState<{ role: string; parts: { text: string }[] }[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages]);
 
-  const startTopic = (topicId: string) => {
+  const startTopic = async (topicId: string) => {
+    // Check limits before starting conversation if not admin
+    if (user && profile && !profile.isAdmin) {
+      try {
+        const checkRes = await fetch('/api/limits/check', {
+          headers: { Authorization: `Bearer ${session?.access_token}` }
+        });
+        if (checkRes.ok) {
+          const limits = await checkRes.json();
+          if (!limits.can_use_ai) {
+            if (onLimitReached) onLimitReached('AI Tutor Conversations');
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check AI limits:', err);
+      }
+    }
+
     const starter = STARTERS[topicId];
     setSelectedTopic(topicId);
     setTotalXP(0);
@@ -60,15 +80,29 @@ export function AIChatView({ onBack, onPlayTTS, uiLang }: AIChatViewProps) {
       en: starter.en,
     };
     setMessages([firstMsg]);
-    setChatHistory([{
-      role: 'model',
-      parts: [{ text: JSON.stringify({ content_ja: starter.ja, content_romaji: starter.romaji, content_en: starter.en }) }]
-    }]);
     onPlayTTS(starter.ja);
   };
 
   const sendMessage = async () => {
     if (!inputText.trim() || isLoading || !selectedTopic) return;
+
+    // Double check limits client-side before sending if not admin
+    if (user && profile && !profile.isAdmin) {
+      try {
+        const checkRes = await fetch('/api/limits/check', {
+          headers: { Authorization: `Bearer ${session?.access_token}` }
+        });
+        if (checkRes.ok) {
+          const limits = await checkRes.json();
+          if (!limits.can_use_ai) {
+            if (onLimitReached) onLimitReached('AI Tutor Conversations');
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check AI limits:', err);
+      }
+    }
 
     const userMsg: Message = {
       id: `user-${Date.now()}`,
@@ -80,47 +114,67 @@ export function AIChatView({ onBack, onPlayTTS, uiLang }: AIChatViewProps) {
     setIsLoading(true);
 
     const topic = CONVERSATION_TOPICS.find(t => t.id === selectedTopic)!;
-    const newHistory = [
-      ...chatHistory,
-      { role: 'user', parts: [{ text: inputText }] }
-    ];
+
+    // Build history for backend API
+    const formattedHistory = messages.map(m => ({
+      role: m.role === 'ai' ? 'assistant' : 'user',
+      content: m.role === 'ai' ? m.ja || m.en : m.en
+    }));
 
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-      if (!apiKey) throw new Error('No Gemini API key');
-
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
-        systemInstruction: `${topic.system}. Keep responses short (1-2 sentences). Always respond with valid JSON only.`,
-      });
-
-      const chat = model.startChat({ history: chatHistory });
-      const result = await chat.sendMessage(inputText);
-      const text = result.response.text().trim();
-
-      let parsed: any;
-      try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
-      } catch {
-        parsed = { content_ja: text, content_romaji: '', content_en: text };
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
       }
 
+      const res = await fetch('/api/ai/conversation', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          topic: topic.label,
+          messages: [
+            ...formattedHistory,
+            { role: 'user', content: userMsg.en }
+          ],
+          user_id: user?.id,
+        })
+      });
+
+      if (!res.ok) {
+        if (res.status === 429) {
+          throw new Error('Too many requests. Please wait a moment.');
+        }
+        throw new Error('Server error');
+      }
+
+      const parsed = await res.json();
+
       const aiMsg: Message = {
-        id: `ai-${Date.now()}`,
+        id: parsed.message_id || `ai-${Date.now()}`,
         role: 'ai',
         ja: parsed.content_ja || '',
         romaji: parsed.content_romaji || '',
-        en: parsed.content_en || text,
-        hint: parsed.hint,
+        en: parsed.content_en || 'I see!',
+        hint: parsed.grammar_note || undefined,
       };
+
       setMessages(prev => [...prev, aiMsg]);
-      setChatHistory([...newHistory, { role: 'model', parts: [{ text }] }]);
       onPlayTTS(aiMsg.ja || '');
       setTotalXP(x => x + 10);
-    } catch {
-      // Fallback mock
+
+      // Increment usage in database atomically
+      if (user) {
+        const supabase = createClient();
+        await supabase.rpc('increment_daily_usage', {
+          p_user_id: user.id,
+          p_counter: 'ai_requests'
+        });
+      }
+    } catch (err: any) {
+      console.error('[AI Chat] Send error:', err);
+      // Fallback response on failure
       await new Promise(r => setTimeout(r, 600));
       const fallbacks = [
         { ja: 'なるほど！もっと教えてください。', romaji: 'Naruhodo! Motto oshiete kudasai.', en: 'I see! Please tell me more.', hint: 'Great effort! Keep practicing.' },
@@ -128,9 +182,8 @@ export function AIChatView({ onBack, onPlayTTS, uiLang }: AIChatViewProps) {
         { ja: 'とてもいい日本語ですね！', romaji: 'Totemo ii nihongo desu ne!', en: 'That is very good Japanese!', hint: 'Excellent work! Your Japanese is improving.' },
       ];
       const f = fallbacks[Math.floor(Math.random() * fallbacks.length)];
-      const aiMsg: Message = { id: `ai-${Date.now()}`, role: 'ai', ...f };
+      const aiMsg: Message = { id: `ai-fallback-${Date.now()}`, role: 'ai', ...f };
       setMessages(prev => [...prev, aiMsg]);
-      setChatHistory([...newHistory, { role: 'model', parts: [{ text: JSON.stringify(f) }] }]);
       onPlayTTS(f.ja);
       setTotalXP(x => x + 5);
     } finally {
@@ -145,7 +198,7 @@ export function AIChatView({ onBack, onPlayTTS, uiLang }: AIChatViewProps) {
           <button className="btn btn-ghost btn-sm" onClick={onBack} id="ai-chat-back-btn">← Back</button>
           <div>
             <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, margin: 0 }}>🤖 AI Conversation</h2>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', margin: 0 }}>Powered by Gemini</p>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', margin: 0 }}>Secure Server-Side AI Tutor</p>
           </div>
         </div>
         <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-5)' }}>

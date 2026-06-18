@@ -29,5 +29,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/**/*.ts", "../../packages/**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "app_api_backup"]
 }

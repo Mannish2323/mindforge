@@ -39,6 +39,9 @@ import { SocialTab } from './components/SocialTab';
 import { StoriesView } from './components/StoriesView';
 import { AIChatView } from './components/AIChatView';
 import { HomeDashboard } from './components/HomeDashboard';
+import { ProfileView } from './components/ProfileView';
+import { SettingsView } from './components/SettingsView';
+import { AdminView } from './components/AdminView';
 import { LearnPath } from './components/LearnPath';
 import { ScriptLab } from './components/ScriptLab';
 import { SpeakRoleplay } from './components/SpeakRoleplay';
@@ -52,6 +55,8 @@ import { PremiumModal } from './components/PremiumModal';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { BillingView } from './components/BillingView';
 import { usePushNotifications } from './hooks/usePushNotifications';
+import { createClient } from './lib/supabase';
+import { AdBanner } from './components/AdBanner';
 
 export default function EVLOApp() {
   const {
@@ -60,6 +65,7 @@ export default function EVLOApp() {
     addXP,
     loseHeart,
     refillHearts,
+    syncMaxHearts,
     addGems,
     spendGems,
     completeLesson,
@@ -79,7 +85,7 @@ export default function EVLOApp() {
     setGoalMinutes,
   } = useStore();
 
-  const { user, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails } = useAuth();
+  const { user, session, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails } = useAuth();
 
   const activeState = React.useMemo(() => {
     if (user && profile) {
@@ -94,11 +100,115 @@ export default function EVLOApp() {
     return state;
   }, [state, user, profile]);
 
-  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings' | 'billing'>('home');
+  const weeklyXpData = React.useMemo(() => {
+    const xpArray = [0, 0, 0, 0, 0, 0, 0]; // Mon, Tue, Wed, Thu, Fri, Sat, Sun
+    const today = new Date();
+    
+    // Get ISO date string (YYYY-MM-DD) in local time
+    const getLocalDateString = (date: Date) => {
+      const offset = date.getTimezoneOffset();
+      const local = new Date(date.getTime() - (offset * 60 * 1000));
+      return local.toISOString().split('T')[0];
+    };
+
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const distanceToMonday = currentDay === 0 ? 6 : currentDay - 1;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - distanceToMonday);
+    monday.setHours(0, 0, 0, 0);
+
+    const thisWeekDays: string[] = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      thisWeekDays.push(getLocalDateString(d));
+    }
+
+    // Lessons XP
+    const lprog = activeState?.lessonProgress || {};
+    Object.values(lprog).forEach((l: any) => {
+      if (l.completed && l.completedAt) {
+        const compDate = new Date(l.completedAt);
+        const dStr = getLocalDateString(compDate);
+        const idx = thisWeekDays.indexOf(dStr);
+        if (idx !== -1) {
+          xpArray[idx] += (l.xp || 15);
+        }
+      }
+    });
+
+    // Stories XP
+    const stories = activeState?.stories || [];
+    stories.forEach((s: any) => {
+      if (s.completed && s.completedAt) {
+        const compDate = new Date(s.completedAt);
+        const dStr = getLocalDateString(compDate);
+        const idx = thisWeekDays.indexOf(dStr);
+        if (idx !== -1) {
+          xpArray[idx] += (s.xp_reward || 30);
+        }
+      }
+    });
+
+    return xpArray;
+  }, [activeState?.lessonProgress, activeState?.stories]);
+
+  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings' | 'billing' | 'admin'>('home');
   const [activeSubView, setActiveSubView] = useState<'none' | 'hiragana' | 'jlpt-plan' | 'phrases' | 'lesson-player' | 'script-lab' | 'stories' | 'ai-chat' | 'quests' | 'badges'>('none');
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [lockedFeatureName, setLockedFeatureName] = useState<string | undefined>(undefined);
+  const [topLeaders, setTopLeaders] = useState<Array<{username: string; xp: number; rank: number}>>([]);
   const { permission: notifPermission, requestPermission: requestNotifPermission } = usePushNotifications(user?.id || null);
   const [selectedLessonParams, setSelectedLessonParams] = useState<any>(null);
+  const [showRefillModal, setShowRefillModal] = useState(false);
+  const [isWatchingAd, setIsWatchingAd] = useState(false);
+  const [adTimer, setAdTimer] = useState(3);
+
+  const handleRefillClick = () => {
+    if (profile?.isPremium) {
+      refillHearts(profile?.heartsLimit ?? 999);
+    } else {
+      setShowRefillModal(true);
+    }
+  };
+
+  const handleWatchAdRefill = () => {
+    setIsWatchingAd(true);
+    setAdTimer(3);
+    const interval = setInterval(() => {
+      setAdTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setIsWatchingAd(false);
+          setShowRefillModal(false);
+          refillHearts(profile?.heartsLimit ?? 5);
+          if (user) {
+            const supabase = createClient();
+            supabase.rpc('increment_daily_usage', {
+              p_user_id: user.id,
+              p_counter: 'hearts_used'
+            }).then(({ error }) => { if (error) console.error(error); });
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleSpendGemsRefill = () => {
+    if (spendGems(10)) {
+      refillHearts(profile?.heartsLimit ?? 5);
+      setShowRefillModal(false);
+      if (user) {
+        const supabase = createClient();
+        supabase.rpc('increment_daily_usage', {
+          p_user_id: user.id,
+          p_counter: 'hearts_used'
+        }).then(({ error }) => { if (error) console.error(error); });
+      }
+    }
+  };
 
   // Lesson player states
   const [questions, setQuestions] = useState<any[]>([]);
@@ -177,12 +287,32 @@ export default function EVLOApp() {
     }
   }, [isLoaded, state.theme]);
 
-  // Show premium modal automatically for free users on load
+  // Load real top leaderboard entries for sidebar preview
   useEffect(() => {
-    if (profile && !profile.isPremium) {
-      setShowPremiumModal(true);
+    const supabase = createClient();
+    supabase
+      .from('leaderboard_entries')
+      .select('user_id, xp, rank, profiles(username, display_name)')
+      .eq('board_id', 'xp_alltime')
+      .order('xp', { ascending: false })
+      .limit(3)
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setTopLeaders(data.map((row: any) => ({
+            username: row.profiles?.display_name || row.profiles?.username || 'Learner',
+            xp: row.xp,
+            rank: row.rank ?? 0,
+          })));
+        }
+      });
+  }, []);
+
+  // Sync hearts limit dynamically from Supabase profile
+  useEffect(() => {
+    if (profile?.heartsLimit) {
+      syncMaxHearts(profile.heartsLimit);
     }
-  }, [profile]);
+  }, [profile?.heartsLimit, syncMaxHearts]);
 
   if (!isLoaded || loadingLessons) {
     return (
@@ -212,7 +342,26 @@ export default function EVLOApp() {
   );
 
   // --- MCQ Generation logic ---
-  const startLesson = (unitId: string, lessonId: string) => {
+  const startLesson = async (unitId: string, lessonId: string) => {
+    // If not admin, check daily lesson limits via /api/limits/check
+    if (user && profile && !profile.isAdmin) {
+      try {
+        const checkRes = await fetch('/api/limits/check', {
+          headers: { Authorization: `Bearer ${session?.access_token}` }
+        });
+        if (checkRes.ok) {
+          const limits = await checkRes.json();
+          if (!limits.can_start_lesson) {
+            setLockedFeatureName('Daily Lessons Limit');
+            setShowPremiumModal(true);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check lesson limits:', err);
+      }
+    }
+
     const unitData = lessonsCache[unitId];
     const lesson = unitData.lessons.find((l: any) => l.lesson_id === lessonId);
     if (!lesson) return;
@@ -345,17 +494,15 @@ export default function EVLOApp() {
     const { lesson, unitId } = selectedLessonParams;
     const timeElapsed = Math.round((Date.now() - lessonTimeStart) / 1000);
 
-    // Call Rust backend for scoring & anti-cheat check
-    let verifiedScore = (correctCount * 100) / questions.length;
     let xpGranted = lesson.xp_reward;
-    let antiCheatReason = null;
 
+    // Rust anti-cheat (local dev only — fails silently in production)
     try {
       const response = await fetch('http://localhost:8080/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          answers: questions.map((_, i) => i === currentQIdx ? selectedAns : "sample"),
+          answers: questions.map((_, i) => i === currentQIdx ? selectedAns : 'sample'),
           correct_answers: questions.map(q => q.correct),
           elapsed_seconds: timeElapsed
         })
@@ -363,22 +510,30 @@ export default function EVLOApp() {
       const scoreData = await response.json();
       if (scoreData.cheated) {
         xpGranted = 0;
-        antiCheatReason = scoreData.anti_cheat_reason;
       } else {
         xpGranted = scoreData.xp_rewarded;
       }
-    } catch (e) {
-      console.warn('Rust core service offline. Using local calculations.', e);
+    } catch {
+      // Service offline — use local XP
     }
 
-    // Complete local store sync
     completeLesson(lesson.lesson_id, xpGranted);
 
     if (user && profile) {
       await updateProfileStats(xpGranted, 2);
+
+      // Increment daily usage counter atomically
+      try {
+        const supabase = createClient();
+        await supabase.rpc('increment_daily_usage', {
+          p_user_id: user.id,
+          p_counter: 'lessons_started'
+        });
+      } catch (err: any) {
+        console.error('Failed to increment lessons daily counter:', err.message);
+      }
     }
 
-    // Sync to Spaced Repetition (SRS)
     lesson.vocabulary?.forEach((v: any) => {
       handleSRSCardUpdate(v, 1);
     });
@@ -392,14 +547,14 @@ export default function EVLOApp() {
     setAiTutorAnswer(null);
     setAiLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/ai/explain', {
+      const response = await fetch('/api/ai/explain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          grammar_id: selectedLessonParams?.lesson.grammar_point?.grammar_id || "default",
-          structure: selectedLessonParams?.lesson.grammar_point?.structure || "form",
-          title: selectedLessonParams?.lesson.grammar_point?.title || "Grammar Rule",
-          explanation_en: q.prompt + " " + q.correct,
+          grammar_id: selectedLessonParams?.lesson.grammar_point?.grammar_id || 'default',
+          structure: selectedLessonParams?.lesson.grammar_point?.structure || 'form',
+          title: selectedLessonParams?.lesson.grammar_point?.title || 'Grammar Rule',
+          explanation_en: q.prompt + ' ' + q.correct,
           lang: state.uiLang
         })
       });
@@ -907,7 +1062,7 @@ export default function EVLOApp() {
             </p>
             <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
               <Button variant="secondary" onClick={() => setActiveSubView('none')}>Return Path</Button>
-              <Button variant="primary" onClick={() => { refillHearts(); }}>Refill (Free)</Button>
+              <Button variant="primary" onClick={handleRefillClick}>Refill</Button>
             </div>
           </div>
         ) : (
@@ -1403,6 +1558,7 @@ export default function EVLOApp() {
   };
 
 
+  // ── Profile tab now handled by ProfileView component ──
   const renderProfileTab = () => {
     if (!user) {
       return <AuthView />;
@@ -1792,33 +1948,69 @@ export default function EVLOApp() {
     />
   );
 
+  const handleNavigateFromHome = (tab: any, subView?: any) => {
+    setActiveTab(tab);
+    if (subView) {
+      if (subView === 'hiragana') {
+        setActiveTab('script');
+      } else if (subView === 'phrases') {
+        setActiveTab('speak');
+      } else if (subView === 'badges' || subView === 'quests' || subView === 'stories' || subView === 'ai-chat') {
+        setActiveSubView(subView);
+      } else {
+        setActiveSubView(subView);
+      }
+    }
+  };
+
+  // Master navigate — ALWAYS clears subView so sidebar/nav is never lost
+  const navigate = (tab: typeof activeTab) => {
+    setActiveSubView('none');
+    setActiveTab(tab);
+  };
+
   const renderActiveTab = () => {
     // Sub-views that override tab content
     if (activeSubView === 'quests') return <QuestsView quests={state.quests || []} onClaimQuest={claimQuest} onBack={() => setActiveSubView('none')} />;
     if (activeSubView === 'badges') return <BadgesView badges={state.badges || []} onBack={() => setActiveSubView('none')} />;
     if (activeSubView === 'stories') return <StoriesView stories={state.stories || []} onBack={() => setActiveSubView('none')} onCompleteStory={completeStory} onPlayTTS={playTTS} />;
-    if (activeSubView === 'ai-chat') return <AIChatView onBack={() => setActiveSubView('none')} onPlayTTS={playTTS} uiLang={state.uiLang} />;
+    if (activeSubView === 'ai-chat') return (
+      <AIChatView
+        onBack={() => setActiveSubView('none')}
+        onPlayTTS={playTTS}
+        uiLang={state.uiLang}
+        onLimitReached={(feature) => {
+          setLockedFeatureName(feature);
+          setShowPremiumModal(true);
+        }}
+      />
+    );
 
     switch (activeTab) {
       case 'home':
         return (
-          <HomeDashboard
-            state={activeState}
-            onNavigate={(tab, subView) => {
-              setActiveTab(tab);
-              if (subView) {
-                if (subView === 'hiragana') {
-                  setActiveTab('script');
-                } else if (subView === 'phrases') {
-                  setActiveTab('speak');
-                } else {
-                  setActiveSubView(subView);
-                }
-              }
-            }}
-            onContinueLesson={() => setActiveTab('learn')}
-            onActivateShield={activateStreakShield}
-          />
+          <>
+            <HomeDashboard
+              state={activeState}
+              profile={profile}
+              user={user}
+              onNavigate={handleNavigateFromHome}
+              onContinueLesson={() => setActiveTab('learn')}
+              onActivateShield={activateStreakShield}
+            />
+            {/* Home footer ad — Free users only, never blocks interaction */}
+            {profile?.adsEnabled && (
+              <div style={{ padding: '0 var(--sp-4) var(--sp-6)' }}>
+                <AdBanner
+                  placement="home_footer"
+                  onUpgrade={() => {
+                    setLockedFeatureName('Ad-Free Experience');
+                    setShowPremiumModal(true);
+                  }}
+                />
+              </div>
+            )}
+          </>
         );
       case 'learn':
         return (
@@ -1827,17 +2019,14 @@ export default function EVLOApp() {
             units={unitsIndex?.units || []}
             lessonsCache={lessonsCache}
             onStartLesson={(lessonId) => {
-              const lesson = Object.values(lessonsCache).flatMap((u: any) => u.lessons || []).find((l: any) => l.lesson_id === lessonId);
-              if (lesson) {
-                setSelectedLessonParams(lesson);
-                setQuestions(lesson.exercises || []);
-                setCurrentQIdx(0);
-                setSelectedAns(null);
-                setIsAnswered(false);
-                setCorrectCount(0);
-                setLessonFinished(false);
-                setLessonTimeStart(Date.now());
-                setActiveSubView('lesson-player');
+              let foundLesson: any = null;
+              let foundUnitId: string = '';
+              for (const [unitId, unitData] of Object.entries(lessonsCache)) {
+                const lesson = (unitData as any).lessons?.find((l: any) => l.lesson_id === lessonId);
+                if (lesson) { foundLesson = lesson; foundUnitId = unitId; break; }
+              }
+              if (foundLesson && foundUnitId) {
+                startLesson(foundUnitId, lessonId);
               }
             }}
             onBack={() => setActiveTab('home')}
@@ -1860,9 +2049,23 @@ export default function EVLOApp() {
       case 'leaderboard': return <Leaderboard />;
       case 'analytics': return <AnalyticsDashboard />;
       case 'social': return renderSocialTab();
-      case 'profile': return renderProfileTab();
-      case 'settings': return renderSettingsTab();
+      case 'profile':
+        return user
+          ? <ProfileView state={activeState} onNavigate={(tab, subView) => { setActiveTab(tab as any); if (subView) setActiveSubView(subView as any); }} />
+          : <AuthView />;
+      case 'settings':
+        return (
+          <SettingsView
+            state={state}
+            onSetTheme={setTheme}
+            onSetUILang={setUILang}
+            onToggleTTS={toggleTTS}
+            onSetGoalMinutes={setGoalMinutes}
+            onNavigate={(tab) => setActiveTab(tab as any)}
+          />
+        );
       case 'billing': return <BillingView />;
+      case 'admin': return <AdminView />;
     }
   };
 
@@ -1879,52 +2082,63 @@ export default function EVLOApp() {
             </div>
           </div>
           <nav className="sidebar-nav">
-            <button className={cn({ active: activeTab === 'home' })} onClick={() => setActiveTab('home')} aria-label="Home">
+            {/* ── Core Learning ── */}
+            <button className={cn({ active: activeTab === 'home' })} onClick={() => navigate('home')} aria-label="Home" id="nav-home">
               <Home size={18} />
               <span>Home</span>
             </button>
-            <button className={cn({ active: activeTab === 'learn' })} onClick={() => setActiveTab('learn')} aria-label="Learn Path">
+            <button className={cn({ active: activeTab === 'learn' })} onClick={() => navigate('learn')} aria-label="Learn Path" id="nav-learn">
               <BookOpen size={18} />
               <span>Learn Path</span>
             </button>
-            <button className={cn({ active: activeTab === 'script' })} onClick={() => setActiveTab('script')} aria-label="Script Lab">
+            <button className={cn({ active: activeTab === 'script' })} onClick={() => navigate('script')} aria-label="Script Lab" id="nav-script">
               <PenLine size={18} />
               <span>Script Lab</span>
             </button>
-            <button className={cn({ active: activeTab === 'speak' })} onClick={() => setActiveTab('speak')} aria-label="Speak Mode">
+            <button className={cn({ active: activeTab === 'speak' })} onClick={() => navigate('speak')} aria-label="Speak" id="nav-speak">
               <Mic size={18} />
-              <span>Speak Mode</span>
+              <span>Speak</span>
             </button>
-            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => setActiveTab('jlpt')} aria-label="JLPT Prep">
+            <button className={cn({ active: activeTab === 'jlpt' })} onClick={() => navigate('jlpt')} aria-label="JLPT" id="nav-jlpt">
               <Medal size={18} />
-              <span>JLPT Prep</span>
+              <span>JLPT</span>
             </button>
-            <button className={cn({ active: activeTab === 'review' })} onClick={() => setActiveTab('review')} aria-label="Review">
+            <button className={cn({ active: activeTab === 'review' })} onClick={() => navigate('review')} aria-label="Review" id="nav-review">
               <RotateCcw size={18} />
               <span>Review</span>
             </button>
             <div className="sidebar-divider" />
-            <button className={cn({ active: activeTab === 'social' })} onClick={() => setActiveTab('social')} aria-label="Social">
+            {/* ── Social & Rankings ── */}
+            <button className={cn({ active: activeTab === 'social' })} onClick={() => navigate('social')} aria-label="Social" id="nav-social">
               <Users size={18} />
               <span>Social</span>
             </button>
-            <button className={cn({ active: activeTab === 'leaderboard' })} onClick={() => setActiveTab('leaderboard')} aria-label="Leaderboard">
+            <button className={cn({ active: activeTab === 'leaderboard' })} onClick={() => navigate('leaderboard')} aria-label="Leaderboard" id="nav-leaderboard">
               <Trophy size={18} />
               <span>Leaderboard</span>
             </button>
-            <button className={cn({ active: activeTab === 'analytics' })} onClick={() => setActiveTab('analytics')} aria-label="Analytics">
-              <BarChart2 size={18} />
-              <span>Analytics</span>
-            </button>
             <div className="sidebar-divider" />
-            <button className={cn({ active: activeTab === 'profile' })} onClick={() => setActiveTab('profile')} aria-label="Profile">
+            {/* ── Account ── */}
+            <button className={cn({ active: activeTab === 'profile' })} onClick={() => navigate('profile')} aria-label="Profile" id="nav-profile">
               <User size={18} />
               <span>Profile</span>
             </button>
-            <button className={cn({ active: activeTab === 'settings' })} onClick={() => setActiveTab('settings')} aria-label="Settings">
+            <button className={cn({ active: activeTab === 'settings' })} onClick={() => navigate('settings')} aria-label="Settings" id="nav-settings">
               <Settings size={18} />
               <span>Settings</span>
             </button>
+            <button className={cn({ active: activeTab === 'billing' })} onClick={() => navigate('billing')} aria-label="Billing" id="nav-billing">
+              <CreditCard size={18} />
+              <span>Billing</span>
+            </button>
+            {/* ── Admin (isAdmin only) ── */}
+            {profile?.isAdmin && (
+              <button className={cn({ active: activeTab === 'admin' })} onClick={() => setActiveTab('admin')} aria-label="Admin Panel" id="nav-admin"
+                style={{ color: 'var(--error)', marginTop: 'var(--sp-1)' }}>
+                <BarChart2 size={18} />
+                <span>Admin</span>
+              </button>
+            )}
           </nav>
           {/* Upgrade CTA — only for free users */}
           {!profile?.isPremium && (
@@ -2049,7 +2263,7 @@ export default function EVLOApp() {
               <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
                 <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>WEEKLY PROGRESS</h4>
                 <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'flex-end', height: '60px', padding: '0 4px' }}>
-                  {[12, 24, 0, 45, 10, 50, 15].map((xp, index) => {
+                  {weeklyXpData.map((xp, index) => {
                     const pct = Math.min(100, (xp / 50) * 100);
                     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
                     return (
@@ -2062,25 +2276,29 @@ export default function EVLOApp() {
                 </div>
               </div>
 
-              {/* 5. Leaderboard Summary */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }} onClick={() => setActiveTab('leaderboard')}>
+              {/* 5. Leaderboard Summary — real data only */}
+              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', cursor: 'pointer' }} onClick={() => setActiveTab('leaderboard')}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>LEADERBOARD</h4>
-                  <span style={{ fontSize: '11px', color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}>View All</span>
+                  <span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 600 }}>View All</span>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>🏆 Velmorth</span>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--xp-gold)' }}>1,240 XP</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>⚡ Mannish</span>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: 'var(--text-2)' }}>1,120 XP</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>⭐ Tanaka</span>
-                    <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: '#cd7c2f' }}>980 XP</span>
-                  </div>
+                  {topLeaders.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: 'var(--sp-4)', color: 'var(--text-3)', fontSize: 'var(--text-xs)' }}>
+                      Be the first on the board! 🏆
+                    </div>
+                  ) : (
+                    topLeaders.map((leader, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', background: 'var(--surface-2)', padding: '8px 12px', borderRadius: 'var(--radius)', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: 'var(--text-xs)', fontWeight: 600 }}>
+                          {i === 0 ? '🏆' : i === 1 ? '🥈' : '🥉'} {leader.username}
+                        </span>
+                        <span style={{ fontSize: 'var(--text-xs)', fontWeight: 700, color: i === 0 ? 'var(--xp-gold)' : i === 1 ? 'var(--text-2)' : '#cd7c2f' }}>
+                          {leader.xp.toLocaleString()} XP
+                        </span>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             </aside>
@@ -2095,7 +2313,7 @@ export default function EVLOApp() {
         <nav className="bottom-nav" role="navigation" aria-label="Main navigation">
           <button
             className={cn({ active: activeTab === 'home' })}
-            onClick={() => setActiveTab('home')}
+            onClick={() => navigate('home')}
             aria-label="Home"
             aria-current={activeTab === 'home' ? 'page' : undefined}
           >
@@ -2104,7 +2322,7 @@ export default function EVLOApp() {
           </button>
           <button
             className={cn({ active: activeTab === 'learn' })}
-            onClick={() => setActiveTab('learn')}
+            onClick={() => navigate('learn')}
             aria-label="Learn Path"
             aria-current={activeTab === 'learn' ? 'page' : undefined}
           >
@@ -2113,7 +2331,7 @@ export default function EVLOApp() {
           </button>
           <button
             className={cn({ active: activeTab === 'script' })}
-            onClick={() => setActiveTab('script')}
+            onClick={() => navigate('script')}
             aria-label="Script Lab"
             aria-current={activeTab === 'script' ? 'page' : undefined}
           >
@@ -2122,7 +2340,7 @@ export default function EVLOApp() {
           </button>
           <button
             className={cn({ active: activeTab === 'speak' })}
-            onClick={() => setActiveTab('speak')}
+            onClick={() => navigate('speak')}
             aria-label="Speak Mode"
             aria-current={activeTab === 'speak' ? 'page' : undefined}
           >
@@ -2131,7 +2349,7 @@ export default function EVLOApp() {
           </button>
           <button
             className={cn({ active: activeTab === 'jlpt' })}
-            onClick={() => setActiveTab('jlpt')}
+            onClick={() => navigate('jlpt')}
             aria-label="JLPT Prep"
             aria-current={activeTab === 'jlpt' ? 'page' : undefined}
           >
@@ -2140,7 +2358,7 @@ export default function EVLOApp() {
           </button>
           <button
             className={cn({ active: activeTab === 'review' })}
-            onClick={() => setActiveTab('review')}
+            onClick={() => navigate('review')}
             aria-label="Review"
             aria-current={activeTab === 'review' ? 'page' : undefined}
           >
@@ -2153,7 +2371,55 @@ export default function EVLOApp() {
         <PremiumModal
           onClose={() => setShowPremiumModal(false)}
           onUpgrade={() => setActiveTab('billing')}
+          featureName={lockedFeatureName}
         />
+      )}
+      {showRefillModal && (
+        <Modal isOpen={showRefillModal} onClose={() => { if (!isWatchingAd) setShowRefillModal(false); }} title="Refill Hearts ❤️">
+          <div style={{ textAlign: 'center', padding: 'var(--space-4)' }}>
+            {isWatchingAd ? (
+              <div>
+                <div style={{ fontSize: '48px', marginBottom: 'var(--space-3)', animation: 'spin 2s linear infinite' }}>📺</div>
+                <h3 style={{ fontWeight: 700 }}>Watching Advertisement...</h3>
+                <p style={{ color: 'var(--text-muted)', margin: '8px 0' }}>Refilling in {adTimer} seconds...</p>
+                <div style={{ width: '100%', height: '6px', background: 'var(--surface-3)', borderRadius: '3px', overflow: 'hidden', marginTop: '16px' }}>
+                  <div style={{ width: `${(3 - adTimer) * 33.3}%`, height: '100%', background: 'var(--primary)', transition: 'width 1s linear' }} />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div style={{ fontSize: '48px', marginBottom: 'var(--space-3)' }}>❤️</div>
+                <h3 style={{ fontWeight: 700 }}>Need a Refill?</h3>
+                <p style={{ color: 'var(--text-muted)', margin: '8px 0 var(--space-5)' }}>
+                  Refill your hearts capacity to continue learning!
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <Button
+                    variant="primary"
+                    onClick={handleWatchAdRefill}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    📺 Watch Ad (3s)
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={handleSpendGemsRefill}
+                    disabled={activeState.gems < 10}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                  >
+                    💎 Spend 10 Gems (You have {activeState.gems})
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowRefillModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
       )}
     </>
   );

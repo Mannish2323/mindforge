@@ -1,272 +1,416 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Crown, Check, X, Shield, CreditCard, Clock, Zap } from 'lucide-react';
+import { Crown, Check, X, Star, Zap, MessageCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-interface Plan {
+// ── Plan definitions ──────────────────────────────────────────────────────────
+interface PlanDef {
   id: string;
   name: string;
   price: string;
-  period: string;
-  features: { text: string; included: boolean }[];
-  highlighted: boolean;
+  sub: string;
   badge?: string;
-  color?: string;
+  highlight?: boolean;
+  color: string;
+  emoji: string;
+  features: { text: string; ok: boolean }[];
+  razorpayId?: string; // undefined = not purchasable
 }
 
-const PLANS: Plan[] = [
+const PLANS: PlanDef[] = [
   {
     id: 'free',
     name: 'Free',
     price: '₹0',
-    period: 'forever',
-    highlighted: false,
+    sub: 'forever',
+    color: '#64748B',
+    emoji: '🌱',
     features: [
-      { text: '5 lessons per day', included: true },
-      { text: 'Basic SRS review', included: true },
-      { text: 'Hiragana & Katakana', included: true },
-      { text: '3 hearts per session', included: true },
-      { text: 'Community access', included: true },
-      { text: 'AI Tutor', included: false },
-      { text: 'Unlimited lessons', included: false },
-      { text: 'Offline mode', included: false },
-      { text: 'JLPT mock tests', included: false },
-      { text: 'Priority support', included: false },
+      { text: '5 lessons/day', ok: true },
+      { text: 'Basic SRS review', ok: true },
+      { text: 'Hiragana & Katakana', ok: true },
+      { text: '5 hearts max', ok: true },
+      { text: 'Community access', ok: true },
+      { text: 'Ads between sections', ok: false },
+      { text: 'AI Tutor', ok: false },
+      { text: 'Unlimited lessons', ok: false },
+      { text: 'JLPT packs', ok: false },
     ],
   },
   {
-    id: 'pro_monthly',
+    id: 'starter',
+    name: 'Starter',
+    price: '₹99',
+    sub: '/month',
+    color: '#0EA5E9',
+    emoji: '⚡',
+    razorpayId: 'starter',
+    features: [
+      { text: '15 lessons/day', ok: true },
+      { text: 'Ads between sections', ok: false },
+      { text: 'Advanced SRS review', ok: true },
+      { text: '25 hearts max', ok: true },
+      { text: '15 AI chats/day', ok: true },
+      { text: 'Better progress tools', ok: true },
+      { text: 'JLPT N5 pack access', ok: true },
+      { text: 'No ads', ok: false },
+      { text: 'Speak mode full access', ok: false },
+    ],
+  },
+  {
+    id: 'plus',
+    name: 'Plus',
+    price: '₹149',
+    sub: '/month',
+    color: '#A855F7',
+    emoji: '🚀',
+    razorpayId: 'plus',
+    features: [
+      { text: '30 lessons/day', ok: true },
+      { text: 'Ads between sections', ok: false },
+      { text: 'Full SRS + weak-spot detection', ok: true },
+      { text: '50 hearts max', ok: true },
+      { text: '30 AI chats/day', ok: true },
+      { text: 'JLPT N5 + N4 packs', ok: true },
+      { text: 'Speak mode basic access', ok: true },
+      { text: 'Priority over Starter', ok: true },
+      { text: 'No ads', ok: false },
+    ],
+  },
+  {
+    id: 'pro',
     name: 'Pro',
     price: '₹199',
-    period: '/month',
-    highlighted: true,
+    sub: '/month',
+    badge: '⭐ Most Popular',
+    highlight: true,
+    color: '#16A34A',
+    emoji: '👑',
+    razorpayId: 'pro',
     features: [
-      { text: 'Unlimited lessons', included: true },
-      { text: 'Advanced SRS + weak spots', included: true },
-      { text: 'Full script library (Kanji)', included: true },
-      { text: 'Unlimited hearts', included: true },
-      { text: 'AI Tutor — unlimited chats', included: true },
-      { text: 'Speak Mode + pronunciation scores', included: true },
-      { text: 'JLPT N5→N1 mock tests', included: true },
-      { text: 'Offline mode', included: true },
-      { text: 'Duels + social features', included: true },
-      { text: 'Priority support', included: true },
-    ],
-  },
-  {
-    id: 'pro_yearly',
-    name: 'Yearly',
-    price: '₹999',
-    period: '/year',
-    highlighted: false,
-    badge: '🏆 Best Value — Save 58%',
-    features: [
-      { text: 'Everything in Pro', included: true },
-      { text: 'Save ₹1,389 vs monthly', included: true },
-      { text: 'Early access to new features', included: true },
-      { text: 'Velmorth Pro badge', included: true },
-      { text: 'Annual progress report', included: true },
-      { text: '1-on-1 study plan call', included: true },
-      { text: 'Custom streak goals', included: true },
-      { text: 'API access (advanced)', included: true },
-      { text: 'Dedicated account manager', included: true },
-      { text: 'Lifetime discount lock-in', included: true },
+      { text: 'Unlimited lessons', ok: true },
+      { text: 'No ads', ok: true },
+      { text: 'Advanced SRS + all tools', ok: true },
+      { text: '100 hearts max', ok: true },
+      { text: '99 AI chats/day', ok: true },
+      { text: 'Speak mode — full access', ok: true },
+      { text: 'JLPT N5→N1 all packs', ok: true },
+      { text: 'Early feature access', ok: true },
+      { text: 'Priority support', ok: true },
     ],
   },
 ];
 
-const PAYMENT_HISTORY: { date: string; plan: string; amount: string; status: string }[] = [];
+const YEARLY_PLAN = {
+  id: 'pro_yearly',
+  razorpayId: 'pro_yearly',
+  label: 'Pro Yearly — ₹999/year',
+  badge: '🏆 Best Value — Save 58%',
+  note: '≈ ₹83/month',
+};
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
+declare global { interface Window { Razorpay: any; } }
+
+// ── Plan badge label ─────────────────────────────────────────────────────────
+function planLabel(status: string) {
+  if (status === 'starter') return { text: 'Your Plan', color: '#0EA5E9' };
+  if (status === 'plus')    return { text: 'Your Plan', color: '#A855F7' };
+  if (status === 'pro' || status === 'yearly') return { text: 'Your Plan', color: '#16A34A' };
+  return null;
 }
 
 export function BillingView() {
-  const { session } = useAuth();
-  const [selectedPlan, setSelectedPlan] = useState<string>('pro_monthly');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { session, profile } = useAuth();
+  const [selectedId, setSelectedId] = useState<string>('pro');
+  const [useYearly, setUseYearly]   = useState(false);
+  const [loading, setLoading]        = useState(false);
+  const [success, setSuccess]        = useState(false);
+  const [error, setError]            = useState<string | null>(null);
 
-  const handleUpgrade = async () => {
+  const activePlanId = useYearly ? 'pro_yearly' : selectedId;
+
+  const handlePurchase = async () => {
+    if (selectedId === 'free') return;
     setLoading(true);
     setError(null);
+
     try {
-      // Create Razorpay order
       const res = await fetch('/api/billing/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId: selectedPlan }),
+        body: JSON.stringify({ planId: activePlanId }),
       });
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.error || 'Failed to create order');
 
-      // Open Razorpay checkout
-      if (typeof window !== 'undefined' && window.Razorpay) {
-        const rzp = new window.Razorpay({
-          key: data.key,
-          amount: data.amount,
-          currency: data.currency,
-          name: 'Velmorth Labs',
-          description: `Learn with Velmorth — ${selectedPlan === 'pro_monthly' ? 'Pro Monthly' : 'Pro Yearly'}`,
-          order_id: data.orderId,
-          theme: { color: '#16A34A' },
-          handler: async (response: any) => {
-            // Verify payment
-            const verifyRes = await fetch('/api/billing/verify', {
-              method: 'POST',
-              headers: { 
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session?.access_token || ''}`
-              },
-              body: JSON.stringify({ ...response, planId: selectedPlan }),
-            });
-            if (verifyRes.ok) {
-              setSuccess(true);
-            } else {
-              setError('Payment verification failed. Please contact support.');
-            }
-            setLoading(false);
-          },
-          modal: {
-            ondismiss: () => setLoading(false),
-          },
-        });
-        rzp.open();
-      } else {
+      if (typeof window === 'undefined' || !window.Razorpay) {
         throw new Error('Payment gateway not loaded. Please refresh and try again.');
       }
+
+      const planObj = PLANS.find(p => p.id === selectedId);
+
+      const rzp = new window.Razorpay({
+        key:         data.key,
+        amount:      data.amount,
+        currency:    data.currency,
+        name:        'Velmorth Labs',
+        description: data.label || `Learn with Velmorth — ${selectedId}`,
+        order_id:    data.orderId,
+        prefill:     { email: profile?.email || '' },
+        theme:       { color: planObj?.color || '#16A34A' },
+        notes:       { 'Prices in INR': 'Bank conversion may apply.' },
+        handler: async (response: any) => {
+          const verifyRes = await fetch('/api/billing/verify', {
+            method: 'POST',
+            headers: {
+              'Content-Type':  'application/json',
+              'Authorization': `Bearer ${session?.access_token || ''}`,
+            },
+            body: JSON.stringify({ ...response, planId: activePlanId }),
+          });
+          if (verifyRes.ok) {
+            setSuccess(true);
+          } else {
+            const ve = await verifyRes.json();
+            setError(ve.error || 'Verification failed. Please contact us on Instagram @Mannish_2323.');
+          }
+          setLoading(false);
+        },
+        modal: { ondismiss: () => setLoading(false) },
+      });
+      rzp.open();
     } catch (err: any) {
       setError(err.message || 'Something went wrong. Please try again.');
       setLoading(false);
     }
   };
 
+  // ── Success screen ────────────────────────────────────────────────────────
   if (success) {
     return (
-      <div className="billing-page page-enter">
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '60vh',
-          gap: 'var(--sp-4)',
-          textAlign: 'center',
-        }}>
-          <div style={{
-            width: 80, height: 80,
-            borderRadius: 'var(--radius-pill)',
-            background: 'var(--primary-light)',
-            border: '2px solid rgba(22,163,74,.4)',
-            display: 'grid',
-            placeItems: 'center',
-            fontSize: 40,
-            animation: 'bounceIn 500ms ease',
-          }}>
-            🎉
-          </div>
-          <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900 }}>You&apos;re now Pro!</h2>
-          <p style={{ color: 'var(--text-2)', maxWidth: 360 }}>
-            Welcome to Velmorth Pro. Enjoy unlimited lessons, AI Tutor, JLPT mock tests and more.
-          </p>
-          <div className="pro-badge" style={{ fontSize: 'var(--text-base)', padding: '10px 24px' }}>
-            <Crown size={18} /> PRO Active
-          </div>
+      <div className="billing-page page-enter" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', gap: 'var(--sp-5)', textAlign: 'center' }}>
+        <div style={{ fontSize: 64, animation: 'bounceIn 500ms ease' }}>🎉</div>
+        <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, margin: 0 }}>
+          Welcome to {PLANS.find(p => p.id === selectedId)?.name || 'Pro'}!
+        </h2>
+        <p style={{ color: 'var(--text-2)', maxWidth: 360 }}>
+          Your plan is now active. Enjoy unlimited Japanese learning! 頑張ってください！
+        </p>
+        <div className="pro-badge" style={{ fontSize: 'var(--text-base)', padding: '10px 24px' }}>
+          <Crown size={18} /> {PLANS.find(p => p.id === selectedId)?.name} Active
         </div>
+        <p style={{ fontSize: 12, color: 'var(--text-3)' }}>
+          Questions? DM us on Instagram{' '}
+          <a href="https://instagram.com/Mannish_2323" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>
+            @Mannish_2323
+          </a>
+        </p>
       </div>
     );
   }
 
+  // ── Main billing UI ──────────────────────────────────────────────────────
   return (
     <div className="billing-page page-enter">
+
       {/* Hero */}
       <div className="billing-hero">
         <div className="pro-badge" style={{ display: 'inline-flex', margin: '0 auto var(--sp-4)', fontSize: 'var(--text-sm)', padding: '8px 20px' }}>
-          <Crown size={16} /> Velmorth Pro
+          <Crown size={16} /> Velmorth Plans
         </div>
-        <h1>Supercharge your Japanese</h1>
-        <p>Unlock every feature and reach fluency 3× faster</p>
+        <h1>Pick your level of Japanese mastery</h1>
+        <p>Free forever. Upgrade anytime. Cancel anytime.</p>
       </div>
 
+      {/* Yearly toggle */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 'var(--sp-6)' }}>
+        <span style={{ fontSize: 'var(--text-sm)', color: useYearly ? 'var(--text-3)' : 'var(--text)' }}>Monthly</span>
+        <button
+          id="toggle-yearly"
+          onClick={() => setUseYearly(v => !v)}
+          style={{
+            width: 48, height: 26,
+            borderRadius: 13,
+            background: useYearly ? 'var(--primary)' : 'var(--surface-3)',
+            border: 'none',
+            cursor: 'pointer',
+            position: 'relative',
+            transition: 'background .2s ease',
+          }}
+        >
+          <span style={{
+            position: 'absolute',
+            top: 3, left: useYearly ? 25 : 3,
+            width: 20, height: 20,
+            borderRadius: '50%',
+            background: 'white',
+            transition: 'left .2s ease',
+          }} />
+        </button>
+        <span style={{ fontSize: 'var(--text-sm)', color: useYearly ? 'var(--primary)' : 'var(--text-3)', fontWeight: useYearly ? 700 : 400 }}>
+          Yearly <span style={{ fontSize: 11, background: 'rgba(22,163,74,.15)', color: 'var(--primary)', borderRadius: 6, padding: '2px 6px', marginLeft: 4 }}>Save 58%</span>
+        </span>
+      </div>
+
+      {/* Error banner */}
       {error && (
-        <div className="error-banner" style={{ marginBottom: 'var(--sp-6)', maxWidth: 600, margin: '0 auto var(--sp-6)' }}>
+        <div className="error-banner" style={{ maxWidth: 600, margin: '0 auto var(--sp-5)' }}>
           {error}
         </div>
       )}
 
       {/* Plan cards */}
-      <div className="plan-cards-grid" style={{ marginBottom: 'var(--sp-8)' }}>
-        {PLANS.map(plan => (
-          <div
-            key={plan.id}
-            className={`plan-card${plan.highlighted ? ' highlighted' : ''}${selectedPlan === plan.id ? ' highlighted' : ''}`}
-            onClick={() => setSelectedPlan(plan.id)}
-            role="radio"
-            aria-checked={selectedPlan === plan.id}
-            tabIndex={0}
-            onKeyDown={e => e.key === 'Enter' && setSelectedPlan(plan.id)}
-          >
-            {plan.badge && <div className="plan-best-badge">{plan.badge}</div>}
-            <div className="plan-name">{plan.name}</div>
-            <div className="plan-price">
-              {plan.price}
-              <span>{plan.period}</span>
-            </div>
-            {plan.id === 'pro_yearly' && (
-              <div style={{ fontSize: 'var(--text-xs)', color: 'var(--xp-gold)', marginBottom: 'var(--sp-2)', fontWeight: 700 }}>
-                ≈ ₹83/month
+      <div
+        className="plan-cards-grid"
+        style={{ marginBottom: 'var(--sp-6)', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}
+      >
+        {PLANS.map(plan => {
+          const isSelected = selectedId === plan.id;
+          const isCurrent  = profile?.planStatus === plan.id || (plan.id === 'pro' && profile?.planStatus === 'yearly');
+          const currentBadge = planLabel(profile?.planStatus || 'free');
+          const showCurrentBadge = isCurrent && currentBadge;
+
+          return (
+            <div
+              key={plan.id}
+              id={`plan-card-${plan.id}`}
+              className={`plan-card${plan.highlight || isSelected ? ' highlighted' : ''}`}
+              onClick={() => plan.id !== 'free' && setSelectedId(plan.id)}
+              role="radio"
+              aria-checked={isSelected}
+              tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && plan.id !== 'free' && setSelectedId(plan.id)}
+              style={{
+                cursor: plan.id === 'free' ? 'default' : 'pointer',
+                borderColor: isSelected ? plan.color : undefined,
+                position: 'relative',
+              }}
+            >
+              {/* Badges */}
+              {plan.badge && (
+                <div className="plan-best-badge" style={{ background: `${plan.color}22`, color: plan.color, border: `1px solid ${plan.color}44` }}>
+                  {plan.badge}
+                </div>
+              )}
+              {showCurrentBadge && (
+                <div style={{
+                  position: 'absolute', top: 8, right: 8,
+                  background: `${currentBadge!.color}22`,
+                  border: `1px solid ${currentBadge!.color}55`,
+                  color: currentBadge!.color,
+                  borderRadius: 8,
+                  padding: '2px 8px',
+                  fontSize: 10,
+                  fontWeight: 800,
+                  letterSpacing: '.04em',
+                }}>
+                  ✓ CURRENT
+                </div>
+              )}
+
+              {/* Plan header */}
+              <div style={{ fontSize: 28, marginBottom: 4 }}>{plan.emoji}</div>
+              <div className="plan-name" style={{ color: plan.color }}>{plan.name}</div>
+              <div className="plan-price">
+                {useYearly && plan.id === 'pro' ? '₹999' : plan.price}
+                <span>{useYearly && plan.id === 'pro' ? '/year' : plan.sub}</span>
               </div>
-            )}
-            <ul className="plan-features">
-              {plan.features.map((f, i) => (
-                <li key={i}>
-                  {f.included
-                    ? <Check size={14} className="feature-check" style={{ color: 'var(--primary)' }} />
-                    : <X size={14} className="feature-x" style={{ color: 'var(--text-3)' }} />
-                  }
-                  <span style={{ color: f.included ? 'var(--text)' : 'var(--text-3)' }}>
-                    {f.text}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            {plan.id !== 'free' && (
-              <button
-                className={selectedPlan === plan.id ? 'btn-primary' : 'btn-secondary'}
-                style={{ marginTop: 'var(--sp-3)' }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedPlan(plan.id);
-                }}
-              >
-                {selectedPlan === plan.id ? 'Selected' : 'Select'}
-              </button>
-            )}
-          </div>
-        ))}
+              {useYearly && plan.id === 'pro' && (
+                <div style={{ fontSize: 'var(--text-xs)', color: 'var(--xp-gold)', fontWeight: 700, marginBottom: 'var(--sp-2)' }}>
+                  ≈ ₹83/month · Save ₹1,389
+                </div>
+              )}
+
+              {/* Features */}
+              <ul className="plan-features">
+                {plan.features.map((f, i) => (
+                  <li key={i}>
+                    {f.ok
+                      ? <Check size={13} style={{ color: plan.color, flexShrink: 0 }} />
+                      : <X size={13} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
+                    }
+                    <span style={{ color: f.ok ? 'var(--text)' : 'var(--text-3)' }}>{f.text}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Select button */}
+              {plan.razorpayId && (
+                <button
+                  id={`btn-select-${plan.id}`}
+                  className={isSelected ? 'btn-primary' : 'btn-secondary'}
+                  style={{ marginTop: 'var(--sp-3)', background: isSelected ? plan.color : undefined, border: isSelected ? 'none' : undefined }}
+                  onClick={e => { e.stopPropagation(); setSelectedId(plan.id); }}
+                >
+                  {isSelected ? '✓ Selected' : 'Select'}
+                </button>
+              )}
+            </div>
+          );
+        })}
       </div>
 
-      {/* CTA */}
-      {selectedPlan !== 'free' && (
-        <div style={{ maxWidth: 480, margin: '0 auto var(--sp-8)', textAlign: 'center' }}>
+      {/* 1-on-1 Coming Soon card */}
+      <div
+        id="plan-card-1on1"
+        style={{
+          border: '1px dashed rgba(255,255,255,.12)',
+          borderRadius: 'var(--radius-xl)',
+          padding: 'var(--sp-5)',
+          textAlign: 'center',
+          color: 'var(--text-3)',
+          marginBottom: 'var(--sp-6)',
+          background: 'rgba(255,255,255,.02)',
+          cursor: 'not-allowed',
+          position: 'relative',
+        }}
+      >
+        <span style={{ fontSize: 28 }}>🎓</span>
+        <div style={{ fontWeight: 800, fontSize: 'var(--text-base)', margin: '6px 0 2px', color: 'var(--text-2)' }}>
+          1-on-1 Tutoring Plan
+        </div>
+        <div style={{ fontSize: 'var(--text-xs)' }}>
+          Live sessions with a Japanese teacher — Coming soon 🔜
+        </div>
+        <div style={{
+          position: 'absolute', top: 12, right: 12,
+          background: 'rgba(251,191,36,.12)',
+          border: '1px solid rgba(251,191,36,.3)',
+          color: '#FBBF24',
+          borderRadius: 8,
+          padding: '2px 10px',
+          fontSize: 10,
+          fontWeight: 800,
+          letterSpacing: '.06em',
+        }}>
+          SOON
+        </div>
+      </div>
+
+      {/* CTA Button */}
+      {selectedId !== 'free' && (
+        <div style={{ maxWidth: 480, margin: '0 auto var(--sp-6)', textAlign: 'center' }}>
           <button
-            className="btn-primary"
-            onClick={handleUpgrade}
-            disabled={loading}
-            style={{ fontSize: 'var(--text-lg)', padding: '16px var(--sp-8)', gap: 'var(--sp-2)' }}
             id="btn-checkout"
+            className="btn-primary"
+            onClick={handlePurchase}
+            disabled={loading}
+            style={{ fontSize: 'var(--text-base)', padding: '15px var(--sp-8)', gap: 'var(--sp-2)', width: '100%' }}
           >
             {loading ? (
               <><span className="loader-sm loader-inline" /> Processing...</>
             ) : (
-              <><Crown size={20} /> Upgrade to {selectedPlan === 'pro_monthly' ? 'Pro — ₹199/mo' : 'Yearly — ₹999/yr'}</>
+              <>
+                <Crown size={18} />
+                Get {PLANS.find(p => p.id === selectedId)?.name} —{' '}
+                {useYearly && selectedId === 'pro' ? '₹999/year' : `${PLANS.find(p => p.id === selectedId)?.price}/month`}
+              </>
             )}
           </button>
+          <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 'var(--sp-2)' }}>
+            Prices in INR. Your bank may apply conversion fees.
+          </p>
         </div>
       )}
 
@@ -279,41 +423,32 @@ export function BillingView() {
         <span className="trust-badge">🛡️ Cancel anytime</span>
       </div>
 
-      {/* Payment history */}
-      <div style={{ marginTop: 'var(--sp-10)' }}>
-        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, marginBottom: 'var(--sp-4)' }}>Payment History</h2>
-        {PAYMENT_HISTORY.length === 0 ? (
-          <div className="empty-state" style={{ padding: 'var(--sp-8)', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', minHeight: 'auto' }}>
-            <div className="empty-icon">📋</div>
-            <h3>No payments yet</h3>
-            <p>Your payment history will appear here after your first purchase.</p>
-          </div>
-        ) : (
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
-            <table className="payment-history-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Plan</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {PAYMENT_HISTORY.map((row, i) => (
-                  <tr key={i}>
-                    <td>{row.date}</td>
-                    <td>{row.plan}</td>
-                    <td>{row.amount}</td>
-                    <td style={{ color: row.status === 'paid' ? 'var(--success)' : 'var(--error)' }}>
-                      {row.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* Support — Instagram only */}
+      <div style={{
+        maxWidth: 480,
+        margin: 'var(--sp-8) auto 0',
+        textAlign: 'center',
+        padding: 'var(--sp-5)',
+        borderRadius: 'var(--radius-xl)',
+        background: 'var(--surface-2)',
+        border: '1px solid var(--border)',
+      }}>
+        <MessageCircle size={20} style={{ color: 'var(--primary)', marginBottom: 8 }} />
+        <p style={{ fontSize: 'var(--text-sm)', fontWeight: 600, margin: '0 0 4px' }}>
+          Need help or have a question?
+        </p>
+        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-2)', margin: 0 }}>
+          DM us on Instagram{' '}
+          <a
+            href="https://instagram.com/Mannish_2323"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--primary)', fontWeight: 700 }}
+          >
+            @Mannish_2323
+          </a>
+          {' '}— for feedback, support, and billing questions.
+        </p>
       </div>
 
       {/* Razorpay script */}

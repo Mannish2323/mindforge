@@ -224,9 +224,21 @@ export function useStore() {
     return state.hearts;
   };
 
-  const refillHearts = () => {
-    const updated = { ...state, hearts: state.maxHearts };
+  const refillHearts = (customMax?: number) => {
+    const targetMax = customMax ?? state.maxHearts;
+    const updated = { ...state, maxHearts: targetMax, hearts: targetMax };
     save(updated);
+  };
+
+  const syncMaxHearts = (limit: number) => {
+    if (limit && state.maxHearts !== limit) {
+      const updated = {
+        ...state,
+        maxHearts: limit,
+        hearts: state.hearts > limit ? limit : (state.maxHearts < limit ? limit : state.hearts)
+      };
+      save(updated);
+    }
   };
 
   const addGems = (amount: number) => {
@@ -504,6 +516,7 @@ export function useStore() {
     addXP,
     loseHeart,
     refillHearts,
+    syncMaxHearts,
     addGems,
     spendGems,
     completeLesson,

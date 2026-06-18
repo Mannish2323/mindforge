@@ -1,5 +1,5 @@
 -- ============================================================
--- LEARN WITH VELMORTH — Supabase Schema v3
+-- LEARN WITH VELMORTH — Supabase Schema v4
 -- Run this in your Supabase SQL editor
 -- ============================================================
 
@@ -27,21 +27,24 @@ CREATE TABLE IF NOT EXISTS public.user_settings (
   ui_language     TEXT DEFAULT 'en',
   tts_enabled     BOOLEAN DEFAULT TRUE,
   goal_minutes    INT DEFAULT 10,
-  notifications   BOOLEAN DEFAULT TRUE
+  notifications   BOOLEAN DEFAULT TRUE,
+  jlpt_target     TEXT DEFAULT 'N5' CHECK (jlpt_target IN ('N5', 'N4', 'N3', 'N2', 'N1'))
 );
 
 -- ============================================================
 -- USER STATS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.user_stats (
-  user_id       UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
-  xp_total      INT DEFAULT 0,
-  xp_today      INT DEFAULT 0,
-  gems_balance  INT DEFAULT 5,
-  lessons_done  INT DEFAULT 0,
-  words_learned INT DEFAULT 0,
-  reviews_done  INT DEFAULT 0,
-  last_active   DATE DEFAULT CURRENT_DATE
+  user_id         UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  xp_total        INT DEFAULT 0,
+  xp_today        INT DEFAULT 0,
+  gems_balance    INT DEFAULT 5,
+  lessons_done    INT DEFAULT 0,
+  words_learned   INT DEFAULT 0,
+  kanji_learned   INT DEFAULT 0,
+  reviews_done    INT DEFAULT 0,
+  speak_sessions  INT DEFAULT 0,
+  last_active     DATE DEFAULT CURRENT_DATE
 );
 
 -- ============================================================
@@ -59,13 +62,73 @@ CREATE TABLE IF NOT EXISTS public.user_streaks (
 -- ENTITLEMENTS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.entitlements (
-  user_id    UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
-  plan_id    TEXT DEFAULT 'free',
-  status     TEXT DEFAULT 'free' CHECK (status IN ('free', 'pro', 'yearly', 'cancelled')),
-  starts_at  TIMESTAMPTZ,
-  ends_at    TIMESTAMPTZ,
-  provider   TEXT,
-  payment_id TEXT
+  user_id              UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  plan_id              TEXT DEFAULT 'free',
+  status               TEXT DEFAULT 'free' CHECK (status IN ('free', 'starter', 'plus', 'pro', 'yearly', 'cancelled')),
+  starts_at            TIMESTAMPTZ,
+  ends_at              TIMESTAMPTZ,
+  provider             TEXT,
+  payment_id           TEXT,
+  -- Per-plan feature limits (synced from plans table on purchase)
+  hearts_limit         INT DEFAULT 50,
+  ai_limit_daily       INT DEFAULT 5,
+  lessons_limit_daily  INT DEFAULT 5,
+  ads_enabled          BOOLEAN DEFAULT TRUE
+);
+
+-- ============================================================
+-- PLANS (canonical plan config — read-only for users)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.plans (
+  plan_id              TEXT PRIMARY KEY,
+  name                 TEXT NOT NULL,
+  price_monthly        INT  DEFAULT 0,      -- in paise (₹99 = 9900)
+  price_yearly         INT  DEFAULT 0,
+  ads_enabled          BOOLEAN DEFAULT TRUE,
+  hearts_limit         INT  DEFAULT 50,
+  ai_limit_daily       INT  DEFAULT 5,
+  lessons_limit_daily  INT  DEFAULT 5,
+  jlpt_access_level    TEXT DEFAULT 'N5',
+  support_priority     TEXT DEFAULT 'community'
+);
+
+-- Seed plan rows (safe to re-run)
+INSERT INTO public.plans
+  (plan_id, name, price_monthly, price_yearly, ads_enabled, hearts_limit, ai_limit_daily, lessons_limit_daily, jlpt_access_level, support_priority)
+VALUES
+  ('free',    'Free',    0,     0,      true,  5,   5,  5,  'N5', 'community'),
+  ('starter', 'Starter', 9900,  0,      true,  25,  15, 15, 'N5', 'standard'),
+  ('plus',    'Plus',    14900, 0,      true,  50,  30, 30, 'N4', 'standard'),
+  ('pro',     'Pro',     19900, 99900,  false, 100, 99, 99, 'N1', 'priority')
+ON CONFLICT (plan_id) DO UPDATE SET
+  price_monthly       = EXCLUDED.price_monthly,
+  price_yearly        = EXCLUDED.price_yearly,
+  hearts_limit        = EXCLUDED.hearts_limit,
+  ai_limit_daily      = EXCLUDED.ai_limit_daily,
+  lessons_limit_daily = EXCLUDED.lessons_limit_daily;
+
+-- ============================================================
+-- USAGE COUNTERS (daily usage per user — resets each day)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.usage_counters (
+  user_id         UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  date            DATE DEFAULT CURRENT_DATE,
+  hearts_used     INT DEFAULT 0,
+  ai_requests     INT DEFAULT 0,
+  lessons_started INT DEFAULT 0,
+  reviews_done    INT DEFAULT 0,
+  PRIMARY KEY (user_id, date)
+);
+
+-- ============================================================
+-- ADMIN ROLES (internal only — not a public plan)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS public.admin_roles (
+  user_id     UUID PRIMARY KEY REFERENCES public.profiles(id) ON DELETE CASCADE,
+  role        TEXT DEFAULT 'admin' CHECK (role IN ('admin', 'moderator', 'content_editor')),
+  permissions JSONB DEFAULT '{}',
+  granted_at  TIMESTAMPTZ DEFAULT NOW(),
+  granted_by  UUID REFERENCES public.profiles(id)
 );
 
 -- ============================================================
@@ -229,9 +292,12 @@ BEGIN
   VALUES (NEW.id)
   ON CONFLICT (user_id) DO NOTHING;
 
-  -- Create entitlement (free by default)
-  INSERT INTO public.entitlements (user_id, plan_id, status)
-  VALUES (NEW.id, 'free', 'free')
+  -- Create entitlement (Free plan defaults)
+  INSERT INTO public.entitlements (
+    user_id, plan_id, status,
+    hearts_limit, ai_limit_daily, lessons_limit_daily, ads_enabled
+  )
+  VALUES (NEW.id, 'free', 'free', 50, 5, 5, true)
   ON CONFLICT (user_id) DO NOTHING;
 
   RETURN NEW;
@@ -265,6 +331,9 @@ ALTER TABLE public.review_queue      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.leaderboard_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications     ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.event_logs        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.plans             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.usage_counters    ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_roles       ENABLE ROW LEVEL SECURITY;
 
 -- profiles: own write, public read
 CREATE POLICY "profiles_read_all"  ON public.profiles FOR SELECT USING (TRUE);
@@ -310,6 +379,15 @@ CREATE POLICY "notifications_own" ON public.notifications FOR ALL USING (auth.ui
 -- event_logs: insert own row only
 CREATE POLICY "event_logs_insert_own" ON public.event_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+-- plans: public read only (prices are not secret)
+CREATE POLICY "plans_read_all" ON public.plans FOR SELECT USING (TRUE);
+
+-- usage_counters: own row only
+CREATE POLICY "usage_counters_own" ON public.usage_counters FOR ALL USING (auth.uid() = user_id);
+
+-- admin_roles: service role only (users cannot see or write this table)
+-- No SELECT policy — anon/authenticated roles cannot access admin_roles directly
+
 -- ============================================================
 -- REALTIME SUBSCRIPTIONS
 -- ============================================================
@@ -317,3 +395,49 @@ ALTER PUBLICATION supabase_realtime ADD TABLE public.user_stats;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.leaderboard_entries;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.review_queue;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.notifications;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.entitlements;
+
+-- ============================================================
+-- MIGRATION HELPERS (safe to run on existing DB)
+-- ============================================================
+-- Add new columns to entitlements if upgrading from v3
+ALTER TABLE public.entitlements ADD COLUMN IF NOT EXISTS hearts_limit        INT DEFAULT 50;
+ALTER TABLE public.entitlements ADD COLUMN IF NOT EXISTS ai_limit_daily      INT DEFAULT 5;
+ALTER TABLE public.entitlements ADD COLUMN IF NOT EXISTS lessons_limit_daily INT DEFAULT 5;
+ALTER TABLE public.entitlements ADD COLUMN IF NOT EXISTS ads_enabled         BOOLEAN DEFAULT TRUE;
+-- Fix status check constraint to include new plan tiers
+ALTER TABLE public.entitlements DROP CONSTRAINT IF EXISTS entitlements_status_check;
+ALTER TABLE public.entitlements ADD CONSTRAINT entitlements_status_check
+  CHECK (status IN ('free', 'starter', 'plus', 'pro', 'yearly', 'cancelled'));
+
+-- ============================================================
+-- SECURE LIMITS INCREMENT RPC (called securely from application)
+-- ============================================================
+CREATE OR REPLACE FUNCTION public.increment_daily_usage(
+  p_user_id UUID,
+  p_counter TEXT
+)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_today DATE := CURRENT_DATE;
+BEGIN
+  INSERT INTO public.usage_counters (user_id, date, hearts_used, ai_requests, lessons_started, reviews_done)
+  VALUES (
+    p_user_id,
+    v_today,
+    CASE WHEN p_counter = 'hearts_used' THEN 1 ELSE 0 END,
+    CASE WHEN p_counter = 'ai_requests' THEN 1 ELSE 0 END,
+    CASE WHEN p_counter = 'lessons_started' THEN 1 ELSE 0 END,
+    CASE WHEN p_counter = 'reviews_done' THEN 1 ELSE 0 END
+  )
+  ON CONFLICT (user_id, date) DO UPDATE SET
+    hearts_used = public.usage_counters.hearts_used + CASE WHEN p_counter = 'hearts_used' THEN 1 ELSE 0 END,
+    ai_requests = public.usage_counters.ai_requests + CASE WHEN p_counter = 'ai_requests' THEN 1 ELSE 0 END,
+    lessons_started = public.usage_counters.lessons_started + CASE WHEN p_counter = 'lessons_started' THEN 1 ELSE 0 END,
+    reviews_done = public.usage_counters.reviews_done + CASE WHEN p_counter = 'reviews_done' THEN 1 ELSE 0 END;
+END;
+$$;

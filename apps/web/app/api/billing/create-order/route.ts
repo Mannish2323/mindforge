@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Razorpay order creation API route
-// Requires: RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env.local
-
+// ── Plan → Razorpay amount (paise) ───────────────────────────────────────────
 const PLAN_AMOUNTS: Record<string, number> = {
-  pro_monthly: 19900,  // ₹199 in paise
-  pro_yearly:  99900,  // ₹999 in paise
+  starter:    9900,   // ₹99
+  plus:       14900,  // ₹149
+  pro:        19900,  // ₹199
+  pro_yearly: 99900,  // ₹999
+};
+
+const PLAN_LABELS: Record<string, string> = {
+  starter:    'Starter Monthly',
+  plus:       'Plus Monthly',
+  pro:        'Pro Monthly',
+  pro_yearly: 'Pro Yearly',
 };
 
 export async function POST(req: NextRequest) {
@@ -13,7 +20,10 @@ export async function POST(req: NextRequest) {
     const { planId } = await req.json();
 
     if (!planId || !PLAN_AMOUNTS[planId]) {
-      return NextResponse.json({ error: 'Invalid plan ID' }, { status: 400 });
+      return NextResponse.json(
+        { error: `Invalid plan ID "${planId}". Valid: starter, plus, pro, pro_yearly` },
+        { status: 400 }
+      );
     }
 
     const keyId     = process.env.RAZORPAY_KEY_ID || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -21,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     if (!keyId || !keySecret) {
       return NextResponse.json(
-        { error: 'Razorpay keys not configured. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to .env.local' },
+        { error: 'Razorpay keys not configured. Add RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET to env vars.' },
         { status: 503 }
       );
     }
@@ -33,13 +43,13 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/json',
+        'Content-Type':  'application/json',
       },
       body: JSON.stringify({
         amount,
         currency: 'INR',
-        receipt: `velmorth_${planId}_${Date.now()}`,
-        notes: { planId },
+        receipt:  `velmorth_${planId}_${Date.now()}`,
+        notes:    { planId, label: PLAN_LABELS[planId] },
       }),
     });
 
@@ -51,13 +61,17 @@ export async function POST(req: NextRequest) {
     const order = await response.json();
 
     return NextResponse.json({
-      orderId: order.id,
-      amount:  order.amount,
+      orderId:  order.id,
+      amount:   order.amount,
       currency: order.currency,
-      key: keyId,
+      key:      keyId,
+      label:    PLAN_LABELS[planId],
     });
   } catch (err: any) {
-    console.error('Razorpay create-order error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    console.error('[Billing] create-order error:', err.message);
+    return NextResponse.json(
+      { error: err.message || 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
