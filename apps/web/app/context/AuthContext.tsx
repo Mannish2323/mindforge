@@ -315,16 +315,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUpStep2 = async (username: string, displayName: string, avatarUrl: string) => {
     if (!user) throw new Error('Not authenticated');
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        username,
-        display_name: displayName,
-        avatar_url: avatarUrl,
-      })
-      .eq('id', user.id);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          username,
+          display_name: displayName,
+          avatar_url: avatarUrl,
+        })
+        .eq('id', user.id);
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error during signUpStep2 DB sync:', err);
+    }
     
     // Update local profile state
     setProfile(prev => prev ? {
@@ -337,12 +341,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUpStep3 = async (goalMinutes: number) => {
     if (!user) throw new Error('Not authenticated');
-    const { error } = await supabase
-      .from('user_settings')
-      .update({ goal_minutes: goalMinutes })
-      .eq('user_id', user.id);
+    try {
+      const { error } = await supabase
+        .from('user_settings')
+        .update({ goal_minutes: goalMinutes })
+        .eq('user_id', user.id);
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error during signUpStep3 DB sync:', err);
+    }
 
     // Update local profile state
     setProfile(prev => prev ? {
@@ -414,16 +422,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfileDetails = async (displayName: string, bio: string, avatarUrl: string) => {
     if (!user) throw new Error('Not authenticated');
-    const { error } = await supabase
-      .from('profiles')
-      .update({
-        display_name: displayName,
-        bio: bio,
-        avatar_url: avatarUrl,
-      })
-      .eq('id', user.id);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          display_name: displayName,
+          bio: bio,
+          avatar_url: avatarUrl,
+        })
+        .eq('id', user.id);
 
-    if (error) throw error;
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error updating profile details in DB:', err);
+    }
     
     // Update local profile state
     setProfile(prev => prev ? {
