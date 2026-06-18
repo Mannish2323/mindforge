@@ -22,7 +22,20 @@ export function SettingsView({
   onSetGoalMinutes,
   onNavigate,
 }: SettingsViewProps) {
-  const { user, profile, logout, updateSettings } = useAuth();
+  const { user, profile, logout, updateSettings, deleteAccount } = useAuth();
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteAccount();
+    } catch (err: any) {
+      setDeleteError(err.message || 'Failed to delete account');
+      setDeleting(false);
+    }
+  };
   const [notificationsEnabled, setNotificationsEnabled] = useState(profile?.notifications ?? true);
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -330,19 +343,33 @@ export function SettingsView({
           danger={true}
           right={
             showDeleteConfirm ? (
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <button onClick={() => setShowDeleteConfirm(false)}
-                  style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--surface-3)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'var(--text)' }}>
-                  Cancel
-                </button>
-                <button
-                  style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--error)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'white', fontWeight: 700 }}>
-                  Confirm Delete
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button 
+                    onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
+                    disabled={deleting}
+                    style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--surface-3)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'var(--text)' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDeleteAccount}
+                    disabled={deleting}
+                    style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--error)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'white', fontWeight: 700 }}
+                  >
+                    {deleting ? 'Deleting...' : 'Confirm Delete'}
+                  </button>
+                </div>
+                {deleteError && (
+                  <div style={{ fontSize: '10px', color: 'var(--error)', marginTop: '2px' }}>
+                    {deleteError}
+                  </div>
+                )}
               </div>
             ) : (
               <button className="btn-ghost"
                 onClick={() => setShowDeleteConfirm(true)}
+                disabled={deleting}
                 style={{ minHeight: 34, fontSize: '12px', color: 'var(--error)', border: '1px solid rgba(239,68,68,.4)', padding: '4px 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <Trash2 size={13} />
                 Delete

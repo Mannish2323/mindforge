@@ -38,6 +38,29 @@ export function AuthView() {
   // Signup step 3
   const [goalMinutes, setGoalMinutes] = useState(10);
 
+  const friendlyAuthError = (raw: any): string => {
+    if (!raw) return 'An unexpected error occurred.';
+    const msg = typeof raw === 'string' ? raw : (raw.message || '');
+    const code = raw.code || '';
+    
+    if (code === 'invalid_credentials' || msg.includes('Invalid login credentials')) {
+      return 'Incorrect email or password. Please try again.';
+    }
+    if (code === 'over_email_send_rate_limit' || msg.includes('rate limit exceeded')) {
+      return 'Too many attempts. Please wait a few minutes and try again.';
+    }
+    if (code === 'email_not_confirmed' || msg.includes('Email not confirmed')) {
+      return 'Please confirm your email address before signing in.';
+    }
+    if (code === 'user_already_exists' || msg.includes('User already registered') || msg.includes('User already exists')) {
+      return 'An account with this email address already exists.';
+    }
+    if (msg.includes('Password should be')) {
+      return 'Password must be at least 8 characters long.';
+    }
+    return msg || 'Authentication failed. Please try again.';
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -45,7 +68,7 @@ export function AuthView() {
     try {
       await loginWithEmail(email, password);
     } catch (err: any) {
-      setError(err.message || 'Sign-in failed. Check your email and password.');
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -57,7 +80,7 @@ export function AuthView() {
     try {
       await signInWithGoogle();
     } catch (err: any) {
-      setError(err.message || 'Google sign-in failed.');
+      setError(friendlyAuthError(err));
       setLoading(false);
     }
   };
@@ -69,10 +92,16 @@ export function AuthView() {
     setError(null);
     setLoading(true);
     try {
-      await signUpWithEmail(sEmail, sPassword, displayName || sEmail.split('@')[0]);
-      setStep(2);
+      const data = await signUpWithEmail(sEmail, sPassword, displayName || sEmail.split('@')[0]);
+      if (data && data.session) {
+        setStep(2);
+      } else {
+        // If session is null, email confirmation is enabled.
+        setError('✓ Verification email sent! Please check your inbox and verify your email, then sign in.');
+        setMode('login');
+      }
     } catch (err: any) {
-      setError(err.message || 'Sign-up failed. Please try again.');
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -87,7 +116,7 @@ export function AuthView() {
       await signUpStep2(username || displayName.toLowerCase().replace(/[^a-z0-9_]/g, ''), displayName, avatar);
       setStep(3);
     } catch (err: any) {
-      setError(err.message || 'Profile setup failed.');
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -101,7 +130,7 @@ export function AuthView() {
       await signUpStep3(goalMinutes);
       setStep(1);
     } catch (err: any) {
-      setError(err.message || 'Goal setup failed.');
+      setError(friendlyAuthError(err));
     } finally {
       setLoading(false);
     }
@@ -128,8 +157,24 @@ export function AuthView() {
         <p className="auth-sub">Sign in to continue your Japanese journey</p>
 
         {error && (
-          <div className="error-banner" role="alert">
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
+          <div 
+            className={error.startsWith('✓') ? 'success-banner' : 'error-banner'} 
+            role="alert"
+            style={error.startsWith('✓') ? {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--sp-2)',
+              padding: 'var(--sp-3)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: 'var(--radius-md)',
+              color: '#22c55e',
+              fontSize: 'var(--text-sm)',
+              marginBottom: 'var(--sp-4)',
+              lineHeight: 1.4
+            } : undefined}
+          >
+            {!error.startsWith('✓') && <AlertCircle size={16} style={{ flexShrink: 0 }} />}
             <span>{error}</span>
           </div>
         )}
@@ -219,8 +264,24 @@ export function AuthView() {
         <p className="auth-sub">Step 1 of 3 — Your credentials</p>
 
         {error && (
-          <div className="error-banner" role="alert">
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
+          <div 
+            className={error.startsWith('✓') ? 'success-banner' : 'error-banner'} 
+            role="alert"
+            style={error.startsWith('✓') ? {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--sp-2)',
+              padding: 'var(--sp-3)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: 'var(--radius-md)',
+              color: '#22c55e',
+              fontSize: 'var(--text-sm)',
+              marginBottom: 'var(--sp-4)',
+              lineHeight: 1.4
+            } : undefined}
+          >
+            {!error.startsWith('✓') && <AlertCircle size={16} style={{ flexShrink: 0 }} />}
             <span>{error}</span>
           </div>
         )}
@@ -300,8 +361,24 @@ export function AuthView() {
         <p className="auth-sub">Step 2 of 3 — Choose your identity</p>
 
         {error && (
-          <div className="error-banner" role="alert">
-            <AlertCircle size={16} style={{ flexShrink: 0 }} />
+          <div 
+            className={error.startsWith('✓') ? 'success-banner' : 'error-banner'} 
+            role="alert"
+            style={error.startsWith('✓') ? {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--sp-2)',
+              padding: 'var(--sp-3)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: 'var(--radius-md)',
+              color: '#22c55e',
+              fontSize: 'var(--text-sm)',
+              marginBottom: 'var(--sp-4)',
+              lineHeight: 1.4
+            } : undefined}
+          >
+            {!error.startsWith('✓') && <AlertCircle size={16} style={{ flexShrink: 0 }} />}
             <span>{error}</span>
           </div>
         )}
@@ -379,6 +456,29 @@ export function AuthView() {
         </div>
         <h1>Set your daily goal</h1>
         <p className="auth-sub">Step 3 of 3 — How long do you want to study each day?</p>
+
+        {error && (
+          <div 
+            className={error.startsWith('✓') ? 'success-banner' : 'error-banner'} 
+            role="alert"
+            style={error.startsWith('✓') ? {
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--sp-2)',
+              padding: 'var(--sp-3)',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: 'var(--radius-md)',
+              color: '#22c55e',
+              fontSize: 'var(--text-sm)',
+              marginBottom: 'var(--sp-4)',
+              lineHeight: 1.4
+            } : undefined}
+          >
+            {!error.startsWith('✓') && <AlertCircle size={16} style={{ flexShrink: 0 }} />}
+            <span>{error}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSignupStep3} noValidate>
           <label>Study time per day</label>

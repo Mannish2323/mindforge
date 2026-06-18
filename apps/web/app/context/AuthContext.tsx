@@ -52,7 +52,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
-  signUpWithEmail: (email: string, pass: string, name: string) => Promise<void>;
+  signUpWithEmail: (email: string, pass: string, name: string) => Promise<{ user: User | null; session: Session | null }>;
   signUpStep2: (username: string, displayName: string, avatarUrl: string) => Promise<void>;
   signUpStep3: (goalMinutes: number) => Promise<void>;
   logout: () => Promise<void>;
@@ -60,6 +60,7 @@ interface AuthContextType {
   updateSettings: (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean }>) => Promise<void>;
   updateProfileDetails: (displayName: string, bio: string, avatarUrl: string) => Promise<void>;
   updateHearts: (newHearts: number, nextRecoverAt: string | null, lastDebitAt: string | null) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -296,7 +297,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUpWithEmail = async (email: string, pass: string, name: string) => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password: pass,
         options: {
@@ -307,6 +308,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setLoading(false);
         throw error;
       }
+      if (data.user && data.session) {
+        setUser(data.user);
+        setSession(data.session);
+      }
+      return data;
     } catch (error) {
       setLoading(false);
       throw error;
@@ -471,6 +477,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const deleteAccount = async () => {
+    if (!session) throw new Error('Not authenticated');
+    setLoading(true);
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to delete account');
+      }
+      await logout();
+    } catch (error) {
+      setLoading(false);
+      throw error;
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -488,6 +515,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updateSettings,
         updateProfileDetails,
         updateHearts,
+        deleteAccount,
       }}
     >
       {children}
