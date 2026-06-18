@@ -248,7 +248,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        await syncUserProfile(session.user);
+        // Defer profile sync to prevent supabase-js internal deadlock
+        setTimeout(() => {
+          syncUserProfile(session.user);
+        }, 0);
       } else {
         setProfile(null);
       }
