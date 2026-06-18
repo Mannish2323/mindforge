@@ -78,8 +78,9 @@ class UserRepository(context: Context) {
     /**
      * Directly updates profile details.
      */
-    fun updateProfile(displayName: String, nativeLanguage: String) {
+    fun updateProfile(displayName: String, username: String, nativeLanguage: String) {
         prefsManager.userName = displayName
+        prefsManager.username = username
         prefsManager.nativeLanguage = nativeLanguage
     }
 

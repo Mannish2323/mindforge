@@ -116,7 +116,7 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
   };
 
   return (
-    <div className="profile-container-main" style={{ maxWidth: '680px', margin: '0 auto' }}>
+    <div className="profile-container-main" style={{ maxWidth: '680px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
 
       {/* ══ HERO HEADER ══════════════════════════════════════════════════ */}
       <div style={{
@@ -224,55 +224,79 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
             <span>Select Avatar</span>
           </button>
 
-          {/* Avatar picker dropdown */}
+          {/* Avatar picker — centered fixed overlay, mobile-safe */}
           {showAvatarPicker && (
-            <div style={{
-              position: 'absolute', top: '140px', zIndex: 200,
-              background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 'var(--radius-lg)', padding: 'var(--sp-4)',
-              display: 'flex', flexDirection: 'column', gap: '12px',
-              boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
-              animation: 'fadeup 0.2s ease both',
-              width: '260px',
-            }}>
-              <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-3)', letterSpacing: '0.04em', textTransform: 'uppercase', textAlign: 'center' }}>
-                Select New Avatar
-              </div>
+            <>
+              {/* Backdrop */}
+              <div
+                onClick={() => setShowAvatarPicker(false)}
+                style={{
+                  position: 'fixed', inset: 0, zIndex: 199,
+                  background: 'rgba(0,0,0,0.55)',
+                  backdropFilter: 'blur(4px)',
+                  animation: 'fadein 0.15s ease both',
+                }}
+              />
+              {/* Picker panel — always centered on screen */}
               <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px',
+                position: 'fixed',
+                top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 200,
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--sp-4)',
+                display: 'flex', flexDirection: 'column', gap: '12px',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                animation: 'fadescale 0.2s ease both',
+                width: 'min(280px, 90vw)',
               }}>
-                {AVATARS.map(av => {
-                  const isSelected = selectedAvatar === av;
-                  return (
-                    <button key={av} type="button" onClick={() => setSelectedAvatar(av)}
-                      style={{
-                        fontSize: '24px', width: '48px', height: '48px',
-                        borderRadius: 'var(--radius)',
-                        border: isSelected ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.06)',
-                        background: isSelected ? 'rgba(22,163,74,0.12)' : 'var(--surface-2)',
-                        cursor: 'pointer', transition: 'all 0.15s ease',
-                        transform: isSelected ? 'scale(1.08)' : 'scale(1)',
-                        boxShadow: isSelected ? '0 0 12px rgba(22,163,74,0.3)' : 'none',
-                      }}
-                      className="avatar-pick-btn"
-                    >
-                      {av}
-                    </button>
-                  );
-                })}
+                <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-3)', letterSpacing: '0.04em', textTransform: 'uppercase', textAlign: 'center' }}>
+                  Select New Avatar
+                </div>
+                <div style={{
+                  display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px',
+                }}>
+                  {AVATARS.map(av => {
+                    const isSelected = selectedAvatar === av;
+                    return (
+                      <button key={av} type="button" onClick={() => setSelectedAvatar(av)}
+                        style={{
+                          fontSize: '24px', width: '100%', aspectRatio: '1',
+                          borderRadius: 'var(--radius)',
+                          border: isSelected ? '2px solid var(--primary)' : '1px solid rgba(255,255,255,0.06)',
+                          background: isSelected ? 'rgba(22,163,74,0.12)' : 'var(--surface-2)',
+                          cursor: 'pointer', transition: 'all 0.15s ease',
+                          transform: isSelected ? 'scale(1.08)' : 'scale(1)',
+                          boxShadow: isSelected ? '0 0 12px rgba(22,163,74,0.3)' : 'none',
+                          display: 'grid', placeItems: 'center',
+                        }}
+                        className="avatar-pick-btn"
+                      >
+                        {av}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                  <button className="btn-ghost" onClick={() => setShowAvatarPicker(false)}
+                    style={{ flex: 1, padding: '10px 12px', fontSize: '13px', height: '42px', width: 'auto', minHeight: 'unset' }}>
+                    Cancel
+                  </button>
+                  <button
+                    id="btn-avatar-select"
+                    className="btn-primary"
+                    onClick={() => handleAvatarSelect(selectedAvatar)}
+                    style={{ flex: 1, padding: '10px 12px', fontSize: '13px', height: '42px', width: 'auto', minHeight: 'unset', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: 0 }}
+                  >
+                    <Check size={14} /> Save Avatar
+                  </button>
+                </div>
               </div>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                <button className="btn-ghost" onClick={() => setShowAvatarPicker(false)}
-                  style={{ flex: 1, padding: '8px 12px', fontSize: '12px', height: '36px', width: 'auto' }}>
-                  Cancel
-                </button>
-                <button className="btn-primary" onClick={() => handleAvatarSelect(selectedAvatar)}
-                  style={{ flex: 1, padding: '8px 12px', fontSize: '12px', height: '36px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                  <Check size={12} /> Select
-                </button>
-              </div>
-            </div>
+            </>
           )}
+
 
           {/* Name / Bio / Plan badge */}
           <div style={{

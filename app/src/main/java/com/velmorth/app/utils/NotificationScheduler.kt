@@ -47,6 +47,38 @@ object NotificationScheduler {
     }
 
     /**
+     * Schedules a PeriodicWorkRequest for the streak warning,
+     * firing daily around 8:00 PM (20:00).
+     */
+    fun scheduleStreakReminder(context: Context) {
+        val initialDelay = calculateInitialDelayMs(20, 0) // 8:00 PM
+
+        val request = PeriodicWorkRequestBuilder<StreakReminderWorker>(24, TimeUnit.HOURS)
+            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+            .setConstraints(
+                Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                    .build()
+            )
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "velmorth_streak_reminder",
+            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+            request
+        )
+        Log.d(TAG, "Streak break reminder scheduled at 20:00 (delay ${initialDelay / 60000}min)")
+    }
+
+    /**
+     * Cancels the streak break reminder.
+     */
+    fun cancelStreakReminder(context: Context) {
+        WorkManager.getInstance(context).cancelUniqueWork("velmorth_streak_reminder")
+        Log.d(TAG, "Streak break reminder cancelled")
+    }
+
+    /**
      * Computes how many milliseconds until the next occurrence of [hour]:[minute].
      * If that time has already passed today, returns the delay to the same time tomorrow.
      */

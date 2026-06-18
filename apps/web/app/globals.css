@@ -2689,16 +2689,19 @@ textarea { resize: vertical; min-height: 88px; }
 .center-content-column {
   width: 100%;
   max-width: 100%;
+  min-width: 0; /* prevent grid blowout on narrow viewports */
 }
 
+/* Stats panel — hidden on mobile (data already shown in topbar + home cards) */
 .stats-panel-card {
-  display: flex;
+  display: none; /* mobile: hidden */
   flex-direction: column;
   gap: var(--sp-4);
   width: 100%;
 }
 @media (min-width: 1024px) {
   .stats-panel-card {
+    display: flex; /* desktop: show as sticky right column */
     width: 300px;
     position: sticky;
     top: calc(var(--topbar-h) + var(--sp-4));
@@ -2739,3 +2742,150 @@ textarea { resize: vertical; min-height: 88px; }
   }
 }
 
+
+/* ============================================================
+   MASTER FIX v6 — ANDROID RESPONSIVE OVERRIDES
+   ============================================================ */
+
+/* Global overflow safety */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+#app-shell, #root, #__next {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* All cards: full-width, safe box model */
+.card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Mobile-specific (< 768px) ── */
+@media (max-width: 767px) {
+
+  /* Topbar: 52px height, compact */
+  .topbar {
+    height: 52px !important;
+    padding: 0 var(--sp-3) !important;
+    gap: var(--sp-2) !important;
+  }
+  .topbar-logo .logo-mark { width: 28px; height: 28px; font-size: 14px; }
+  .topbar-wordmark        { font-size: 13px; }
+  .topbar-stats           { gap: var(--sp-1) !important; }
+  .stat-pill {
+    padding: 4px 7px !important;
+    gap: 3px !important;
+    font-size: 10px !important;
+  }
+  .stat-pill .icon        { font-size: 12px !important; }
+  .pro-badge              { padding: 4px 7px !important; font-size: 10px !important; }
+
+  /* Bottom nav: fixed, safe */
+  .bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 100 !important;
+    height: var(--bottom-nav-h) !important;
+  }
+
+  /* Main content: extra padding-bottom so content is never hidden under nav */
+  .main-content {
+    padding: var(--sp-3) !important;
+    padding-bottom: calc(var(--bottom-nav-h) + 24px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Cards: always full-width, correct border-radius */
+  .card {
+    width: 100% !important;
+    border-radius: var(--radius-lg) !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Quick action grids: wrap on tiny screens */
+  .quick-actions-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* Profile page safe scroll */
+  .profile-container-main {
+    padding-bottom: calc(var(--bottom-nav-h) + 24px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Settings page: safe scroll */
+  .settings-page {
+    padding-bottom: calc(var(--bottom-nav-h) + 24px) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Remove min-widths that can cause horizontal overflow */
+  * { min-width: 0; }
+
+  /* Prevent button overflow */
+  .btn-primary, .btn-secondary, .btn-ghost {
+    min-width: unset !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Vocab cards full width */
+  .vocab-learn-card {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Dashboard three-col: stack on mobile */
+  .dashboard-three-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--sp-4) !important;
+  }
+  .stats-panel-card {
+    display: none !important; /* hidden on mobile — info is in topbar */
+  }
+
+  /* Chip groups: wrap on mobile */
+  .chip-group {
+    flex-wrap: wrap !important;
+  }
+
+  /* Admin tab nav: scroll horizontally */
+  .admin-tab-nav {
+    overflow-x: auto !important;
+    padding-bottom: 4px !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Bottom nav icons: 18px */
+  .bottom-nav button svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  .bottom-nav button {
+    font-size: 9px !important;
+    padding: 6px 2px !important;
+  }
+}
+
+/* ── Small mobile (< 375px) ── */
+@media (max-width: 374px) {
+  .stat-pill { display: none !important; }
+  .topbar-stats .hearts { display: flex !important; }  /* always keep hearts visible */
+  .topbar-stats .xp     { display: flex !important; }  /* always keep XP visible */
+  .topbar-wordmark      { display: none !important; }
+}
+
+/* ── Tablet layout (768px–1023px) already handled above; reinforce ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .profile-container-main { padding-bottom: var(--sp-10); }
+  .settings-page          { padding-bottom: var(--sp-10); }
+}

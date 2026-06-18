@@ -48,7 +48,7 @@ class VelmorthApp : Application() {
             Log.w("VelmorthApp", "Firebase initialisation skipped: ${e.message}")
         }
 
-        // ── Daily reminder scheduling ─────────────────────────────────────────
+        // ── Daily reminder & streak warning scheduling ─────────────────────────
         if (prefs.notificationsEnabled) {
             try {
                 NotificationScheduler.scheduleDailyReminder(
@@ -56,6 +56,7 @@ class VelmorthApp : Application() {
                     hour    = prefs.reminderHour,
                     minute  = prefs.reminderMinute
                 )
+                NotificationScheduler.scheduleStreakReminder(this)
             } catch (e: Exception) {
                 Log.w("VelmorthApp", "Failed to schedule reminder: ${e.message}")
             }

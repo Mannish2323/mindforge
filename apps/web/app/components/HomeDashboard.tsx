@@ -282,7 +282,56 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
         </div>
       )}
 
-      {/* ── 5. Daily Missions Card ── */}
+      {/* ── 5. Quick Actions Row ── */}
+      <div>
+        <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Quick Actions</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--sp-2)' }}>
+          {[
+            { icon: <PenLine size={20} style={{ color: 'var(--primary)' }} />, label: 'Script', bg: 'rgba(22,163,74,0.12)', action: () => onNavigate('script') },
+            { icon: <Mic size={20} style={{ color: 'var(--accent-ai)' }} />, label: 'Speak', bg: 'rgba(14,165,233,0.12)', action: () => onNavigate('speak') },
+            { icon: <RotateCcw size={20} style={{ color: 'var(--gem)' }} />, label: 'Review', bg: 'rgba(139,92,246,0.12)', action: () => onNavigate('review') },
+            { icon: <Medal size={20} style={{ color: 'var(--xp-gold)' }} />, label: 'JLPT', bg: 'rgba(251,191,36,0.12)', action: () => onNavigate('jlpt') },
+          ].map(item => (
+            <button
+              key={item.label}
+              onClick={item.action}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
+                padding: 'var(--sp-3) var(--sp-2)', borderRadius: 'var(--radius-lg)',
+                background: item.bg, border: '1px solid var(--border)',
+                cursor: 'pointer', color: 'var(--text)', transition: 'transform var(--t-fast)',
+              }}
+              className="card-interactive"
+            >
+              {item.icon}
+              <span style={{ fontSize: '11px', fontWeight: 700 }}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 6. Recent Badges Card ── */}
+      {unlockedBadges.length > 0 && (
+        <div
+          className="card card-interactive animate-fadein"
+          onClick={() => onNavigate('profile', 'badges')}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        >
+          <div>
+            <span style={{ fontSize: '11px', color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recent Badges</span>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+              {unlockedBadges.slice(-3).map((b: any) => (
+                <span key={b.badge_id} style={{ fontSize: '24px' }}>{b.icon}</span>
+              ))}
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--primary)', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+            View All <ChevronRight size={14} />
+          </div>
+        </div>
+      )}
+
+      {/* ── 7. Daily Missions Card ── */}
       <div className="card animate-fadein" style={{ padding: 'var(--sp-4)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
           <div>
@@ -313,55 +362,6 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
       </div>
 
 
-
-      {/* ── 7. Quick Actions Row ── */}
-      <div>
-        <h3 style={{ fontSize: 'var(--text-sm)', fontWeight: 800, marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Quick Actions</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--sp-2)' }}>
-          {[
-            { icon: <PenLine size={20} style={{ color: 'var(--primary)' }} />, label: 'Script', bg: 'rgba(22,163,74,0.12)', action: () => onNavigate('script') },
-            { icon: <Mic size={20} style={{ color: 'var(--accent-ai)' }} />, label: 'Speak', bg: 'rgba(14,165,233,0.12)', action: () => onNavigate('speak') },
-            { icon: <RotateCcw size={20} style={{ color: 'var(--gem)' }} />, label: 'Review', bg: 'rgba(139,92,246,0.12)', action: () => onNavigate('review') },
-            { icon: <Medal size={20} style={{ color: 'var(--xp-gold)' }} />, label: 'JLPT', bg: 'rgba(251,191,36,0.12)', action: () => onNavigate('jlpt') },
-          ].map(item => (
-            <button
-              key={item.label}
-              onClick={item.action}
-              style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                padding: 'var(--sp-3) var(--sp-2)', borderRadius: 'var(--radius-lg)',
-                background: item.bg, border: '1px solid var(--border)',
-                cursor: 'pointer', color: 'var(--text)', transition: 'transform var(--t-fast)',
-              }}
-              className="card-interactive"
-            >
-              {item.icon}
-              <span style={{ fontSize: '11px', fontWeight: 700 }}>{item.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── 8. Recent Badges Card ── */}
-      {unlockedBadges.length > 0 && (
-        <div
-          className="card card-interactive animate-fadein"
-          onClick={() => onNavigate('profile', 'badges')}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-        >
-          <div>
-            <span style={{ fontSize: '11px', color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Recent Badges</span>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-              {unlockedBadges.slice(-3).map((b: any) => (
-                <span key={b.badge_id} style={{ fontSize: '24px' }}>{b.icon}</span>
-              ))}
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--primary)', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
-            View All <ChevronRight size={14} />
-          </div>
-        </div>
-      )}
 
       {/* ── 9. Focus of the Day Card ── */}
       <div className="card animate-fadein" style={{ padding: 'var(--sp-5)', background: 'linear-gradient(135deg, rgba(139,92,246,0.10), rgba(14,165,233,0.08))' }}>

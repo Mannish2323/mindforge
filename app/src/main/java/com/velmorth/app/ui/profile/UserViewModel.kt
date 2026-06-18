@@ -180,16 +180,18 @@ class UserViewModel @Inject constructor(
     }
 
     /**
-     * Updates the display name and native language, syncing to Firestore.
+     * Updates the display name, username and native language, syncing to Firestore.
      */
-    fun updateProfile(displayName: String, nativeLanguage: String) {
+    fun updateProfile(displayName: String, username: String, nativeLanguage: String) {
         prefs.userName        = displayName
+        prefs.username        = username
         prefs.nativeLanguage  = nativeLanguage
-        _userState.update { it.copy(name = displayName, nativeLanguage = nativeLanguage) }
+        _userState.update { it.copy(name = displayName, username = username, nativeLanguage = nativeLanguage) }
 
         viewModelScope.launch(Dispatchers.IO) {
             FirestoreProgressRepository.syncUserProfile(
-                name           = displayName,
+                displayName    = displayName,
+                username       = username,
                 nativeLanguage = nativeLanguage,
                 profileImage   = null
             )

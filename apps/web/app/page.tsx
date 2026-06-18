@@ -47,6 +47,7 @@ import { ScriptLab } from './components/ScriptLab';
 import { SpeakRoleplay } from './components/SpeakRoleplay';
 import { JlptPrep } from './components/JlptPrep';
 import { SmartReview } from './components/SmartReview';
+import { VocabLearnView } from './components/VocabLearnView';
 import { getDaysUntilLeagueReset, getLeagueThresholds } from '@evlo/core-logic';
 import { useAuth } from './context/AuthContext';
 import { AuthView } from './components/AuthView';
@@ -296,7 +297,7 @@ export default function EVLOApp() {
     return xpArray;
   }, [activeState?.lessonProgress, activeState?.stories]);
 
-  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings' | 'billing' | 'admin'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'learn' | 'vocab' | 'script' | 'speak' | 'jlpt' | 'review' | 'leaderboard' | 'analytics' | 'social' | 'profile' | 'settings' | 'billing' | 'admin'>('home');
   const [activeSubView, setActiveSubView] = useState<'none' | 'hiragana' | 'jlpt-plan' | 'phrases' | 'lesson-player' | 'script-lab' | 'stories' | 'ai-chat' | 'quests' | 'badges'>('none');
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [lockedFeatureName, setLockedFeatureName] = useState<string | undefined>(undefined);
@@ -2218,6 +2219,14 @@ export default function EVLOApp() {
         return <SpeakRoleplay onBack={() => setActiveTab('home')} />;
       case 'jlpt':
         return <JlptPrep state={activeState} onBack={() => setActiveTab('home')} />;
+      case 'vocab':
+        return (
+          <VocabLearnView
+            state={activeState}
+            onXpGained={(xp) => { addXP(xp); }}
+            onHeartLost={() => { loseHeart(); }}
+          />
+        );
       case 'review':
         return (
           <SmartReview
@@ -2270,6 +2279,10 @@ export default function EVLOApp() {
             <button className={cn({ active: activeTab === 'learn' })} onClick={() => navigate('learn')} aria-label="Learn Path" id="nav-learn">
               <BookOpen size={18} />
               <span>Learn Path</span>
+            </button>
+            <button className={cn({ active: activeTab === 'vocab' })} onClick={() => navigate('vocab')} aria-label="Vocab" id="nav-vocab">
+              <BookOpen size={18} />
+              <span>Vocab</span>
             </button>
             <button className={cn({ active: activeTab === 'script' })} onClick={() => navigate('script')} aria-label="Script Lab" id="nav-script">
               <PenLine size={18} />
@@ -2501,13 +2514,13 @@ export default function EVLOApp() {
             <span>Path</span>
           </button>
           <button
-            className={cn({ active: activeTab === 'script' })}
-            onClick={() => navigate('script')}
-            aria-label="Script Lab"
-            aria-current={activeTab === 'script' ? 'page' : undefined}
+            className={cn({ active: activeTab === 'vocab' })}
+            onClick={() => navigate('vocab')}
+            aria-label="Vocab"
+            aria-current={activeTab === 'vocab' ? 'page' : undefined}
           >
-            <PenLine size={20} />
-            <span>Script</span>
+            <BookOpen size={20} />
+            <span>Vocab</span>
           </button>
           <button
             className={cn({ active: activeTab === 'speak' })}

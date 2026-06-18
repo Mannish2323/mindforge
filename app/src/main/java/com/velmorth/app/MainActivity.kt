@@ -1,11 +1,15 @@
 package com.velmorth.app
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -116,6 +120,30 @@ class MainActivity : FragmentActivity() {
                 isEnabled = false
                 onBackPressedDispatcher.onBackPressed()
             }
+        }
+
+        // Check and ask for any missing permissions to run freely
+        checkAndRequestPermissions()
+    }
+
+    private fun checkAndRequestPermissions() {
+        val requiredPermissions = mutableListOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.CAMERA
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requiredPermissions.add(Manifest.permission.POST_NOTIFICATIONS)
+            requiredPermissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+        } else {
+            requiredPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+        val missing = requiredPermissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (missing.isNotEmpty()) {
+            requestPermissions(missing.toTypedArray(), 101)
         }
     }
 

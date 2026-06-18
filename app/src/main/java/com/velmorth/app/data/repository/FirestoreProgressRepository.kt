@@ -305,16 +305,20 @@ object FirestoreProgressRepository {
     }
 
     /**
-     * Syncs updated user profile info (username, native language, profile image) to Firestore.
+     * Syncs updated user profile info (name, username, native language, profile image) to Firestore.
      */
-    fun syncUserProfile(name: String, nativeLanguage: String, profileImage: String?) {
+    fun syncUserProfile(displayName: String, username: String, nativeLanguage: String, profileImage: String?) {
         val uid = currentUid() ?: return
         val db = getDb() ?: return
 
-        val userUpdates = mapOf(
-            "username"     to name,
-            "profileImage" to (profileImage ?: "")
+        val userUpdates = mutableMapOf<String, Any>(
+            "name"     to displayName,
+            "username" to username
         )
+        if (profileImage != null) {
+            userUpdates["profileImage"] = profileImage
+        }
+
         db.collection(USERS).document(uid)
             .update(userUpdates)
             .addOnFailureListener { e ->

@@ -43,6 +43,8 @@ import com.velmorth.app.ui.splash.SplashActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.velmorth.app.utils.NotificationScheduler
 import com.velmorth.app.theme.LearnWithVelmorthTheme
+import androidx.activity.viewModels
+import com.velmorth.app.ui.profile.UserViewModel
 
 // ── Colors ────────────────────────────────────────────────────────────────────
 private val BgCream: Color
@@ -76,6 +78,8 @@ private val DangerRed: Color
  * Full-featured Settings screen with Firestore sync.
  */
 class SettingsActivity : AppCompatActivity() {
+
+    private val userViewModel: UserViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +120,9 @@ class SettingsActivity : AppCompatActivity() {
                 initialValue = displayName,
                 onDismiss   = { showNameDialog = false },
                 onSave      = { v ->
-                    displayName = v; prefs.userName = v
+                    displayName = v
+                    prefs.userName = v
+                    userViewModel.updateProfile(displayName = v, username = username, nativeLanguage = prefs.nativeLanguage)
                     showNameDialog = false
                     Toast.makeText(context, "Name updated ✓", Toast.LENGTH_SHORT).show()
                 }
@@ -129,7 +135,14 @@ class SettingsActivity : AppCompatActivity() {
                 initialValue = username,
                 onDismiss    = { showUsernameDialog = false },
                 onSave       = { v ->
-                    username = v; prefs.username = v
+                    val cleanUsername = v.lowercase().replace("[^a-z0-9_]".toRegex(), "")
+                    if (cleanUsername.isEmpty()) {
+                        Toast.makeText(context, "Invalid username", Toast.LENGTH_SHORT).show()
+                        return@EditFieldDialog
+                    }
+                    username = cleanUsername
+                    prefs.username = cleanUsername
+                    userViewModel.updateProfile(displayName = displayName, username = cleanUsername, nativeLanguage = prefs.nativeLanguage)
                     showUsernameDialog = false
                     Toast.makeText(context, "Username updated ✓", Toast.LENGTH_SHORT).show()
                 }
@@ -244,8 +257,12 @@ class SettingsActivity : AppCompatActivity() {
                         FirestoreProgressRepository.ensureSettingsDocExists()
                         if (enabled) {
                             NotificationScheduler.scheduleDailyReminder(context, reminderHour, reminderMinute)
+                            if (streakAlert) {
+                                NotificationScheduler.scheduleStreakReminder(context)
+                            }
                         } else {
                             NotificationScheduler.cancelReminder(context)
+                            NotificationScheduler.cancelStreakReminder(context)
                         }
                     }
                 )
@@ -276,7 +293,15 @@ class SettingsActivity : AppCompatActivity() {
                     title    = "Streak Alert",
                     subtitle = "Warn when your streak is at risk",
                     checked  = streakAlert,
-                    onToggle = { streakAlert = it; prefs.streakAlertEnabled = it }
+                    onToggle = { enabled ->
+                        streakAlert = enabled
+                        prefs.streakAlertEnabled = enabled
+                        if (enabled && dailyReminder) {
+                            NotificationScheduler.scheduleStreakReminder(context)
+                        } else {
+                            NotificationScheduler.cancelStreakReminder(context)
+                        }
+                    }
                 )
                 RowDivider()
                 SwitchRow(

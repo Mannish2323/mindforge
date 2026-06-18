@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { LogOut, Trash2, Moon, Sun, Monitor, Bell, BellOff, Globe, ChevronRight, ExternalLink } from 'lucide-react';
+import { LogOut, Trash2, Moon, Sun, Monitor, Globe, ChevronRight, ExternalLink, Lock, Instagram } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { createClient } from '../lib/supabase';
 
 interface SettingsViewProps {
   state: any;
@@ -25,6 +26,11 @@ export function SettingsView({
   const [notificationsEnabled, setNotificationsEnabled] = useState(profile?.notifications ?? true);
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwMsg, setPwMsg] = useState('');
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -70,6 +76,26 @@ export function SettingsView({
     } catch { /* silent */ }
   };
 
+  const handleChangePassword = async () => {
+    if (!newPassword || newPassword.length < 6) { setPwMsg('Password must be at least 6 characters.'); return; }
+    if (newPassword !== confirmPassword) { setPwMsg('Passwords do not match.'); return; }
+    setPwLoading(true);
+    setPwMsg('');
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      setPwMsg('✅ Password changed successfully!');
+      setNewPassword('');
+      setConfirmPassword('');
+      setTimeout(() => { setShowChangePassword(false); setPwMsg(''); }, 2000);
+    } catch (err: any) {
+      setPwMsg(`❌ ${err.message || 'Failed to change password'}`);
+    } finally {
+      setPwLoading(false);
+    }
+  };
+
   const SectionHeader = ({ title }: { title: string }) => (
     <div style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.1em', color: 'var(--text-3)', padding: 'var(--sp-5) var(--sp-5) var(--sp-2)', textTransform: 'uppercase' }}>
       {title}
@@ -105,11 +131,41 @@ export function SettingsView({
   );
 
   return (
-    <div className="settings-page page-enter" style={{ maxWidth: '640px', margin: '0 auto' }}>
+    <div className="settings-page page-enter" style={{ maxWidth: '640px', margin: '0 auto', paddingBottom: 'calc(var(--bottom-nav-h) + 32px)' }}>
       <div style={{ padding: 'var(--sp-5) var(--sp-5) 0' }}>
         <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900 }}>Settings</h1>
         <p style={{ color: 'var(--text-3)', fontSize: 'var(--text-sm)', marginTop: '4px' }}>Preferences and account control</p>
       </div>
+
+      {/* Change Password Modal */}
+      {showChangePassword && (
+        <>
+          <div onClick={() => setShowChangePassword(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', zIndex: 299 }} />
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+            zIndex: 300, background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-xl)', padding: 'var(--sp-6)', width: 'min(360px, 92vw)',
+            boxShadow: 'var(--shadow-lg)', animation: 'fadescale 0.2s ease both',
+          }}>
+            <h3 style={{ fontWeight: 800, marginBottom: 'var(--sp-4)' }}>🔒 Change Password</h3>
+            <label style={{ marginTop: 0 }}>New Password</label>
+            <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)}
+              placeholder="Min. 6 characters" style={{ marginTop: '6px' }} />
+            <label>Confirm Password</label>
+            <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
+              placeholder="Repeat password" style={{ marginTop: '6px' }} />
+            {pwMsg && (
+              <p style={{ fontSize: '12px', marginTop: '8px', color: pwMsg.startsWith('✅') ? 'var(--success)' : 'var(--error)' }}>{pwMsg}</p>
+            )}
+            <div style={{ display: 'flex', gap: '8px', marginTop: 'var(--sp-4)' }}>
+              <button className="btn-ghost" onClick={() => { setShowChangePassword(false); setPwMsg(''); setNewPassword(''); setConfirmPassword(''); }}
+                style={{ flex: 1, height: '44px', fontSize: '13px' }}>Cancel</button>
+              <button className="btn-primary" onClick={handleChangePassword} disabled={pwLoading}
+                style={{ flex: 1, marginTop: 0 }}>{pwLoading ? 'Saving…' : 'Update Password'}</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ── APPEARANCE ── */}
       <SectionHeader title="Appearance" />
@@ -206,6 +262,12 @@ export function SettingsView({
           label="Username"
           sub={`@${profile?.username ?? '—'}`}
           right={<span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 600 }}>Edit</span>}
+        />
+        <SettingsRow
+          label="Change Password"
+          sub="Update your account password"
+          right={<Lock size={15} style={{ color: 'var(--text-3)' }} />}
+          onClick={() => setShowChangePassword(true)}
         />
         <SettingsRow
           label="Subscription"
@@ -319,6 +381,12 @@ export function SettingsView({
       {/* ── SUPPORT ── */}
       <SectionHeader title="Support" />
       <div className="card" style={{ margin: '0 var(--sp-4)', padding: 0, overflow: 'hidden', marginBottom: 'var(--sp-2)' }}>
+        <SettingsRow
+          label="DM on Instagram"
+          sub="@Mannish_2323 — fastest support"
+          right={<ExternalLink size={14} style={{ color: 'var(--accent-ai)' }} />}
+          onClick={() => window.open('https://instagram.com/Mannish_2323', '_blank')}
+        />
         <SettingsRow
           label="Send Feedback"
           sub="Help us improve Learn with Velmorth"

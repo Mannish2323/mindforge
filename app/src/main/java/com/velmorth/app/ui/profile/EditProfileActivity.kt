@@ -497,11 +497,12 @@ class EditProfileActivity : ComponentActivity() {
 
                                 val finalSave = { photoUrlToSave: String ->
                                     prefsManager.photoUrl = photoUrlToSave
-                                    userRepository.updateProfile(displayName.trim(), nativeLanguage)
+                                    userRepository.updateProfile(displayName.trim(), prefsManager.username, nativeLanguage)
                                     FirestoreProgressRepository.syncUserProfile(
-                                        name          = displayName.trim(),
+                                        displayName    = displayName.trim(),
+                                        username       = prefsManager.username,
                                         nativeLanguage = nativeLanguage,
-                                        profileImage  = photoUrlToSave
+                                        profileImage   = photoUrlToSave
                                     )
                                     Toast.makeText(context, "Profile updated! ✅", Toast.LENGTH_SHORT).show()
                                     finish()
