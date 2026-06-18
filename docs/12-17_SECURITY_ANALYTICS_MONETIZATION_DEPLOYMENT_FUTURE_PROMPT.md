@@ -761,7 +761,7 @@ gcloud storage cp /data/dump.rdb gs://velmorth-backups/redis/$(date +%Y%m%d).rdb
 
 # SECTION 16 — FUTURE TECHNOLOGIES
 
-## 16.1 AR Learning (2026-2027)
+## 16.1 AR Learning (2028-2029)
 
 ### Street Mode AR
 ```
@@ -793,7 +793,7 @@ Example: A virtual kitchen where every object is labeled in target language
          Objects fade to grey if not reviewed recently (visual spaced repetition)
 ```
 
-## 16.2 VR Learning (2027-2028)
+## 16.2 VR Learning (2029-2030)
 
 ```
 Platform: Meta Quest 3, Apple Vision Pro
@@ -894,7 +894,7 @@ Adaptation:
 ```python
 class PredictiveLearningEngine:
     """
-    2028 vision: Predict exactly what a learner needs BEFORE they ask.
+    2030 vision: Predict exactly what a learner needs BEFORE they ask.
     """
     
     def predict_optimal_tomorrow(self, user_id: str) -> TomorrowPlan:
@@ -931,7 +931,7 @@ class PredictiveLearningEngine:
         )
 ```
 
-## 16.7 Metaverse Classroom (2029)
+## 16.7 Metaverse Classroom (2031)
 
 ```
 Platform: Decentralized metaverse (compatible with Open Metaverse standards)

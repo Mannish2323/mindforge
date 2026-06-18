@@ -200,14 +200,14 @@ Beyond explicit instruction, Velmorth provides massive quantities of comprehensi
 
 ## 1.7 FUTURE EXPANSION STRATEGY
 
-### Phase 1 (2025-2026): Core Product Excellence
+### Phase 1 (2027-2028): Core Product Excellence
 - Launch with 10 most-demanded languages (Spanish, French, German, Japanese, Mandarin, Arabic, Portuguese, Korean, Italian, Hindi)
 - Perfect the Learning DNA and adaptive engine
 - Build the community ecosystem to critical mass
 - Achieve 1M DAU
 - Establish school pilot programs in 5 countries
 
-### Phase 2 (2026-2027): Scale & Diversification
+### Phase 2 (2028-2029): Scale & Diversification
 - Expand to 30 languages
 - Launch B2B enterprise product
 - Government education contracts (5 target countries)
@@ -216,7 +216,7 @@ Beyond explicit instruction, Velmorth provides massive quantities of comprehensi
 - Expand to 10M DAU
 - Series B funding for international expansion
 
-### Phase 3 (2027-2028): Deep Intelligence
+### Phase 3 (2029-2030): Deep Intelligence
 - Launch full AI Teacher Cloning capability (upload a teacher's pedagogical style; AI learns from it)
 - Digital Human Teachers — photorealistic AI avatars
 - Emotion Detection via camera (opt-in)
@@ -224,14 +224,14 @@ Beyond explicit instruction, Velmorth provides massive quantities of comprehensi
 - 50M DAU target
 - IPO preparation or strategic partnership
 
-### Phase 4 (2028-2029): Immersive Reality
+### Phase 4 (2030-2031): Immersive Reality
 - Full VR classroom launch (Meta Quest, Apple Vision Pro)
 - AR street-mode (point phone at real-world text; instant contextual lesson generated)
 - Brain-Computer Interface research partnerships (passive learning state optimization)
 - 100+ languages
 - 100M DAU target
 
-### Phase 5 (2029-2030): Platform of Record
+### Phase 5 (2031-2032): Platform of Record
 - Velmorth becomes the global standard for language proficiency certification
 - University admission integration in 20+ countries
 - Employer talent verification API

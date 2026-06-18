@@ -129,11 +129,11 @@ Jaeger — Distributed tracing
 
 | Phase | Timeline | Milestone |
 |---|---|---|
-| 1: Core Excellence | 2025-2026 | 10 languages, 1M DAU, Learning DNA v1 |
-| 2: Scale & B2B | 2026-2027 | 30 languages, 10M DAU, Enterprise launch |
-| 3: Deep Intelligence | 2027-2028 | AI Teacher Cloning, 50M DAU, IPO ready |
-| 4: Immersive Reality | 2028-2029 | Full VR classrooms, 100M DAU |
-| 5: Platform of Record | 2029-2030 | Global certification standard, UNESCO partnership |
+| 1: Core Excellence | 2027-2028 | 10 languages, 1M DAU, Learning DNA v1 |
+| 2: Scale & B2B | 2028-2029 | 30 languages, 10M DAU, Enterprise launch |
+| 3: Deep Intelligence | 2029-2030 | AI Teacher Cloning, 50M DAU, IPO ready |
+| 4: Immersive Reality | 2030-2031 | Full VR classrooms, 100M DAU |
+| 5: Platform of Record | 2031-2032 | Global certification standard, UNESCO partnership |
 
 ---
 
