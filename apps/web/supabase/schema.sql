@@ -28,7 +28,10 @@ CREATE TABLE IF NOT EXISTS public.user_settings (
   tts_enabled     BOOLEAN DEFAULT TRUE,
   goal_minutes    INT DEFAULT 10,
   notifications   BOOLEAN DEFAULT TRUE,
-  jlpt_target     TEXT DEFAULT 'N5' CHECK (jlpt_target IN ('N5', 'N4', 'N3', 'N2', 'N1'))
+  jlpt_target     TEXT DEFAULT 'N5' CHECK (jlpt_target IN ('N5', 'N4', 'N3', 'N2', 'N1')),
+  heart_system_enabled BOOLEAN DEFAULT TRUE,
+  heart_recovery_mode  TEXT DEFAULT 'time',
+  heart_recovery_hours INT DEFAULT 24
 );
 
 -- ============================================================
@@ -44,7 +47,12 @@ CREATE TABLE IF NOT EXISTS public.user_stats (
   kanji_learned   INT DEFAULT 0,
   reviews_done    INT DEFAULT 0,
   speak_sessions  INT DEFAULT 0,
-  last_active     DATE DEFAULT CURRENT_DATE
+  last_active     DATE DEFAULT CURRENT_DATE,
+  hearts_total    INT DEFAULT 50,
+  hearts_used_today INT DEFAULT 0,
+  hearts_max      INT DEFAULT 50,
+  hearts_recover_at TIMESTAMPTZ,
+  hearts_last_debit_at TIMESTAMPTZ
 );
 
 -- ============================================================
@@ -117,6 +125,9 @@ CREATE TABLE IF NOT EXISTS public.usage_counters (
   ai_requests     INT DEFAULT 0,
   lessons_started INT DEFAULT 0,
   reviews_done    INT DEFAULT 0,
+  hearts_spent    INT DEFAULT 0,
+  lessons_attempted INT DEFAULT 0,
+  reviews_attempted INT DEFAULT 0,
   PRIMARY KEY (user_id, date)
 );
 
@@ -282,9 +293,9 @@ BEGIN
   VALUES (NEW.id)
   ON CONFLICT (user_id) DO NOTHING;
 
-  -- Create user_stats (all zeros)
-  INSERT INTO public.user_stats (user_id)
-  VALUES (NEW.id)
+  -- Create user_stats (all zeros + default hearts)
+  INSERT INTO public.user_stats (user_id, hearts_total, hearts_max)
+  VALUES (NEW.id, 50, 50)
   ON CONFLICT (user_id) DO NOTHING;
 
   -- Create user_streaks (all zeros)
@@ -409,6 +420,21 @@ ALTER TABLE public.entitlements ADD COLUMN IF NOT EXISTS ads_enabled         BOO
 ALTER TABLE public.entitlements DROP CONSTRAINT IF EXISTS entitlements_status_check;
 ALTER TABLE public.entitlements ADD CONSTRAINT entitlements_status_check
   CHECK (status IN ('free', 'starter', 'plus', 'pro', 'yearly', 'cancelled'));
+
+-- V5 Migrations for Hearts debit and recovery system
+ALTER TABLE public.user_stats ADD COLUMN IF NOT EXISTS hearts_total INT DEFAULT 50;
+ALTER TABLE public.user_stats ADD COLUMN IF NOT EXISTS hearts_used_today INT DEFAULT 0;
+ALTER TABLE public.user_stats ADD COLUMN IF NOT EXISTS hearts_max INT DEFAULT 50;
+ALTER TABLE public.user_stats ADD COLUMN IF NOT EXISTS hearts_recover_at TIMESTAMPTZ;
+ALTER TABLE public.user_stats ADD COLUMN IF NOT EXISTS hearts_last_debit_at TIMESTAMPTZ;
+
+ALTER TABLE public.user_settings ADD COLUMN IF NOT EXISTS heart_system_enabled BOOLEAN DEFAULT TRUE;
+ALTER TABLE public.user_settings ADD COLUMN IF NOT EXISTS heart_recovery_mode TEXT DEFAULT 'time';
+ALTER TABLE public.user_settings ADD COLUMN IF NOT EXISTS heart_recovery_hours INT DEFAULT 24;
+
+ALTER TABLE public.usage_counters ADD COLUMN IF NOT EXISTS hearts_spent INT DEFAULT 0;
+ALTER TABLE public.usage_counters ADD COLUMN IF NOT EXISTS lessons_attempted INT DEFAULT 0;
+ALTER TABLE public.usage_counters ADD COLUMN IF NOT EXISTS reviews_attempted INT DEFAULT 0;
 
 -- ============================================================
 -- SECURE LIMITS INCREMENT RPC (called securely from application)

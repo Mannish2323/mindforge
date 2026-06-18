@@ -10,8 +10,8 @@ const PLAN_LIMITS: Record<string, {
   lessons_limit_daily: number;
   ads_enabled: boolean;
 }> = {
-  starter:    { status: 'starter', hearts_limit: 25,  ai_limit_daily: 15,  lessons_limit_daily: 15,  ads_enabled: true  },
-  plus:       { status: 'plus',    hearts_limit: 50,  ai_limit_daily: 30,  lessons_limit_daily: 30,  ads_enabled: true  },
+  starter:    { status: 'starter', hearts_limit: 75,  ai_limit_daily: 15,  lessons_limit_daily: 15,  ads_enabled: true  },
+  plus:       { status: 'plus',    hearts_limit: 90,  ai_limit_daily: 30,  lessons_limit_daily: 30,  ads_enabled: true  },
   pro:        { status: 'pro',     hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
   pro_yearly: { status: 'yearly',  hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
 };

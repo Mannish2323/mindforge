@@ -171,7 +171,7 @@ export function PremiumModal({ onClose, onUpgrade, featureName }: PremiumModalPr
           color: 'var(--text-3)',
           marginTop: 'var(--sp-3)',
         }}>
-          🔒 Secured by Razorpay · Cancel anytime · 7-day refund policy
+          🔒 Secured by Razorpay · Cancel anytime · Instant activation after payment
         </p>
       </div>
     </div>

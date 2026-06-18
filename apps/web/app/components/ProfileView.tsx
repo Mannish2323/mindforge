@@ -106,16 +106,21 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
     catch { } finally { setSaving(false); }
   };
   const handleAvatarSelect = async (av: string) => {
-    try { await updateProfileDetails(profile.name || 'Learner', profile.bio || '', av); setShowAvatarPicker(false); }
-    catch { }
+    try { 
+      await updateProfileDetails(profile.name || 'Learner', profile.bio || '', av); 
+      setShowAvatarPicker(false); 
+    } catch (err) {
+      alert('Failed to save avatar. Please try again.');
+      console.error(err);
+    }
   };
 
   return (
-    <div style={{ maxWidth: '680px', margin: '0 auto', paddingBottom: 'var(--sp-10)' }}>
+    <div className="profile-container-main" style={{ maxWidth: '680px', margin: '0 auto' }}>
 
       {/* ══ HERO HEADER ══════════════════════════════════════════════════ */}
       <div style={{
-        position: 'relative', overflow: 'hidden',
+        position: 'relative', overflow: 'visible',
         background: 'linear-gradient(135deg, rgba(22,163,74,0.18) 0%, rgba(139,92,246,0.14) 50%, rgba(14,165,233,0.10) 100%)',
         borderRadius: '0 0 var(--radius-xl) var(--radius-xl)',
         padding: 'var(--sp-8) var(--sp-5) var(--sp-6)',
@@ -191,6 +196,34 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
             }}>✏️</div>
           </div>
 
+          <button
+            type="button"
+            className="btn-ghost"
+            style={{
+              padding: '6px 16px',
+              fontSize: 'var(--text-xs)',
+              height: '32px',
+              width: 'auto',
+              borderRadius: 'var(--radius-pill)',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              marginTop: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              if (!showAvatarPicker) {
+                setSelectedAvatar(profile.avatarUrl || '🦊');
+              }
+              setShowAvatarPicker(v => !v);
+            }}
+          >
+            <span>{profile.avatarUrl || '🦊'}</span>
+            <span>Select Avatar</span>
+          </button>
+
           {/* Avatar picker dropdown */}
           {showAvatarPicker && (
             <div style={{
@@ -235,7 +268,7 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
                 </button>
                 <button className="btn-primary" onClick={() => handleAvatarSelect(selectedAvatar)}
                   style={{ flex: 1, padding: '8px 12px', fontSize: '12px', height: '36px', width: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                  <Check size={12} /> Confirm
+                  <Check size={12} /> Select
                 </button>
               </div>
             </div>

@@ -58,6 +58,96 @@ import { usePushNotifications } from './hooks/usePushNotifications';
 import { createClient } from './lib/supabase';
 import { AdBanner } from './components/AdBanner';
 
+function HeartsRecoveryWidget({ activeState, onRefill }: { activeState: any; onRefill: () => void }) {
+  const [timeLeft, setTimeLeft] = useState('');
+  const [fullTimeLeft, setFullTimeLeft] = useState('');
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const hearts = activeState.hearts ?? 50;
+      const maxHearts = activeState.maxHearts ?? 50;
+      const recoverAtStr = activeState.heartsRecoverAt;
+      
+      if (hearts >= maxHearts || !recoverAtStr) {
+        setTimeLeft('');
+        setFullTimeLeft('');
+        return;
+      }
+
+      const recoverAt = new Date(recoverAtStr);
+      const now = new Date();
+      const diff = recoverAt.getTime() - now.getTime();
+
+      if (diff <= 0) {
+        setTimeLeft('Recovering...');
+        setFullTimeLeft('');
+        return;
+      }
+
+      const hoursPerHeart = activeState.heartRecoveryHours ?? 24;
+      const recoveryPeriodMs = hoursPerHeart * 60 * 60 * 1000;
+
+      // Format next heart
+      const h = Math.floor(diff / (3600 * 1000));
+      const m = Math.floor((diff % (3600 * 1000)) / (60 * 1000));
+      const s = Math.floor((diff % (60 * 1000)) / 1000);
+      setTimeLeft(`Next heart in ${h}h ${m}m ${s}s`);
+
+      // Format full recovery
+      const missingHearts = maxHearts - hearts;
+      const totalDiff = diff + (missingHearts - 1) * recoveryPeriodMs;
+      const th = Math.floor(totalDiff / (3600 * 1000));
+      const tm = Math.floor((totalDiff % (3600 * 1000)) / (60 * 1000));
+      setFullTimeLeft(`Hearts fully recover in ${th}h ${tm}m`);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [activeState.hearts, activeState.maxHearts, activeState.heartsRecoverAt, activeState.heartRecoveryHours]);
+
+  const hearts = activeState.hearts ?? 50;
+  const maxHearts = activeState.maxHearts ?? 50;
+
+  if (hearts >= maxHearts) {
+    return (
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', fontWeight: 'bold' }}>
+          <span style={{ color: 'var(--success)' }}>HEARTS STATUS</span>
+          <span>{hearts} / {maxHearts}</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+          <span style={{ fontSize: '20px' }}>❤️</span>
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-2)', fontWeight: 600 }}>Hearts fully charged!</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-2)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-xs)', fontWeight: 'bold' }}>
+        <span style={{ color: 'var(--error)' }}>HEARTS STATUS</span>
+        <span>{hearts} / {maxHearts}</span>
+      </div>
+      <div className="lesson-progress-bar" style={{ height: '8px', marginBottom: '4px', background: 'var(--surface-3)' }}>
+        <div className="lesson-progress-fill" style={{ width: `${(hearts / maxHearts) * 100}%`, background: 'var(--error)' }} />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '11px', color: 'var(--text-3)' }}>
+        <span style={{ fontWeight: 600, color: 'var(--text-2)' }}>⚡ {timeLeft}</span>
+        <span>🕒 {fullTimeLeft}</span>
+      </div>
+      <button 
+        className="btn-ghost" 
+        onClick={onRefill} 
+        style={{ padding: '6px 12px', fontSize: 'var(--text-xs)', height: '28px', width: '100%', marginTop: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      >
+        ❤️ Refill Hearts
+      </button>
+    </div>
+  );
+}
+
 export default function EVLOApp() {
   const {
     state,
@@ -66,6 +156,7 @@ export default function EVLOApp() {
     loseHeart,
     refillHearts,
     syncMaxHearts,
+    setHeartsState,
     addGems,
     spendGems,
     completeLesson,
@@ -85,7 +176,7 @@ export default function EVLOApp() {
     setGoalMinutes,
   } = useStore();
 
-  const { user, session, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails } = useAuth();
+  const { user, session, profile, loading: authLoading, updateProfileStats, logout, updateProfileDetails, updateHearts } = useAuth();
 
   const activeState = React.useMemo(() => {
     if (user && profile) {
@@ -95,10 +186,62 @@ export default function EVLOApp() {
         gems: profile.leafBalance,
         streak: profile.streak,
         username: profile.name,
+        hearts: profile.heartsTotal ?? state.hearts,
+        maxHearts: profile.heartsMax ?? state.maxHearts,
+        heartsRecoverAt: profile.heartsRecoverAt ?? state.heartsRecoverAt,
+        heartRecoveryHours: profile.heartRecoveryHours ?? state.heartRecoveryHours,
       };
     }
     return state;
   }, [state, user, profile]);
+
+  // --- Periodic Heart Recovery Check (1 heart every X hours) ---
+  useEffect(() => {
+    const checkHeartsRecovery = async () => {
+      const hearts = activeState.hearts ?? 50;
+      const maxHearts = activeState.maxHearts ?? 50;
+      const recoverAtStr = activeState.heartsRecoverAt;
+
+      if (hearts >= maxHearts || !recoverAtStr) {
+        return;
+      }
+
+      const recoverAt = new Date(recoverAtStr);
+      const now = new Date();
+
+      if (now >= recoverAt) {
+        const recoveryHours = activeState.heartRecoveryHours ?? 24;
+        const recoveryPeriodMs = recoveryHours * 60 * 60 * 1000;
+
+        const msPassed = now.getTime() - recoverAt.getTime();
+        const recoveredCount = Math.floor(msPassed / recoveryPeriodMs) + 1;
+
+        const newHearts = Math.min(maxHearts, hearts + recoveredCount);
+        let newRecoverAt: string | null = null;
+
+        if (newHearts < maxHearts) {
+          newRecoverAt = new Date(recoverAt.getTime() + recoveredCount * recoveryPeriodMs).toISOString();
+        }
+
+        if (user && profile) {
+          await updateHearts(newHearts, newRecoverAt, profile.heartsLastDebitAt);
+        } else {
+          setHeartsState(newHearts, newRecoverAt);
+        }
+      }
+    };
+
+    checkHeartsRecovery();
+    const interval = setInterval(checkHeartsRecovery, 5000);
+    return () => clearInterval(interval);
+  }, [
+    user,
+    profile,
+    activeState.hearts,
+    activeState.maxHearts,
+    activeState.heartsRecoverAt,
+    activeState.heartRecoveryHours,
+  ]);
 
   const weeklyXpData = React.useMemo(() => {
     const xpArray = [0, 0, 0, 0, 0, 0, 0]; // Mon, Tue, Wed, Thu, Fri, Sat, Sun
@@ -164,9 +307,17 @@ export default function EVLOApp() {
   const [isWatchingAd, setIsWatchingAd] = useState(false);
   const [adTimer, setAdTimer] = useState(3);
 
+  const triggerRefillHearts = async () => {
+    const max = activeState.maxHearts;
+    refillHearts(max);
+    if (user && profile) {
+      await updateHearts(max, null, null);
+    }
+  };
+
   const handleRefillClick = () => {
     if (profile?.isPremium) {
-      refillHearts(profile?.heartsLimit ?? 999);
+      triggerRefillHearts();
     } else {
       setShowRefillModal(true);
     }
@@ -181,7 +332,7 @@ export default function EVLOApp() {
           clearInterval(interval);
           setIsWatchingAd(false);
           setShowRefillModal(false);
-          refillHearts(profile?.heartsLimit ?? 5);
+          triggerRefillHearts();
           if (user) {
             const supabase = createClient();
             supabase.rpc('increment_daily_usage', {
@@ -198,7 +349,7 @@ export default function EVLOApp() {
 
   const handleSpendGemsRefill = () => {
     if (spendGems(10)) {
-      refillHearts(profile?.heartsLimit ?? 5);
+      triggerRefillHearts();
       setShowRefillModal(false);
       if (user) {
         const supabase = createClient();
@@ -343,6 +494,12 @@ export default function EVLOApp() {
 
   // --- MCQ Generation logic ---
   const startLesson = async (unitId: string, lessonId: string) => {
+    // Check if user has hearts remaining
+    if (activeState.hearts <= 0) {
+      handleRefillClick();
+      return;
+    }
+
     // If not admin, check daily lesson limits via /api/limits/check
     if (user && profile && !profile.isAdmin) {
       try {
@@ -464,6 +621,30 @@ export default function EVLOApp() {
 
   const shuffle = (arr: any[]) => [...arr].sort(() => Math.random() - 0.5);
 
+  const triggerLoseHeart = async () => {
+    // Lose heart locally
+    loseHeart();
+    
+    // If logged in, update Supabase
+    if (user && profile) {
+      try {
+        const now = new Date();
+        const currentHeartsVal = profile.heartsTotal ?? 50;
+        const newHeartsVal = Math.max(0, currentHeartsVal - 1);
+        let nextRecoverAtStr = profile.heartsRecoverAt;
+        
+        if (currentHeartsVal === (profile.heartsMax ?? 50)) {
+          const recoveryHours = profile.heartRecoveryHours ?? 24;
+          nextRecoverAtStr = new Date(now.getTime() + recoveryHours * 60 * 60 * 1000).toISOString();
+        }
+        
+        await updateHearts(newHeartsVal, nextRecoverAtStr, now.toISOString());
+      } catch (err) {
+        console.warn('Failed to update heart debit in DB:', err);
+      }
+    }
+  };
+
   const checkAnswer = async () => {
     const q = questions[currentQIdx];
     const correct = selectedAns === q.correct;
@@ -474,7 +655,7 @@ export default function EVLOApp() {
       setCorrectCount(prev => prev + 1);
       playTTS(q.japanese || '');
     } else {
-      loseHeart();
+      triggerLoseHeart();
     }
   };
 
@@ -1046,10 +1227,9 @@ export default function EVLOApp() {
           <div className="lesson-prog-bar">
             <div className="lesson-prog-fill" style={{ width: `${progressPct}%` }}></div>
           </div>
-          <div className="lesson-hearts">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} style={{ opacity: i >= hearts ? 0.25 : 1 }}>❤️</span>
-            ))}
+          <div className="lesson-hearts" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: 'var(--text-sm)', fontWeight: 800 }}>
+            <span>❤️</span>
+            <span>{hearts}</span>
           </div>
         </div>
 
@@ -2180,9 +2360,14 @@ export default function EVLOApp() {
               <span className="icon" style={{ animation: 'flame-rise 2.4s ease-in-out infinite', display: 'inline-block', transformOrigin: 'bottom center' }}>🔥</span>
               <span>{activeState.streak ?? 0}</span>
             </div>
-            <div className="stat-pill hearts" title="Hearts remaining">
+            <div 
+              className="stat-pill hearts" 
+              title={activeState.hearts < activeState.maxHearts ? "Hearts recovering..." : "Hearts fully charged"}
+              onClick={handleRefillClick}
+              style={{ cursor: 'pointer' }}
+            >
               <span className="icon">❤️</span>
-              <span>{activeState.hearts ?? 5}</span>
+              <span>{activeState.hearts ?? 50}</span>
             </div>
             <div className="stat-pill gems" title="Gems">
               <span className="icon">💎</span>
@@ -2259,22 +2444,8 @@ export default function EVLOApp() {
                 </div>
               </div>
 
-              {/* 4. Weekly Goal Progress Graph */}
-              <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)' }}>
-                <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>WEEKLY PROGRESS</h4>
-                <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between', alignItems: 'flex-end', height: '60px', padding: '0 4px' }}>
-                  {weeklyXpData.map((xp, index) => {
-                    const pct = Math.min(100, (xp / 50) * 100);
-                    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                    return (
-                      <div key={index} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, height: '100%', justifyContent: 'flex-end', gap: '4px' }}>
-                        <div style={{ width: '100%', height: `${pct || 8}%`, background: xp >= 50 ? 'var(--success)' : xp > 0 ? 'var(--primary)' : 'var(--surface-2)', borderRadius: '4px' }} title={`${xp} XP`} />
-                        <span style={{ fontSize: '9px', color: 'var(--text-3)' }}>{days[index]}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* 4. Hearts Recovery Widget */}
+              <HeartsRecoveryWidget activeState={activeState} onRefill={handleRefillClick} />
 
               {/* 5. Leaderboard Summary — real data only */}
               <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-3)', cursor: 'pointer' }} onClick={() => setActiveTab('leaderboard')}>

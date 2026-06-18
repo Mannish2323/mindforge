@@ -30,7 +30,7 @@ const PLANS: PlanDef[] = [
       { text: '5 lessons/day', ok: true },
       { text: 'Basic SRS review', ok: true },
       { text: 'Hiragana & Katakana', ok: true },
-      { text: '5 hearts max', ok: true },
+      { text: '50 hearts max', ok: true },
       { text: 'Community access', ok: true },
       { text: 'Ads between sections', ok: false },
       { text: 'AI Tutor', ok: false },
@@ -50,7 +50,7 @@ const PLANS: PlanDef[] = [
       { text: '15 lessons/day', ok: true },
       { text: 'Ads between sections', ok: false },
       { text: 'Advanced SRS review', ok: true },
-      { text: '25 hearts max', ok: true },
+      { text: '75 hearts max', ok: true },
       { text: '15 AI chats/day', ok: true },
       { text: 'Better progress tools', ok: true },
       { text: 'JLPT N5 pack access', ok: true },
@@ -70,7 +70,7 @@ const PLANS: PlanDef[] = [
       { text: '30 lessons/day', ok: true },
       { text: 'Ads between sections', ok: false },
       { text: 'Full SRS + weak-spot detection', ok: true },
-      { text: '50 hearts max', ok: true },
+      { text: '90 hearts max', ok: true },
       { text: '30 AI chats/day', ok: true },
       { text: 'JLPT N5 + N4 packs', ok: true },
       { text: 'Speak mode basic access', ok: true },
@@ -418,7 +418,7 @@ export function BillingView() {
       <div className="trust-badges">
         <span className="trust-badge">🔒 Secured by Razorpay</span>
         <span className="trust-badge">💳 UPI, Cards, Net Banking</span>
-        <span className="trust-badge">↩️ 7-day refund policy</span>
+        <span className="trust-badge">↩️ Cancel according to plan rules</span>
         <span className="trust-badge">✨ Instant activation</span>
         <span className="trust-badge">🛡️ Cancel anytime</span>
       </div>

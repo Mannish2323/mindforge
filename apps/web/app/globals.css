@@ -1320,7 +1320,7 @@ textarea { resize: vertical; min-height: 88px; }
 }
 .lesson-node:hover:not(.locked) { background: var(--surface-2); transform: translateX(4px); }
 .lesson-node.locked { opacity: .55; cursor: not-allowed; }
-.lesson-node.completed { }
+.lesson-node.completed { border-color: rgba(22,163,74,.15); opacity: 0.85; }
 .lesson-node.available { border-color: rgba(22,163,74,.25); background: rgba(22,163,74,.06); }
 .lesson-node.in-progress { border-color: rgba(22,163,74,.4); background: rgba(22,163,74,.1); }
 
@@ -2667,5 +2667,75 @@ textarea { resize: vertical; min-height: 88px; }
 }
 .sidebar-nav button[aria-label="Admin Panel"].active {
   background: rgba(239, 68, 68, 0.10);
+}
+
+/* ============================================================
+   V5 — MOBILE & LAYOUT CORRECTIONS
+   ============================================================ */
+
+/* 1. Stacked Layout for home dashboard and learn path */
+.dashboard-three-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-6);
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .dashboard-three-col {
+    grid-template-columns: 1fr 300px;
+  }
+}
+
+.center-content-column {
+  width: 100%;
+  max-width: 100%;
+}
+
+.stats-panel-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  .stats-panel-card {
+    width: 300px;
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--sp-4));
+    align-self: start;
+  }
+}
+
+/* 2. Top Navigation mobile-friendly adjustments */
+@media (max-width: 480px) {
+  .topbar {
+    padding: 0 var(--sp-2) !important;
+    gap: var(--sp-1) !important;
+  }
+  .topbar-wordmark {
+    display: none !important;
+  }
+  .topbar-stats {
+    gap: 4px !important;
+  }
+  .stat-pill {
+    padding: 4px 6px !important;
+    gap: 3px !important;
+    font-size: 10px !important;
+  }
+  .pro-badge {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+}
+
+/* 3. Profile Page container bottom padding to avoid bottom-nav clipping */
+.profile-container-main {
+  padding-bottom: var(--sp-10);
+}
+@media (max-width: 767px) {
+  .profile-container-main {
+    padding-bottom: calc(var(--bottom-nav-h) + var(--sp-10)) !important;
+  }
 }
 

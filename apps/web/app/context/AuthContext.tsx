@@ -35,6 +35,14 @@ export interface UserProfile {
   lessons_done: number;
   reviews_done: number;
   createdAt: string;
+  heartsTotal: number;
+  heartsUsedToday: number;
+  heartsMax: number;
+  heartsRecoverAt: string | null;
+  heartsLastDebitAt: string | null;
+  heartSystemEnabled: boolean;
+  heartRecoveryMode: string;
+  heartRecoveryHours: number;
 }
 
 interface AuthContextType {
@@ -51,6 +59,7 @@ interface AuthContextType {
   updateProfileStats: (xpDelta: number, leafDelta: number) => Promise<void>;
   updateSettings: (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean }>) => Promise<void>;
   updateProfileDetails: (displayName: string, bio: string, avatarUrl: string) => Promise<void>;
+  updateHearts: (newHearts: number, nextRecoverAt: string | null, lastDebitAt: string | null) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -202,6 +211,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lessons_done: statsData.lessons_done ?? 0,
         reviews_done: statsData.reviews_done ?? 0,
         createdAt: profileData.created_at || new Date().toISOString(),
+        heartsTotal: statsData.hearts_total ?? (entitlementsData.status === 'free' ? 50 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
+        heartsUsedToday: statsData.hearts_used_today ?? 0,
+        heartsMax: statsData.hearts_max ?? (entitlementsData.status === 'free' ? 50 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
+        heartsRecoverAt: statsData.hearts_recover_at || null,
+        heartsLastDebitAt: statsData.hearts_last_debit_at || null,
+        heartSystemEnabled: settingsData.heart_system_enabled ?? true,
+        heartRecoveryMode: settingsData.heart_recovery_mode || 'time',
+        heartRecoveryHours: settingsData.heart_recovery_hours ?? 24,
       };
 
       setProfile(mergedProfile);
@@ -417,6 +434,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } : null);
   };
 
+  const updateHearts = async (newHearts: number, nextRecoverAt: string | null, lastDebitAt: string | null) => {
+    if (!user || !profile) return;
+    try {
+      const { error } = await supabase
+        .from('user_stats')
+        .update({
+          hearts_total: newHearts,
+          hearts_recover_at: nextRecoverAt,
+          hearts_last_debit_at: lastDebitAt,
+        })
+        .eq('user_id', user.id);
+        
+      if (error) throw error;
+      
+      setProfile(prev => prev ? {
+        ...prev,
+        heartsTotal: newHearts,
+        heartsRecoverAt: nextRecoverAt,
+        heartsLastDebitAt: lastDebitAt,
+      } : null);
+    } catch (err) {
+      console.error('Error updating hearts in DB:', err);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -433,6 +475,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updateProfileStats,
         updateSettings,
         updateProfileDetails,
+        updateHearts,
       }}
     >
       {children}

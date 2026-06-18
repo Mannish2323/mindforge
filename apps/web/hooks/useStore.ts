@@ -107,8 +107,11 @@ const DEFAULT_STATE = {
   joinDate: new Date().toISOString(),
   xp: 0,
   gems: 50,
-  hearts: 5,
-  maxHearts: 5,
+  hearts: 50,
+  maxHearts: 50,
+  heartsRecoverAt: null as string | null,
+  heartsLastDebitAt: null as string | null,
+  heartRecoveryHours: 24,
   streak: 0,
   lastStudyDate: null as string | null,
   lessonProgress: {} as Record<string, { completed: boolean; xp: number; completedAt: string }>,
@@ -217,7 +220,22 @@ export function useStore() {
 
   const loseHeart = () => {
     if (state.hearts > 0) {
-      const updated = { ...state, hearts: state.hearts - 1 };
+      const now = new Date();
+      const newHearts = state.hearts - 1;
+      let recoverAt = state.heartsRecoverAt;
+      
+      // If hearts were at max, start the recovery timer
+      if (state.hearts === state.maxHearts) {
+        const recoveryHours = state.heartRecoveryHours ?? 24;
+        recoverAt = new Date(now.getTime() + recoveryHours * 60 * 60 * 1000).toISOString();
+      }
+      
+      const updated = {
+        ...state,
+        hearts: newHearts,
+        heartsRecoverAt: recoverAt,
+        heartsLastDebitAt: now.toISOString()
+      };
       save(updated);
       return updated.hearts;
     }
@@ -226,8 +244,22 @@ export function useStore() {
 
   const refillHearts = (customMax?: number) => {
     const targetMax = customMax ?? state.maxHearts;
-    const updated = { ...state, maxHearts: targetMax, hearts: targetMax };
+    const updated = {
+      ...state,
+      maxHearts: targetMax,
+      hearts: targetMax,
+      heartsRecoverAt: null
+    };
     save(updated);
+  };
+
+  const setHeartsState = (hearts: number, recoverAt: string | null, lastDebitAt?: string | null) => {
+    save({
+      ...state,
+      hearts,
+      heartsRecoverAt: recoverAt,
+      heartsLastDebitAt: lastDebitAt !== undefined ? lastDebitAt : state.heartsLastDebitAt
+    });
   };
 
   const syncMaxHearts = (limit: number) => {
@@ -517,6 +549,7 @@ export function useStore() {
     loseHeart,
     refillHearts,
     syncMaxHearts,
+    setHeartsState,
     addGems,
     spendGems,
     completeLesson,

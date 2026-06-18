@@ -312,29 +312,7 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
         </div>
       </div>
 
-      {/* ── 6. Weekly Progress Chart ── */}
-      <div className="card animate-fadein" style={{ padding: 'var(--sp-4)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-3)' }}>
-          <h4 style={{ fontWeight: 800, fontSize: 'var(--text-sm)' }}>Weekly Progress</h4>
-          <span style={{ fontSize: '11px', color: 'var(--text-3)', fontWeight: 600 }}>{weeklyTotal} XP this week</span>
-        </div>
-        <div className="weekly-chart">
-          {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map((day, index) => {
-            const xp = weeklyXpData[index] || 0;
-            const pct = Math.min(100, (xp / goalXp) * 100);
-            return (
-              <div key={index} className="weekly-bar-wrap">
-                <div
-                  className={`weekly-bar${xp > 0 ? (xp >= goalXp ? ' goal-met' : ' has-data') : ''}`}
-                  style={{ height: `${Math.max(4, pct)}%` }}
-                  title={`${day}: ${xp} XP`}
-                />
-                <span className="weekly-day">{day}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+
 
       {/* ── 7. Quick Actions Row ── */}
       <div>
