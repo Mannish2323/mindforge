@@ -336,7 +336,7 @@ export function useStore() {
     if (user) {
       createClient().from('user_stats').update({ xp_total: updated.xp }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing XP to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync XP to Supabase:', err));
     }
 
     return updated.xp;
@@ -369,7 +369,7 @@ export function useStore() {
           hearts_last_debit_at: updated.heartsLastDebitAt
         }).eq('user_id', user.id).then(({ error }) => {
           if (error) console.error('Error syncing hearts details to Supabase:', error);
-        });
+        }, err => console.error('Failed to sync hearts to Supabase:', err));
       }
 
       return updated.hearts;
@@ -394,7 +394,7 @@ export function useStore() {
         hearts_recover_at: null
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing refillHearts to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync refillHearts to Supabase:', err));
     }
   };
 
@@ -414,7 +414,7 @@ export function useStore() {
         hearts_last_debit_at: updated.heartsLastDebitAt
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing setHeartsState to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync setHeartsState to Supabase:', err));
     }
   };
 
@@ -433,7 +433,7 @@ export function useStore() {
           hearts_total: updated.hearts
         }).eq('user_id', user.id).then(({ error }) => {
           if (error) console.error('Error syncing syncMaxHearts to Supabase:', error);
-        });
+        }, err => console.error('Failed to sync syncMaxHearts to Supabase:', err));
       }
     }
   };
@@ -445,7 +445,7 @@ export function useStore() {
     if (user) {
       createClient().from('user_stats').update({ gems_balance: updated.gems }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing addGems to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync addGems to Supabase:', err));
     }
   };
 
@@ -457,7 +457,7 @@ export function useStore() {
       if (user) {
         createClient().from('user_stats').update({ gems_balance: updated.gems }).eq('user_id', user.id).then(({ error }) => {
           if (error) console.error('Error syncing spendGems to Supabase:', error);
-        });
+        }, err => console.error('Failed to sync spendGems to Supabase:', err));
       }
 
       return true;
@@ -488,7 +488,7 @@ export function useStore() {
   };
 
   const completeLesson = (lessonId: string, xpReward: number) => {
-    const progress = { ...state.lessonProgress };
+    const progress = { ...(state.lessonProgress || {}) };
     const lessonResult = calculateCompletedLessonXP(lessonId, progress, xpReward);
     const xpGained = lessonResult.xpToAdd;
     const gemsGained = lessonResult.gemsToAdd;
@@ -523,7 +523,7 @@ export function useStore() {
       streak: streakUpdate.streak,
       totalXP: state.xp + xpGained,
       lessonsCompleted: completedCount,
-      friendCount: state.friends.filter(f => f.status === 'accepted').length,
+      friendCount: (state.friends || []).filter(f => f.status === 'accepted').length,
       duelsWon: state.duelsWon || 0,
       storiesCompleted: state.storiesCompleted || 0,
     });
@@ -558,7 +558,7 @@ export function useStore() {
         completed_at: new Date().toISOString()
       }, { onConflict: 'user_id,lesson_id' }).then(({ error }) => {
         if (error) console.error('Error syncing lesson progress to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync lesson progress:', err));
 
       // 2. Sync user stats
       supabase.from('user_stats').update({
@@ -567,7 +567,7 @@ export function useStore() {
         lessons_done: completedCount
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing stats after lesson to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync stats after lesson:', err));
 
       // 3. Sync streak
       supabase.from('user_streaks').select('longest').eq('user_id', user.id).maybeSingle().then(({ data }) => {
@@ -579,12 +579,12 @@ export function useStore() {
           last_study_at: new Date().toISOString().split('T')[0]
         }).eq('user_id', user.id).then(({ error }) => {
           if (error) console.error('Error syncing streak to Supabase:', error);
-        });
-      });
+        }, err => console.error('Failed to update streak:', err));
+      }, err => console.error('Failed to fetch longest streak:', err));
 
       // 4. Sync badges
       const newlyUnlocked = updated.badges.filter((b, idx) => {
-        const oldB = state.badges[idx];
+        const oldB = (state.badges || [])[idx];
         return b.unlockedAt && (!oldB || !oldB.unlockedAt);
       });
       newlyUnlocked.forEach(badge => {
@@ -594,16 +594,16 @@ export function useStore() {
           earned_at: badge.unlockedAt
         }).then(({ error }) => {
           if (error) console.error('Error syncing newly unlocked badge to Supabase:', error);
-        });
+        }, err => console.error('Failed to insert unlocked badge:', err));
       });
     }
   };
 
   const handleSRSCardUpdate = (vocab: any, quality: number) => {
-    const currentCard = state.srsData[vocab.vocab_id] || null;
+    const currentCard = (state.srsData || {})[vocab.vocab_id] || null;
     const result = updateSRSCard(currentCard, quality);
 
-    const srsData = { ...state.srsData };
+    const srsData = { ...(state.srsData || {}) };
     srsData[vocab.vocab_id] = {
       cardId: vocab.vocab_id,
       vocab_id: vocab.vocab_id,
@@ -640,14 +640,14 @@ export function useStore() {
         last_reviewed_at: new Date().toISOString()
       }, { onConflict: 'user_id,word_id' }).then(({ error }) => {
         if (error) console.error('Error syncing review queue update to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync review queue update:', err));
 
       // Update reviews_done in user_stats
       supabase.from('user_stats').update({
         reviews_done: newDailyReviews
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing reviews_done increment to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync reviews_done increment:', err));
     }
   };
 
@@ -710,12 +710,12 @@ export function useStore() {
   // --- New actions ---
 
   const claimQuest = (questId: string) => {
-    const quests = state.quests.map(q =>
+    const quests = (state.quests || []).map(q =>
       q.quest_id === questId && q.status === 'completed'
         ? { ...q, status: 'claimed' as const }
         : q
     );
-    const quest = state.quests.find(q => q.quest_id === questId);
+    const quest = (state.quests || []).find(q => q.quest_id === questId);
     const xpBonus = quest?.xp_reward || 0;
     const gemBonus = quest?.gem_reward || 0;
     const updated = {
@@ -732,12 +732,12 @@ export function useStore() {
         gems_balance: updated.gems
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing claimed quest rewards to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync claimed quest rewards:', err));
     }
   };
 
   const nudgeFriend = (friendId: string) => {
-    const friends = state.friends.map(f =>
+    const friends = (state.friends || []).map(f =>
       f.friend_id === friendId ? { ...f, nudged_today: true } : f
     );
     save({ ...state, friends });
@@ -754,11 +754,11 @@ export function useStore() {
       lastActive: new Date().toISOString(),
       nudged_today: false,
     };
-    save({ ...state, friends: [...state.friends, newFriend] });
+    save({ ...state, friends: [...(state.friends || []), newFriend] });
   };
 
   const challengeDuel = (friendId: string) => {
-    const friend = state.friends.find(f => f.friend_id === friendId);
+    const friend = (state.friends || []).find(f => f.friend_id === friendId);
     if (!friend) return;
     const newDuel: Duel = {
       duel_id: `d-${Date.now()}`,
@@ -777,26 +777,26 @@ export function useStore() {
       createdAt: new Date().toISOString(),
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     };
-    save({ ...state, duels: [...state.duels, newDuel] });
+    save({ ...state, duels: [...(state.duels || []), newDuel] });
   };
 
   const joinCircle = (circleId: string) => {
-    const circles = state.circles.map(c =>
+    const circles = (state.circles || []).map(c =>
       c.circle_id === circleId ? { ...c, is_member: true, member_count: c.member_count + 1 } : c
     );
     save({ ...state, circles });
   };
 
   const completeStory = (storyId: string, xpReward: number) => {
-    const stories = state.stories.map(s =>
+    const stories = (state.stories || []).map(s =>
       s.story_id === storyId ? { ...s, completed: true, completedAt: new Date().toISOString() } : s
     );
     const newStoriesCompleted = (state.storiesCompleted || 0) + 1;
     const updatedBadges = checkBadgeUnlocks(state.badges || [], {
       streak: state.streak,
       totalXP: state.xp + xpReward,
-      lessonsCompleted: Object.keys(state.lessonProgress).length,
-      friendCount: state.friends.filter(f => f.status === 'accepted').length,
+      lessonsCompleted: Object.keys(state.lessonProgress || {}).length,
+      friendCount: (state.friends || []).filter(f => f.status === 'accepted').length,
       duelsWon: state.duelsWon || 0,
       storiesCompleted: newStoriesCompleted,
     });
@@ -816,10 +816,10 @@ export function useStore() {
         xp_total: updated.xp
       }).eq('user_id', user.id).then(({ error }) => {
         if (error) console.error('Error syncing stats after story to Supabase:', error);
-      });
+      }, err => console.error('Failed to sync stats after story:', err));
 
       const newlyUnlocked = updated.badges.filter((b, idx) => {
-        const oldB = state.badges[idx];
+        const oldB = (state.badges || [])[idx];
         return b.unlockedAt && (!oldB || !oldB.unlockedAt);
       });
       newlyUnlocked.forEach(badge => {
@@ -829,7 +829,7 @@ export function useStore() {
           earned_at: badge.unlockedAt
         }).then(({ error }) => {
           if (error) console.error('Error syncing badge to Supabase:', error);
-        });
+        }, err => console.error('Failed to sync badge to Supabase:', err));
       });
     }
   };

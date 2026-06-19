@@ -84,10 +84,6 @@ export function ExerciseCard({
 
   // Trigger speak simulation
   const startRecordingSim = () => {
-    if (!isProUser) {
-      alert('Speak and Match is a PRO only feature. Upgrade to unlock!');
-      return;
-    }
     setIsRecording(true);
     setTimeout(() => {
       setIsRecording(false);

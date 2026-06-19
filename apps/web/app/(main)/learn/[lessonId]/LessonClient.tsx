@@ -136,14 +136,14 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               prompt: 'Translate this sentence:',
               japanese: ex.japanese,
               romaji: ex.romaji,
-              correct: ex.english,
+              correct: ex.translation_en,
               options: shuffle([
-                ex.english,
+                ex.translation_en,
                 'Excuse me, where is the station?',
                 'Good morning, nice to meet you.',
                 'Please write your name here.',
                 'Japanese is fun and easy to learn!'
-              ].filter(x => x !== ex.english).slice(0, 3).concat(ex.english))
+              ].filter(x => x !== ex.translation_en).slice(0, 3).concat(ex.translation_en))
             });
           }
 
@@ -213,7 +213,22 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
 
   const checkAnswer = () => {
     const q = questions[currentQIdx];
-    const correct = selectedAns === q.correct;
+    let correct = false;
+    if (q.type === 'match-pair') {
+      try {
+        const selObj = JSON.parse(selectedAns || '{}');
+        const correctObj = JSON.parse(q.correct || '{}');
+        const selKeys = Object.keys(selObj);
+        const correctKeys = Object.keys(correctObj);
+        if (selKeys.length === correctKeys.length) {
+          correct = correctKeys.every(k => selObj[k] === correctObj[k]);
+        }
+      } catch (e) {
+        correct = false;
+      }
+    } else {
+      correct = selectedAns === q.correct;
+    }
     setIsCorrect(correct);
     setIsAnswered(true);
 

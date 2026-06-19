@@ -341,11 +341,19 @@ button {
   scrollbar-color: var(--border-strong) transparent;
   transform: translateX(-100%);
   transition: transform var(--t-slow);
+  pointer-events: none;
 }
 
 .sidebar.mobile-open {
   transform: translateX(0);
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+@media (max-width: 1023px) {
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
 }
 
 .sidebar-logo {
@@ -582,6 +590,7 @@ button {
     width: 72px;
     padding: var(--sp-5) var(--sp-2);
     align-items: center;
+    pointer-events: auto !important;
   }
   .sidebar-logo .logo-name,
   .sidebar-logo .logo-sub,
@@ -623,6 +632,7 @@ button {
     height: 100vh;
     transform: none !important;
     z-index: 200;
+    pointer-events: auto !important;
   }
   .topbar        { grid-column: 2; grid-row: 1; }
   .main-content  {
@@ -656,6 +666,7 @@ button {
     height: 100vh;
     transform: none !important;
     z-index: 200;
+    pointer-events: auto !important;
   }
   .topbar        { grid-column: 2; grid-row: 1; }
   .main-content  {
