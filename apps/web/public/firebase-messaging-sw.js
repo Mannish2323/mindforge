@@ -4,9 +4,7 @@ importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-com
 
 firebase.initializeApp({
   apiKey: "AIzaSyExample",
-  authDomain: "learn-with-velmorth-254fa.firebaseapp.com",
   projectId: "learn-with-velmorth-254fa",
-  storageBucket: "learn-with-velmorth-254fa.appspot.com",
   messagingSenderId: "999787929255",
   appId: "1:999787929255:web:velmorth"
 });
@@ -33,7 +31,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   if (event.action === 'practice' || !event.action) {
     event.waitUntil(
-      clients.openWindow('https://learnwithvelmorth.web.app')
+      clients.openWindow(self.location.origin)
     );
   }
 });

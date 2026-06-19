@@ -22,9 +22,12 @@ export function SettingsView({
   onSetGoalMinutes,
   onNavigate,
 }: SettingsViewProps) {
-  const { user, profile, logout, updateSettings, deleteAccount } = useAuth();
+  const { user, session, profile, logout, updateSettings, deleteAccount } = useAuth();
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
 
   const handleDeleteAccount = async () => {
     setDeleting(true);
@@ -37,6 +40,28 @@ export function SettingsView({
       setDeleting(false);
     }
   };
+
+  const handleCancelSubscription = async () => {
+    setCancelling(true);
+    setCancelError(null);
+    try {
+      const response = await fetch('/api/billing/cancel', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token || ''}`,
+        },
+      });
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to cancel subscription');
+      }
+      window.location.reload();
+    } catch (err: any) {
+      setCancelError(err.message || 'Failed to cancel subscription');
+      setCancelling(false);
+    }
+  };
+
   const [notificationsEnabled, setNotificationsEnabled] = useState(profile?.notifications ?? true);
   const [loggingOut, setLoggingOut] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -288,12 +313,43 @@ export function SettingsView({
           label="Subscription"
           sub={profile?.isPremium ? `✨ ${profile.planId?.toUpperCase() || 'Pro'} — Active` : 'Free Plan'}
           right={
-            !profile?.isPremium
-              ? <button className="btn-ghost" onClick={() => onNavigate('billing')}
-                  style={{ fontSize: '11px', padding: '4px 12px', color: 'var(--xp-gold)', border: '1px solid rgba(251,191,36,.4)' }}>
-                  Upgrade
-                </button>
-              : <span style={{ fontSize: '11px', color: 'var(--primary)', fontWeight: 600 }}>Manage</span>
+            !profile?.isPremium ? (
+              <button className="btn-ghost" onClick={() => onNavigate('billing')}
+                style={{ fontSize: '11px', padding: '4px 12px', color: 'var(--xp-gold)', border: '1px solid rgba(251,191,36,.4)' }}>
+                Upgrade
+              </button>
+            ) : profile?.planStatus === 'cancelled' ? (
+              <span style={{ fontSize: '11px', color: 'var(--error)', fontWeight: 600 }}>Cancelled (Grace Period)</span>
+            ) : showCancelConfirm ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <button 
+                    onClick={() => { setShowCancelConfirm(false); setCancelError(null); }}
+                    disabled={cancelling}
+                    style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--surface-3)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'var(--text)' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCancelSubscription}
+                    disabled={cancelling}
+                    style={{ fontSize: '11px', padding: '4px 10px', background: 'var(--error)', border: 'none', borderRadius: 'var(--radius)', cursor: 'pointer', color: 'white', fontWeight: 700 }}
+                  >
+                    {cancelling ? 'Cancelling...' : 'Confirm'}
+                  </button>
+                </div>
+                {cancelError && (
+                  <div style={{ fontSize: '10px', color: 'var(--error)', marginTop: '2px' }}>
+                    {cancelError}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button className="btn-ghost" onClick={() => setShowCancelConfirm(true)}
+                style={{ fontSize: '11px', padding: '4px 12px', color: 'var(--error)', border: '1px solid rgba(239,68,68,.3)' }}>
+                Cancel Subscription
+              </button>
+            )
           }
         />
         <SettingsRow

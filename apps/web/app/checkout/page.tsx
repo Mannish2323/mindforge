@@ -400,19 +400,6 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-          from { opacity: 0; transform: translateY(-5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }

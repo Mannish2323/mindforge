@@ -496,13 +496,6 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
         </div>
       )}
 
-      {/* Embedded Wave CSS */}
-      <style jsx global>{`
-        @keyframes wave {
-          0%, 100% { height: 8px; }
-          50% { height: 28px; }
-        }
-      `}</style>
     </div>
   );
 }

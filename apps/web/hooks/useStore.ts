@@ -5,6 +5,8 @@ import {
   evaluateQuests, checkBadgeUnlocks, calculateLeagueTier, getDaysUntilLeagueReset
 } from '@evlo/core-logic';
 import { SRSCard, Quest, Badge, Friend, Duel, StudyCircle, Story, StreakShield, LeagueTier } from '@evlo/types';
+import { createClient } from '../app/lib/supabase';
+import { useAuth } from '../app/context/AuthContext';
 
 const STORAGE_KEY = 'velmorth_state_v3';
 
@@ -141,6 +143,7 @@ const DEFAULT_STATE = {
 };
 
 export function useStore() {
+  const { user } = useAuth();
   const [state, setState] = useState(DEFAULT_STATE);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -191,6 +194,120 @@ export function useStore() {
     setIsLoaded(true);
   }, []);
 
+  // Hydrate store state from Supabase when logged in
+  useEffect(() => {
+    if (!user) return;
+
+    const hydrateFromSupabase = async () => {
+      try {
+        const supabase = createClient();
+        
+        // 0. Hydrate Settings
+        const { data: settingsData } = await supabase
+          .from('user_settings')
+          .select('theme, ui_language, tts_enabled, goal_minutes')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        // 1. Hydrate User Stats & Streaks
+        const { data: statsData } = await supabase
+          .from('user_stats')
+          .select('xp_total, gems_balance, hearts_total, hearts_max, hearts_recover_at, hearts_last_debit_at')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const { data: streakData } = await supabase
+          .from('user_streaks')
+          .select('streak, last_study_at')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        // 2. Hydrate Lesson Progress
+        const { data: progData } = await supabase
+          .from('lesson_progress')
+          .select('lesson_id, status, xp_earned, completed_at')
+          .eq('user_id', user.id);
+
+        const lessonProgress: Record<string, any> = {};
+        progData?.forEach(p => {
+          lessonProgress[p.lesson_id] = {
+            completed: p.status === 'completed',
+            xp: p.xp_earned,
+            completedAt: p.completed_at
+          };
+        });
+
+        // 3. Hydrate Badges
+        const { data: userBadgesData } = await supabase
+          .from('user_badges')
+          .select('badge_id, earned_at')
+          .eq('user_id', user.id);
+
+        const unlockedBadgeIds = new Set(userBadgesData?.map(b => b.badge_id) || []);
+        const badges = state.badges.map(b => 
+          unlockedBadgeIds.has(b.badge_id) 
+            ? { ...b, unlockedAt: userBadgesData?.find(ub => ub.badge_id === b.badge_id)?.earned_at || new Date().toISOString() }
+            : b
+        );
+
+        // 4. Hydrate review queue (SRS)
+        const { data: srsList } = await supabase
+          .from('review_queue')
+          .select('*')
+          .eq('user_id', user.id);
+
+        const srsData: Record<string, any> = { ...state.srsData };
+        srsList?.forEach(s => {
+          srsData[s.word_id] = {
+            cardId: s.word_id,
+            vocab_id: s.word_id,
+            ease: s.ease_factor,
+            interval: s.interval_days,
+            repetitions: s.repetitions,
+            dueDate: s.next_review_at || s.due_at,
+            lastReviewed: s.last_reviewed_at || s.last_reviewed,
+            kanji: srsData[s.word_id]?.kanji || '',
+            romaji: srsData[s.word_id]?.romaji || '',
+            meaning_en: srsData[s.word_id]?.meaning_en || '',
+            meaning_hi: srsData[s.word_id]?.meaning_hi || '',
+          };
+        });
+
+        const finalTheme = (settingsData?.theme as any) ?? state.theme;
+        if (finalTheme === 'system') {
+          document.documentElement.removeAttribute('data-theme');
+        } else {
+          document.documentElement.setAttribute('data-theme', finalTheme);
+        }
+
+        const updatedState = {
+          ...state,
+          theme: finalTheme,
+          uiLang: (settingsData?.ui_language as any) ?? state.uiLang,
+          ttsEnabled: settingsData?.tts_enabled ?? state.ttsEnabled,
+          goalMinutes: settingsData?.goal_minutes ?? state.goalMinutes,
+          xp: statsData?.xp_total ?? state.xp,
+          gems: statsData?.gems_balance ?? state.gems,
+          hearts: statsData?.hearts_total ?? state.hearts,
+          maxHearts: statsData?.hearts_max ?? state.maxHearts,
+          heartsRecoverAt: statsData?.hearts_recover_at ?? state.heartsRecoverAt,
+          heartsLastDebitAt: statsData?.hearts_last_debit_at ?? state.heartsLastDebitAt,
+          streak: streakData?.streak ?? state.streak,
+          lastStudyDate: streakData?.last_study_at ?? state.lastStudyDate,
+          lessonProgress,
+          badges,
+          srsData
+        };
+
+        save(updatedState);
+      } catch (err) {
+        console.error('Failed to hydrate store state from Supabase:', err);
+      }
+    };
+
+    hydrateFromSupabase();
+  }, [user]);
+
   const save = (newState: typeof state) => {
     setState(newState);
     try {
@@ -215,6 +332,13 @@ export function useStore() {
       activityLog: log,
     };
     save(updated);
+
+    if (user) {
+      createClient().from('user_stats').update({ xp_total: updated.xp }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing XP to Supabase:', error);
+      });
+    }
+
     return updated.xp;
   };
 
@@ -237,6 +361,17 @@ export function useStore() {
         heartsLastDebitAt: now.toISOString()
       };
       save(updated);
+
+      if (user) {
+        createClient().from('user_stats').update({
+          hearts_total: updated.hearts,
+          hearts_recover_at: updated.heartsRecoverAt,
+          hearts_last_debit_at: updated.heartsLastDebitAt
+        }).eq('user_id', user.id).then(({ error }) => {
+          if (error) console.error('Error syncing hearts details to Supabase:', error);
+        });
+      }
+
       return updated.hearts;
     }
     return state.hearts;
@@ -251,15 +386,36 @@ export function useStore() {
       heartsRecoverAt: null
     };
     save(updated);
+
+    if (user) {
+      createClient().from('user_stats').update({
+        hearts_total: updated.hearts,
+        hearts_max: updated.maxHearts,
+        hearts_recover_at: null
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing refillHearts to Supabase:', error);
+      });
+    }
   };
 
   const setHeartsState = (hearts: number, recoverAt: string | null, lastDebitAt?: string | null) => {
-    save({
+    const updated = {
       ...state,
       hearts,
       heartsRecoverAt: recoverAt,
       heartsLastDebitAt: lastDebitAt !== undefined ? lastDebitAt : state.heartsLastDebitAt
-    });
+    };
+    save(updated);
+
+    if (user) {
+      createClient().from('user_stats').update({
+        hearts_total: hearts,
+        hearts_recover_at: recoverAt,
+        hearts_last_debit_at: updated.heartsLastDebitAt
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing setHeartsState to Supabase:', error);
+      });
+    }
   };
 
   const syncMaxHearts = (limit: number) => {
@@ -270,18 +426,40 @@ export function useStore() {
         hearts: state.hearts > limit ? limit : (state.maxHearts < limit ? limit : state.hearts)
       };
       save(updated);
+
+      if (user) {
+        createClient().from('user_stats').update({
+          hearts_max: limit,
+          hearts_total: updated.hearts
+        }).eq('user_id', user.id).then(({ error }) => {
+          if (error) console.error('Error syncing syncMaxHearts to Supabase:', error);
+        });
+      }
     }
   };
 
   const addGems = (amount: number) => {
     const updated = { ...state, gems: state.gems + amount };
     save(updated);
+
+    if (user) {
+      createClient().from('user_stats').update({ gems_balance: updated.gems }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing addGems to Supabase:', error);
+      });
+    }
   };
 
   const spendGems = (amount: number) => {
     if (state.gems >= amount) {
       const updated = { ...state, gems: state.gems - amount };
       save(updated);
+
+      if (user) {
+        createClient().from('user_stats').update({ gems_balance: updated.gems }).eq('user_id', user.id).then(({ error }) => {
+          if (error) console.error('Error syncing spendGems to Supabase:', error);
+        });
+      }
+
       return true;
     }
     return false;
@@ -367,6 +545,58 @@ export function useStore() {
       accuracyHistory: newAccuracy.slice(-30), // keep last 30 days
     };
     save(updated);
+
+    if (user) {
+      const supabase = createClient();
+      
+      // 1. Sync lesson progress
+      supabase.from('lesson_progress').upsert({
+        user_id: user.id,
+        lesson_id: lessonId,
+        status: 'completed',
+        xp_earned: xpReward,
+        completed_at: new Date().toISOString()
+      }, { onConflict: 'user_id,lesson_id' }).then(({ error }) => {
+        if (error) console.error('Error syncing lesson progress to Supabase:', error);
+      });
+
+      // 2. Sync user stats
+      supabase.from('user_stats').update({
+        xp_total: updated.xp,
+        gems_balance: updated.gems,
+        lessons_done: completedCount
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing stats after lesson to Supabase:', error);
+      });
+
+      // 3. Sync streak
+      supabase.from('user_streaks').select('longest').eq('user_id', user.id).maybeSingle().then(({ data }) => {
+        const currentLongest = data?.longest || 0;
+        const newLongest = Math.max(currentLongest, updated.streak);
+        supabase.from('user_streaks').update({
+          streak: updated.streak,
+          longest: newLongest,
+          last_study_at: new Date().toISOString().split('T')[0]
+        }).eq('user_id', user.id).then(({ error }) => {
+          if (error) console.error('Error syncing streak to Supabase:', error);
+        });
+      });
+
+      // 4. Sync badges
+      const newlyUnlocked = updated.badges.filter((b, idx) => {
+        const oldB = state.badges[idx];
+        return b.unlockedAt && (!oldB || !oldB.unlockedAt);
+      });
+      newlyUnlocked.forEach(badge => {
+        supabase.from('user_badges').insert({
+          user_id: user.id,
+          badge_id: badge.badge_id,
+          earned_at: badge.unlockedAt
+        }).then(({ error }) => {
+          if (error) console.error('Error syncing newly unlocked badge to Supabase:', error);
+        });
+      });
+    }
   };
 
   const handleSRSCardUpdate = (vocab: any, quality: number) => {
@@ -393,7 +623,32 @@ export function useStore() {
       streakDays: state.streak,
     });
 
-    save({ ...state, srsData, dailyReviewsDone: newDailyReviews, quests: updatedQuests });
+    const updated = { ...state, srsData, dailyReviewsDone: newDailyReviews, quests: updatedQuests };
+    save(updated);
+
+    if (user) {
+      const supabase = createClient();
+      
+      // Sync to review_queue
+      supabase.from('review_queue').upsert({
+        user_id: user.id,
+        word_id: vocab.vocab_id,
+        ease_factor: result.ease,
+        interval_days: result.interval,
+        repetitions: result.repetitions,
+        next_review_at: result.dueDate,
+        last_reviewed_at: new Date().toISOString()
+      }, { onConflict: 'user_id,word_id' }).then(({ error }) => {
+        if (error) console.error('Error syncing review queue update to Supabase:', error);
+      });
+
+      // Update reviews_done in user_stats
+      supabase.from('user_stats').update({
+        reviews_done: newDailyReviews
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing reviews_done increment to Supabase:', error);
+      });
+    }
   };
 
   const setTheme = (theme: 'dark' | 'light' | 'system') => {
@@ -404,15 +659,35 @@ export function useStore() {
     } else {
       document.documentElement.setAttribute('data-theme', theme);
     }
+
+    if (user) {
+      createClient().from('user_settings').update({ theme }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing theme to Supabase:', error);
+      });
+    }
   };
 
   const setUILang = (uiLang: 'en' | 'hi') => {
-    save({ ...state, uiLang });
+    const updated = { ...state, uiLang };
+    save(updated);
+
+    if (user) {
+      createClient().from('user_settings').update({ ui_language: uiLang }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing UI language to Supabase:', error);
+      });
+    }
   };
 
   const toggleTTS = () => {
     const updated = { ...state, ttsEnabled: !state.ttsEnabled };
     save(updated);
+
+    if (user) {
+      createClient().from('user_settings').update({ tts_enabled: updated.ttsEnabled }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing TTS state to Supabase:', error);
+      });
+    }
+
     return updated.ttsEnabled;
   };
 
@@ -450,6 +725,15 @@ export function useStore() {
       gems: state.gems + gemBonus,
     };
     save(updated);
+
+    if (user) {
+      createClient().from('user_stats').update({
+        xp_total: updated.xp,
+        gems_balance: updated.gems
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing claimed quest rewards to Supabase:', error);
+      });
+    }
   };
 
   const nudgeFriend = (friendId: string) => {
@@ -524,22 +808,63 @@ export function useStore() {
       badges: updatedBadges,
     };
     save(updated);
+
+    if (user) {
+      const supabase = createClient();
+      
+      supabase.from('user_stats').update({
+        xp_total: updated.xp
+      }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing stats after story to Supabase:', error);
+      });
+
+      const newlyUnlocked = updated.badges.filter((b, idx) => {
+        const oldB = state.badges[idx];
+        return b.unlockedAt && (!oldB || !oldB.unlockedAt);
+      });
+      newlyUnlocked.forEach(badge => {
+        supabase.from('user_badges').insert({
+          user_id: user.id,
+          badge_id: badge.badge_id,
+          earned_at: badge.unlockedAt
+        }).then(({ error }) => {
+          if (error) console.error('Error syncing badge to Supabase:', error);
+        });
+      });
+    }
   };
 
   const activateStreakShield = () => {
     if (state.gems >= 10) {
-      save({
+      const updated = {
         ...state,
         gems: state.gems - 10,
         streakShield: { active: true, uses_remaining: 1, max_uses: 1, activatedAt: new Date().toISOString() },
-      });
+      };
+      save(updated);
+
+      if (user) {
+        createClient().from('user_stats').update({
+          gems_balance: updated.gems
+        }).eq('user_id', user.id).then(({ error }) => {
+          if (error) console.error('Error syncing streak shield activation to Supabase:', error);
+        });
+      }
+
       return true;
     }
     return false;
   };
 
   const setGoalMinutes = (minutes: number) => {
-    save({ ...state, goalMinutes: minutes });
+    const updated = { ...state, goalMinutes: minutes };
+    save(updated);
+
+    if (user) {
+      createClient().from('user_settings').update({ goal_minutes: minutes }).eq('user_id', user.id).then(({ error }) => {
+        if (error) console.error('Error syncing goal minutes to Supabase:', error);
+      });
+    }
   };
 
   return {

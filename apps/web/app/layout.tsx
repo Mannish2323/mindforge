@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
+import { StoreProvider } from './context/StoreContext';
 import { ThemeProvider } from './components/ThemeProvider';
 
 export const metadata: Metadata = {
@@ -8,11 +9,11 @@ export const metadata: Metadata = {
   description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice. Built by Velmorth Labs.',
   manifest: '/manifest.json',
   keywords: ['Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji', 'Velmorth'],
-  authors: [{ name: 'Velmorth Labs', url: 'https://withvelmorth.web.app' }],
+  authors: [{ name: 'Velmorth Labs', url: 'https://learn-with-velmorth.vercel.app' }],
   openGraph: {
     title: 'Learn with Velmorth',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
-    url: 'https://withvelmorth.web.app',
+    url: 'https://learn-with-velmorth.vercel.app',
     siteName: 'Velmorth',
     locale: 'en_US',
     type: 'website',
@@ -54,7 +55,9 @@ export default function RootLayout({
           <div id="app-shell">
             <ThemeProvider>
               <AuthProvider>
-                {children}
+                <StoreProvider>
+                  {children}
+                </StoreProvider>
               </AuthProvider>
             </ThemeProvider>
           </div>

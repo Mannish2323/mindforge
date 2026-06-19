@@ -2,17 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 
 // ── Plan → Razorpay amount (paise) ───────────────────────────────────────────
 const PLAN_AMOUNTS: Record<string, number> = {
-  starter:    9900,   // ₹99
-  plus:       14900,  // ₹149
-  pro:        19900,  // ₹199
-  pro_yearly: 99900,  // ₹999
+  starter:        9900,   // ₹99
+  plus:           14900,  // ₹149
+  pro:            19900,  // ₹199
+  starter_yearly: 49900,  // ₹499
+  plus_yearly:    79900,  // ₹799
+  pro_yearly:     99900,  // ₹999
 };
 
 const PLAN_LABELS: Record<string, string> = {
-  starter:    'Starter Monthly',
-  plus:       'Plus Monthly',
-  pro:        'Pro Monthly',
-  pro_yearly: 'Pro Yearly',
+  starter:        'Starter Monthly',
+  plus:           'Plus Monthly',
+  pro:            'Pro Monthly',
+  starter_yearly: 'Starter Yearly',
+  plus_yearly:    'Plus Yearly',
+  pro_yearly:     'Pro Yearly',
 };
 
 export async function POST(req: NextRequest) {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle } from 'lucide-react';
 
@@ -15,9 +16,14 @@ const GOALS = [
 
 type SignupStep = 1 | 2 | 3;
 
-export function AuthView() {
+interface AuthViewProps {
+  initialMode?: 'login' | 'signup';
+}
+
+export function AuthView({ initialMode = 'login' }: AuthViewProps) {
   const { loginWithEmail, signUpWithEmail, signInWithGoogle, signUpStep2, signUpStep3 } = useAuth();
-  const [mode, setMode]     = useState<'login' | 'signup'>('login');
+  const router = useRouter();
+  const [mode, setMode]     = useState<'login' | 'signup'>(initialMode);
   const [step, setStep]     = useState<SignupStep>(1);
   const [error, setError]   = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -85,6 +91,27 @@ export function AuthView() {
     }
   };
 
+  const handleGitHubSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const { createClient } = await import('../lib/supabase');
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/callback`
+            : undefined,
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(friendlyAuthError(err));
+      setLoading(false);
+    }
+  };
+
   const handleSignupStep1 = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!sEmail || !sPassword) { setError('Please fill in all fields.'); return; }
@@ -145,6 +172,12 @@ export function AuthView() {
     </svg>
   );
 
+  const GitHubSVG = () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+    </svg>
+  );
+
   // ── LOGIN SCREEN ──
   const renderLogin = () => (
     <div className="auth-page">
@@ -189,6 +222,17 @@ export function AuthView() {
           <GoogleSVG /> Continue with Google
         </button>
 
+        <button
+          id="btn-github-signin"
+          className="btn-google"
+          onClick={handleGitHubSignIn}
+          disabled={loading}
+          aria-label="Continue with GitHub"
+          style={{ background: 'var(--surface-2, #1e293b)', border: '1px solid var(--border-strong, rgba(255,255,255,0.14))', marginTop: '8px' }}
+        >
+          <GitHubSVG /> Continue with GitHub
+        </button>
+
         <div className="divider">OR</div>
 
         <form onSubmit={handleLogin} noValidate>
@@ -219,7 +263,7 @@ export function AuthView() {
             <button
               type="button"
               style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: 'var(--text-xs)', fontWeight: 600, cursor: 'pointer' }}
-              onClick={() => setError('Password reset: check your email for instructions.')}
+              onClick={() => router.push('/auth/forgot-password')}
             >
               Forgot password?
             </button>
@@ -293,6 +337,16 @@ export function AuthView() {
           disabled={loading}
         >
           <GoogleSVG /> Sign up with Google
+        </button>
+
+        <button
+          id="btn-github-signup"
+          className="btn-google"
+          onClick={handleGitHubSignIn}
+          disabled={loading}
+          style={{ background: 'var(--surface-2, #1e293b)', border: '1px solid var(--border-strong, rgba(255,255,255,0.14))', marginTop: '8px' }}
+        >
+          <GitHubSVG /> Sign up with GitHub
         </button>
 
         <div className="divider">OR</div>

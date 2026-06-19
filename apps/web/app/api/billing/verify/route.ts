@@ -10,10 +10,12 @@ const PLAN_LIMITS: Record<string, {
   lessons_limit_daily: number;
   ads_enabled: boolean;
 }> = {
-  starter:    { status: 'starter', hearts_limit: 75,  ai_limit_daily: 15,  lessons_limit_daily: 15,  ads_enabled: true  },
-  plus:       { status: 'plus',    hearts_limit: 90,  ai_limit_daily: 30,  lessons_limit_daily: 30,  ads_enabled: true  },
-  pro:        { status: 'pro',     hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
-  pro_yearly: { status: 'yearly',  hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
+  starter:        { status: 'starter', hearts_limit: 75,  ai_limit_daily: 15,  lessons_limit_daily: 15,  ads_enabled: true  },
+  plus:           { status: 'plus',    hearts_limit: 90,  ai_limit_daily: 30,  lessons_limit_daily: 30,  ads_enabled: true  },
+  pro:            { status: 'pro',     hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
+  starter_yearly: { status: 'yearly',  hearts_limit: 75,  ai_limit_daily: 15,  lessons_limit_daily: 15,  ads_enabled: true  },
+  plus_yearly:    { status: 'yearly',  hearts_limit: 90,  ai_limit_daily: 30,  lessons_limit_daily: 30,  ads_enabled: true  },
+  pro_yearly:     { status: 'yearly',  hearts_limit: 100, ai_limit_daily: 99,  lessons_limit_daily: 99,  ads_enabled: false },
 };
 
 export async function POST(req: NextRequest) {
@@ -43,10 +45,15 @@ export async function POST(req: NextRequest) {
     const bodyStr  = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expected = crypto.createHmac('sha256', keySecret).update(bodyStr).digest('hex');
 
-    const sigValid = crypto.timingSafeEqual(
-      Buffer.from(expected, 'hex'),
-      Buffer.from(razorpay_signature, 'hex')
-    );
+    let sigValid = false;
+    try {
+      sigValid = crypto.timingSafeEqual(
+        Buffer.from(expected, 'hex'),
+        Buffer.from(razorpay_signature, 'hex')
+      );
+    } catch {
+      sigValid = false;
+    }
 
     if (!sigValid) {
       console.warn('[Razorpay] Signature mismatch:', { razorpay_order_id, razorpay_payment_id });
@@ -74,7 +81,8 @@ export async function POST(req: NextRequest) {
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
     const limits = PLAN_LIMITS[planId];
 
-    const isYearly = planId === 'pro_yearly';
+    const isYearly = planId.endsWith('_yearly');
+    const basePlanId = planId.replace('_yearly', '');
     const startsAt = new Date();
     const endsAt   = new Date(startsAt);
     isYearly
@@ -85,12 +93,12 @@ export async function POST(req: NextRequest) {
       .from('entitlements')
       .upsert({
         user_id:             user.id,
-        plan_id:             isYearly ? 'pro' : planId,
+        plan_id:             basePlanId,
         status:              limits.status,
         starts_at:           startsAt.toISOString(),
         ends_at:             endsAt.toISOString(),
-        provider:            'razorpay',
-        payment_id:          razorpay_payment_id,
+        razorpay_payment_id: razorpay_payment_id,
+        razorpay_order_id:   razorpay_order_id,
         hearts_limit:        limits.hearts_limit,
         ai_limit_daily:      limits.ai_limit_daily,
         lessons_limit_daily: limits.lessons_limit_daily,
@@ -103,10 +111,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Step 5: Log payment event ────────────────────────────────────────────
-    await adminClient.from('event_logs').insert({
+    await adminClient.from('activity_logs').insert({
       user_id: user.id,
-      event:   'payment_success',
-      payload: {
+      action:   'payment_success',
+      metadata: {
         plan_id:    planId,
         status:     limits.status,
         payment_id: razorpay_payment_id,

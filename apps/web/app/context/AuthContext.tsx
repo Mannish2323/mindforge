@@ -56,9 +56,10 @@ interface AuthContextType {
   signUpStep2: (username: string, displayName: string, avatarUrl: string) => Promise<void>;
   signUpStep3: (goalMinutes: number) => Promise<void>;
   logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   updateProfileStats: (xpDelta: number, leafDelta: number) => Promise<void>;
-  updateSettings: (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean }>) => Promise<void>;
-  updateProfileDetails: (displayName: string, bio: string, avatarUrl: string) => Promise<void>;
+  updateSettings: (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean; jlpt_target?: string }>) => Promise<void>;
+  updateProfileDetails: (displayName: string, bio: string, avatarUrl: string, username?: string) => Promise<void>;
   updateHearts: (newHearts: number, nextRecoverAt: string | null, lastDebitAt: string | null) => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
@@ -190,7 +191,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         level: Math.floor((statsData.xp_total ?? 0) / 100) + 1,
         streak: streakData.streak ?? 0,
         leafBalance: statsData.gems_balance ?? 5,
-        isPremium: ['starter', 'plus', 'pro', 'yearly'].includes(entitlementsData.status),
+        isPremium: ['starter', 'plus', 'pro', 'yearly', 'cancelled'].includes(entitlementsData.status) &&
+                   (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true),
         planId: entitlementsData.plan_id || 'free',
         planStatus: entitlementsData.status || 'free',
         heartsLimit: entitlementsData.hearts_limit ?? 5,
@@ -229,28 +231,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        syncUserProfile(session.user);
+    let active = true;
+
+    // Validate session on mount to prevent stale localstorage session loops
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!active) return;
+      setUser(user ?? null);
+      if (user) {
+        syncUserProfile(user);
       } else {
         setProfile(null);
       }
-      setLoading(false);
+      
+      // Fetch session for access tokens and clear loading state
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (!active) return;
+        setSession(session);
+        setLoading(false);
+      });
     });
 
-    // Subscribe to auth state changes
+    // Subscribe to auth state changes for SIGNED_IN, SIGNED_OUT, etc.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!active) return;
+      if (event === 'INITIAL_SESSION') {
+        // Let the mount getUser check handle the initial session
+        return;
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
         // Defer profile sync to prevent supabase-js internal deadlock
         setTimeout(() => {
-          syncUserProfile(session.user);
+          if (active) syncUserProfile(session.user);
         }, 0);
       } else {
         setProfile(null);
@@ -258,7 +274,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -382,6 +401,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: typeof window !== 'undefined'
+        ? `${window.location.origin}/auth/callback?type=recovery`
+        : undefined,
+    });
+    if (error) throw error;
+  };
+
   const updateProfileStats = async (xpDelta: number, leafDelta: number) => {
     if (!user || !profile) return;
     try {
@@ -410,7 +438,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateSettings = async (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean }>) => {
+  const updateSettings = async (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean; jlpt_target?: string }>) => {
     if (!user || !profile) return;
     try {
       const { error } = await supabase
@@ -429,21 +457,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateProfileDetails = async (displayName: string, bio: string, avatarUrl: string) => {
+  const updateProfileDetails = async (displayName: string, bio: string, avatarUrl: string, username?: string) => {
     if (!user) throw new Error('Not authenticated');
     try {
+      const updateData: any = {
+        display_name: displayName,
+        bio: bio,
+        avatar_url: avatarUrl,
+      };
+      if (username) {
+        updateData.username = username;
+      }
       const { error } = await supabase
         .from('profiles')
-        .update({
-          display_name: displayName,
-          bio: bio,
-          avatar_url: avatarUrl,
-        })
+        .update(updateData)
         .eq('id', user.id);
 
       if (error) throw error;
     } catch (err) {
       console.error('Error updating profile details in DB:', err);
+      throw err;
     }
     
     // Update local profile state
@@ -452,6 +485,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       name: displayName,
       bio,
       avatarUrl,
+      ...(username ? { username } : {}),
     } : null);
   };
 
@@ -514,6 +548,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUpStep2,
         signUpStep3,
         logout,
+        resetPassword,
         updateProfileStats,
         updateSettings,
         updateProfileDetails,

@@ -177,7 +177,7 @@ export function AdminView() {
 
   // ── Guard — only admins ──
   // NOTE: all hooks are above this return to comply with React rules of hooks
-  if (!profile?.isAdmin) {
+  if (!profile?.isAdmin || profile?.email !== 'manish63018@gmail.com') {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', padding: 'var(--sp-8)', textAlign: 'center' }}>
         <div style={{ fontSize: '64px', marginBottom: 'var(--sp-4)' }}>🔒</div>

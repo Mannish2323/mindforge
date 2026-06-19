@@ -239,14 +239,9 @@ button {
 .delay-300 { animation-delay: 300ms; }
 .delay-400 { animation-delay: 400ms; }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *, ::before, ::after {
-    animation-duration: 50ms !important;
-    transition-duration: 50ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
+
+/* NOTE: prefers-reduced-motion is handled in full at the end of this file */
+
 
 /* ============================================================
    SPLASH SCREEN
@@ -507,6 +502,10 @@ button {
   box-shadow: 0 3px 10px rgba(22,163,74,.3);
 }
 .topbar-wordmark { font-size: var(--text-base); font-weight: 800; color: var(--text); letter-spacing: -0.01em; }
+@media (max-width: 440px) {
+  .topbar-wordmark { display: none !important; }
+}
+
 
 .topbar-stats {
   display: flex;
@@ -2876,6 +2875,24 @@ html, body {
   }
 }
 
+/* ── Compact mobile screens (< 480px) ── */
+@media (max-width: 480px) {
+  .topbar-wordmark { display: none !important; }
+  .stat-pill {
+    padding: 3px 6px !important;
+    font-size: 10px !important;
+    gap: 3px !important;
+  }
+  .pro-badge {
+    padding: 3px 6px !important;
+    font-size: 9px !important;
+  }
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+}
+
 /* ── Small mobile (< 375px) ── */
 @media (max-width: 374px) {
   .stat-pill { display: none !important; }
@@ -2889,3 +2906,152 @@ html, body {
   .profile-container-main { padding-bottom: var(--sp-10); }
   .settings-page          { padding-bottom: var(--sp-10); }
 }
+
+/* ================================================================
+   MISSING COMPONENT STYLES — Added in production audit
+   ================================================================ */
+
+/* P5: Script Lab — responsive study grid */
+.script-study-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-4);
+}
+@media (min-width: 600px) {
+  .script-study-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* P6: Wave animation for SpeakRoleplay waveform bars */
+@keyframes wave {
+  0%, 100% { height: 8px;  }
+  50%       { height: 28px; }
+}
+
+/* P9: fadeIn alias (capital I) — used in reduced-motion block */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* P10: Toast system container */
+.toast-container {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-h, 64px) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9000;
+  pointer-events: none;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+@media (min-width: 1024px) {
+  .toast-container {
+    bottom: 24px;
+    left: auto;
+    right: 24px;
+    transform: none;
+  }
+}
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  pointer-events: all;
+  animation: fadeIn 250ms ease both;
+  white-space: nowrap;
+}
+.toast.success { border-color: var(--success);  color: var(--success); }
+.toast.error   { border-color: var(--error);    color: var(--error);   }
+.toast.info    { border-color: var(--primary);  color: var(--primary); }
+
+/* P4: Hide gems stat pill on very small screens */
+@media (max-width: 374px) {
+  .stat-pill.gems { display: none !important; }
+}
+
+/* BottomNav active-item link styles */
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  gap: 3px;
+  position: relative;
+  color: var(--text-3);
+  transition: color 0.2s ease;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.bottom-nav-item.active {
+  color: var(--primary);
+  font-weight: 800;
+}
+.bottom-nav-item:active { transform: scale(0.92); }
+
+
+
+/* ================================================================
+   ACCESSIBILITY — prefers-reduced-motion
+   Replaces heavy motion with simple fades for users who prefer
+   reduced animation (WCAG 2.1 AA, criterion 2.3.3)
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Kill all CSS transitions & animations globally */
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
+  }
+
+  /* Preserve fade-in only — replace slide/scale with opacity fade */
+  .page-enter {
+    animation: fadeIn 150ms ease forwards !important;
+    transform: none !important;
+  }
+
+  /* Disable shake on locked lessons */
+  @keyframes shake { from, to { transform: none; } }
+
+  /* Disable flip card 3D rotation — show front instantly */
+  .flip-card-inner   { transform: none !important; transition: none !important; }
+  .flip-card-back    { transform: rotateY(0) !important; }
+
+  /* Disable bottom-nav icon hover scale */
+  .bottom-nav-item:hover  { transform: none !important; }
+  .bottom-nav-item:active { transform: none !important; }
+
+  /* Disable card lift / hover transforms */
+  .card:hover { transform: none !important; box-shadow: var(--shadow) !important; }
+
+  /* Disable progress bar animated shine */
+  .progress-fill::after { animation: none !important; }
+
+  /* Disable XP floating badge animation */
+  .xp-flash { animation: fadeIn 150ms ease forwards !important; }
+
+  /* Disable plan card glow pulse */
+  .plan-card-pro { animation: none !important; box-shadow: 0 0 0 2px var(--primary) !important; }
+
+  /* Disable stagger — show all at once */
+  [style*="transition-delay"] { transition-delay: 0ms !important; }
+}
+
