@@ -8,4 +8,4 @@ allowBuilds:
   protobufjs: true
   unrs-resolver: true
   undici-types: true
-
+  esbuild: true

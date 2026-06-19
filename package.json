@@ -10,11 +10,11 @@
     "lint": "turbo lint"
   },
   "devDependencies": {
-    "turbo": "^2.9.18"
+    "turbo": "^2.9.18",
+    "vercel": "^54.14.2"
   },
-  "packageManager": "pnpm@11.5.2",
+  "packageManager": "pnpm@10.14.0",
   "engines": {
     "node": ">=22.0.0"
   }
 }
-

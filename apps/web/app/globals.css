@@ -350,6 +350,16 @@ button {
   pointer-events: auto;
 }
 
+.mobile-sidebar-close {
+  display: none !important;
+}
+
+@media (max-width: 767px) {
+  .mobile-sidebar-close {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 1023px) {
   .mobile-menu-toggle {
     display: flex !important;

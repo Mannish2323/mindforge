@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditCard, Crown, BarChart2 } from 'lucide-react';
+import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditCard, Crown, BarChart2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '@evlo/utils';
 
@@ -37,27 +37,50 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
       <div className="sidebar-logo" style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '12px',
+        justifyContent: 'space-between',
         padding: '0 16px',
         marginBottom: '24px',
+        width: '100%',
       }}>
-        <div className="logo-mark" style={{
-          background: 'linear-gradient(135deg, #16A34A, #4ade80)',
-          width: '32px',
-          height: '32px',
-          borderRadius: '8px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 'bold',
-          color: '#fff',
-          fontSize: '18px',
-          boxShadow: '0 0 16px rgba(22,163,74,0.4)',
-        }}>V</div>
-        <div>
-          <div className="logo-name" style={{ fontWeight: 800, fontSize: '16px', color: '#fff' }}>Velmorth</div>
-          <div className="logo-sub" style={{ fontSize: '10px', color: 'var(--text-muted, #7e7e86)' }}>Japanese Labs</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="logo-mark" style={{
+            background: 'linear-gradient(135deg, #16A34A, #4ade80)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 'bold',
+            color: '#fff',
+            fontSize: '18px',
+            boxShadow: '0 0 16px rgba(22,163,74,0.4)',
+          }}>V</div>
+          <div>
+            <div className="logo-name" style={{ fontWeight: 800, fontSize: '16px', color: '#fff' }}>Velmorth</div>
+            <div className="logo-sub" style={{ fontSize: '10px', color: 'var(--text-muted, #7e7e86)' }}>Japanese Labs</div>
+          </div>
         </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="mobile-sidebar-close"
+            style={{
+              background: 'var(--surface-2, #2d2d34)',
+              border: '1px solid var(--border-strong, #2d2d34)',
+              color: 'var(--text, #fff)',
+              cursor: 'pointer',
+              padding: '6px',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            aria-label="Close Navigation Menu"
+          >
+            <X size={18} />
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav" style={{
