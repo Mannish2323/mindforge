@@ -8,7 +8,7 @@ import { useStoreContext } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Modal } from '@evlo/ui';
 
-export function Topbar() {
+export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   const { state, refillHearts } = useStoreContext();
   const { user, profile, updateHearts } = useAuth();
   const router = useRouter();
@@ -57,7 +57,7 @@ export function Topbar() {
       <header id="topbar" className="topbar" style={{
         position: 'fixed',
         top: 0,
-        left: 0,
+        left: 'var(--topbar-left, 0)',
         right: 0,
         height: 'var(--topbar-height, 56px)',
         background: 'var(--bg-surface, #1e1e24)',
@@ -68,28 +68,53 @@ export function Topbar() {
         padding: '0 12px',
         zIndex: 100,
       }}>
-        {/* Left: Brand Icon + Wordmark */}
-        <Link href="/home" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-          <div className="logo-mark" style={{
-            background: 'linear-gradient(135deg, #16A34A, #4ade80)',
-            width: '28px',
-            height: '28px',
-            borderRadius: 'var(--radius-md, 8px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            color: '#fff',
-            fontSize: '16px',
-            boxShadow: '0 0 12px rgba(22,163,74,0.4)',
-          }}>V</div>
-          <span className="topbar-wordmark" style={{
-            fontWeight: 800,
-            fontSize: '16px',
-            color: 'var(--text, #fff)',
-            letterSpacing: '-0.02em',
-          }}>Velmorth</span>
-        </Link>
+        {/* Left: Hamburger menu + Brand Icon + Wordmark */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Hamburger button - visible on mobile only */}
+          <button
+            onClick={onToggleSidebar}
+            className="mobile-menu-toggle"
+            style={{
+              display: 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: 'var(--surface-2, #2d2d34)',
+              border: '1px solid var(--border-strong, #2d2d34)',
+              color: 'var(--text, #fff)',
+              cursor: 'pointer',
+            }}
+            aria-label="Toggle Navigation Menu"
+          >
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M0 12H18V10H0V12ZM0 7H18V5H0V7ZM0 0V2H18V0H0Z" fill="currentColor"/>
+            </svg>
+          </button>
+
+          <Link href="/home" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+            <div className="logo-mark" style={{
+              background: 'linear-gradient(135deg, #16A34A, #4ade80)',
+              width: '28px',
+              height: '28px',
+              borderRadius: 'var(--radius-md, 8px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              color: '#fff',
+              fontSize: '16px',
+              boxShadow: '0 0 12px rgba(22,163,74,0.4)',
+            }}>V</div>
+            <span className="topbar-wordmark" style={{
+              fontWeight: 800,
+              fontSize: '16px',
+              color: 'var(--text, #fff)',
+              letterSpacing: '-0.02em',
+            }}>Velmorth</span>
+          </Link>
+        </div>
 
         {/* Right: Stats strip */}
         <div className="topbar-stats" style={{

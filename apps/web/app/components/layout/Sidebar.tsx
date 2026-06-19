@@ -7,7 +7,7 @@ import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditC
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '@evlo/utils';
 
-export function Sidebar() {
+export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
   const { profile } = useAuth();
 
@@ -21,7 +21,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="sidebar" style={{
+    <aside className={cn("sidebar", { "mobile-open": !!isOpen })} style={{
       width: '240px',
       background: 'var(--bg-surface, #1e1e24)',
       borderRight: '1px solid var(--border-strong, #2d2d34)',
@@ -31,7 +31,7 @@ export function Sidebar() {
       left: 0,
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 90,
+      zIndex: 999,
       padding: '16px 0',
     }}>
       <div className="sidebar-logo" style={{
@@ -76,6 +76,7 @@ export function Sidebar() {
             <Link
               key={item.path}
               href={item.path}
+              onClick={onClose}
               className={cn({ active: isActive })}
               style={{
                 display: 'flex',
@@ -106,6 +107,7 @@ export function Sidebar() {
         {/* Profile */}
         <Link
           href="/profile?tab=profile"
+          onClick={onClose}
           className={cn({ active: pathname === '/profile' && !global?.window?.location?.search?.includes('settings') })}
           style={{
             display: 'flex',
@@ -127,6 +129,7 @@ export function Sidebar() {
         {/* Settings inside Profile tab */}
         <Link
           href="/profile?tab=settings"
+          onClick={onClose}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -147,6 +150,7 @@ export function Sidebar() {
         {/* Billing */}
         <Link
           href="/billing"
+          onClick={onClose}
           className={cn({ active: pathname === '/billing' })}
           style={{
             display: 'flex',
@@ -169,6 +173,7 @@ export function Sidebar() {
         {profile?.isAdmin && (
           <Link
             href="/admin"
+            onClick={onClose}
             className={cn({ active: pathname === '/admin' })}
             style={{
               display: 'flex',
@@ -192,7 +197,7 @@ export function Sidebar() {
       {/* Upgrade CTA */}
       {!profile?.isPremium && (
         <div className="sidebar-upgrade" style={{ padding: '0 16px' }}>
-          <Link href="/billing" style={{ textDecoration: 'none' }}>
+          <Link href="/billing" onClick={onClose} style={{ textDecoration: 'none' }}>
             <button
               className="sidebar-upgrade-btn"
               style={{

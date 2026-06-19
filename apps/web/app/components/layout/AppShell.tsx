@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Topbar } from './Topbar';
 import { Sidebar } from './Sidebar';
@@ -113,6 +113,7 @@ export function AppShell({ children, hideNav = false }: AppShellProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Client-side guard for static export deploy (where middleware is disabled)
   useEffect(() => {
@@ -150,11 +151,26 @@ export function AppShell({ children, hideNav = false }: AppShellProps) {
         color: 'var(--text, #fff)',
       }}
     >
-      {/* Sidebar — Desktop/Tablet only (hidden on mobile via CSS) */}
-      <Sidebar />
+      {/* Sidebar Mobile Backdrop */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="mobile-sidebar-backdrop"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 998,
+          }}
+        />
+      )}
 
-      {/* Topbar — Mobile and Desktop */}
-      <Topbar />
+      {/* Sidebar Drawer */}
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+
+      {/* Topbar */}
+      <Topbar onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
       {/* Main Content Area */}
       <main
@@ -177,7 +193,7 @@ export function AppShell({ children, hideNav = false }: AppShellProps) {
         </div>
       </main>
 
-      {/* Bottom Nav — Mobile only (hidden on desktop via CSS) */}
+      {/* Bottom Nav — Mobile only */}
       <BottomNav />
     </div>
   );

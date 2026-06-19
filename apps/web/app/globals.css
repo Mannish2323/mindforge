@@ -70,6 +70,7 @@
   --sidebar-w:     240px;
   --topbar-h:      60px;
   --bottom-nav-h:  68px;
+  --topbar-left:   0px;
 
   /* Timing */
   --t-fast:   120ms ease;
@@ -310,15 +311,21 @@ button {
 }
 
 #app-shell {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   position: relative;
+  width: 100%;
 }
 
-/* ── Sidebar — hidden on mobile ── */
+/* ── Sidebar — slide-out drawer on mobile by default ── */
 .sidebar {
-  display: none;
+  display: flex;
   position: fixed;
   top: 0; left: 0; bottom: 0;
   width: var(--sidebar-w);
@@ -327,11 +334,18 @@ button {
   padding: var(--sp-5) var(--sp-3);
   flex-direction: column;
   gap: var(--sp-1);
-  z-index: 200;
+  z-index: 999;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
+  transform: translateX(-100%);
+  transition: transform var(--t-slow);
+}
+
+.sidebar.mobile-open {
+  transform: translateX(0);
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.4);
 }
 
 .sidebar-logo {
@@ -591,14 +605,25 @@ button {
   .sidebar-upgrade { padding-top: var(--sp-3); }
   .sidebar-upgrade-btn { justify-content: center; padding: 12px; }
 
-  #app-shell {
+  :root {
+    --topbar-left: 72px;
+  }
+
+  .app-layout {
     display: grid;
     grid-template-columns: 72px 1fr;
     grid-template-rows: auto 1fr;
     min-height: 100vh;
   }
   #root, #__next { display: contents; }
-  .sidebar       { grid-column: 1; grid-row: 1 / -1; position: fixed; height: 100vh; }
+  .sidebar {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    position: fixed;
+    height: 100vh;
+    transform: none !important;
+    z-index: 200;
+  }
   .topbar        { grid-column: 2; grid-row: 1; }
   .main-content  {
     grid-column: 2;
@@ -610,10 +635,13 @@ button {
 
 /* ── Desktop & Laptop (>= 1024px) ── */
 @media (min-width: 1024px) {
+  :root {
+    --topbar-left: var(--sidebar-w);
+  }
   .sidebar { display: flex; }
   .bottom-nav { display: none; }
 
-  #app-shell {
+  .app-layout {
     display: grid;
     grid-template-columns: var(--sidebar-w) 1fr;
     grid-template-rows: auto 1fr;
@@ -621,7 +649,14 @@ button {
   }
   #root, #__next { display: contents; }
 
-  .sidebar       { grid-column: 1; grid-row: 1 / -1; position: fixed; height: 100vh; }
+  .sidebar {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    position: fixed;
+    height: 100vh;
+    transform: none !important;
+    z-index: 200;
+  }
   .topbar        { grid-column: 2; grid-row: 1; }
   .main-content  {
     grid-column: 2;
@@ -3007,6 +3042,13 @@ html, body {
 .bottom-nav-item:active { transform: scale(0.92); }
 
 
+
+/* Mobile menu toggler show rule */
+@media (max-width: 767px) {
+  .mobile-menu-toggle {
+    display: flex !important;
+  }
+}
 
 /* ================================================================
    ACCESSIBILITY — prefers-reduced-motion
