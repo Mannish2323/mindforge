@@ -15,7 +15,6 @@ export function BottomNav() {
     { label: 'SCRIPT', path: '/script', icon: PenLine },
     { label: 'SPEAK',  path: '/speak',  icon: Mic },
     { label: 'JLPT',   path: '/jlpt',   icon: Medal },
-    { label: 'REVIEW', path: '/review', icon: RotateCcw },
   ];
 
   return (

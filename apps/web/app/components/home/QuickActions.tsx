@@ -9,7 +9,6 @@ export function QuickActions() {
   const actions = [
     { label: 'Script Lab', path: '/script', icon: PenLine, color: 'var(--primary, #ff9800)', bg: 'rgba(255, 152, 0, 0.08)' },
     { label: 'Speak Mode', path: '/speak', icon: Mic, color: 'var(--accent-ai, #00acc1)', bg: 'rgba(0, 172, 193, 0.08)' },
-    { label: 'Review Cards', path: '/review', icon: RotateCcw, color: 'var(--gem, #9c27b0)', bg: 'rgba(156, 39, 176, 0.08)' },
     { label: 'JLPT Path', path: '/jlpt', icon: Medal, color: 'var(--xp-gold, #ffc107)', bg: 'rgba(255, 193, 7, 0.08)' },
   ];
 
@@ -23,7 +22,7 @@ export function QuickActions() {
         letterSpacing: '0.05em',
         margin: 0
       }}>Quick Actions</h3>
-      <div className="quick-actions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+      <div className="quick-actions-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
         {actions.map((item, idx) => {
           const Icon = item.icon;
 
