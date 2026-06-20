@@ -421,7 +421,7 @@ export function AdminView() {
             </div>
             <div className="card" style={{ padding: 'var(--sp-4)' }}>
               <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-3)' }}>
-                ℹ️ Ads are never shown to Premium users (plan_id ≠ free).
+                ℹ️ Ads are never shown to Pro users (plan_id = pro or pro_yearly).
               </p>
             </div>
           </div>

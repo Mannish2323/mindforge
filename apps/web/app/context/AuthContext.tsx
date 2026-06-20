@@ -198,7 +198,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         heartsLimit: entitlementsData.hearts_limit ?? 5,
         aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
         lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
-        adsEnabled: entitlementsData.ads_enabled ?? true,
+        adsEnabled: !(
+          (['pro', 'pro_yearly', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'yearly'].includes(entitlementsData.status)) &&
+          (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)
+        ),
         isAdmin: !!adminData,
         avatarUrl: profileData.avatar_url || '🦊',
         bio: profileData.bio || '',

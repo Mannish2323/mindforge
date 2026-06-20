@@ -66,13 +66,13 @@ private val PLANS = listOf(
     SubscriptionPlan(
         planId        = "velmorth_premium_monthly",
         title         = "Premium Monthly",
-        priceInr      = 149,
+        priceInr      = 199,
         billingPeriod = "monthly",
         trialDays     = 1,
         autoRenew     = true,
         savingLabel   = null,
         playStoreId   = "velmorth.premium.monthly",
-        priceLabel    = "₹149 / month",
+        priceLabel    = "₹199 / month",
         subLabel      = "1-day free trial · Auto-renews monthly"
     ),
     SubscriptionPlan(
@@ -82,7 +82,7 @@ private val PLANS = listOf(
         billingPeriod = "yearly",
         trialDays     = 1,
         autoRenew     = true,
-        savingLabel   = "Save 44%",
+        savingLabel   = "Save 58%",
         playStoreId   = "velmorth.premium.yearly",
         priceLabel    = "₹999 / year",
         subLabel      = "1-day free trial · Just ₹83/month · Auto-renews yearly"
