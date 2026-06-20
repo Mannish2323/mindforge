@@ -604,8 +604,8 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
         {answerState !== 'idle' && (
           <div style={{
             padding: 'var(--sp-3)', marginBottom: 'var(--sp-3)', borderRadius: 'var(--radius-lg)', textAlign: 'center',
-            background: answerState === 'correct' ? 'rgba(22,163,74,0.12)' : 'rgba(239,68,68,0.10)',
-            border: `1px solid ${answerState === 'correct' ? 'rgba(22,163,74,0.3)' : 'rgba(239,68,68,0.25)'}`,
+            background: answerState === 'correct' ? 'rgba(34,197,94,0.12)' : 'rgba(239,68,68,0.10)',
+            border: `1px solid ${answerState === 'correct' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.25)'}`,
             animation: 'fadeIn 0.2s ease',
           }}>
             <div style={{ fontWeight: 700, color: answerState === 'correct' ? 'var(--success)' : 'var(--error)' }}>
@@ -623,7 +623,7 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
             let border = '1px solid var(--border)';
             let color = 'var(--text)';
             if (answerState !== 'idle') {
-              if (isCorrectOpt) { bg = 'rgba(22,163,74,0.15)'; border = '1px solid rgba(22,163,74,0.5)'; color = '#16a34a'; }
+              if (isCorrectOpt) { bg = 'rgba(34,197,94,0.15)'; border = '1px solid rgba(34,197,94,0.5)'; color = '#22c55e'; }
               else if (isSelectedOpt) { bg = 'rgba(239,68,68,0.12)'; border = '1px solid rgba(239,68,68,0.4)'; color = '#ef4444'; }
             }
             return (
@@ -639,11 +639,66 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
                 }}
               >
                 <span>{opt}</span>
-                {answerState !== 'idle' && isCorrectOpt && <CheckCircle size={18} style={{ color: '#16a34a', flexShrink: 0 }} />}
+                {answerState !== 'idle' && isCorrectOpt && <CheckCircle size={18} style={{ color: '#22c55e', flexShrink: 0 }} />}
                 {answerState !== 'idle' && isSelectedOpt && !isCorrectOpt && <XCircle size={18} style={{ color: '#ef4444', flexShrink: 0 }} />}
               </button>
             );
           })}
+        </div>
+
+        {/* Mascot Reaction Row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+          {/* Speech bubble */}
+          <div style={{
+            background: 'var(--surface-2)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: '12px',
+            padding: '8px 12px',
+            fontSize: '12px',
+            fontWeight: 600,
+            position: 'relative',
+            maxWidth: '220px',
+            color: 'var(--text-2)',
+          }}>
+            {answerState === 'idle' && "Can you translate this? Give it a try!"}
+            {answerState === 'correct' && "Nodding! That is absolutely correct!"}
+            {answerState === 'wrong' && "Don't worry, keep growing! Try another one."}
+            {/* Speech bubble arrow */}
+            <div style={{
+              position: 'absolute',
+              right: '-6px',
+              top: '12px',
+              width: '0',
+              height: '0',
+              borderTop: '6px solid transparent',
+              borderBottom: '6px solid transparent',
+              borderLeft: '6px solid var(--surface-2)',
+              zIndex: 2,
+            }} />
+            <div style={{
+              position: 'absolute',
+              right: '-7px',
+              top: '12px',
+              width: '0',
+              height: '0',
+              borderTop: '6px solid transparent',
+              borderBottom: '6px solid transparent',
+              borderLeft: '6px solid var(--border-strong)',
+              zIndex: 1,
+            }} />
+          </div>
+
+          {/* Mascot illustration */}
+          <img
+            src="/velmorth_mascot.png"
+            alt="Velmorth Mascot"
+            className={answerState === 'correct' ? 'animate-bounce' : 'animate-sway'}
+            style={{
+              width: '56px',
+              height: '56px',
+              objectFit: 'contain',
+            }}
+          />
         </div>
       </div>
     );

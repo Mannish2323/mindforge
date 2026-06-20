@@ -14,35 +14,35 @@
 /* ── Design Tokens — Dark Theme (default) ── */
 :root {
   /* Brand */
-  --primary:        #16A34A;
-  --primary-hover:  #15803D;
-  --primary-light:  rgba(22, 163, 74, 0.14);
+  --primary:        #4ADE80;
+  --primary-hover:  #22C55E;
+  --primary-light:  rgba(74, 222, 128, 0.14);
   --accent-ai:      #0EA5E9;
   --xp-gold:        #FBBF24;
-  --gem:            #8B5CF6;
+  --gem:            #06b6d4;
   --error:          #EF4444;
   --warn:           #F59E0B;
   --success:        #22C55E;
   --error-light:    rgba(239, 68, 68, 0.12);
   --warn-light:     rgba(245, 158, 11, 0.12);
 
-  /* Dark theme surfaces */
-  --bg:             #0B1220;
-  --surface:        #111827;
-  --surface-2:      #1E293B;
-  --surface-3:      #263244;
+  /* Dark theme surfaces (Midnight Organic Forest Green) */
+  --bg:             #0B1E12;
+  --surface:        #122A1A;
+  --surface-2:      #1B3B26;
+  --surface-3:      #234B31;
   --border:         rgba(255, 255, 255, 0.08);
   --border-strong:  rgba(255, 255, 255, 0.14);
-  --text:           #E5E7EB;
-  --text-2:         #94A3B8;
-  --text-3:         #64748B;
+  --text:           #E8F5E9;
+  --text-2:         #A2BFA6;
+  --text-3:         #5E7D63;
 
   /* Radius */
   --radius-sm:   8px;
-  --radius:      12px;
-  --radius-lg:   16px;
-  --radius-xl:   20px;
-  --radius-2xl:  24px;
+  --radius:      16px; /* rounder, more organic */
+  --radius-lg:   20px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
   --radius-pill: 9999px;
 
   /* Spacing (8px base grid) */
@@ -81,23 +81,23 @@
   --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.2);
   --shadow:       0 8px 32px rgba(0, 0, 0, 0.28);
   --shadow-lg:    0 20px 56px rgba(0, 0, 0, 0.38);
-  --shadow-green: 0 0 0 2px rgba(22, 163, 74, 0.45);
+  --shadow-green: 0 0 0 2px rgba(74, 222, 128, 0.45);
   --shadow-ai:    0 0 0 2px rgba(14, 165, 233, 0.45);
 
   /* Semantic helpers */
   --success-light:  rgba(34, 197, 94, 0.12);
   --warn-bg:        rgba(245, 158, 11, 0.12);
-  --text-muted:     #94A3B8;
-  --text-secondary: #94A3B8;
+  --text-muted:     #A2BFA6;
+  --text-secondary: #A2BFA6;
   --text-primary:   var(--text);
   --text-1:         var(--text);
   --text-ja-md:     20px;
   --grad-gold:      linear-gradient(135deg, #f59e0b, #fbbf24);
-  --grad-primary:   linear-gradient(135deg, #16a34a, #4ade80);
-  --grad-hero:      linear-gradient(135deg, rgba(22,163,74,.18) 0%, rgba(14,165,233,.12) 100%);
+  --grad-primary:   linear-gradient(135deg, #22c55e, #4ade80);
+  --grad-hero:      linear-gradient(135deg, rgba(74,222,128,.18) 0%, rgba(14,165,233,.12) 100%);
 
   /* Radius aliases */
-  --radius-sm:   6px;
+  --radius-sm:   8px;
   --radius-md:   var(--radius);
   --radius-full: var(--radius-pill);
 
@@ -135,39 +135,83 @@
   --space-6: var(--sp-6);
   --space-8: var(--sp-8);
   --space-10: var(--sp-10);
+  --space-12: var(--sp-12);
+  --space-16: var(--sp-16);
 }
 
-/* ── Light Theme ── */
+/* ── Light Theme (Warm Forest Cream) ── */
 [data-theme="light"] {
-  --bg:            #F8FAFC;
-  --surface:       #FFFFFF;
-  --surface-2:     #F1F5F9;
-  --surface-3:     #E2E8F0;
-  --border:        rgba(15, 23, 42, 0.10);
-  --border-strong: rgba(15, 23, 42, 0.18);
-  --text:          #0F172A;
-  --text-2:        #475569;
-  --text-3:        #94A3B8;
-  --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.07);
-  --shadow:       0 8px 32px rgba(0, 0, 0, 0.10);
-  --shadow-lg:    0 20px 56px rgba(0, 0, 0, 0.14);
+  --bg:            #F5EFEB; /* warm cream/beige background */
+  --surface:       #FCFAF6; /* off-white card background */
+  --surface-2:     #F0EAE1; /* slightly darker beige */
+  --surface-3:     #E7E0D3; /* borders / dividers */
+  --border:        rgba(28, 59, 43, 0.08);
+  --border-strong: rgba(28, 59, 43, 0.16);
+  --text:          #1C3B2B; /* deep forest green text */
+  --text-2:        #5B7065; /* sage green secondary text */
+  --text-3:        #93A39A; /* muted sage */
+  
+  --primary:        #1C3B2B;
+  --primary-hover:  #12261C;
+  --primary-light:  rgba(28, 59, 43, 0.08);
+  --accent-ai:      #0369A1;
+  --xp-gold:        #D97706;
+  --gem:            #0891B2;
+  --error:          #DC2626;
+  --warn:           #D97706;
+  --success:        #5D9C59; /* leaf success green */
+  --error-light:    rgba(220, 38, 38, 0.08);
+  --warn-light:     rgba(217, 119, 6, 0.08);
+  --success-light:  rgba(93, 156, 89, 0.12);
+
+  --shadow-sm:    0 1px 3px rgba(28, 59, 43, 0.05);
+  --shadow:       0 8px 32px rgba(28, 59, 43, 0.08);
+  --shadow-lg:    0 20px 56px rgba(28, 59, 43, 0.12);
+  --shadow-green: 0 0 0 2px rgba(28, 59, 43, 0.3);
+  --shadow-ai:    0 0 0 2px rgba(3, 105, 161, 0.3);
+
+  --grad-primary:   linear-gradient(135deg, #1C3B2B, #2E5A44);
+  --grad-hero:      linear-gradient(135deg, rgba(28,59,43,.08) 0%, rgba(93,156,89,.12) 100%);
+  --text-muted:     #5B7065;
+  --text-secondary: #5B7065;
 }
 
 /* ── System theme ── */
 @media (prefers-color-scheme: light) {
   [data-theme="system"] {
-    --bg:            #F8FAFC;
-    --surface:       #FFFFFF;
-    --surface-2:     #F1F5F9;
-    --surface-3:     #E2E8F0;
-    --border:        rgba(15, 23, 42, 0.10);
-    --border-strong: rgba(15, 23, 42, 0.18);
-    --text:          #0F172A;
-    --text-2:        #475569;
-    --text-3:        #94A3B8;
-    --shadow-sm:    0 1px 3px rgba(0, 0, 0, 0.07);
-    --shadow:       0 8px 32px rgba(0, 0, 0, 0.10);
-    --shadow-lg:    0 20px 56px rgba(0, 0, 0, 0.14);
+    --bg:            #F5EFEB;
+    --surface:       #FCFAF6;
+    --surface-2:     #F0EAE1;
+    --surface-3:     #E7E0D3;
+    --border:        rgba(28, 59, 43, 0.08);
+    --border-strong: rgba(28, 59, 43, 0.16);
+    --text:          #1C3B2B;
+    --text-2:        #5B7065;
+    --text-3:        #93A39A;
+    
+    --primary:        #1C3B2B;
+    --primary-hover:  #12261C;
+    --primary-light:  rgba(28, 59, 43, 0.08);
+    --accent-ai:      #0369A1;
+    --xp-gold:        #D97706;
+    --gem:            #0891B2;
+    --error:          #DC2626;
+    --warn:           #D97706;
+    --success:        #5D9C59;
+    --error-light:    rgba(220, 38, 38, 0.08);
+    --warn-light:     rgba(217, 119, 6, 0.08);
+    --success-light:  rgba(93, 156, 89, 0.12);
+
+    --shadow-sm:    0 1px 3px rgba(28, 59, 43, 0.05);
+    --shadow:       0 8px 32px rgba(28, 59, 43, 0.08);
+    --shadow-lg:    0 20px 56px rgba(28, 59, 43, 0.12);
+    --shadow-green: 0 0 0 2px rgba(28, 59, 43, 0.3);
+    --shadow-ai:    0 0 0 2px rgba(3, 105, 161, 0.3);
+
+    --grad-primary:   linear-gradient(135deg, #1C3B2B, #2E5A44);
+    --grad-hero:      linear-gradient(135deg, rgba(28,59,43,.08) 0%, rgba(93,156,89,.12) 100%);
+    --text-muted:     #5B7065;
+    --text-secondary: #5B7065;
   }
 }
 
@@ -216,8 +260,8 @@ button {
 @keyframes bounceIn  { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.08);opacity:1} 80%{transform:scale(0.96)} 100%{transform:scale(1)} }
 @keyframes shimmer   { 0%{background-position:-600px 0} 100%{background-position:600px 0} }
 @keyframes spin      { to{transform:rotate(360deg)} }
-@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.55)} 50%{box-shadow:0 0 0 8px rgba(22,163,74,0)} }
-@keyframes pulse-ring  { 0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)} 70%{box-shadow:0 0 0 10px rgba(22,163,74,0)} 100%{box-shadow:0 0 0 0 rgba(22,163,74,0)} }
+@keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(74, 222, 128, .55)} 50%{box-shadow:0 0 0 8px rgba(74, 222, 128, 0)} }
+@keyframes pulse-ring  { 0%{box-shadow:0 0 0 0 rgba(74, 222, 128, .6)} 70%{box-shadow:0 0 0 10px rgba(74, 222, 128, 0)} 100%{box-shadow:0 0 0 0 rgba(74, 222, 128, 0)} }
 @keyframes xp-pop    { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-32px) scale(.8);opacity:0} }
 @keyframes flame-rise{ 0%{transform:scaleY(1)} 50%{transform:scaleY(1.18)} 100%{transform:scaleY(1)} }
 @keyframes counter-roll { from{transform:translateY(100%);opacity:0} to{transform:translateY(0);opacity:1} }
@@ -227,6 +271,10 @@ button {
 @keyframes tab-switch { from{opacity:0;transform:translateX(8px)} to{opacity:1;transform:translateX(0)} }
 @keyframes dropdown-open { from{opacity:0;transform:translateY(-6px) scaleY(.96)} to{opacity:1;transform:translateY(0) scaleY(1)} }
 @keyframes glow-pulse { 0%,100%{opacity:.8} 50%{opacity:1} }
+@keyframes leafSway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); }
+}
 
 .animate-fadein    { animation: fadein    300ms ease both; }
 .animate-fadeup    { animation: fadeup    350ms ease both; }
@@ -234,6 +282,7 @@ button {
 .animate-pop       { animation: pop       350ms ease both; }
 .animate-bounce    { animation: bounceIn  420ms ease both; }
 .animate-shake     { animation: shake     220ms ease both; }
+.animate-sway      { animation: leafSway 2.5s ease-in-out infinite; transform-origin: bottom center; }
 .delay-100 { animation-delay: 100ms; }
 .delay-150 { animation-delay: 150ms; }
 .delay-200 { animation-delay: 200ms; }
