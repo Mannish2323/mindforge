@@ -16,10 +16,10 @@ function getServiceClient() {
 
 // Plan ID → entitlement shape
 const PLAN_META: Record<string, { plan: string; hearts_per_day: number; ai_messages_per_day: number; lessons_per_day: number }> = {
-  starter:    { plan: 'starter',    hearts_per_day: 10,  ai_messages_per_day: 20,  lessons_per_day: 10 },
-  plus:       { plan: 'plus',       hearts_per_day: 20,  ai_messages_per_day: 50,  lessons_per_day: 30 },
-  pro:        { plan: 'pro',        hearts_per_day: 999, ai_messages_per_day: 200, lessons_per_day: 999 },
-  pro_yearly: { plan: 'pro_yearly', hearts_per_day: 999, ai_messages_per_day: 200, lessons_per_day: 999 },
+  starter:    { plan: 'starter',    hearts_per_day: 75,  ai_messages_per_day: 15,  lessons_per_day: 15 },
+  plus:       { plan: 'plus',       hearts_per_day: 90,  ai_messages_per_day: 30,  lessons_per_day: 30 },
+  pro:        { plan: 'pro',        hearts_per_day: 100, ai_messages_per_day: 99,  lessons_per_day: 99 },
+  pro_yearly: { plan: 'pro_yearly', hearts_per_day: 100, ai_messages_per_day: 99,  lessons_per_day: 99 },
 };
 
 export async function POST(request: Request) {
