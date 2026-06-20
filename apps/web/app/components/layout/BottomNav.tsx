@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw } from 'lucide-react';
+import { Home, BookOpen, PenLine, Mic, User } from 'lucide-react';
 import { cn } from '@evlo/utils';
 
 export function BottomNav() {
@@ -14,7 +14,7 @@ export function BottomNav() {
     { label: 'PATH',   path: '/path',   icon: BookOpen },
     { label: 'SCRIPT', path: '/script', icon: PenLine },
     { label: 'SPEAK',  path: '/speak',  icon: Mic },
-    { label: 'JLPT',   path: '/jlpt',   icon: Medal },
+    { label: 'PROFILE', path: '/profile', icon: User },
   ];
 
   return (
