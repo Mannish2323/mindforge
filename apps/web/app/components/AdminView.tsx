@@ -356,7 +356,7 @@ export function AdminView() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--sp-4)' }}>
             {[
-              { id: 'free',    name: 'Free',           color: '#64748B', hearts: 50,  ai: 5,  lessons: 5  },
+              { id: 'free',    name: 'Free',           color: '#64748B', hearts: 25,  ai: 5,  lessons: 5  },
               { id: 'starter', name: 'Starter — ₹99',  color: '#0EA5E9', hearts: 75,  ai: 15, lessons: 15 },
               { id: 'plus',    name: 'Plus — ₹149',    color: '#8B5CF6', hearts: 90,  ai: 30, lessons: 30 },
               { id: 'pro',     name: 'Pro — ₹199',     color: '#F59E0B', hearts: 100, ai: 99, lessons: 99 },

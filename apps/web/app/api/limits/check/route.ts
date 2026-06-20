@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       .eq('date', today)
       .single();
 
-    const limits = ent ?? { hearts_limit: 5, ai_limit_daily: 5, lessons_limit_daily: 5, ads_enabled: true, status: 'free', plan_id: 'free' };
+    const limits = ent ?? { hearts_limit: 25, ai_limit_daily: 5, lessons_limit_daily: 5, ads_enabled: true, status: 'free', plan_id: 'free' };
     const used   = usage ?? { ai_requests: 0, lessons_started: 0, hearts_used: 0 };
 
     return NextResponse.json({

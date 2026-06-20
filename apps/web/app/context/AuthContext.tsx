@@ -165,14 +165,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             user_id: supabaseUser.id,
             plan_id: 'free',
             status: 'free',
-            hearts_limit: 5,
+            hearts_limit: 25,
             ai_limit_daily: 5,
             lessons_limit_daily: 5,
             ads_enabled: true,
           })
           .select()
           .single();
-        entitlementsData = newEnt || { status: 'free', plan_id: 'free', hearts_limit: 5, ai_limit_daily: 5, lessons_limit_daily: 5, ads_enabled: true };
+        entitlementsData = newEnt || { status: 'free', plan_id: 'free', hearts_limit: 25, ai_limit_daily: 5, lessons_limit_daily: 5, ads_enabled: true };
       }
 
       // 6. Check admin_roles
@@ -195,7 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                    (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true),
         planId: entitlementsData.plan_id || 'free',
         planStatus: entitlementsData.status || 'free',
-        heartsLimit: entitlementsData.hearts_limit ?? 5,
+        heartsLimit: entitlementsData.hearts_limit ?? 25,
         aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
         lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
         adsEnabled: !(
@@ -217,9 +217,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lessons_done: statsData.lessons_done ?? 0,
         reviews_done: statsData.reviews_done ?? 0,
         createdAt: profileData.created_at || new Date().toISOString(),
-        heartsTotal: statsData.hearts_total ?? (entitlementsData.status === 'free' ? 50 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
+        heartsTotal: statsData.hearts_total ?? (entitlementsData.status === 'free' ? 25 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
         heartsUsedToday: statsData.hearts_used_today ?? 0,
-        heartsMax: statsData.hearts_max ?? (entitlementsData.status === 'free' ? 50 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
+        heartsMax: statsData.hearts_max ?? (entitlementsData.status === 'free' ? 25 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
         heartsRecoverAt: statsData.hearts_recover_at || null,
         heartsLastDebitAt: statsData.hearts_last_debit_at || null,
         heartSystemEnabled: settingsData.heart_system_enabled ?? true,

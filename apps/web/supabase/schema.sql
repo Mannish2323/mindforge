@@ -62,9 +62,9 @@ CREATE TABLE IF NOT EXISTS public.user_stats (
   reviews_done      INT NOT NULL DEFAULT 0,
   kanji_learned     INT NOT NULL DEFAULT 0,
   speak_sessions    INT NOT NULL DEFAULT 0,
-  hearts_total      INT NOT NULL DEFAULT 5,
+  hearts_total      INT NOT NULL DEFAULT 25,
   hearts_used_today INT NOT NULL DEFAULT 0,
-  hearts_max        INT NOT NULL DEFAULT 5,
+  hearts_max        INT NOT NULL DEFAULT 25,
   hearts_recover_at TIMESTAMPTZ,
   hearts_last_debit_at TIMESTAMPTZ,
   last_active       DATE,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS public.entitlements (
   user_id              UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   plan_id              TEXT NOT NULL DEFAULT 'free' CHECK (plan_id IN ('free', 'starter', 'plus', 'pro')),
   status               TEXT NOT NULL DEFAULT 'free' CHECK (status IN ('free', 'starter', 'plus', 'pro', 'yearly', 'cancelled')),
-  hearts_limit         INT NOT NULL DEFAULT 5,
+  hearts_limit         INT NOT NULL DEFAULT 25,
   ai_limit_daily       INT NOT NULL DEFAULT 5,
   lessons_limit_daily  INT NOT NULL DEFAULT 5,
   ads_enabled          BOOLEAN NOT NULL DEFAULT TRUE,
@@ -471,7 +471,7 @@ BEGIN
 
   -- Entitlements (default free plan)
   INSERT INTO public.entitlements (user_id, plan_id, status, hearts_limit, ai_limit_daily, lessons_limit_daily, ads_enabled)
-  VALUES (NEW.id, 'free', 'free', 5, 5, 5, TRUE)
+  VALUES (NEW.id, 'free', 'free', 25, 5, 5, TRUE)
   ON CONFLICT (user_id) DO NOTHING;
 
   -- Auto-grant admin to manish63018@gmail.com

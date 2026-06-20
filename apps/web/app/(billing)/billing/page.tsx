@@ -36,7 +36,7 @@ const PLANS: PlanDef[] = [
       { text: '5 lessons/day', ok: true },
       { text: 'Basic SRS review', ok: true },
       { text: 'Hiragana & Katakana', ok: true },
-      { text: '50 hearts max', ok: true },
+      { text: '25 hearts max', ok: true },
       { text: 'Ads between sections', ok: true },
       { text: 'AI Tutor', ok: false },
     ],

@@ -187,7 +187,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
             }}
           >
             <span style={{ fontSize: '16px' }}>❤️</span>
-            <span>{activeState.hearts ?? 50}</span>
+            <span>{activeState.hearts ?? 25}</span>
           </div>
 
           {/* Gems */}

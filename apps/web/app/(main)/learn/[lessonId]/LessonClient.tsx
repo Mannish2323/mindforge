@@ -201,10 +201,10 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
     setTimeout(() => setShowHeartDeduct(false), 600);
 
     if (user && profile) {
-      const currentHearts = profile.heartsTotal ?? 50;
+      const currentHearts = profile.heartsTotal ?? 25;
       const newHearts = Math.max(0, currentHearts - 1);
       let nextRecover = profile.heartsRecoverAt;
-      if (currentHearts === (profile.heartsMax ?? 50)) {
+      if (currentHearts === (profile.heartsMax ?? 25)) {
         nextRecover = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
       }
       await updateHearts(newHearts, nextRecover, new Date().toISOString());
