@@ -10,6 +10,30 @@ import { useAuth } from '../app/context/AuthContext';
 
 const STORAGE_KEY = 'velmorth_state_v3';
 
+const getLocalDateString = (date: Date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const parseLocalDate = (dateStr: string) => {
+  if (!dateStr) return null;
+  let target = dateStr;
+  if (dateStr.includes('T') || dateStr.includes('Z')) {
+    const d = new Date(dateStr);
+    target = getLocalDateString(d);
+  }
+  const parts = target.split('-');
+  if (parts.length === 3) {
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    return new Date(year, month, day);
+  }
+  return new Date(dateStr);
+};
+
 // --- Mock social data ---
 const MOCK_FRIENDS: Friend[] = [
   { friend_id: 'f1', username: 'Sakura_99', avatar: '🌸', xp: 1240, streak: 12, status: 'accepted', lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), nudged_today: false },
@@ -177,10 +201,15 @@ export function useStore() {
 
       // Check streak
       if (merged.lastStudyDate) {
-        const lastDate = new Date(merged.lastStudyDate);
-        const diffDays = Math.floor((new Date().getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-        if (diffDays > 1 && !merged.streakShield?.active) {
-          merged.streak = 0;
+        const lastDate = parseLocalDate(merged.lastStudyDate);
+        if (lastDate) {
+          const todayDate = new Date();
+          const d1 = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
+          const d2 = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+          const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+          if (diffDays > 1 && !merged.streakShield?.active) {
+            merged.streak = 0;
+          }
         }
       }
 
@@ -472,18 +501,26 @@ export function useStore() {
     if (!last) {
       newStreak = 1;
     } else {
-      const lastDate = new Date(last);
-      const diffDays = Math.floor((new Date().getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) {
-        newStreak += 1;
-      } else if (diffDays > 1) {
+      const lastDate = parseLocalDate(last);
+      if (lastDate) {
+        const todayDate = new Date();
+        const d1 = new Date(lastDate.getFullYear(), lastDate.getMonth(), lastDate.getDate());
+        const d2 = new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate());
+        const diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          newStreak += 1;
+        } else if (diffDays > 1) {
+          newStreak = 1;
+        }
+      } else {
         newStreak = 1;
       }
     }
 
     return {
       streak: newStreak,
-      lastStudyDate: new Date().toISOString(),
+      lastStudyDate: getLocalDateString(),
     };
   };
 
@@ -576,7 +613,7 @@ export function useStore() {
         supabase.from('user_streaks').update({
           streak: updated.streak,
           longest: newLongest,
-          last_study_at: new Date().toISOString().split('T')[0]
+          last_study_at: getLocalDateString()
         }).eq('user_id', user.id).then(({ error }) => {
           if (error) console.error('Error syncing streak to Supabase:', error);
         }, err => console.error('Failed to update streak:', err));

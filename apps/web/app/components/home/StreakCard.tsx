@@ -158,7 +158,7 @@ export function StreakCard({ streak, todayStudied, onStudyNow }: StreakCardProps
               alignItems: 'center',
               gap: '6px'
             }}>
-              {streak > 0 ? `${streak} Day Streak!` : 'Start Your Journey'}
+              {streak > 0 ? `${streak} Day Streak!` : '0 Day Streak'}
               {streak >= 7 && <Sparkles size={16} color="#FFD700" className="animate-pulse" />}
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary, #b3b3b9)', margin: '4px 0 0 0' }}>

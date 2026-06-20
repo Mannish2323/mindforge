@@ -122,7 +122,7 @@ export function WelcomeCard({ username, isNewUser, onNavigate, onContinueLesson 
         {/* Streak */}
         <div className="stat-badge" style={{ color: activeStats.streak > 0 ? '#f97316' : 'var(--text-3)' }}>
           <span style={{ fontSize: '16px' }}>🔥</span>
-          <span style={{ whiteSpace: 'nowrap' }}>{activeStats.streak > 0 ? `${activeStats.streak} days` : '0/3'}</span>
+          <span style={{ whiteSpace: 'nowrap' }}>{activeStats.streak} day{activeStats.streak !== 1 ? 's' : ''}</span>
         </div>
 
         {/* XP */}

@@ -415,10 +415,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateProfileStats = async (xpDelta: number, leafDelta: number) => {
     if (!user || !profile) return;
+    const newXp = profile.xp + xpDelta;
+    const newGems = Math.max(0, profile.leafBalance + leafDelta);
+
+    // Optimistically update local profile state
+    setProfile(prev => prev ? {
+      ...prev,
+      xp: newXp,
+      level: Math.floor(newXp / 100) + 1,
+      leafBalance: newGems,
+    } : null);
+
     try {
-      const newXp = profile.xp + xpDelta;
-      const newGems = Math.max(0, profile.leafBalance + leafDelta);
-      
       const { error } = await supabase
         .from('user_stats')
         .update({
@@ -429,13 +437,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('user_id', user.id);
 
       if (error) throw error;
-
-      setProfile(prev => prev ? {
-        ...prev,
-        xp: newXp,
-        level: Math.floor(newXp / 100) + 1,
-        leafBalance: newGems,
-      } : null);
     } catch (err) {
       console.error('Error updating stats:', err);
     }
@@ -443,6 +444,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateSettings = async (settings: Partial<{ theme: 'dark' | 'light' | 'system'; ui_language: string; tts_enabled: boolean; goal_minutes: number; notifications: boolean; jlpt_target?: string }>) => {
     if (!user || !profile) return;
+
+    // Optimistically update local profile state
+    setProfile(prev => prev ? {
+      ...prev,
+      ...settings,
+    } : null);
+
     try {
       const { error } = await supabase
         .from('user_settings')
@@ -450,18 +458,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('user_id', user.id);
 
       if (error) throw error;
-
-      setProfile(prev => prev ? {
-        ...prev,
-        ...settings,
-      } : null);
     } catch (err) {
       console.error('Error updating settings:', err);
     }
   };
 
   const updateProfileDetails = async (displayName: string, bio: string, avatarUrl: string, username?: string) => {
-    if (!user) throw new Error('Not authenticated');
+    if (!user || !profile) throw new Error('Not authenticated');
+
+    // Optimistically update local profile state
+    setProfile(prev => prev ? {
+      ...prev,
+      name: displayName,
+      bio,
+      avatarUrl,
+      ...(username ? { username } : {}),
+    } : null);
+
     try {
       const updateData: any = {
         display_name: displayName,
@@ -479,21 +492,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
     } catch (err) {
       console.error('Error updating profile details in DB:', err);
-      throw err;
     }
-    
-    // Update local profile state
-    setProfile(prev => prev ? {
-      ...prev,
-      name: displayName,
-      bio,
-      avatarUrl,
-      ...(username ? { username } : {}),
-    } : null);
   };
 
   const updateHearts = async (newHearts: number, nextRecoverAt: string | null, lastDebitAt: string | null) => {
     if (!user || !profile) return;
+
+    // Optimistically update local profile state
+    setProfile(prev => prev ? {
+      ...prev,
+      heartsTotal: newHearts,
+      heartsRecoverAt: nextRecoverAt,
+      heartsLastDebitAt: lastDebitAt,
+    } : null);
+
     try {
       const { error } = await supabase
         .from('user_stats')
@@ -505,13 +517,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('user_id', user.id);
         
       if (error) throw error;
-      
-      setProfile(prev => prev ? {
-        ...prev,
-        heartsTotal: newHearts,
-        heartsRecoverAt: nextRecoverAt,
-        heartsLastDebitAt: lastDebitAt,
-      } : null);
     } catch (err) {
       console.error('Error updating hearts in DB:', err);
     }

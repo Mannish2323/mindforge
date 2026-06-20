@@ -149,7 +149,7 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
           }}>🔥</span>
           <div>
             <h3 style={{ fontWeight: 900, fontSize: 'var(--text-lg)', color: streak > 0 ? 'var(--xp-gold)' : 'var(--text)' }}>
-              {streak > 0 ? `${streak} Day Streak!` : 'Start Your Streak'}
+              {streak > 0 ? `${streak} Day Streak!` : '0 Day Streak'}
             </h3>
             <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-2)', marginTop: '2px' }}>
               {todayStudied
