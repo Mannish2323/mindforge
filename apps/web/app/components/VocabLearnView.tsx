@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronRight, Volume2, BookOpen, Dumbbell, FlaskConical, ArrowLeft, CheckCircle, XCircle, Lightbulb, Crown, Lock, RotateCcw, Star } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createClient } from '../lib/supabase';
+import { WordExplainer } from './jlpt/WordExplainer';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface VocabWord {
@@ -69,6 +70,9 @@ interface VocabLearnViewProps {
 
 export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnViewProps) {
   const { profile, updateProfileStats } = useAuth();
+
+  const [isExplainerOpen, setIsExplainerOpen] = useState(false);
+  const [explainerWord, setExplainerWord] = useState('');
 
   // ── Word pool state ──
   const [mode, setMode] = useState<VocabMode>('jlpt_n5');
@@ -478,13 +482,24 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
             {currentWord.romaji}
           </div>
 
-          {/* Audio button */}
-          <button
-            onClick={() => speakWord(currentWord.japanese)}
-            style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-pill)', padding: '8px 20px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--primary)', marginBottom: 'var(--sp-4)' }}
-          >
-            <Volume2 size={16} /> Listen
-          </button>
+          {/* Audio + Explain buttons */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: 'var(--sp-4)' }}>
+            <button
+              onClick={() => speakWord(currentWord.japanese)}
+              style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-pill)', padding: '8px 20px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--primary)' }}
+            >
+              <Volume2 size={16} /> Listen
+            </button>
+            <button
+              onClick={() => {
+                setExplainerWord(currentWord.japanese);
+                setIsExplainerOpen(true);
+              }}
+              style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-pill)', padding: '8px 20px', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 600, color: 'var(--primary)' }}
+            >
+              <Lightbulb size={16} /> Explain Word
+            </button>
+          </div>
 
           {/* English meaning */}
           <div style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text)', marginBottom: 'var(--sp-3)' }}>
@@ -543,6 +558,50 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
         <div style={{ textAlign: 'center', marginTop: 'var(--sp-2)', fontSize: '11px', color: 'var(--text-3)' }}>
           +5 XP per word learned
         </div>
+
+        {/* Dynamic Detailed Explainer Modal Overlay */}
+        {isExplainerOpen && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(11,30,18,0.9)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 10000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '20px'
+          }}>
+            <div className="card animate-fadein" style={{
+              background: 'var(--surface)',
+              width: '100%',
+              maxWidth: '800px',
+              padding: '24px',
+              borderRadius: '20px',
+              boxShadow: 'var(--shadow-lg)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              border: '1px solid var(--border-strong)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px'
+            }}>
+              <div className="flex-between flex" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                <h4 style={{ margin: 0, fontWeight: 900, color: 'var(--primary)', fontSize: '16px' }}>
+                  🔍 Word Explainer Profile
+                </h4>
+                <button 
+                  onClick={() => setIsExplainerOpen(false)} 
+                  className="btn-ghost" 
+                  style={{ width: 'auto', margin: 0, border: '1px solid var(--border)', fontSize: '12px', padding: '6px 12px', borderRadius: '8px', color: 'var(--text)' }}
+                >
+                  Close Explainer
+                </button>
+              </div>
+              <WordExplainer initialWord={explainerWord} />
+            </div>
+          </div>
+        )}
       </div>
     );
   }

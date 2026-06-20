@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditCard, Crown, BarChart2, X } from 'lucide-react';
+import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditCard, Crown, BarChart2, X, Briefcase } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '@evlo/utils';
 
@@ -18,6 +18,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
     { label: 'Speak', path: '/speak', icon: Mic },
     { label: 'JLPT', path: '/jlpt', icon: Medal },
     { label: 'Review', path: '/review', icon: RotateCcw },
+    { label: 'Job Prep', path: '/job-prep', icon: Briefcase },
   ];
 
   return (

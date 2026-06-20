@@ -14,12 +14,14 @@ import { FocusCard } from '../../components/home/FocusCard';
 import { LeagueCard } from '../../components/home/LeagueCard';
 import { QuickActions } from '../../components/home/QuickActions';
 import { BadgesPreview } from '../../components/home/BadgesPreview';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { SplashScreen, HomeTransition } from '../../components/SplashScreen';
 
 export default function HomePage() {
   const { state, isLoaded } = useStoreContext();
   const { user, profile } = useAuth();
   const router = useRouter();
+  const [splashComplete, setSplashComplete] = React.useState(false);
 
   const activeState = React.useMemo(() => {
     if (user && profile) {
@@ -38,17 +40,7 @@ export default function HomePage() {
     return state;
   }, [state, user, profile]);
 
-  if (!isLoaded) {
-    return (
-      <AppShell>
-        <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {[120, 200, 100, 150].map((h, i) => (
-            <div key={i} className="skeleton skeleton-card" style={{ height: `${h}px`, borderRadius: '16px' }} />
-          ))}
-        </div>
-      </AppShell>
-    );
-  }
+  // isLoaded is checked within the SplashScreen loading progress condition
 
   // Daily goal: each lesson = ~10-20 XP. Target 100 XP ≈ 5-7 lessons.
   // goalMinutes is a time setting but XP is the actual trackable unit.
@@ -67,7 +59,15 @@ export default function HomePage() {
   };
 
   return (
-    <AppShell>
+    <>
+      <AnimatePresence mode="wait">
+        {!splashComplete && (
+          <SplashScreen isLoading={!isLoaded} onComplete={() => setSplashComplete(true)} />
+        )}
+      </AnimatePresence>
+
+      <HomeTransition show={splashComplete}>
+        <AppShell>
       <motion.div
         initial="hidden"
         animate="visible"
@@ -138,6 +138,8 @@ export default function HomePage() {
         {/* 9. Recent Badges Row */}
         <BadgesPreview badges={activeState.badges || []} />
       </motion.div>
-    </AppShell>
+        </AppShell>
+      </HomeTransition>
+    </>
   );
 }
