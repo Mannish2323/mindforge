@@ -59,6 +59,12 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
   const [pronunciationResult, setPronunciationResult] = useState<any | null>(null);
 
   const startRecording = (isPronunciationTab = false) => {
+    const targetText = isPronunciationTab 
+      ? (customPhrase ? customPhrase : selectedPhrase?.ja)
+      : selectedReply?.text;
+
+    if (!targetText) return;
+
     setRecording(true);
     setRecorded(false);
     if (isPronunciationTab) {
@@ -67,23 +73,105 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
       setAnalysisResult(null);
     }
 
-    setTimeout(() => {
-      setRecording(false);
-      setRecorded(true);
-      const score = Math.floor(Math.random() * 15) + 85; // 85-99
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      // Fallback if browser doesn't support Web Speech API
+      setTimeout(() => {
+        setRecording(false);
+        setRecorded(true);
+        const score = Math.floor(Math.random() * 15) + 85; // 85-99
+        const resultObj = {
+          score,
+          pitch: (Math.random() * 1.5 + 8.5).toFixed(1),
+          fluency: (Math.random() * 1.5 + 8.5).toFixed(1),
+          feedback: 'Great pronunciation! Work on keeping your vowel lengths consistent.',
+          transcript: null,
+          isMock: true
+        };
+        
+        if (isPronunciationTab) {
+          setPronunciationResult(resultObj);
+        } else {
+          setAnalysisResult(resultObj);
+        }
+      }, 2000);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ja-JP';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      const clean = (str: string) => str.replace(/[\s,.\-!?;:"'()、。・「」『』！？]/g, "").toLowerCase();
+      const tClean = clean(targetText);
+      const uClean = clean(transcript);
+
+      // Character-level matching accuracy
+      let matches = 0;
+      const uChars = uClean.split("");
+      for (const char of tClean) {
+        const idx = uChars.indexOf(char);
+        if (idx !== -1) {
+          matches++;
+          uChars.splice(idx, 1);
+        }
+      }
+      const score = Math.max(10, Math.min(100, Math.round((matches / Math.max(1, tClean.length)) * 100)));
+
+      const pitch = (8.0 + (score / 50.0)).toFixed(1);
+      const fluency = (7.5 + (score / 40.0)).toFixed(1);
+      const feedback = score >= 85 
+        ? "Excellent pronunciation and natural rhythm! Keep it up."
+        : score >= 60 
+          ? "Good attempt. Try speaking slightly slower and check your syllable accents."
+          : "We had trouble matching your voice. Ensure you speak clearly near the microphone.";
+
       const resultObj = {
         score,
-        pitch: (Math.random() * 1.5 + 8.5).toFixed(1),
-        fluency: (Math.random() * 1.5 + 8.5).toFixed(1),
-        feedback: 'Great pronunciation! Work on keeping your vowel lengths consistent.'
+        pitch,
+        fluency,
+        feedback,
+        transcript,
+        isMock: false
       };
-      
+
+      setRecording(false);
+      setRecorded(true);
       if (isPronunciationTab) {
         setPronunciationResult(resultObj);
       } else {
         setAnalysisResult(resultObj);
       }
-    }, 2500);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.warn("Speech recognition error:", event.error);
+      setRecording(false);
+      setRecorded(true);
+      const score = Math.floor(Math.random() * 15) + 80;
+      const resultObj = {
+        score,
+        pitch: (Math.random() * 1.5 + 8.5).toFixed(1),
+        fluency: (Math.random() * 1.5 + 8.5).toFixed(1),
+        feedback: `Mic issue (${event.error}). Using simulated evaluation.`,
+        transcript: null,
+        isMock: true
+      };
+      if (isPronunciationTab) {
+        setPronunciationResult(resultObj);
+      } else {
+        setAnalysisResult(resultObj);
+      }
+    };
+
+    recognition.onend = () => {
+      setRecording(false);
+    };
+
+    recognition.start();
   };
 
   const handlePlayAudio = (text: string) => {
@@ -310,6 +398,17 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                     </div>
                   </div>
 
+                  {analysisResult.transcript && (
+                    <div style={{ fontSize: '12px', background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius)', marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textAlign: 'center' }}>
+                      <strong>We heard:</strong> "{analysisResult.transcript}"
+                    </div>
+                  )}
+                  {analysisResult.isMock && (
+                    <div style={{ fontSize: '11px', color: 'var(--text-3)', textAlign: 'center', marginBottom: 'var(--sp-2)' }}>
+                      ⚠️ Speech Recognition not supported or microphone access denied. Using mock analysis.
+                    </div>
+                  )}
+
                   <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', textAlign: 'center', margin: 0 }}>
                     <strong>AI Feedback: </strong> {analysisResult.feedback}
                   </div>
@@ -485,6 +584,17 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
                       <p style={{ fontWeight: 'bold', color: 'var(--primary)' }}>{pronunciationResult.fluency} / 10</p>
                     </div>
                   </div>
+
+                  {pronunciationResult.transcript && (
+                    <div style={{ fontSize: '12px', background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius)', marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textAlign: 'center' }}>
+                      <strong>We heard:</strong> "{pronunciationResult.transcript}"
+                    </div>
+                  )}
+                  {pronunciationResult.isMock && (
+                    <div style={{ fontSize: '11px', color: 'var(--text-3)', textAlign: 'center', marginBottom: 'var(--sp-2)' }}>
+                      ⚠️ Speech Recognition not supported or microphone access denied. Using mock analysis.
+                    </div>
+                  )}
 
                   <div className="feedback-panel info" style={{ background: 'var(--primary-light)', border: '1px solid var(--border)', color: 'var(--text-2)', textAlign: 'center', margin: 0 }}>
                     <strong>AI Feedback: </strong> {pronunciationResult.feedback}

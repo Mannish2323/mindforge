@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Volume2, Send, ArrowLeft, Zap } from 'lucide-react';
+import { Volume2, Send, ArrowLeft, Zap, Mic, MicOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createClient } from '../lib/supabase';
 
@@ -44,7 +44,51 @@ export function AIChatView({ onBack, onPlayTTS, uiLang, onLimitReached }: AIChat
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [totalXP, setTotalXP] = useState(0);
+  const [isListening, setIsListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
+
+  const toggleSpeechRecognition = () => {
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser. Please use Chrome or Safari.");
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = 'ja-JP';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+
+    rec.onstart = () => {
+      setIsListening(true);
+    };
+
+    rec.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputText(prev => prev + transcript);
+    };
+
+    rec.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      setIsListening(false);
+    };
+
+    rec.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = rec;
+    rec.start();
+  };
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -267,11 +311,33 @@ export function AIChatView({ onBack, onPlayTTS, uiLang, onLimitReached }: AIChat
         )}
       </div>
 
-      <div className="ai-chat-input-area">
+      <div className="ai-chat-input-area" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <button
+          type="button"
+          onClick={toggleSpeechRecognition}
+          className={`btn ${isListening ? 'btn-danger' : 'btn-secondary'}`}
+          style={{
+            padding: '8px',
+            borderRadius: '50%',
+            background: isListening ? 'rgba(239, 68, 68, 0.15)' : 'var(--surface-2)',
+            border: isListening ? '1.5px solid var(--error)' : '1px solid var(--border)',
+            color: isListening ? 'var(--error)' : 'var(--text-secondary)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '40px',
+            height: '40px',
+            flexShrink: 0
+          }}
+          title={isListening ? "Stop listening" : "Talk in Japanese"}
+        >
+          {isListening ? <MicOff size={16} /> : <Mic size={16} />}
+        </button>
         <input
           type="text"
           className="ai-chat-input"
-          placeholder="Type in Japanese or English..."
+          placeholder={isListening ? "Listening..." : "Type or click mic to talk..."}
           value={inputText}
           onChange={e => setInputText(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && sendMessage()}
