@@ -37,7 +37,7 @@ const PLANS: PlanDef[] = [
       { text: 'Basic SRS review', ok: true },
       { text: 'Hiragana & Katakana', ok: true },
       { text: '50 hearts max', ok: true },
-      { text: 'Ads between sections', ok: false },
+      { text: 'Ads between sections', ok: true },
       { text: 'AI Tutor', ok: false },
     ],
   },
@@ -52,7 +52,7 @@ const PLANS: PlanDef[] = [
     razorpayId: 'starter',
     features: [
       { text: '15 lessons/day', ok: true },
-      { text: 'No ads', ok: true },
+      { text: 'Ads between sections', ok: true },
       { text: 'Advanced SRS review', ok: true },
       { text: '75 hearts max', ok: true },
       { text: '15 AI chats/day', ok: true },
@@ -70,7 +70,7 @@ const PLANS: PlanDef[] = [
     razorpayId: 'plus',
     features: [
       { text: '30 lessons/day', ok: true },
-      { text: 'No ads', ok: true },
+      { text: 'Ads between sections', ok: true },
       { text: 'Full SRS + weak-spot detection', ok: true },
       { text: '90 hearts max', ok: true },
       { text: '30 AI chats/day', ok: true },
