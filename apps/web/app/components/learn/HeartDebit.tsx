@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { PremiumIcon } from '../ui/PremiumIcon';
 
 interface HeartDebitProps {
   hearts: number;
@@ -33,12 +33,12 @@ export function HeartDebit({ hearts, isDeducting, isRefill = false }: HeartDebit
         fontWeight: 800,
       }}
     >
-      <Heart
+      <PremiumIcon
+        type="heart"
         size={18}
-        fill={isDeducting ? '#7e7e86' : '#ef4444'}
-        color={isDeducting ? '#7e7e86' : '#ef4444'}
         style={{
-          transition: 'fill 200ms ease, color 200ms ease',
+          filter: isDeducting ? 'grayscale(1) opacity(0.5)' : 'none',
+          transition: 'filter 200ms ease',
         }}
       />
       <span 

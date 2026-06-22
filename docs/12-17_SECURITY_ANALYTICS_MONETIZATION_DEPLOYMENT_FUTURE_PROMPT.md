@@ -5,60 +5,57 @@
 
 # SECTION 12 — COMPLETE SECURITY ARCHITECTURE
 
-## 12.1 JWT Authentication System
+## 12.1 Authentication and Row-Level Security System
 
-### Token Architecture
-```
-Access Token (JWT, RS256):
-  Header: {"alg": "RS256", "typ": "JWT", "kid": "key-rotation-id"}
-  Payload: {
-    "sub": "user-uuid",
-    "email": "user@example.com",
-    "is_premium": true,
-    "roles": ["user"],
-    "iat": 1718000000,
-    "exp": 1718000900,  // 15 minutes
-    "iss": "https://auth.velmorth.com",
-    "aud": "https://api.velmorth.com",
-    "jti": "unique-jwt-id"  // For blacklisting
-  }
-  
-Refresh Token (Opaque):
-  Format: UUID v4 (random, unpredictable)
-  Storage: SHA-256 hashed in PostgreSQL
-  TTL: 30 days
-  Rotation: New token on every refresh (old invalidated)
-  Binding: Tied to device + session ID
-```
+### Identity Management: Firebase Authentication
+Identity verification, credentials validation, and session security are fully offloaded to **Firebase Authentication**:
+- **Authentication Providers**: Google Sign-In, Email & Password, and Anonymous Guest sessions.
+- **Client Tokens**: Upon successful login, Firebase Auth returns a cryptographically signed Firebase ID Token (JWT).
+- **In-App Handling**: The client caches the ID Token in secure local storage and attaches it to the `Authorization: Bearer <ID_TOKEN>` header for all API requests directed at the backend gateway.
 
-### Key Rotation
+### Token Verification Pipeline (Backend Gateway)
 ```typescript
-// JWT signing keys rotated every 90 days
-// Old keys kept valid for 1 additional rotation period (grace period)
-// Keys managed via Google Cloud KMS
+import * as admin from 'firebase-admin';
 
-class JwtKeyManager {
-  private readonly KMS_KEY_RING = 'velmorth-jwt-keys';
-  private readonly KEY_VERSION_TTL_DAYS = 90;
-  
-  async getCurrentSigningKey(): Promise<{ privateKey: Buffer; keyId: string }> {
-    // Fetch current key version from KMS
-    const keyName = this.kmsClient.cryptoKeyVersionPath(
-      this.projectId,
-      'global',
-      this.KMS_KEY_RING,
-      'jwt-signing-key',
-      'latest'
-    );
-    return this.kmsClient.getPublicKey({ name: keyName });
+// Firebase admin initialization
+admin.initializeApp({
+  credential: admin.credential.applicationDefault()
+});
+
+export async function verifyFirebaseSession(req: Request, res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Missing or malformed Authorization header' });
   }
-  
-  async getAllVerificationKeys(): Promise<PublicKey[]> {
-    // Return current + previous key (for grace period)
-    // Allows tokens signed with previous key to still be valid
+
+  const idToken = authHeader.split('Bearer ')[1];
+  try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    req.user = {
+      id: decodedToken.uid,
+      email: decodedToken.email,
+      isAnonymous: decodedToken.provider_id === 'anonymous'
+    };
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: 'Invalid or expired Firebase ID Token' });
   }
 }
 ```
+
+### Relational Storage Access: Supabase PostgreSQL RLS Policies
+All transaction queries run against Supabase PostgreSQL, protected by SQL Row-Level Security (RLS) policies. RLS maps permissions directly to the current database user profile:
+- **Profile Check**: RLS checks if `auth.uid() = user_id` for table queries, preventing unauthorized data reading or writing across user sessions.
+- **Example RLS Policy (`user_stats` table)**:
+  ```sql
+  CREATE POLICY "Users can only read/write their own learning stats"
+  ON public.user_stats
+  FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+  ```
+
 
 ## 12.2 OAuth 2.0 + PKCE Flow (Mobile)
 
@@ -498,6 +495,38 @@ AI PERFORMANCE DASHBOARD:
   - Error rate by AI feature
 ```
 
+## 13.4 Telemetry and High-Frequency Event Storage (Firebase Firestore)
+
+For high-frequency logging of user study metrics (daily active minutes, XP gained per day, lesson nodes completed), the system writes daily aggregations directly from the client and backend workers to **Firebase Firestore**.
+
+### Telemetry Document Structure
+- **Path**: `/users/{userId}/dailyLogs/{logDate}` (e.g. `/users/1a2b3c/dailyLogs/2026-06-22`)
+- **Fields**:
+  - `date`: `string` (formatted ISO Date: `YYYY-MM-DD`)
+  - `xpEarned`: `number` (total accumulated XP for this date)
+  - `lessonsCompleted`: `number` (count of study lessons successfully finished on this date)
+
+### Telemetry Service Implementation
+```typescript
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, setDoc, increment } from 'firebase/firestore';
+
+const firebaseApp = initializeApp({ /* firebase credentials */ });
+const db = getFirestore(firebaseApp);
+
+export async function logDailyTelemetry(userId: string, xpDelta: number, lessonDelta: number) {
+  const logDate = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+  const logRef = doc(db, 'users', userId, 'dailyLogs', logDate);
+
+  await setDoc(logRef, {
+    date: logDate,
+    xpEarned: increment(xpDelta),
+    lessonsCompleted: increment(lessonDelta)
+  }, { merge: true });
+}
+```
+These telemetry logs are cached on client nodes and read by the **Student Dashboard (Home Tab)** and **Analytics Dashboard** to compile daily and weekly charts of user study velocity and consistency.
+
 ---
 
 # SECTION 14 — MONETIZATION ARCHITECTURE
@@ -591,7 +620,35 @@ ALL PREMIUM MONTHLY FEATURES PLUS:
   ✓ Professional services for content customization
 ```
 
-## 14.2 Revenue Forecasting Model
+## 14.2 Payment Gateway Integration: Razorpay
+
+Premium checkout and token acquisitions are managed via **Razorpay**. 
+
+### Razorpay Signature Verification and Webhook Security
+To prevent tampering or exploitation of the checkout process, all upgrades require backend verification using Razorpay signature hashes.
+- **Client Handshake**: When the user pays, the client receives signature payload: `razorpay_payment_id`, `razorpay_order_id`, and `razorpay_signature`.
+- **Integrity Validation**: The backend hashes the order ID concatenated with the payment ID using the Razorpay API Secret key, validating that it matches the signature payload.
+- **Webhook Security**: Subscriptions, renewals, and chargebacks are received via Razorpay Webhooks. The gateway validates the webhook signature header (`X-Razorpay-Signature`) against the configured Webhook Secret before processing changes to the user's `entitlements` table.
+
+```typescript
+import * as crypto from 'crypto';
+
+export function verifyRazorpaySignature(
+  orderId: string,
+  paymentId: string,
+  signature: string,
+  webhookSecret: string
+): boolean {
+  const text = `${orderId}|${paymentId}`;
+  const generatedSignature = crypto
+    .createHmac('sha256', webhookSecret)
+    .update(text)
+    .digest('hex');
+  return generatedSignature === signature;
+}
+```
+
+## 14.3 Revenue Forecasting Model
 
 ```python
 class RevenueForecaster:
@@ -652,34 +709,35 @@ class RevenueForecaster:
 
 ```
 DEVELOPMENT:
-  Infrastructure: Local Docker Compose
-  Database: Local PostgreSQL
-  Monitoring: None (local logs)
+  Frontend Host: Local dev server (Vite + React)
+  Backend Host: Local Express gateway
+  Database: Local PostgreSQL + Firebase Emulator
+  Auth: Firebase Local Emulator Suite
   Deployments: npm run dev
-  Auth: Mock tokens OK
   
 TESTING (CI):
-  Infrastructure: GitHub Actions + Docker services
-  Database: Temporary PostgreSQL container
-  Data: Seeded test data
-  Tests: Unit + Integration + E2E
-  
+  Infrastructure: GitHub Actions runner
+  Database: Memory-backed pg-mem / Docker PostgreSQL
+  Auth: Firebase Mock authentication tokens
+  Tests: Playwright E2E + Vitest Unit & Integration
+
 STAGING:
-  Infrastructure: GKE cluster (us-central1, 20% of prod capacity)
-  Database: Cloud SQL (1 primary + 1 replica)
-  Monitoring: Full (Prometheus + Grafana + Jaeger)
-  Deployments: Auto on push to develop branch
-  Data: Anonymized production data subset
-  Access: Internal team only
-  
+  Frontend Host: Vercel (staging branch deployment previews)
+  Backend Host: Render Web Service (staging cluster instance)
+  Database: Supabase PostgreSQL (Staging Project) + Firebase Firestore
+  Auth: Firebase Authentication (Staging)
+  Deployments: Automatic build on git merge to staging branch
+  Access: Internal testing team only
+
 PRODUCTION:
-  Infrastructure: GKE clusters (3 regions, full capacity)
-  Database: Cloud SQL (1 primary + 2 replicas per region)
-  Monitoring: Full + PagerDuty alerting
-  Deployments: Manual approval required (GitHub Actions CD)
-  Data: Live production data
-  SLA: 99.95% uptime
+  Frontend Host: Vercel Production Environment (Edge network delivery)
+  Backend Host: Render Web Service (Autoscaling instances, Render load balancers)
+  Database: Supabase PostgreSQL (Production Project, pooled connection client) + Firebase Firestore
+  Auth: Firebase Authentication (Production)
+  Deployments: GitHub Actions CD with manual release gate approval
+  SLA: 99.95% API and Web portal availability
 ```
+
 
 ## 15.2 Zero-Downtime Deployment Strategy
 

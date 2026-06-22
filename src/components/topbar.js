@@ -4,6 +4,7 @@
 // =====================================================
 
 import { store } from '../state/store.js';
+import { Icons } from './icons.js';
 
 let topbarEl = null;
 
@@ -25,22 +26,22 @@ function update() {
   const { xp, streak, hearts, gems } = state;
 
   topbarEl.innerHTML = `
-    <div class="topbar-logo">🌿 Velmorth</div>
+    <div class="topbar-logo">${Icons.logo()} Velmorth</div>
     <div class="topbar-stats">
       <div class="stat-pill xp" id="stat-xp" title="Total XP">
-        <span class="icon">⭐</span>
+        <span class="icon">${Icons.xp()}</span>
         <span id="xp-val">${formatNum(xp)}</span>
       </div>
       <div class="stat-pill streak" id="stat-streak" title="Day Streak">
-        <span class="icon">🔥</span>
+        <span class="icon">${Icons.streak()}</span>
         <span id="streak-val">${streak}</span>
       </div>
       <div class="stat-pill hearts" id="stat-hearts" title="Hearts">
-        <span class="icon">❤️</span>
+        <span class="icon">${Icons.hearts()}</span>
         <span id="hearts-val">${hearts}</span>
       </div>
       <div class="stat-pill gems" id="stat-gems" title="Gems">
-        <span class="icon">💎</span>
+        <span class="icon">${Icons.gems()}</span>
         <span id="gems-val">${formatNum(gems)}</span>
       </div>
     </div>

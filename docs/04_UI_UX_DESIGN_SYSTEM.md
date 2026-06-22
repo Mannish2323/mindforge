@@ -485,3 +485,77 @@ Dark mode in Velmorth is not simply an inverted light mode — it's a completely
 - Large text mode (global font scale +30%)
 - Screen reader narration of lesson content
 - Audio descriptions for all visual lesson content
+
+---
+
+## 4.10 TAILWIND CSS & WEB INTEGRATION
+
+To ensure visual consistency and high performance on the web platform, the Luminary Design tokens are fully implemented inside `apps/web/tailwind.config.js`.
+
+### Tailwind Configuration Extension
+```javascript
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          indigo: {
+            light: '#5B4FD4',
+            DEFAULT: '#5B4FD4',
+            dark: '#7C71FF',
+          },
+          mist: {
+            light: '#E8E5FF',
+            dark: '#2D2866',
+          },
+          mint: '#00C9A7',
+          mintHaze: {
+            light: '#CCFFF6',
+            dark: '#003A2E',
+          },
+          coral: {
+            light: '#FF6B6B',
+            dark: '#FF8E8E',
+          },
+          gold: {
+            DEFAULT: '#FFD700',
+            dark: '#FFC200',
+          },
+        },
+        neutralScale: {
+          deepMidnight: '#1A1A2E',
+          mutedViolet: '#4A4A6A',
+          coolGrey: '#8B8BAB',
+          borderLight: '#C4C4DC',
+          bgLight: '#F5F5FF',
+          surfaceLight: '#FFFFFF',
+          bgDark: '#0F0E1A',
+          surfaceDark: '#1A1928',
+          cardDark: '#1F1E30',
+          borderDark: '#2E2D42',
+        },
+      },
+      fontFamily: {
+        display: ['Nunito', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      boxShadow: {
+        'level-1': '0 1px 2px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.06)',
+        'level-2': '0 2px 8px rgba(0,0,0,0.10), 0 4px 6px rgba(0,0,0,0.06)',
+        'level-3': '0 4px 16px rgba(0,0,0,0.12), 0 8px 12px rgba(0,0,0,0.07)',
+        'glow-primary': '0 0 20px rgba(91,79,212,0.35), 0 0 60px rgba(91,79,212,0.15)',
+        'glow-success': '0 0 20px rgba(0,201,167,0.35)',
+        'glow-streak': '0 0 20px rgba(255,107,107,0.40), 0 0 50px rgba(255,159,67,0.20)',
+      },
+    },
+  },
+};
+```
+
+### Component Styling Implementations
+React components in `apps/web/app/components` leverage these Tailwind extensions for styling:
+- **Vocabulary Builder Cards**: Styled with `bg-neutralScale-surfaceLight dark:bg-neutralScale-cardDark border border-neutralScale-borderLight dark:border-neutralScale-borderDark hover:shadow-level-2 hover:scale-[1.01] transition-all duration-200`.
+- **Quiz Option Buttons**: Active states use `border-brand-indigo bg-brand-mist-light dark:bg-brand-mist-dark text-brand-indigo-light dark:text-brand-indigo-dark`. Correct selection highlights apply `border-brand-mint bg-brand-mintHaze-light dark:bg-brand-mintHaze-dark text-brand-mint`. Incorrect choices shake and highlight with `border-brand-coral bg-red-50 dark:bg-red-950/20 text-brand-coral-light`.
+- **Student Dashboard Stat Grid**: Uses grid utilities (`grid grid-cols-2 md:grid-cols-4 gap-4`) displaying the custom gradient backdrops like `bg-gradient-to-r from-brand-gold to-orange-500` for XP summaries and `bg-gradient-to-br from-brand-coral to-red-500` for streaks.
+

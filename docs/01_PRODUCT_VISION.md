@@ -5,26 +5,19 @@
 
 ## 1.1 MISSION
 
-**"To democratize world-class personalized education by building an AI-powered learning companion that understands every learner's unique cognitive fingerprint and guides them to fluency, mastery, and lifelong growth."**
-
-Learn With Velmorth exists to eliminate the barriers between ambition and achievement. We believe that every human being, regardless of socioeconomic background, geographic location, age, or prior education, deserves access to a deeply personalized, scientifically grounded, and emotionally intelligent learning experience. Our mission is not simply to teach languages — it is to unlock the full intellectual potential of every person on Earth through adaptive AI that treats learning as a deeply personal journey, not a one-size-fits-all curriculum.
-
-Velmorth will serve as the world's most intelligent learning companion: one that remembers every mistake you've ever made, predicts what you're about to forget, understands when you're frustrated or bored, and adapts every single lesson in real-time to keep you in the optimal learning state — the "flow state" — where growth happens fastest.
+**"To make language learning accessible, enjoyable, and effective for students worldwide using modern technology, AI assistance, and gamified learning experiences."**
 
 ---
 
 ## 1.2 VISION
 
-**"By 2030, Learn With Velmorth will be the world's most trusted AI-native education platform, serving 500 million learners in 195 countries across 100 languages, recognized as the platform that redefined what personalized learning means."**
+**"Learn with Velmorth is an AI-powered language learning ecosystem focused on language mastery, vocabulary intelligence, pronunciation, translation, gamification, and personalized learning. The long-term goal is to become a premier learning platform targeting 100,000+ learners worldwide by combining the Duolingo learning experience, Notion-level organization, AI tutor assistance, and personalized learning paths."**
 
-Our ten-year vision encompasses:
-
-- **Universal Accessibility**: Every feature available in low-bandwidth, offline-capable modes so that a learner in rural Kenya has the same quality experience as one in Silicon Valley.
-- **Cognitive Science Integration**: Partnerships with leading neuroscience and cognitive science research institutions to continuously integrate the latest discoveries in memory, motivation, and learning into our engine.
-- **AI Teacher Network**: A global network of AI-powered digital teachers, each trained on master pedagogy and capable of adapting their personality, teaching style, and tone to each individual learner.
-- **Credential Recognition**: A globally recognized Velmorth Proficiency Certificate accepted by universities, employers, and immigration authorities as proof of language competency.
-- **School & Enterprise Ecosystem**: Complete institutional adoption infrastructure enabling schools, universities, corporations, and governments to deploy Velmorth as their primary language education platform.
-- **Metaverse Learning Environments**: Fully immersive VR/AR classrooms where learners practice in simulated real-world environments — coffee shops in Paris, boardrooms in Tokyo, markets in Cairo.
+Our target roadmap encompasses:
+- **Universal Accessibility**: Every feature available in responsive web design, followed by a native mobile app with offline-ready support.
+- **Notion-Level Organization**: Seamlessly organized courses, modules, categories, vocabulary notebooks, and customizable student dashboards.
+- **AI Tutor Assistance**: Direct contextual explanations, grammatical analyses, pronunciation guidance, and real-time translation help using the Gemini, OpenAI, and Perplexity APIs.
+- **Duolingo-Style Gamification**: Playful learning mechanics with streaks, achievement badges, level rewards, and interactive weekly leaderboards.
 
 ---
 
@@ -200,41 +193,23 @@ Beyond explicit instruction, Velmorth provides massive quantities of comprehensi
 
 ## 1.7 FUTURE EXPANSION STRATEGY
 
-### Phase 1 (2027-2028): Core Product Excellence
-- Launch with 10 most-demanded languages (Spanish, French, German, Japanese, Mandarin, Arabic, Portuguese, Korean, Italian, Hindi)
-- Perfect the Learning DNA and adaptive engine
-- Build the community ecosystem to critical mass
-- Achieve 1M DAU
-- Establish school pilot programs in 5 countries
+### Phase 1: Core Platform Foundation
+- Build and perfect the core language learning engine.
+- Integrate authentication modules (via Supabase and Firebase).
+- Establish user profiles with baseline customizable settings.
+- Implement robust progress tracking metrics (streaks, basic XP systems).
 
-### Phase 2 (2028-2029): Scale & Diversification
-- Expand to 30 languages
-- Launch B2B enterprise product
-- Government education contracts (5 target countries)
-- Launch Velmorth Certified Educator program
-- Introduce AR-enhanced lessons
-- Expand to 10M DAU
-- Series B funding for international expansion
+### Phase 2: AI Assistance & Personalized Paths
+- Deploy the AI language assistant for contextual explanations.
+- Introduce personalized learning paths that adjust dynamically to user performance.
+- Create vocabulary intelligence features for smarter recommendations.
 
-### Phase 3 (2029-2030): Deep Intelligence
-- Launch full AI Teacher Cloning capability (upload a teacher's pedagogical style; AI learns from it)
-- Digital Human Teachers — photorealistic AI avatars
-- Emotion Detection via camera (opt-in)
-- Predictive Learning Engine v2.0 (predicts mastery date to within 5% accuracy)
-- 50M DAU target
-- IPO preparation or strategic partnership
+### Phase 3: Community Learning & Monetization
+- Introduce community learning boards, sharing features, and study cohorts.
+- Build the comprehensive teacher dashboard for lesson planning and class progress tracking.
+- Launch premium subscriptions, integrated with secure billing services (Razorpay).
 
-### Phase 4 (2030-2031): Immersive Reality
-- Full VR classroom launch (Meta Quest, Apple Vision Pro)
-- AR street-mode (point phone at real-world text; instant contextual lesson generated)
-- Brain-Computer Interface research partnerships (passive learning state optimization)
-- 100+ languages
-- 100M DAU target
-
-### Phase 5 (2031-2032): Platform of Record
-- Velmorth becomes the global standard for language proficiency certification
-- University admission integration in 20+ countries
-- Employer talent verification API
-- UN and UNESCO partnerships for global education initiatives
-- Acquisition strategy for complementary EdTech companies
-- Vision: become the AWS of education infrastructure
+### Phase 4: Scaling & Immersive Ecosystem
+- Extend course curriculum to support multi-language translation and instruction.
+- Develop and launch the mobile application using Flutter (with Firebase integration and full offline learning support).
+- Expand to a global learner ecosystem with international challenges and rewards, targeting 100,000+ active learners.

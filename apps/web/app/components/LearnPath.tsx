@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Lock, Star, ShieldAlert, Award, MessageCircle, AlertCircle, Play, Check } from 'lucide-react';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 interface LearnPathProps {
   state: any;
@@ -56,10 +57,10 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
     if (isLocked) return <Lock size={18} strokeWidth={2.5} />;
     
     switch (nodeType) {
-      case 'boss': return <ShieldAlert size={22} />;
-      case 'review': return <Award size={20} />;
-      case 'story': return <MessageCircle size={20} />;
-      default: return isInProgress ? <Star size={20} fill="currentColor" /> : <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />;
+      case 'boss': return <PremiumIcon type="boss" size={22} />;
+      case 'review': return <PremiumIcon type="review" size={20} />;
+      case 'story': return <PremiumIcon type="story" size={20} />;
+      default: return isInProgress ? <PremiumIcon type="xp" size={20} /> : <Play size={18} fill="currentColor" style={{ marginLeft: '2px' }} />;
     }
   };
 
@@ -200,7 +201,9 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
       {/* Top Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
         <button className="btn-ghost" style={{ padding: '6px 12px', borderRadius: 'var(--radius)' }} onClick={onBack}>← Back</button>
-        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🌿 Your Forest Journey to Language</h2>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PremiumIcon type="level1" size={20} /> Your Forest Journey to Language
+        </h2>
       </div>
 
       {/* Category Chips */}
@@ -311,7 +314,9 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
           <div>
             <span style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Current Lesson</span>
             <h4 style={{ fontSize: 'var(--text-base)', fontWeight: 'bold', marginTop: '2px', color: 'var(--text)' }}>{inProgressLesson.lesson_title}</h4>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-3)' }}>⚡ {inProgressLesson.xp_reward} XP • ❤️ 1 Heart</p>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-3)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <PremiumIcon type="xp" size={12} /> {inProgressLesson.xp_reward} XP • <PremiumIcon type="heart" size={12} /> 1 Heart
+            </p>
           </div>
           <button className="btn-primary" style={{ width: 'auto', margin: 0, padding: '8px 20px', background: 'var(--primary)' }} onClick={() => setSelectedNode({ ...inProgressLesson, nodeType: 'normal', isInProgress: true })}>
             Resume
@@ -329,19 +334,31 @@ export function LearnPath({ state, units, lessonsCache, onStartLesson, onBack }:
             
             <h3 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, color: 'var(--text)' }}>{selectedNode.lesson_title}</h3>
             <p style={{ color: 'var(--text-2)', fontSize: 'var(--text-sm)', margin: 'var(--sp-3) 0 var(--sp-5)' }}>
-              {selectedNode.nodeType === 'boss' ? '🏆 Boss Lesson! Put your grammar knowledge to the ultimate test.' :
-               selectedNode.nodeType === 'story' ? '📖 Interactive Japanese story with conversation choices.' :
-               'Challenge yourself with new vocabulary and pronunciation drills.'}
+              {selectedNode.nodeType === 'boss' ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
+                  <PremiumIcon type="boss" size={16} /> Boss Lesson! Put your grammar knowledge to the ultimate test.
+                </span>
+              ) : selectedNode.nodeType === 'story' ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', justifyContent: 'center' }}>
+                  <PremiumIcon type="story" size={16} /> Interactive Japanese story with conversation choices.
+                </span>
+              ) : (
+                'Challenge yourself with new vocabulary and pronunciation drills.'
+              )}
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--sp-3)', marginBottom: 'var(--sp-6)' }}>
               <div style={{ background: 'var(--surface-2)', padding: 'var(--sp-3)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>REWARD</span>
-                <p style={{ fontWeight: 'bold', color: 'var(--xp-gold)', fontSize: '16px', marginTop: '2px' }}>⚡ {selectedNode.xp_reward} XP</p>
+                <p style={{ fontWeight: 'bold', color: 'var(--xp-gold)', fontSize: '16px', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                  <PremiumIcon type="xp" size={16} /> {selectedNode.xp_reward} XP
+                </p>
               </div>
               <div style={{ background: 'var(--surface-2)', padding: 'var(--sp-3)', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
                 <span style={{ fontSize: '11px', color: 'var(--text-3)' }}>COST</span>
-                <p style={{ fontWeight: 'bold', color: 'var(--error)', fontSize: '16px', marginTop: '2px' }}>❤️ 1 Heart</p>
+                <p style={{ fontWeight: 'bold', color: 'var(--error)', fontSize: '16px', marginTop: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                  <PremiumIcon type="heart" size={16} /> 1 Heart
+                </p>
               </div>
             </div>
 

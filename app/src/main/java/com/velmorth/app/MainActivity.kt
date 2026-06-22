@@ -81,11 +81,11 @@ class MainActivity : FragmentActivity() {
 
         // Add tabs programmatically
         bottomNav.menu.apply {
-            add(0, 1, 0, "Home").setIcon(R.drawable.ic_nav_home)
-            add(0, 2, 1, "Learn").setIcon(R.drawable.ic_nav_learn)
-            add(0, 3, 2, "Practice").setIcon(R.drawable.ic_nav_practice)
-            add(0, 4, 3, "Store").setIcon(R.drawable.ic_nav_store)
-            add(0, 5, 4, "Profile").setIcon(R.drawable.ic_nav_profile)
+            add(0, R.id.nav_home, 0, "Home").setIcon(R.drawable.ic_nav_home)
+            add(0, R.id.nav_lessons, 1, "Learn").setIcon(R.drawable.ic_nav_learn)
+            add(0, R.id.nav_review, 2, "Practice").setIcon(R.drawable.ic_nav_practice)
+            add(0, R.id.nav_shop, 3, "Store").setIcon(R.drawable.ic_nav_store)
+            add(0, R.id.nav_profile, 4, "Profile").setIcon(R.drawable.ic_nav_profile)
         }
 
         rootLayout.addView(fragmentContainer)
@@ -95,11 +95,11 @@ class MainActivity : FragmentActivity() {
         // Set navigation listener
         bottomNav.setOnItemSelectedListener { item ->
             val tag = when (item.itemId) {
-                1 -> "Home"
-                2 -> "Lessons"
-                3 -> "Review"
-                4 -> "Shop"
-                5 -> "Profile"
+                R.id.nav_home -> "Home"
+                R.id.nav_lessons -> "Lessons"
+                R.id.nav_review -> "Review"
+                R.id.nav_shop -> "Shop"
+                R.id.nav_profile -> "Profile"
                 else -> "Home"
             }
             switchFragment(tag)
@@ -108,14 +108,14 @@ class MainActivity : FragmentActivity() {
 
         // Default initial tab load
         if (savedInstanceState == null) {
-            bottomNav.selectedItemId = 1
+            bottomNav.selectedItemId = R.id.nav_home
         }
 
         // Handle back press: navigate to Home tab first, then exit
         onBackPressedDispatcher.addCallback(this) {
             val currentTag = supportFragmentManager.findFragmentById(CONTAINER_ID)?.tag
-            if (currentTag != "Home" && bottomNav.selectedItemId != 1) {
-                bottomNav.selectedItemId = 1
+            if (currentTag != "Home" && bottomNav.selectedItemId != R.id.nav_home) {
+                bottomNav.selectedItemId = R.id.nav_home
             } else {
                 isEnabled = false
                 onBackPressedDispatcher.onBackPressed()

@@ -278,6 +278,51 @@ button {
   50% { transform: rotate(5deg); }
 }
 
+@keyframes flame-sway {
+  0% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 2px rgba(255, 61, 0, 0.4)); }
+  50% { transform: scale(1.08) rotate(1deg); filter: drop-shadow(0 0 8px rgba(255, 145, 0, 0.7)); }
+  100% { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 0 2px rgba(255, 61, 0, 0.4)); }
+}
+
+@keyframes heartbeat-bounce {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.12); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.15); }
+  70% { transform: scale(1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes star-spin-react {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+@keyframes gem-shine-react {
+  0% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+  50% { transform: scale(1.15) rotate(15deg); filter: brightness(1.35) drop-shadow(0 0 8px rgba(0, 229, 255, 0.6)); }
+  100% { transform: scale(1) rotate(0deg); filter: brightness(1); }
+}
+
+.animate-flame {
+  animation: flame-sway 1.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.animate-heartbeat {
+  animation: heartbeat-bounce 1.4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.hover\:animate-star-bounce:hover {
+  animation: star-spin-react 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.hover\:animate-gem-shine:hover {
+  animation: gem-shine-react 0.6s ease-in-out forwards;
+}
+
 .animate-fadein    { animation: fadein    300ms ease both; }
 .animate-fadeup    { animation: fadeup    350ms ease both; }
 .animate-fadescale { animation: fadescale 260ms ease both; }

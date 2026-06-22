@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 /* ─────────────────────────────────────────────────────────────
    TYPES
@@ -305,7 +306,9 @@ export function StudyActivityHeatmap({ activityData = null, realDataOnly = false
         {/* ── Header ── */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--sp-4)' }}>
           <div>
-            <h3 style={{ fontWeight: 900, fontSize: '16px', marginBottom: '2px' }}>📅 Study Activity</h3>
+            <h3 style={{ fontWeight: 900, fontSize: '16px', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <PremiumIcon type="time" size={16} /> Study Activity
+            </h3>
             <p style={{ fontSize: '11px', color: 'var(--text-3)' }}>14 weeks · every cell = one day</p>
           </div>
           {!isAllEmpty && (
@@ -334,7 +337,9 @@ export function StudyActivityHeatmap({ activityData = null, realDataOnly = false
             transform: visible ? 'scale(1)' : 'scale(0.95)',
             transition: 'all 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s',
           }}>
-            <div style={{ fontSize: '40px', marginBottom: '10px', lineHeight: 1 }}>🌱</div>
+            <div style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center' }}>
+              <PremiumIcon type="level1" size={40} />
+            </div>
             <div style={{ fontWeight: 800, fontSize: '15px', marginBottom: '6px' }}>No activity yet</div>
             <p style={{ fontSize: '12px', color: 'var(--text-3)', lineHeight: 1.6 }}>
               Complete your first lesson and your study streak will start growing here.
@@ -400,10 +405,10 @@ export function StudyActivityHeatmap({ activityData = null, realDataOnly = false
           gap: 'var(--sp-2)', marginTop: 'var(--sp-5)',
         }}>
           {[
-            { icon: '🗓️', label: 'Active Days',  value: stats.active,   color: 'var(--primary)', bg: 'rgba(22,163,74,0.10)' },
-            { icon: '🔥', label: 'Best Streak',  value: stats.best,     color: '#EF4444',        bg: 'rgba(239,68,68,0.10)' },
-            { icon: '⚡', label: 'This Week XP', value: stats.weekXP,   color: '#F59E0B',        bg: 'rgba(245,158,11,0.10)' },
-            { icon: '⭐', label: 'Total XP',     value: stats.totalXP,  color: '#8B5CF6',        bg: 'rgba(139,92,246,0.10)' },
+            { icon: 'time', label: 'Active Days',  value: stats.active,   color: 'var(--primary)', bg: 'rgba(22,163,74,0.10)' },
+            { icon: 'streak', label: 'Best Streak',  value: stats.best,     color: '#EF4444',        bg: 'rgba(239,68,68,0.10)' },
+            { icon: 'xp', label: 'This Week XP', value: stats.weekXP,   color: '#F59E0B',        bg: 'rgba(245,158,11,0.10)' },
+            { icon: 'trophy', label: 'Total XP',     value: stats.totalXP,  color: '#8B5CF6',        bg: 'rgba(139,92,246,0.10)' },
           ].map((s, i) => (
             <div key={s.label} className="heat-stat-card"
               style={{
@@ -414,7 +419,9 @@ export function StudyActivityHeatmap({ activityData = null, realDataOnly = false
                 transform: visible ? 'translateY(0)' : 'translateY(10px)',
                 transition: `opacity 0.4s ease ${0.4 + i * 0.07}s, transform 0.4s ease ${0.4 + i * 0.07}s`,
               }}>
-              <div style={{ fontSize: '18px', marginBottom: '2px' }}>{s.icon}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', height: '22px', marginBottom: '4px', alignItems: 'center' }}>
+                <PremiumIcon type={s.icon as any} size={18} />
+              </div>
               <div style={{ fontSize: '18px', fontWeight: 900, color: s.color, lineHeight: 1 }}>
                 {visible ? <StatNum value={s.value} /> : 0}
               </div>

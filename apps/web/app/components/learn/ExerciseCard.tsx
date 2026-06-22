@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Volume2, Check, Mic, Sparkles } from 'lucide-react';
 import { Button } from '@evlo/ui';
+import { PremiumIcon } from '../ui/PremiumIcon';
 
 interface ExerciseCardProps {
   question: any;
@@ -95,14 +96,42 @@ export function ExerciseCard({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Exercise header description */}
-      <span style={{ fontSize: '11px', color: 'var(--text-secondary, #b3b3b9)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        {question.type === 'mcq-meaning' && '🔤 MCQ — Translate Word'}
-        {question.type === 'mcq-japanese' && '🇯🇵 MCQ — Pick Japanese'}
-        {question.type === 'translate' && '📝 MCQ — Translate Sentence'}
-        {question.type === 'listen-pick' && '🎧 Listening — Choose Correct'}
-        {question.type === 'fill-blank' && '✍️ Fill in the Blank'}
-        {question.type === 'match-pair' && '🧩 Match the Pairs'}
-        {question.type === 'speak-match' && '🗣️ Speak & Match'}
+      <span style={{ fontSize: '11px', color: 'var(--text-secondary, #b3b3b9)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {question.type === 'mcq-meaning' && (
+          <>
+            <PremiumIcon type="numbers" size={12} /> MCQ — Translate Word
+          </>
+        )}
+        {question.type === 'mcq-japanese' && (
+          <>
+            <PremiumIcon type="kana" size={12} /> MCQ — Pick Japanese
+          </>
+        )}
+        {question.type === 'translate' && (
+          <>
+            <PremiumIcon type="book" size={12} /> MCQ — Translate Sentence
+          </>
+        )}
+        {question.type === 'listen-pick' && (
+          <>
+            <PremiumIcon type="speaker" size={12} /> Listening — Choose Correct
+          </>
+        )}
+        {question.type === 'fill-blank' && (
+          <>
+            <PremiumIcon type="book" size={12} /> Fill in the Blank
+          </>
+        )}
+        {question.type === 'match-pair' && (
+          <>
+            <PremiumIcon type="tips" size={12} /> Match the Pairs
+          </>
+        )}
+        {question.type === 'speak-match' && (
+          <>
+            <PremiumIcon type="greetings" size={12} /> Speak & Match
+          </>
+        )}
       </span>
 
       {/* Main Question Header */}

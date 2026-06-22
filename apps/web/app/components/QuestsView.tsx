@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Quest } from '@evlo/types';
+import { PremiumIcon, PremiumIconType } from './ui/PremiumIcon';
 
 interface QuestsViewProps {
   quests: Quest[];
@@ -15,6 +16,22 @@ const rarityColor: Record<Quest['type'], string> = {
   special: 'var(--purple)',
 };
 
+function getPremiumIconFromEmoji(emoji: string): PremiumIconType | null {
+  switch (emoji) {
+    case '🔥': return 'streak';
+    case '⭐': case '⚡': return 'xp';
+    case '📖': case '📚': case '📝': return 'book';
+    case '💎': return 'gem';
+    case '🏆': return 'trophy';
+    case '👑': return 'crown';
+    case '🎯': return 'level1';
+    case '🛡️': return 'shield';
+    case '⚔️': return 'swords';
+    case '🔊': case '🎤': return 'speaker';
+    default: return null;
+  }
+}
+
 export function QuestsView({ quests, onClaimQuest, onBack }: QuestsViewProps) {
   const daily = quests.filter(q => q.type === 'daily');
   const weekly = quests.filter(q => q.type === 'weekly');
@@ -24,11 +41,16 @@ export function QuestsView({ quests, onClaimQuest, onBack }: QuestsViewProps) {
     const pct = Math.min(100, Math.round((quest.progress / quest.target) * 100));
     const isDone = quest.status === 'completed';
     const isClaimed = quest.status === 'claimed';
+    const premiumType = getPremiumIconFromEmoji(quest.icon);
 
     return (
       <div key={quest.quest_id} className={`quest-card${isDone ? ' quest-done' : ''}${isClaimed ? ' quest-claimed' : ''}`}>
-        <div className="quest-icon-wrap">
-          <span className="quest-icon">{quest.icon}</span>
+        <div className="quest-icon-wrap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {premiumType ? (
+            <PremiumIcon type={premiumType} size={24} />
+          ) : (
+            <span className="quest-icon">{quest.icon}</span>
+          )}
         </div>
         <div className="quest-info">
           <div className="quest-header-row">
@@ -50,9 +72,13 @@ export function QuestsView({ quests, onClaimQuest, onBack }: QuestsViewProps) {
             </div>
             <span className="quest-progress-text">{quest.progress}/{quest.target}</span>
           </div>
-          <div className="quest-rewards">
-            <span className="quest-reward xp">⚡ +{quest.xp_reward} XP</span>
-            <span className="quest-reward gem">💎 +{quest.gem_reward}</span>
+          <div className="quest-rewards" style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+            <span className="quest-reward xp" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <PremiumIcon type="xp" size={13} /> +{quest.xp_reward} XP
+            </span>
+            <span className="quest-reward gem" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <PremiumIcon type="gem" size={13} /> +{quest.gem_reward}
+            </span>
           </div>
         </div>
         <div className="quest-action">
@@ -89,12 +115,16 @@ export function QuestsView({ quests, onClaimQuest, onBack }: QuestsViewProps) {
     <div className="page-home page-enter" style={{ padding: 'var(--space-5)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
         <button className="btn btn-ghost btn-sm" onClick={onBack} id="quests-back-btn">← Back</button>
-        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>🎯 Quests</h2>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PremiumIcon type="trophy" size={20} /> Quests
+        </h2>
       </div>
 
       {/* Season streak shield CTA */}
       <div className="quest-shield-banner">
-        <span className="shield-icon">🛡️</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <PremiumIcon type="shield" size={28} />
+        </div>
         <div>
           <div className="shield-title">Streak Shield</div>
           <div className="shield-sub">Protects your streak for 1 missed day</div>

@@ -36,6 +36,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.velmorth.app.MainActivity
+import com.velmorth.app.R
 import com.velmorth.app.data.local.PrefsManager
 import com.velmorth.app.data.repository.FirestoreProgressRepository
 import com.velmorth.app.data.repository.LessonRepository
@@ -213,7 +214,7 @@ class HomeFragment : Fragment() {
                     displayName = userState.name.ifBlank { "Learner" },
                     onAvatarClick = {
                         (requireActivity() as? MainActivity)?.let { act ->
-                            act.bottomNav.selectedItemId = 5
+                            act.bottomNav.selectedItemId = R.id.nav_profile
                         }
                     }
                 )
@@ -303,12 +304,12 @@ class HomeFragment : Fragment() {
                                 }
                                 "review" -> {
                                     (requireActivity() as? MainActivity)?.let { act ->
-                                        act.bottomNav.selectedItemId = 3
+                                        act.bottomNav.selectedItemId = R.id.nav_review
                                     }
                                 }
                                 "shop" -> {
                                     (requireActivity() as? MainActivity)?.let { act ->
-                                        act.bottomNav.selectedItemId = 4
+                                        act.bottomNav.selectedItemId = R.id.nav_shop
                                     }
                                 }
                             }

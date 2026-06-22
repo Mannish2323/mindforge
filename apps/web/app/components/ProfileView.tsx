@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Settings, PenLine, ChevronRight, Check, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { StudyActivityHeatmap } from './StudyActivityHeatmap';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 interface ProfileViewProps {
   state: any;
@@ -17,12 +18,12 @@ function buildStats(state: any, completedLessons: number) {
   const wordsLearned = Object.keys(state?.srsData || {}).length;
   const speakSessions = state?.storiesCompleted || 0;
   return [
-    { label: 'Total XP',       value: state?.xp        || 0, icon: '⭐', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
-    { label: 'Day Streak',     value: state?.streak     || 0, icon: '🔥', color: '#EF4444', bg: 'rgba(239,68,68,0.12)'  },
-    { label: 'Lessons Done',   value: completedLessons,       icon: '📖', color: '#16A34A', bg: 'rgba(22,163,74,0.12)'  },
-    { label: 'Words Learnt',   value: wordsLearned,           icon: '🈳', color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
-    { label: 'Reviews Done',   value: state?.dailyReviewsDone || 0, icon: '🔁', color: '#0EA5E9', bg: 'rgba(14,165,233,0.12)' },
-    { label: 'Speak Sessions', value: speakSessions,          icon: '🎤', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
+    { label: 'Total XP',       value: state?.xp        || 0, icon: 'xp', color: '#F59E0B', bg: 'rgba(245,158,11,0.12)' },
+    { label: 'Day Streak',     value: state?.streak     || 0, icon: 'streak', color: '#EF4444', bg: 'rgba(239,68,68,0.12)'  },
+    { label: 'Lessons Done',   value: completedLessons,       icon: 'book', color: '#16A34A', bg: 'rgba(22,163,74,0.12)'  },
+    { label: 'Words Learnt',   value: wordsLearned,           icon: 'kana', color: '#8B5CF6', bg: 'rgba(139,92,246,0.12)' },
+    { label: 'Reviews Done',   value: state?.dailyReviewsDone || 0, icon: 'review', color: '#0EA5E9', bg: 'rgba(14,165,233,0.12)' },
+    { label: 'Speak Sessions', value: speakSessions,          icon: 'speaker', color: '#EC4899', bg: 'rgba(236,72,153,0.12)' },
   ];
 }
 
@@ -64,7 +65,7 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
   if (!user || !profile) {
     return (
       <div style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 'var(--sp-8)', textAlign: 'center' }}>
-        <div style={{ fontSize: '64px', marginBottom: '16px', animation: 'bounce-in 0.6s ease both' }}>🔒</div>
+        <div style={{ marginBottom: '16px', animation: 'bounce-in 0.6s ease both', display: 'flex', justifyContent: 'center' }}><PremiumIcon type="lock" size={64} /></div>
         <h2 style={{ fontWeight: 800, marginBottom: '8px' }}>Sign in to view your profile</h2>
         <p style={{ color: 'var(--text-2)', marginBottom: '20px' }}>Track your progress, badges, and activity.</p>
         <button className="btn-primary" onClick={() => onNavigate('home')} style={{ width: 'auto', padding: '10px 28px' }}>Sign In</button>
@@ -191,9 +192,9 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
               position: 'absolute', bottom: '8px', right: '4px',
               width: '24px', height: '24px', borderRadius: '50%',
               background: 'var(--primary)', border: '2px solid var(--bg)',
-              display: 'grid', placeItems: 'center', fontSize: '10px',
-              cursor: 'pointer', pointerEvents: 'none',
-            }}>✏️</div>
+              display: 'grid', placeItems: 'center',
+              cursor: 'pointer', pointerEvents: 'none', color: '#fff',
+            }}><PenLine size={12} style={{ strokeWidth: 3 }} /></div>
           </div>
 
           <button
@@ -331,8 +332,8 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
                 {/* Plan badge */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                   {profile.isPremium && (
-                    <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'linear-gradient(135deg,#F59E0B,#8B5CF6)', color: 'white', letterSpacing: '0.04em' }}>
-                      ✨ {profile.planId?.toUpperCase() || 'PRO'}
+                    <span style={{ fontSize: '11px', fontWeight: 800, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'linear-gradient(135deg,#F59E0B,#8B5CF6)', color: 'white', letterSpacing: '0.04em', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                      <PremiumIcon type="crown" size={11} /> {profile.planId?.toUpperCase() || 'PRO'}
                     </span>
                   )}
                   <span style={{ fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'rgba(22,163,74,0.15)', color: 'var(--primary)', border: '1px solid rgba(22,163,74,0.25)' }}>
@@ -418,7 +419,9 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
                 border: `1px solid ${s.color}22`,
                 animationDelay: `${0.30 + i * 0.06}s`,
               }}>
-              <div style={{ fontSize: '24px', marginBottom: '4px', fontFamily: i === 4 ? 'var(--font-ja)' : 'initial' }}>{s.icon}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', height: '28px', marginBottom: '6px', alignItems: 'center' }}>
+                <PremiumIcon type={s.icon as any} size={26} />
+              </div>
               <div style={{ fontSize: '22px', fontWeight: 900, color: s.color, lineHeight: 1, marginBottom: '2px' }}>
                 <AnimatedNumber value={typeof s.value === 'number' ? s.value : 0} />
               </div>
@@ -475,7 +478,9 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
             transition: 'all 0.5s ease 0.44s',
           }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--sp-3)' }}>
-            <h3 style={{ fontWeight: 800, fontSize: '15px' }}>🏅 Badges Earned</h3>
+            <h3 style={{ fontWeight: 800, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <PremiumIcon type="trophy" size={18} /> Badges Earned
+            </h3>
             {unlockedBadges.length > 0 && (
               <button className="btn-ghost" onClick={() => onNavigate('learn')}
                 style={{ fontSize: '11px', padding: '4px 12px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -485,7 +490,9 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
           </div>
           {unlockedBadges.length === 0 ? (
             <div style={{ textAlign: 'center', padding: 'var(--sp-5)', color: 'var(--text-3)' }}>
-              <div style={{ fontSize: '36px', marginBottom: '8px', opacity: 0.5 }}>🏆</div>
+              <div style={{ marginBottom: '8px', opacity: 0.5, display: 'flex', justifyContent: 'center' }}>
+                <PremiumIcon type="trophy" size={36} />
+              </div>
               <p style={{ fontSize: '13px' }}>Complete lessons to earn your first badge!</p>
             </div>
           ) : (
@@ -528,15 +535,17 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
           <h3 style={{ fontWeight: 800, fontSize: '15px', marginBottom: 'var(--sp-4)' }}>📜 Achievement Timeline</h3>
           {completedLessons === 0 ? (
             <div style={{ textAlign: 'center', padding: 'var(--sp-4)', color: 'var(--text-3)' }}>
-              <p style={{ fontSize: '13px' }}>Complete your first lesson to start your story! 🌱</p>
+              <p style={{ fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                Complete your first lesson to start your story! <PremiumIcon type="level1" size={16} />
+              </p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
               {[
-                completedLessons > 0 && { icon: '🎉', title: 'First Lesson!', sub: 'Your Japanese journey started', color: 'var(--primary)' },
-                (state?.xp || 0) >= 100 && { icon: '⭐', title: 'Reached Level 2', sub: '100 XP milestone', color: '#F59E0B' },
-                (state?.streak || 0) >= 3 && { icon: '🔥', title: '3-Day Streak!', sub: 'Consistency is your superpower', color: '#EF4444' },
-                unlockedBadges.length > 0 && { icon: '🏅', title: 'First Badge Earned', sub: unlockedBadges[0]?.name || 'Great work!', color: '#8B5CF6' },
+                completedLessons > 0 && { icon: 'level1', title: 'First Lesson!', sub: 'Your Japanese journey started', color: 'var(--primary)' },
+                (state?.xp || 0) >= 100 && { icon: 'xp', title: 'Reached Level 2', sub: '100 XP milestone', color: '#F59E0B' },
+                (state?.streak || 0) >= 3 && { icon: 'streak', title: '3-Day Streak!', sub: 'Consistency is your superpower', color: '#EF4444' },
+                unlockedBadges.length > 0 && { icon: 'trophy', title: 'First Badge Earned', sub: unlockedBadges[0]?.name || 'Great work!', color: '#8B5CF6' },
               ].filter(Boolean).map((item: any, i, arr) => (
                 <div key={i} style={{
                   display: 'flex', gap: '12px', alignItems: 'flex-start',
@@ -546,8 +555,8 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
                 }}>
                   {/* Timeline dot */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, paddingTop: '2px' }}>
-                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `${item.color}22`, border: `2px solid ${item.color}44`, display: 'grid', placeItems: 'center', fontSize: '16px' }}>
-                      {item.icon}
+                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: `${item.color}22`, border: `2px solid ${item.color}44`, display: 'grid', placeItems: 'center' }}>
+                      <PremiumIcon type={item.icon as any} size={16} />
                     </div>
                     {i < arr.length - 1 && <div style={{ width: '2px', flex: 1, minHeight: '20px', background: 'var(--border)', margin: '4px 0' }} />}
                   </div>
@@ -597,8 +606,8 @@ export function ProfileView({ state, onNavigate }: ProfileViewProps) {
             }}
             className="card-interactive">
             <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius)', background: 'rgba(251,191,36,0.15)', display: 'grid', placeItems: 'center', fontSize: '20px' }}>
-                👑
+              <div style={{ width: '40px', height: '40px', borderRadius: 'var(--radius)', background: 'rgba(251,191,36,0.15)', display: 'grid', placeItems: 'center' }}>
+                <PremiumIcon type="crown" size={20} />
               </div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '14px', color: '#F59E0B' }}>Upgrade to Pro</div>

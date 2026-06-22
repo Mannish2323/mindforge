@@ -416,7 +416,7 @@ export function SettingsTab() {
       <SettingsRow label="Terms of Service" onClick={() => window.open('/terms', '_blank')} right={<ExternalLink size={14} />} />
       <SettingsRow label="Moderation Policy" onClick={() => window.open('/moderation', '_blank')} right={<ExternalLink size={14} />} />
       <SettingsRow label="Instagram Support" sub="@Mannish_2323" onClick={() => window.open('https://instagram.com/Mannish_2323', '_blank')} right={<InstagramSupportIcon />} />
-      <SettingsRow label="App Version" sub="v7.0.0" />
+      <SettingsRow label="App Version" sub="v2.0.0" />
 
       <Divider />
 

@@ -8,6 +8,7 @@ import { ProgressBar } from './ProgressBar';
 import { XPFlash } from './XPFlash';
 import { HeartDebit } from './HeartDebit';
 import { ExerciseCard } from './ExerciseCard';
+import { PremiumIcon } from '../ui/PremiumIcon';
 
 interface LessonPlayerProps {
   questions: any[];
@@ -87,7 +88,9 @@ export function LessonPlayer({
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         minHeight: '80vh', textAlign: 'center', padding: '24px'
       }}>
-        <span style={{ fontSize: '64px' }}>💔</span>
+        <div style={{ display: 'flex', justifyContent: 'center', filter: 'grayscale(1)', marginBottom: '16px' }}>
+          <PremiumIcon type="heart" size={64} />
+        </div>
         <h2 style={{ fontSize: '24px', fontWeight: 900, margin: '12px 0' }}>No Hearts Left</h2>
         <p style={{ color: 'var(--text-secondary, #b3b3b9)', maxWidth: '300px', marginBottom: '24px' }}>
           Refill your hearts capacity using gems in settings or return to the lessons path.
@@ -99,20 +102,20 @@ export function LessonPlayer({
     );
   }
 
-  if (lessonFinished) {
+    if (lessonFinished) {
     return (
       <div style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         minHeight: '90vh', textAlign: 'center', padding: '24px', maxWidth: '440px', margin: '0 auto'
       }}>
-        <motion.span 
+        <motion.div 
           initial={{ scale: 0 }} 
           animate={{ scale: [0, 1.2, 1] }} 
           transition={{ duration: 0.5, type: 'spring' }} 
-          style={{ fontSize: '64px', marginBottom: '16px', display: 'block' }}
+          style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}
         >
-          🎉
-        </motion.span>
+          <PremiumIcon type="trophy" size={64} />
+        </motion.div>
         <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0 }}>Lesson Complete!</h2>
         <p style={{ color: 'var(--text-secondary, #b3b3b9)', margin: '8px 0 24px 0', fontSize: '14px' }}>
           Outstanding! You correctly answered {correctCount} out of {questions.length} questions.
@@ -120,8 +123,8 @@ export function LessonPlayer({
 
         <div className="card" style={{ width: '100%', padding: '20px', background: 'var(--surface-2, #2d2d34)', marginBottom: '24px' }}>
           <AnimatedXPCounter target={xpReward} />
-          <span style={{ fontSize: '12px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '4px', display: 'block' }}>
-            Bonus Reward: +5 Gems 💎
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px', justifyContent: 'center', width: '100%' }}>
+            Bonus Reward: +5 Gems <PremiumIcon type="gem" size={13} />
           </span>
         </div>
 

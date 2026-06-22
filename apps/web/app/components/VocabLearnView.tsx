@@ -5,6 +5,7 @@ import { ChevronRight, Volume2, BookOpen, Dumbbell, FlaskConical, ArrowLeft, Che
 import { useAuth } from '../context/AuthContext';
 import { createClient } from '../lib/supabase';
 import { WordExplainer } from './jlpt/WordExplainer';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface VocabWord {
@@ -50,9 +51,9 @@ const ModeLabel: Record<VocabMode, string> = {
 };
 
 const ModeIcon: Record<VocabMode, string> = {
-  jlpt_n5: '🎌',
-  jft_basic: '🏭',
-  ssw: '🛠️',
+  jlpt_n5: 'kana',
+  jft_basic: 'time',
+  ssw: 'swords',
 };
 
 const ModeDesc: Record<VocabMode, string> = {
@@ -271,8 +272,8 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
       <div className="vocab-learn-card page-enter" style={{ padding: 'var(--sp-5)', maxWidth: '680px', margin: '0 auto', paddingBottom: 'calc(var(--bottom-nav-h) + 24px)' }}>
         {/* Header */}
         <div style={{ marginBottom: 'var(--sp-5)' }}>
-          <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, marginBottom: '4px' }}>
-            📚 Vocab Learn
+          <h1 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <PremiumIcon type="book" size={26} /> Vocab Learn
           </h1>
           <p style={{ color: 'var(--text-3)', fontSize: 'var(--text-sm)' }}>
             Teach → Quiz → Mock Test
@@ -295,7 +296,9 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
                 transition: 'all var(--t-fast)',
               }}
             >
-              <div style={{ fontSize: '24px', marginBottom: '4px' }}>{ModeIcon[m]}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', height: '28px', marginBottom: '4px', alignItems: 'center' }}>
+                <PremiumIcon type={ModeIcon[m] as any} size={24} />
+              </div>
               <div style={{ fontSize: '11px', fontWeight: 800, color: mode === m ? 'var(--primary)' : 'var(--text-2)' }}>
                 {ModeLabel[m]}
               </div>
@@ -420,12 +423,14 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
         {/* Stats row */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--sp-2)', marginTop: 'var(--sp-5)' }}>
           {[
-            { icon: '📖', label: 'Words Learned', val: learnedCount },
-            { icon: '📝', label: 'Total Available', val: wordPool.length },
-            { icon: '⚡', label: 'Mode', val: ModeLabel[mode] },
+            { icon: 'book', label: 'Words Learned', val: learnedCount },
+            { icon: 'kana', label: 'Total Available', val: wordPool.length },
+            { icon: 'xp', label: 'Mode', val: ModeLabel[mode] },
           ].map(s => (
             <div key={s.label} className="card" style={{ textAlign: 'center', padding: 'var(--sp-3)' }}>
-              <div style={{ fontSize: '20px', marginBottom: '2px' }}>{s.icon}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', height: '22px', marginBottom: '2px', alignItems: 'center' }}>
+                <PremiumIcon type={s.icon as any} size={18} />
+              </div>
               <div style={{ fontWeight: 800, fontSize: 'var(--text-sm)', color: 'var(--primary)' }}>{s.val}</div>
               <div style={{ fontSize: '10px', color: 'var(--text-3)', marginTop: '2px' }}>{s.label}</div>
             </div>
@@ -453,8 +458,8 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
           <span style={{ fontSize: '12px', color: 'var(--text-3)', fontWeight: 600, whiteSpace: 'nowrap' }}>{currentIdx + 1}/{sessionWords.length}</span>
         </div>
 
-        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--sp-3)' }}>
-          📖 Learn New Word
+        <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--sp-3)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PremiumIcon type="book" size={14} /> Learn New Word
         </div>
 
         {/* Word card */}
@@ -626,8 +631,8 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
           <span style={{ fontSize: '12px', color: 'var(--text-3)', fontWeight: 600, whiteSpace: 'nowrap' }}>{currentIdx + 1}/{sessionWords.length}</span>
         </div>
 
-        <div style={{ fontSize: '11px', fontWeight: 700, color: isQuiz ? '#0ea5e9' : '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--sp-3)' }}>
-          {isQuiz ? '💪 Quiz Mode' : '🧪 Mock Test'}
+        <div style={{ fontSize: '11px', fontWeight: 700, color: isQuiz ? '#0ea5e9' : '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 'var(--sp-3)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PremiumIcon type={isQuiz ? 'swords' : 'boss'} size={14} /> {isQuiz ? 'Quiz Mode' : 'Mock Test'}
         </div>
 
         {/* Question card */}
@@ -667,8 +672,16 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
             border: `1px solid ${answerState === 'correct' ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.25)'}`,
             animation: 'fadeIn 0.2s ease',
           }}>
-            <div style={{ fontWeight: 700, color: answerState === 'correct' ? 'var(--success)' : 'var(--error)' }}>
-              {answerState === 'correct' ? '✅ Correct! +10 XP' : `❌ Wrong — ${currentWord.english_meaning}`}
+            <div style={{ fontWeight: 700, color: answerState === 'correct' ? 'var(--success)' : 'var(--error)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              {answerState === 'correct' ? (
+                <>
+                  <PremiumIcon type="check" size={14} /> Correct! +10 XP
+                </>
+              ) : (
+                <>
+                  <PremiumIcon type="close" size={14} /> Wrong — {currentWord.english_meaning}
+                </>
+              )}
             </div>
           </div>
         )}
@@ -764,28 +777,30 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
   }
 
   // ── RESULT ──
-  if (step === 'result') {
-    const totalWords = sessionWords.length;
-    const pct = Math.round((correctCount / totalWords) * 100);
-    const emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '💪';
-    const isTeachResult = sessionType === 'quiz' && step === 'result' && correctCount === 0;
+    if (step === 'result') {
+      const totalWords = sessionWords.length;
+      const pct = Math.round((correctCount / totalWords) * 100);
+      const isTeachResult = sessionType === 'quiz' && step === 'result' && correctCount === 0;
+      const iconType = isTeachResult ? 'crown' : (pct >= 80 ? 'trophy' : (pct >= 60 ? 'greetings' : 'streak'));
 
-    return (
-      <div className="vocab-learn-card page-enter" style={{ padding: 'var(--sp-5)', maxWidth: '680px', margin: '0 auto', textAlign: 'center', paddingBottom: 'calc(var(--bottom-nav-h) + 24px)' }}>
-        <div style={{ fontSize: '64px', marginBottom: 'var(--sp-3)' }}>{isTeachResult ? '🌟' : emoji}</div>
-        <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, marginBottom: 'var(--sp-2)' }}>
-          {isTeachResult ? 'Words Learned!' : 'Session Complete!'}
-        </h2>
-        {!isTeachResult && (
-          <div style={{ marginBottom: 'var(--sp-5)' }}>
-            <div style={{ fontSize: '48px', fontWeight: 900, color: pct >= 80 ? 'var(--success)' : pct >= 60 ? 'var(--xp-gold)' : 'var(--primary)' }}>
-              {pct}%
-            </div>
-            <div style={{ color: 'var(--text-3)', fontSize: 'var(--text-sm)' }}>
-              {correctCount} of {totalWords} correct
-            </div>
+      return (
+        <div className="vocab-learn-card page-enter" style={{ padding: 'var(--sp-5)', maxWidth: '680px', margin: '0 auto', textAlign: 'center', paddingBottom: 'calc(var(--bottom-nav-h) + 24px)' }}>
+          <div style={{ marginBottom: 'var(--sp-3)', display: 'flex', justifyContent: 'center' }}>
+            <PremiumIcon type={iconType} size={64} />
           </div>
-        )}
+          <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, marginBottom: 'var(--sp-2)' }}>
+            {isTeachResult ? 'Words Learned!' : 'Session Complete!'}
+          </h2>
+          {!isTeachResult && (
+            <div style={{ marginBottom: 'var(--sp-5)' }}>
+              <div style={{ fontSize: '48px', fontWeight: 900, color: pct >= 80 ? 'var(--success)' : pct >= 60 ? 'var(--xp-gold)' : 'var(--primary)' }}>
+                {pct}%
+              </div>
+              <div style={{ color: 'var(--text-3)', fontSize: 'var(--text-sm)' }}>
+                {correctCount} of {totalWords} correct
+              </div>
+            </div>
+          )}
         {isTeachResult && (
           <p style={{ color: 'var(--text-3)', fontSize: 'var(--text-sm)', marginBottom: 'var(--sp-5)' }}>
             You learned {totalWords} new words! Now try the quiz to test yourself.
@@ -822,10 +837,10 @@ export function VocabLearnView({ state, onXpGained, onHeartLost }: VocabLearnVie
               style={{
                 width: '100%', padding: 'var(--sp-4)', background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
                 color: 'white', border: 'none', borderRadius: 'var(--radius-lg)', fontWeight: 700,
-                fontSize: 'var(--text-base)', cursor: 'pointer',
+                fontSize: 'var(--text-base)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px'
               }}
             >
-              💪 Try a Quiz Now!
+              <PremiumIcon type="swords" size={16} /> Try a Quiz Now!
             </button>
           )}
         </div>

@@ -2,14 +2,16 @@
 // MODAL & TOAST UTILITIES
 // =====================================================
 
+import { Icons } from './icons.js';
+
 // ===== TOAST =====
 const toastContainer = () => document.getElementById('toast-container');
 
 export function showToast(message, type = 'info', duration = 3000) {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  const icons = { success: '✅', error: '❌', info: 'ℹ️' };
-  toast.innerHTML = `<span>${icons[type] || ''}</span><span>${message}</span>`;
+  const icons = { success: Icons.check(), error: Icons.close(), info: Icons.logo() };
+  toast.innerHTML = `<span style="font-size: 20px; display: inline-flex; align-items: center; justify-content: center;">${icons[type] || ''}</span><span>${message}</span>`;
   toastContainer().appendChild(toast);
 
   setTimeout(() => {
@@ -51,10 +53,10 @@ export function closeModal(overlay, onClose) {
 export function showLessonComplete(xpEarned, onContinue) {
   const overlay = showModal(`
     <div class="complete-modal">
-      <div class="complete-icon">🎉</div>
+      <div class="complete-icon" style="font-size: 64px; line-height: 1;">${Icons.trophy()}</div>
       <h2 class="complete-title">Lesson Complete!</h2>
       <p class="complete-sub">素晴らしい！ Great job — keep it up!</p>
-      <div class="xp-earned">⭐ +${xpEarned} XP</div>
+      <div class="xp-earned" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.xp()} +${xpEarned} XP</div>
       <div class="flex flex-col gap-3 w-full">
         <button class="btn btn-primary btn-full btn-lg" id="modal-continue">
           Continue

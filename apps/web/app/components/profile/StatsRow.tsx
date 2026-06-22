@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { PremiumIcon } from '../ui/PremiumIcon';
 
 interface StatsRowProps {
   xp: number;
@@ -11,10 +12,10 @@ interface StatsRowProps {
 
 export function StatsRow({ xp, streak, completedLessons, wordsLearned }: StatsRowProps) {
   const stats = [
-    { label: 'XP', value: xp, icon: '⭐' },
-    { label: 'Streak', value: streak, icon: '🔥' },
-    { label: 'Lessons', value: completedLessons, icon: '📖' },
-    { label: 'Words', value: wordsLearned, icon: '🈳' },
+    { label: 'XP', value: xp, icon: 'xp' },
+    { label: 'Streak', value: streak, icon: 'streak' },
+    { label: 'Lessons', value: completedLessons, icon: 'book' },
+    { label: 'Words', value: wordsLearned, icon: 'kana' },
   ];
 
   return (
@@ -29,7 +30,9 @@ export function StatsRow({ xp, streak, completedLessons, wordsLearned }: StatsRo
     }}>
       {stats.map((s) => (
         <div key={s.label} style={{ textAlign: 'center' }}>
-          <span style={{ fontSize: '18px', display: 'block' }}>{s.icon}</span>
+          <div style={{ display: 'flex', justifyContent: 'center', height: '22px', alignItems: 'center' }}>
+            <PremiumIcon type={s.icon as any} size={18} />
+          </div>
           <span style={{ fontSize: '18px', fontWeight: 900, display: 'block', color: 'var(--text-primary, #fff)', marginTop: '4px' }}>
             {s.value}
           </span>

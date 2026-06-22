@@ -7,6 +7,7 @@ import { Crown } from 'lucide-react';
 import { useStoreContext } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
 import { Button, Modal } from '@evlo/ui';
+import { PremiumIcon } from '../ui/PremiumIcon';
 
 export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
   const { state, refillHearts } = useStoreContext();
@@ -138,7 +139,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
               cursor: 'pointer',
               whiteSpace: 'nowrap'
             }}>
-              <span style={{ fontSize: '16px' }}>⭐</span>
+              <PremiumIcon type="xp" size={16} />
               <span>{activeState.xp ?? 0}</span>
             </div>
           </Link>
@@ -158,12 +159,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
               cursor: 'pointer',
               whiteSpace: 'nowrap'
             }}>
-              <span style={{
-                fontSize: '16px',
-                animation: 'flame-rise 2.4s ease-in-out infinite',
-                display: 'inline-block',
-                transformOrigin: 'bottom center'
-              }}>🔥</span>
+              <PremiumIcon type="streak" size={16} />
               <span>{activeState.streak ?? 0}</span>
             </div>
           </Link>
@@ -186,7 +182,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
               whiteSpace: 'nowrap'
             }}
           >
-            <span style={{ fontSize: '16px' }}>❤️</span>
+            <PremiumIcon type="heart" size={16} />
             <span>{activeState.hearts ?? 25}</span>
           </div>
 
@@ -203,7 +199,7 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
             color: 'var(--text-primary, #fff)',
             whiteSpace: 'nowrap'
           }}>
-            <span style={{ fontSize: '16px' }}>💎</span>
+            <PremiumIcon type="gem" size={16} />
             <span>{activeState.gems ?? 0}</span>
           </div>
 
@@ -271,7 +267,9 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
       {/* Heart Refill Modal */}
       <Modal isOpen={showRefillModal} onClose={() => setShowRefillModal(false)} title="Refill Hearts">
         <div style={{ textAlign: 'center', padding: '16px 8px' }}>
-          <span style={{ fontSize: '48px', display: 'block', marginBottom: '16px' }}>❤️</span>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <PremiumIcon type="heart" size={48} />
+          </div>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
             Need more hearts to continue learning? Refill them now!
           </p>
@@ -280,9 +278,9 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
               variant="primary"
               onClick={handleSpendGemsRefill}
               disabled={activeState.gems < 10}
-              style={{ width: '100%' }}
+              style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
             >
-              Use 10 Gems (You have {activeState.gems} 💎)
+              Use 10 Gems (You have {activeState.gems} <PremiumIcon type="gem" size={14} />)
             </Button>
             <Button
               variant="ghost"

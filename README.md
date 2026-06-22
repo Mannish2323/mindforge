@@ -1,9 +1,10 @@
-# LEARN WITH VELMORTH
-## Complete System Design & Architecture Documentation
+# Learn with Velmorth - Updated Architecture (2026)
 
-**Version**: 1.0.0 | **Status**: Production Blueprint | **Date**: June 2026
+## System Vision
 
-> *"The next-generation evolution of language learning — AI-native, scientifically-grounded, obsessively personalized."*
+Learn with Velmorth is an AI-powered language learning ecosystem focused on language mastery, vocabulary intelligence, pronunciation, translation, gamification, and personalized learning.
+
+The platform is designed to combine the engaging learning experience of Duolingo, the clean organization of Notion, personalized AI tutor assistance, and adaptive learning paths.
 
 ---
 
@@ -11,129 +12,90 @@
 
 | Section | Document | Coverage |
 |---|---|---|
-| 01 | [Product Vision](docs/01_PRODUCT_VISION.md) | Mission, Philosophy, User Journey, Methodology, Competitive Analysis |
-| 02 | [System Architecture](docs/02_SYSTEM_ARCHITECTURE.md) | All layers: Frontend, Backend, AI, Analytics, Gamification, Real-Time, Security, DR, Scaling |
-| 03 | [Frontend Architecture](docs/03_FRONTEND_ARCHITECTURE.md) | Flutter structure, State management, Offline mode, Navigation, Performance |
-| 04 | [UI/UX Design System](docs/04_UI_UX_DESIGN_SYSTEM.md) | Brand identity, Color palette, Typography, Components, Microinteractions, Dark mode |
-| 05 | [User Flow](docs/05_USER_FLOW.md) | Every screen detailed — Splash to Analytics (19 screens) |
-| 06 | [Learning Engine](docs/06_LEARNING_ENGINE.md) | SRS algorithm, Knowledge Graph, Learning DNA, Mastery Engine, Prediction |
-| 07 | [Gamification](docs/07_GAMIFICATION.md) | XP, Levels, Ranks, Guilds, Raids, Boss Battles, Season Pass, Events |
-| 08 | [AI System](docs/08_AI_SYSTEM.md) | 11 AI agents: Tutor, Coach, Generator, Voice, Recommendation, Prediction, Twin |
-| 09 | [Database Architecture](docs/09_DATABASE_ARCHITECTURE.md) | Complete PostgreSQL schema — 30+ tables, indexes, partitioning |
-| 10 | [API Architecture](docs/10_API_ARCHITECTURE.md) | REST, WebSocket, GraphQL — full request/response examples |
-| 11 | [Backend Architecture](docs/11_BACKEND_ARCHITECTURE.md) | NestJS services, Docker, Kubernetes, CI/CD |
-| 12-17 | [Security + Analytics + Monetization + Deployment + Future + AI Prompt](docs/12-17_SECURITY_ANALYTICS_MONETIZATION_DEPLOYMENT_FUTURE_PROMPT.md) | Complete production coverage of final 6 sections |
+| 01 | [Product Vision](docs/01_PRODUCT_VISION.md) | Ecosystem philosophy, user journey, Duolingo+Notion goal, 100k+ learner target |
+| 02 | [System Architecture](docs/02_SYSTEM_ARCHITECTURE.md) | Web Client (Vite), Express API, Supabase Database, Gemini/OpenAI/Perplexity |
+| 03 | [Frontend Architecture](docs/03_FRONTEND_ARCHITECTURE.md) | Web App (React + Vite + React Router + Tailwind CSS) & Future Flutter Client |
+| 04 | [UI/UX Design System](docs/04_UI_UX_DESIGN_SYSTEM.md) | Brand identity, Color palette, Typography, Custom CSS design |
+| 05 | [User Flow](docs/05_USER_FLOW.md) | Navigation maps: Home dashboard, learn path, JLPT prep, auth, profile |
+| 06 | [Learning Engine](docs/06_LEARNING_ENGINE.md) | Spaced Repetition System (SRS) algorithm, vocabulary builder, quiz engines |
+| 07 | [Gamification](docs/07_GAMIFICATION.md) | XP systems, daily streaks, badges, achievements, leaderboard rankings |
+| 08 | [AI System](docs/08_AI_SYSTEM.md) | Translation, Meaning, Sentence Breakdown, and Assistant pipelines |
+| 09 | [Database Architecture](docs/09_DATABASE_ARCHITECTURE.md) | Supabase PostgreSQL Relational Schema & Firestore Telemetry schemas |
+| 10 | [API Architecture](docs/10_API_ARCHITECTURE.md) | Node.js + Express API endpoints and Vercel routing configs |
 
 ---
 
-## 🏗️ Tech Stack Summary
+## Technology Stack & Architecture
 
-### Frontend
-```
-Flutter 3.x (iOS, Android, Web, Desktop)
-Riverpod 2.0 (State Management)
-GoRouter (Navigation)
-Hive + Drift (Local Storage)
-TensorFlow Lite (On-device AI)
-```
+### Frontend Layer
+- **Web Application**: React, Vite, React Router, Framer Motion, Tailwind CSS
+- **Future Mobile App**: Flutter, Firebase Integration, Offline Learning Support
 
-### Backend
-```
-NestJS (TypeScript) — All microservices
-Python FastAPI — AI Orchestration Service
-PostgreSQL 16 — Primary OLTP database
-Redis Cluster — Caching + Sessions + Leaderboards
-Apache Kafka — Event streaming (100+ topics)
-Elasticsearch 8 — Full-text search
-ClickHouse — Analytics (time-series)
-Neo4j 5 — Knowledge Graph
-MinIO / GCS — Object storage
-```
+### Authentication Layer
+- **User Authentication**: Google Login, Email & Password, Anonymous Guest Mode
+- **Services**: Firebase Authentication & Supabase Auth (SSR verification)
 
-### AI Stack
-```
-Gemini 2.5 Pro — Primary reasoning + content generation
-Gemini 2.0 Flash — Real-time recommendation
-Whisper Large v3 — Speech-to-text
-LangGraph — Agent orchestration
-TensorFlow Serving — Custom ML models
-Sentence-BERT — Semantic similarity
-```
+### API Layer (Future Backend Gateway)
+- **Framework**: Node.js + Express (REST APIs)
+- **Gateway Responsibilities**: Authentication Validation, API Security, Rate Limiting, AI Requests, Analytics Collection
 
-### Infrastructure
-```
-Google Kubernetes Engine (GKE Autopilot)
-Cloud SQL (PostgreSQL) — 3 regions
-Istio Service Mesh — mTLS + circuit breaking
-Kong API Gateway — Rate limiting + routing
-Cloud Armor — WAF + DDoS protection
-Prometheus + Grafana — Observability
-Jaeger — Distributed tracing
-```
+### Database Layer
+- **Primary Database**: **Supabase (PostgreSQL)**
+  - Stores all persistent structural records including profiles, user stats, settings, streaks, subscription entitlements, lesson progress, spaced-repetition queues, badges, and usage logs.
+- **Telemetry Database**: **Firebase Firestore**
+  - Logs daily activity streams (such as XP history charts per user).
+
+### AI Learning Engine
+- **AI Services**: Translation Engine (JA ⇄ EN), Word Meaning Engine, Sentence Breakdown Engine, Learning Assistant
+- **Future Integrations**: Gemini API, OpenAI API, Perplexity API
 
 ---
 
-## 🎯 Key Differentiators
+## Learning System Core Modules
 
-| Feature | Duolingo | Velmorth |
-|---|---|---|
-| Personalization | Course-level | Atomic item-level (per cognitive fingerprint) |
-| AI Integration | Bolt-on | Native at every architectural layer |
-| Curriculum | Fixed paths | Dynamically generated per learner |
-| Social | Leaderboard | Guild ecosystem + live raids + boss battles |
-| Voice | Basic comparison | Phoneme-level prosody + fluency analysis |
-| Analytics | Streaks/XP only | Full cognitive analytics dashboard |
-| Offline | Limited | Full AI-powered offline mode |
-| Business | B2C | B2C + B2B + B2G + Enterprise |
-| Memory Science | SM-2 based | FSRS 5.0 + SM-18 ensemble + emotional encoding |
-| Learning Moat | None | Learning DNA that compounds with every session |
+- **Vocabulary Builder**: Flashcards, Word Meaning, Audio Support, Practice Mode
+- **Grammar Training**: Grammar Lessons, Interactive Exercises
+- **Quiz Engine**: MCQ, Fill in the Blanks, Listening Tests, Writing Tests
+- **Revision System**: Smart Revision, Weak Topic Detection, Daily Recommendations
 
 ---
 
-## 📊 Scale Targets
+## Gamification & Rewards
 
-- **Users**: 100 million (design target)
-- **Concurrent**: 1 million simultaneous
-- **API Latency**: < 100ms P95 for REST, < 2s for AI
-- **Uptime SLA**: 99.95%
-- **Languages**: 100+ supported
-- **Content**: Infinite (AI-generated + human-authored)
-- **Data Residency**: GDPR compliant, regional data sovereignty
+- **XP System**: Earn Lesson XP, Quiz XP, and Daily XP
+- **Achievements**: Streak Badges, Course Completion, Vocabulary Master
+- **Leaderboards**: Weekly Rankings, Global Rankings
 
 ---
 
-## 🎨 Design Identity
+## Analytics & Monitoring
 
-- **Brand**: Luminary Design — illumination, neural connection, cosmic depth
-- **Colors**: Electric Indigo (#5B4FD4) × Teal Mint (#00C9A7) × Coral Fire (#FF6B6B)
-- **Typography**: Nunito (display) + Inter (UI)
-- **Motion**: Spring physics, micro-interactions, Lottie animations
-- **Accessibility**: WCAG 2.1 AA + dyslexia mode + color blind modes
+- **Track Metrics**: Daily Active Users (DAU), Course Completion, Quiz Accuracy, Retention Rate, Learning Time
+- **Dashboards**: Student Dashboard, Admin Dashboard
+- **Admin Panel**: Course, Lesson, and User management, Analytics, Content publishing
 
 ---
 
-## 💰 Monetization
+## Monetization Model
 
-| Plan | Price | Key Feature |
-|---|---|---|
-| Free | $0 | 5 hearts, 1 language, 3 AI messages/day |
-| Premium Monthly | $9.99/mo | Unlimited everything + 1.2× XP |
-| Premium Annual | $79.99/yr | Save 33% + 2,000 bonus gems |
-| Family | $14.99/mo | 6 members + family dashboard |
-| School | $4.99/student/mo | Teacher dashboard + assignments |
-| Enterprise | Custom | SSO + custom content + private cloud |
+- **Free Plan**: Basic Lessons
+- **Premium Plan**: Unlimited Learning, AI Tutor, Advanced Analytics
+- **Future Plans**: Subscription Model, Lifetime Access, Team Plans
 
 ---
 
-## 🚀 Product Roadmap
+## Deployment & Hosting
 
-| Phase | Timeline | Milestone |
-|---|---|---|
-| 1: Core Excellence | 2027-2028 | 10 languages, 1M DAU, Learning DNA v1 |
-| 2: Scale & B2B | 2028-2029 | 30 languages, 10M DAU, Enterprise launch |
-| 3: Deep Intelligence | 2029-2030 | AI Teacher Cloning, 50M DAU, IPO ready |
-| 4: Immersive Reality | 2030-2031 | Full VR classrooms, 100M DAU |
-| 5: Platform of Record | 2031-2032 | Global certification standard, UNESCO partnership |
+- **Frontend**: Vercel
+- **Backend API**: Render
+- **Database & Storage**: Supabase (PostgreSQL) & Firebase (Firestore / Storage)
+- **Monitoring & Analytics**: Google Analytics, Firebase Analytics
+
+---
+
+## Long-Term Goal
+
+Become a premier AI-powered learning platform targeting **100,000+ learners** worldwide, combining a Duolingo learning experience, Notion-level organization, AI tutor assistance, and personalized learning paths.
 
 ---
 
@@ -143,13 +105,17 @@ Jaeger — Distributed tracing
 learn-with-velmorth/
 ├── app/                     # Native Android App (Kotlin, Jetpack Compose, Firebase)
 ├── apps/
-│   └── web/                 # Next.js Web Application (AIChat, Billing, Admin dashboard)
-├── packages/                # Shared monorepo packages (analytics, core-logic, design-tokens, types, ui, utils)
-├── services/                # Backend and Microservices (rust-core, python-ai, java-legacy)
-├── docs/                    # System Design documentation blueprints and web portal
-│   ├── 01_PRODUCT_VISION.md ...
-│   ├── index.html           # Developer Portal & Doc Index
-│   └── privacy.html         # Privacy Policy
+│   └── web/                 # Web Application (React, Vite, Tailwind CSS)
+│       └── supabase/        # SQL schema configurations and database migrations
+├── packages/                # Shared monorepo packages
+│   ├── analytics/           # Shared telemetry utilities
+│   ├── core-logic/          # Shared client-side business rules
+│   ├── design-tokens/       # Custom style values, colors, spacing
+│   ├── types/               # Shared TypeScript typings
+│   ├── ui/                  # Component styles and tokens
+│   └── utils/               # Common helper utilities
+├── services/                # Legacy backend microservices
+├── docs/                    # Developer index portal and architecture blueprints
 └── README.md                # This file
 ```
 
@@ -162,17 +128,12 @@ learn-with-velmorth/
 git clone https://github.com/manish63018-sketch/learn-with-velmorth.git
 cd learn-with-velmorth
 
-# Install dependencies (uses pnpm workspaces)
+# Install workspace dependencies
 pnpm install
 
-# Run the local development server for all services
+# Run the local development environment
 pnpm dev
 
 # Build all applications and packages
 pnpm build
 ```
-
----
-
-*Learn With Velmorth — Built to serve 100 million learners. Designed to change lives.*
-

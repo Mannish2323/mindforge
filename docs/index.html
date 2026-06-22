@@ -567,7 +567,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 02</div>
                     <div class="doc-title">System Architecture</div>
-                    <div class="doc-desc">Full multilayered map including backend microservices, real-time queues, high availability, DR strategies, and caching layers.</div>
+                    <div class="doc-desc">System mapping including Next.js web client, Android client integrations, Firebase services, and Supabase SQL configurations.</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/02_SYSTEM_ARCHITECTURE.md" class="doc-link">Read Blueprint</a>
@@ -580,7 +580,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 03</div>
                     <div class="doc-title">Frontend Architecture</div>
-                    <div class="doc-desc">Mobile application state machine, offline databases synchronization flow, localization strategies, and asset optimization.</div>
+                    <div class="doc-desc">Vite + React web application with Tailwind CSS, React Router views, future Flutter mobile clients, and local sync caching.</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/03_FRONTEND_ARCHITECTURE.md" class="doc-link">Read Blueprint</a>
@@ -593,7 +593,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 04</div>
                     <div class="doc-title">UI/UX Design System</div>
-                    <div class="doc-desc">Design principles, brand color spectrum, premium cosmic styling guides, custom interactive microanimations, and accessibility specifications.</div>
+                    <div class="doc-desc">Luminary design language, brand color spectrum, custom micro-interactions, Tailwind CSS configuration mapping, and WCAG AA accessibility.</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/04_UI_UX_DESIGN_SYSTEM.md" class="doc-link">Read Blueprint</a>
@@ -606,7 +606,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 05</div>
                     <div class="doc-title">User Flow</div>
-                    <div class="doc-desc">Screen-by-screen breakdown mapping the complete experience: splash, login, learning tabs, dynamic checkout, profile, and settings.</div>
+                    <div class="doc-desc">Screen-by-screen navigation maps: splash, credentials and anonymous guest setup, interactive learning, Razorpay checkout, and stats dashboard.</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/05_USER_FLOW.md" class="doc-link">Read Blueprint</a>
@@ -658,7 +658,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 09</div>
                     <div class="doc-title">Database Architecture</div>
-                    <div class="doc-desc">Relational schema design (Supabase/PostgreSQL), entitlements indexes, event tracking, and tables constraints configuration.</div>
+                    <div class="doc-desc">Supabase PostgreSQL transactional relational schemas (18 tables including profiles, settings, progress, SRS review queue) & Firestore logs.</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/09_DATABASE_ARCHITECTURE.md" class="doc-link">Read Blueprint</a>
@@ -697,7 +697,7 @@
                 <div class="doc-header">
                     <div class="doc-num">Section 12-17</div>
                     <div class="doc-title">Operation & Launch</div>
-                    <div class="doc-desc">Comprehensive blueprint covering details on security layers, data analytics pipelines, monetization strategy, and deployment.</div>
+                    <div class="doc-desc">Security (Firebase Auth & Supabase RLS), Analytics (Firestore telemetry), Monetization (Razorpay checkout & tiers), and Staging/Production Deployments (Vercel & Render).</div>
                 </div>
                 <div class="doc-footer">
                     <a href="https://github.com/manish63018-sketch/learn-with-velmorth/blob/main/docs/12-17_SECURITY_ANALYTICS_MONETIZATION_DEPLOYMENT_FUTURE_PROMPT.md" class="doc-link">Read Blueprint</a>
@@ -715,15 +715,19 @@
                 <div class="dir-tree">learn-with-velmorth/
 ├── <span class="dir-highlight">app/</span>                     <span class="dir-comment"># Native Kotlin Android Application</span>
 ├── <span class="dir-highlight">apps/</span>
-│   └── <span class="dir-highlight">web/</span>                 <span class="dir-comment"># Next.js web dashboard & billing endpoints</span>
+│   └── <span class="dir-highlight">web/</span>                 <span class="dir-comment"># Next.js web portal & serverless API routes</span>
 ├── <span class="dir-highlight">packages/</span>                <span class="dir-comment"># Shared monorepo modules</span>
 │   ├── analytics/           <span class="dir-comment"># Telemetry utilities</span>
-│   ├── core-logic/          <span class="dir-comment"># Shared models & logics</span>
-│   └── design-tokens/       <span class="dir-comment"># Colors & spacing tokens</span>
-├── <span class="dir-highlight">services/</span>                <span class="dir-comment"># Backends & workers</span>
-│   ├── python-ai/           <span class="dir-comment"># FastAPI AI tutor connector</span>
-│   └── rust-core/           <span class="dir-comment"># High-speed data processor</span>
-└── <span class="dir-highlight">docs/</span>                    <span class="dir-comment"># System documentation web pages</span></div>
+│   ├── core-logic/          <span class="dir-comment"># Client-side business rules</span>
+│   ├── design-tokens/       <span class="dir-comment"># Core theme & styling values</span>
+│   ├── types/               # Common TypeScript interfaces
+│   ├── ui/                  # Component styles and tokens
+│   └── utils/               # Shared helpers
+├── <span class="dir-highlight">services/</span>                <span class="dir-comment"># Legacy backend microservices</span>
+│   ├── java-legacy/         # Legacy data tools
+│   ├── python-ai/           # Python AI helper
+│   └── rust-core/           # High-speed processor
+└── <span class="dir-highlight">docs/</span>                    <span class="dir-comment"># Developer documentation portal</span></div>
             </div>
 
             <!-- Developer Commands Card -->

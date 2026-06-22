@@ -6,6 +6,7 @@
 import { store } from '../state/store.js';
 import { showLessonComplete, showToast } from '../components/modal.js';
 import { speakJapanese } from './hiragana.js';
+import { Icons } from '../components/icons.js';
 
 let _navigate = (r) => {};
 export function setLessonNavigate(fn) { _navigate = fn; }
@@ -20,7 +21,7 @@ let answered     = false;
 export function renderLessonPlayer(container, params) {
   lessonData = params.unitData.lessons.find(l => l.lesson_id === params.lessonId);
   if (!lessonData) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">❌</div><h3>Lesson not found</h3></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon" style="color: var(--red); font-size: 40px;">${Icons.close()}</div><h3>Lesson not found</h3></div>`;
     return;
   }
 
@@ -123,7 +124,7 @@ function renderQuestion(container) {
   const prog = ((currentQIdx) / questions.length) * 100;
   const hearts = store.get('hearts');
   const heartsHTML = Array.from({ length: 5 }, (_, i) =>
-    `<span class="heart-icon ${i >= hearts ? 'lost' : ''}">❤️</span>`
+    `<span class="heart-icon ${i >= hearts ? 'lost' : ''}" style="display: inline-flex; font-size: 20px;">${Icons.hearts()}</span>`
   ).join('');
 
   container.innerHTML = `
@@ -184,11 +185,11 @@ function renderQuestionContent(q) {
   switch (q.type) {
     case 'mcq-meaning':
       return `
-        <div class="question-type-label">🔤 Translate</div>
+        <div class="question-type-label" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.book()} Translate</div>
         <div class="question-japanese">${q.japanese}</div>
         <div class="question-romaji">${q.romaji}</div>
-        <button class="btn btn-ghost btn-sm" style="margin: 0 auto var(--space-4); display:flex; gap:6px;"
-                data-speak="${q.japanese}">🔊 Listen</button>
+        <button class="btn btn-ghost btn-sm" style="margin: 0 auto var(--space-4); display:flex; gap:6px; align-items: center;"
+                data-speak="${q.japanese}">${Icons.speaker()} Listen</button>
         <div class="mcq-options">
           ${q.options.map(opt => `
             <button class="mcq-btn" data-value="${opt}">${opt}</button>
@@ -198,7 +199,7 @@ function renderQuestionContent(q) {
 
     case 'mcq-japanese':
       return `
-        <div class="question-type-label">🇯🇵 Pick Japanese</div>
+        <div class="question-type-label" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.kana()} Pick Japanese</div>
         <div class="question-prompt">${q.english}</div>
         <div class="mcq-options">
           ${q.options.map((opt, i) => `
@@ -212,11 +213,11 @@ function renderQuestionContent(q) {
 
     case 'translate':
       return `
-        <div class="question-type-label">📝 Translate the sentence</div>
+        <div class="question-type-label" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.book()} Translate the sentence</div>
         <div class="question-japanese" style="font-size: var(--text-ja-md);">${q.japanese}</div>
         <div class="question-romaji">${q.romaji}</div>
-        <button class="btn btn-ghost btn-sm" style="margin: 0 auto var(--space-4); display:flex; gap:6px;"
-                data-speak="${q.japanese}">🔊 Listen</button>
+        <button class="btn btn-ghost btn-sm" style="margin: 0 auto var(--space-4); display:flex; gap:6px; align-items: center;"
+                data-speak="${q.japanese}">${Icons.speaker()} Listen</button>
         <div class="mcq-options" style="grid-template-columns: 1fr;">
           ${q.options.map(opt => `
             <button class="mcq-btn" data-value="${opt}" style="text-align:left;">${opt}</button>
@@ -268,7 +269,7 @@ function checkAnswer(container) {
     correctCount++;
     footer.className = 'answer-footer correct-state';
     footer.innerHTML = `
-      <div class="answer-result correct">✅ Correct! よくできました！</div>
+      <div class="answer-result correct" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.check()} Correct! よくできました！</div>
       <button class="btn btn-primary btn-full btn-lg" id="check-btn">Continue</button>
     `;
     speakJapanese(q.japanese || '');
@@ -276,7 +277,7 @@ function checkAnswer(container) {
     store.loseHeart();
     footer.className = 'answer-footer wrong-state';
     footer.innerHTML = `
-      <div class="answer-result wrong">❌ Not quite — Correct: <strong>${q.correct}</strong></div>
+      <div class="answer-result wrong" style="display: inline-flex; align-items: center; gap: 6px;">${Icons.close()} Not quite — Correct: <strong>${q.correct}</strong></div>
       <button class="btn btn-danger btn-full btn-lg" id="check-btn">Got it</button>
     `;
   }
@@ -302,13 +303,13 @@ function finishLesson(container) {
     }
   });
 
-  showToast(`+${xp} XP earned! 🎉`, 'success');
+  showToast(`+${xp} XP earned!`, 'success');
   showLessonComplete(xp, () => navigate('home'));
 
   container.innerHTML = `
     <div class="page-lesson">
       <div class="empty-state" style="padding-top: 60px;">
-        <div class="empty-icon">🎉</div>
+        <div class="empty-icon" style="font-size: 56px;">${Icons.trophy()}</div>
         <h3>Lesson Complete!</h3>
         <p>${correctCount}/${questions.length} correct</p>
       </div>

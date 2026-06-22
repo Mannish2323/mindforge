@@ -2,6 +2,8 @@
 // BOTTOM NAVIGATION COMPONENT
 // =====================================================
 
+import { Icons } from './icons.js';
+
 // navigate and currentRoute are set by main.js to avoid circular deps
 let _navigate = () => {};
 let _currentRoute = () => 'home';
@@ -12,11 +14,11 @@ export function setNavHandlers(navigateFn, currentRouteFn) {
 }
 
 const NAV_ITEMS = [
-  { id: 'home',        icon: '📖', label: 'Learn',     route: 'home' },
-  { id: 'hiragana',   icon: 'あ',  label: 'Kana',      route: 'hiragana' },
-  { id: 'review',     icon: '🔁', label: 'Review',    route: 'review' },
-  { id: 'leaderboard',icon: '🏆', label: 'League',    route: 'leaderboard' },
-  { id: 'profile',    icon: '👤', label: 'Profile',   route: 'profile' },
+  { id: 'home',        icon: Icons.book(), label: 'Learn',     route: 'home' },
+  { id: 'hiragana',   icon: Icons.kana(),  label: 'Kana',      route: 'hiragana' },
+  { id: 'review',     icon: Icons.review(), label: 'Review',    route: 'review' },
+  { id: 'leaderboard',icon: Icons.trophy(), label: 'League',    route: 'leaderboard' },
+  { id: 'profile',    icon: Icons.user(),   label: 'Profile',   route: 'profile' },
 ];
 
 export function renderNavbar() {

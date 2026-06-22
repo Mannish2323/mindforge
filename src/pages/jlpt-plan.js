@@ -159,7 +159,25 @@ const N5_PLAN = [
 // RENDER
 // =====================================================
 
+import { Icons } from '../components/icons.js';
+
 export function renderJLPT(container) {
+  const levelIcons = {
+    '🌱': Icons.level1(),
+    '🌿': Icons.level2(),
+    '🌳': Icons.level3(),
+    '🏔️': Icons.level4(),
+    '👑': Icons.level5()
+  };
+
+  const tipIcons = {
+    '⏰': Icons.time(),
+    '🔊': Icons.speaker(),
+    '🃏': Icons.review(),
+    '📺': Icons.book(),
+    '✍️': Icons.kana()
+  };
+
   container.innerHTML = `
     <div class="page-jlpt page-enter">
       <!-- Hero -->
@@ -169,9 +187,9 @@ export function renderJLPT(container) {
         </div>
         <h2>JLPT N5 → N1</h2>
         <p>Your complete roadmap to Japanese fluency</p>
-        <div style="margin-top: var(--space-5); display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
-          <div class="badge badge-green">📅 Exams: July & December</div>
-          <div class="badge badge-amber">🎯 Your Goal: N5</div>
+        <div style="margin-top: var(--space-5); display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap; align-items: center;">
+          <div class="badge badge-green" style="display: inline-flex; align-items: center; gap: 4px;">${Icons.time()} Exams: July & December</div>
+          <div class="badge badge-amber" style="display: inline-flex; align-items: center; gap: 4px;">${Icons.xp()} Your Goal: N5</div>
         </div>
       </div>
 
@@ -180,7 +198,7 @@ export function renderJLPT(container) {
       <div class="jlpt-levels-row">
         ${JLPT_LEVELS.map(lv => `
           <div class="jlpt-level-card ${lv.id}">
-            <div style="font-size: 28px; margin-bottom: var(--space-2);">${lv.icon}</div>
+            <div style="font-size: 32px; margin-bottom: var(--space-2); display: inline-flex; align-items: center; justify-content: center;">${levelIcons[lv.icon] || Icons.level1()}</div>
             <div class="jlpt-level-badge" style="color: ${lv.color};">${lv.level}</div>
             <div class="jlpt-level-name">${lv.name}</div>
             <div class="jlpt-level-words" style="margin-top: 4px;">
@@ -189,8 +207,8 @@ export function renderJLPT(container) {
             <div style="font-size: var(--text-xs); color: var(--text-secondary); margin-top: var(--space-3); line-height: 1.5;">
               ${lv.desc}
             </div>
-            <div class="jlpt-level-date">
-              📅 ${lv.examDates.join(' · ')}
+            <div class="jlpt-level-date" style="display: flex; align-items: center; gap: 4px; justify-content: center;">
+              ${Icons.time()} ${lv.examDates.join(' · ')}
             </div>
           </div>
         `).join('')}
@@ -236,7 +254,7 @@ export function renderJLPT(container) {
               { icon: '✍️', tip: 'Write Hiragana by hand — muscle memory helps a lot' },
             ].map(s => `
               <div style="display: flex; gap: var(--space-3); align-items: flex-start;">
-                <span style="font-size: 20px; flex-shrink: 0;">${s.icon}</span>
+                <span style="font-size: 20px; flex-shrink: 0; display: inline-flex;">${tipIcons[s.icon] || Icons.tips()}</span>
                 <span style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.6;">${s.tip}</span>
               </div>
             `).join('')}
@@ -252,7 +270,7 @@ export function renderJLPT(container) {
     const body    = document.getElementById(`month-body-${monthNum}`);
     const toggle  = document.getElementById(`toggle-${monthNum}`);
     let open = true;
-
+ 
     header.addEventListener('click', () => {
       open = !open;
       body.style.display = open ? 'block' : 'none';

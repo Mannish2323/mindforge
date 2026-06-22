@@ -54,8 +54,19 @@ const PHRASES = [
   { category: '🆘 Emergency', ja: '警察を呼んでください', romaji: 'Keisatsu wo yonde kudasai', en: 'Please call the police' },
 ];
 
+import { Icons } from '../components/icons.js';
+
 export function renderPhrases(container) {
   const categories = [...new Set(PHRASES.map(p => p.category))];
+
+  const catIcons = {
+    '👋 Greetings': Icons.greetings(),
+    '💬 Basics': Icons.logo(),
+    '👤 Introductions': Icons.user(),
+    '🍜 Food & Shopping': Icons.food(),
+    '📍 Directions': Icons.location(),
+    '🆘 Emergency': Icons.alert(),
+  };
 
   container.innerHTML = `
     <div class="page-phrases page-enter">
@@ -65,19 +76,21 @@ export function renderPhrases(container) {
       </div>
 
       <!-- Search -->
-      <div class="phrases-search-wrap">
-        <span class="search-icon">🔍</span>
+      <div class="phrases-search-wrap" style="position: relative; display: flex; align-items: center;">
+        <span class="search-icon" style="position: absolute; left: 12px; display: inline-flex; align-items: center; justify-content: center; pointer-events: none; color: var(--text-muted);">
+          <svg viewBox="0 0 24 24" style="width:1em; height:1em; fill:none; stroke:currentColor; stroke-width:2;" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
         <input type="text" class="phrases-search" id="phrase-search"
                placeholder="Search phrases, romaji, or English…"
-               autocomplete="off" spellcheck="false" />
+               autocomplete="off" spellcheck="false" style="padding-left: 36px; width: 100%;" />
       </div>
 
       <!-- Category filter chips -->
-      <div style="display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: var(--space-3); scrollbar-width: none; margin-bottom: var(--space-4);">
+      <div style="display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: var(--space-3); scrollbar-width: none; margin-bottom: var(--space-4); align-items: center;">
         <button class="btn btn-sm btn-primary" data-cat="all" id="cat-all">All</button>
         ${categories.map(cat => `
-          <button class="btn btn-sm btn-ghost" data-cat="${cat}" style="white-space: nowrap;">
-            ${cat}
+          <button class="btn btn-sm btn-ghost" data-cat="${cat}" style="white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">
+            ${catIcons[cat] || ''} <span>${cat.replace(/[^\w\s&]/g, '').trim()}</span>
           </button>
         `).join('')}
       </div>
@@ -103,7 +116,7 @@ export function renderPhrases(container) {
     });
     list.innerHTML = filtered.length > 0
       ? renderPhraseList(filtered)
-      : `<div class="empty-state"><div class="empty-icon">🔍</div><h3>No phrases found</h3></div>`;
+      : `<div class="empty-state"><div class="empty-icon" style="font-size: 40px; color: var(--text-muted);">${Icons.close()}</div><h3>No phrases found</h3></div>`;
 
     // Re-attach speak handlers
     list.querySelectorAll('.phrase-speak').forEach(btn => {
@@ -118,7 +131,8 @@ export function renderPhrases(container) {
     btn.addEventListener('click', () => {
       activeCategory = btn.dataset.cat;
       container.querySelectorAll('[data-cat]').forEach(b => {
-        b.className = b.dataset.cat === activeCategory ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-ghost';
+        const isSelected = b.dataset.cat === activeCategory;
+        b.className = isSelected ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-ghost';
         b.style.whiteSpace = 'nowrap';
       });
       updateList();
@@ -132,6 +146,15 @@ export function renderPhrases(container) {
 }
 
 function renderPhraseList(phrases) {
+  const catIcons = {
+    '👋 Greetings': Icons.greetings(),
+    '💬 Basics': Icons.logo(),
+    '👤 Introductions': Icons.user(),
+    '🍜 Food & Shopping': Icons.food(),
+    '📍 Directions': Icons.location(),
+    '🆘 Emergency': Icons.alert(),
+  };
+
   // Group by category
   const byCategory = {};
   phrases.forEach(p => {
@@ -141,7 +164,9 @@ function renderPhraseList(phrases) {
 
   return Object.entries(byCategory).map(([cat, items]) => `
     <div style="margin-bottom: var(--space-5);">
-      <div class="section-title" style="margin-bottom: var(--space-3);">${cat}</div>
+      <div class="section-title" style="margin-bottom: var(--space-3); display: inline-flex; align-items: center; gap: 6px;">
+        ${catIcons[cat] || Icons.book()} <span>${cat.replace(/[^\w\s&]/g, '').trim()}</span>
+      </div>
       ${items.map((p, i) => `
         <div class="phrase-row" data-idx="${i}">
           <div style="flex: 1;">
@@ -151,8 +176,8 @@ function renderPhraseList(phrases) {
           <div class="phrase-right">
             <div class="phrase-en">${p.en}</div>
           </div>
-          <button class="phrase-speak" data-ja="${p.ja}" aria-label="Listen to ${p.en}" title="Listen">
-            🔊
+          <button class="phrase-speak" data-ja="${p.ja}" aria-label="Listen to ${p.en}" title="Listen" style="display: inline-flex; align-items: center; justify-content: center; font-size: 16px;">
+            ${Icons.speaker()}
           </button>
         </div>
       `).join('')}

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { createClient } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Trophy, Flame, Zap, Award } from 'lucide-react';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 interface LeaderboardEntry {
   uid: string;
@@ -135,7 +136,7 @@ export function Leaderboard() {
       
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
-        <Trophy size={28} className="text-gold" />
+        <PremiumIcon type="trophy" size={28} />
         <div>
           <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 900 }}>Leaderboard League</h2>
           <p style={{ fontSize: 'var(--text-xs)', color: 'var(--text-3)' }}>Compete with learners worldwide</p>
@@ -193,7 +194,9 @@ export function Leaderboard() {
       ) : entries.length === 0 ? (
         /* Empty State */
         <div className="card text-center" style={{ padding: 'var(--sp-10)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🏆</div>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <PremiumIcon type="trophy" size={48} />
+          </div>
           <h3 className="font-bold">No rankings yet</h3>
           <p className="text-muted text-sm mt-1">
             Complete a lesson or start reviewing to post your first score and join the league!
@@ -319,8 +322,21 @@ export function Leaderboard() {
 }
 
 function PodiumCard({ entry, rank, tab, height }: { entry: LeaderboardEntry; rank: number; tab: 'xp' | 'streak'; height: number }) {
-  const emoji = TIER_EMOJIS[rank - 1];
   const color = TIER_COLORS[rank - 1];
+
+  const renderPodiumBadge = () => {
+    switch (rank) {
+      case 1:
+        return <PremiumIcon type="crown" size={24} />;
+      case 2:
+        return <PremiumIcon type="trophy" size={22} style={{ filter: 'opacity(0.9) brightness(0.95)' }} />;
+      case 3:
+        return <PremiumIcon type="trophy" size={20} style={{ filter: 'opacity(0.8) brightness(0.85)' }} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
       <div style={{ fontSize: '28px', marginBottom: '2px' }}>{entry.avatar}</div>
@@ -341,9 +357,8 @@ function PodiumCard({ entry, rank, tab, height }: { entry: LeaderboardEntry; ran
         alignItems: 'flex-start',
         justifyContent: 'center',
         paddingTop: '8px',
-        fontSize: '20px',
       }}>
-        {emoji}
+        {renderPodiumBadge()}
       </div>
     </div>
   );

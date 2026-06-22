@@ -6,6 +6,7 @@
 import { store } from '../state/store.js';
 import { speakJapanese } from './hiragana.js';
 import { showToast } from '../components/modal.js';
+import { Icons } from '../components/icons.js';
 
 let allVocab     = {};
 let reviewQueue  = [];
@@ -17,7 +18,7 @@ export async function renderReview(container) {
   container.innerHTML = `
     <div class="page-review page-enter">
       <div class="empty-state" style="padding-top: 60px;">
-        <div class="empty-icon">⌛</div>
+        <div class="empty-icon" style="font-size: 40px;">${Icons.loading()}</div>
         <h3>Loading review cards…</h3>
       </div>
     </div>
@@ -102,8 +103,8 @@ function renderCard(container) {
           <div class="flashcard-face flashcard-front">
             <div class="flashcard-kana">${vocab.kanji}</div>
             <div class="flashcard-hint">Tap to see meaning →</div>
-            <button style="margin-top: var(--space-4); background: var(--bg-surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-full); color: var(--text-secondary); font-size: var(--text-sm); cursor: pointer;"
-                    id="listen-btn">🔊 Listen</button>
+            <button style="margin-top: var(--space-4); background: var(--bg-surface); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-full); color: var(--text-secondary); font-size: var(--text-sm); cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"
+                    id="listen-btn">${Icons.speaker()} Listen</button>
           </div>
           <!-- Back -->
           <div class="flashcard-face flashcard-back">
@@ -115,26 +116,26 @@ function renderCard(container) {
       </div>
 
       <!-- Session stats mini -->
-      <div style="display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-4);">
-        <span style="font-size: var(--text-xs); color: var(--red);">😓 ${sessionStats.hard}</span>
-        <span style="font-size: var(--text-xs); color: var(--amber);">😐 ${sessionStats.ok}</span>
-        <span style="font-size: var(--text-xs); color: var(--green-400);">😊 ${sessionStats.easy}</span>
+      <div style="display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-4); align-items: center;">
+        <span style="font-size: var(--text-xs); color: var(--red); display: inline-flex; align-items: center; gap: 4px;">${Icons.hard()} ${sessionStats.hard}</span>
+        <span style="font-size: var(--text-xs); color: var(--amber); display: inline-flex; align-items: center; gap: 4px;">${Icons.ok()} ${sessionStats.ok}</span>
+        <span style="font-size: var(--text-xs); color: var(--green-400); display: inline-flex; align-items: center; gap: 4px;">${Icons.easy()} ${sessionStats.easy}</span>
       </div>
 
       <!-- Review actions (hidden until flipped) -->
       <div class="review-actions" id="review-actions" style="opacity: 0; pointer-events: none; transition: opacity 0.3s ease;">
         <button class="review-btn hard" id="btn-hard">
-          <span class="r-icon">😓</span>
+          <span class="r-icon" style="display: inline-flex; font-size: 20px;">${Icons.hard()}</span>
           <span>Hard</span>
           <span style="font-size: 9px; color: inherit; opacity: 0.7;">1 day</span>
         </button>
         <button class="review-btn ok" id="btn-ok">
-          <span class="r-icon">😐</span>
+          <span class="r-icon" style="display: inline-flex; font-size: 20px;">${Icons.ok()}</span>
           <span>Ok</span>
           <span style="font-size: 9px; color: inherit; opacity: 0.7;">3 days</span>
         </button>
         <button class="review-btn easy" id="btn-easy">
-          <span class="r-icon">😊</span>
+          <span class="r-icon" style="display: inline-flex; font-size: 20px;">${Icons.easy()}</span>
           <span>Easy</span>
           <span style="font-size: 9px; color: inherit; opacity: 0.7;">7 days</span>
         </button>
@@ -198,7 +199,7 @@ function renderEmptyReview(container) {
   container.innerHTML = `
     <div class="page-review page-enter">
       <div class="empty-state" style="padding-top: 80px;">
-        <div class="empty-icon">🎊</div>
+        <div class="empty-icon" style="font-size: 48px;">${Icons.check()}</div>
         <h3>All caught up!</h3>
         <p>Complete more lessons to get words to review.</p>
         <button class="btn btn-primary mt-5" onclick="window.navigate?.('home')">
@@ -217,7 +218,7 @@ function renderSessionComplete(container) {
   container.innerHTML = `
     <div class="page-review page-enter">
       <div style="text-align: center; padding: var(--space-10) var(--space-5);">
-        <div style="font-size: 64px; margin-bottom: var(--space-5);">🏆</div>
+        <div style="font-size: 64px; margin-bottom: var(--space-5); display: inline-flex; align-items: center; justify-content: center;">${Icons.trophy()}</div>
         <h2 style="font-size: var(--text-2xl); font-weight: 800; margin-bottom: var(--space-3);">Session Complete!</h2>
         <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">Great work on your review session!</p>
 

@@ -72,7 +72,7 @@
 ## 5.3 SCREEN 2: LOGIN SCREEN
 
 **Route**: `/auth/login`
-**Purpose**: Account creation and sign-in
+**Purpose**: Account creation, sign-in, and guest entry
 
 ### Visual Design
 - Background: `gradient-cosmic` (full screen)
@@ -94,6 +94,8 @@
     [Password input field + show/hide toggle]
     [Forgot password? link]
     [Sign In button]
+  [Divider: "or"]
+  [Continue as Guest Button — Outline style, secondary]
   [Toggle: "Don't have an account? Sign Up"]
   [Privacy Policy + Terms links — label-sm, secondary]
 ```
@@ -107,6 +109,9 @@
 ### Screen Transitions
 - Sign-in success (new user): Cross-fade to Onboarding screen 1
 - Sign-in success (existing user): Hero logo contracts to top-left, dashboard expands from center
+- Continue as Guest: Invokes Firebase Auth anonymous login API. Creates a temporary profile record in Supabase PostgreSQL `profiles` and `user_stats` tables (plan_id: 'free', guest_session: true). Transitions to Onboarding Screen 1.
+  - *Guest Constraints*: Tracked under `usage_counters`. Restricted to 3 AI messages/day and 3 voice exercises. Attempting to exceed this triggers the **Upgrade Prompt Overlay** ("Join the Velmorth Academy: Sign up to save progress and unlock unlimited learning").
+
 
 ---
 
@@ -921,3 +926,16 @@ Weekly Leaderboard (default):
   2,800 gems (+40%): $19.99
   6,000 gems (+60%): $39.99
 ```
+
+### Razorpay Checkout Sequence (Premium Upgrades & Gem Packs)
+1. **Initiate Checkout**: User clicks a Premium plan, package, or Gem Pack purchase option.
+2. **Order Creation**: Client posts to the `/api/billing/create-order` endpoint, sending the target plan/pack ID.
+3. **Razorpay Modal Launch**: The React client loads the Razorpay checkout overlay using the `orderId`, `amount`, and `currency` returned.
+4. **Payment Processing**: User completes payment via UPI, net banking, card, or wallet interfaces.
+5. **Authorization Verification**:
+   - Razorpay redirects with validation credentials (`razorpay_order_id`, `razorpay_payment_id`, `razorpay_signature`).
+   - The web app posts these parameters to `/api/billing/verify`.
+   - The backend validates the signature callback hash.
+   - If verified, the backend updates the Supabase PostgreSQL `entitlements` table (or increments stats for gem balances) and publishes the success state.
+6. **Confirmation**: A celebration modal plays a Lottie animation of confetti, showing the upgraded state or new gem balance, and returns the user to the active dashboard.
+

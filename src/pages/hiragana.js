@@ -188,7 +188,7 @@ export function renderHiragana(container) {
     <div class="page-hiragana page-enter">
       <div class="hiragana-header">
         <h2>ひらがな Chart</h2>
-        <p>Tap any character to hear it spoken 🔊</p>
+        <p style="display: inline-flex; align-items: center; gap: 4px; justify-content: center; width: 100%;">Tap any character to hear it spoken <span style="font-size: 16px; display: inline-flex;">${Icons.speaker()}</span></p>
       </div>
 
       <div class="hiragana-section">
@@ -232,13 +232,13 @@ export function renderHiragana(container) {
       </div>
 
       <div class="hiragana-section">
-        <h3>Tips for Pronunciation 📢</h3>
+        <h3 style="display: inline-flex; align-items: center; gap: 6px;">${Icons.logo()} Tips for Pronunciation</h3>
         <div class="card" style="margin-bottom: var(--space-3);">
-          <p style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.7;">
-            🔵 Each kana = one beat. Say <strong>ko-n-ni-chi-wa</strong> with even rhythm.<br/>
-            🔴 Vowels: a=आ, i=ई, u=उ, e=ए, o=ओ — always short and pure.<br/>
-            🟡 The 'r' sound is a light flap — between R and L. Like in <em>arigatou</em>.<br/>
-            🟢 Long vowels (aa, ii) = hold the sound for 2 beats.
+          <p style="font-size: var(--text-sm); color: var(--text-secondary); line-height: 1.8;">
+            <span style="display:inline-flex; width:8px; height:8px; border-radius:50%; background:var(--blue); margin-right:8px; vertical-align:middle;"></span>Each kana = one beat. Say <strong>ko-n-ni-chi-wa</strong> with even rhythm.<br/>
+            <span style="display:inline-flex; width:8px; height:8px; border-radius:50%; background:var(--red); margin-right:8px; vertical-align:middle;"></span>Vowels: a=आ, i=ई, u=उ, e=ए, o=オ — always short and pure.<br/>
+            <span style="display:inline-flex; width:8px; height:8px; border-radius:50%; background:var(--amber); margin-right:8px; vertical-align:middle;"></span>The 'r' sound is a light flap — between R and L. Like in <em>arigatou</em>.<br/>
+            <span style="display:inline-flex; width:8px; height:8px; border-radius:50%; background:var(--green-400); margin-right:8px; vertical-align:middle;"></span>Long vowels (aa, ii) = hold the sound for 2 beats.
           </p>
         </div>
       </div>

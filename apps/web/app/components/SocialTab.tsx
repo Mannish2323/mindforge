@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Friend, Duel, StudyCircle } from '@evlo/types';
 import { cn } from '@evlo/utils';
 import { Trash2, UserPlus, Trophy, Users, ShieldAlert, Sparkles } from 'lucide-react';
+import { PremiumIcon } from './ui/PremiumIcon';
 
 interface SocialTabProps {
   friends: Friend[];
@@ -154,7 +155,9 @@ export function SocialTab({
 
       {friendsList.length === 0 ? (
         <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>👥</div>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <PremiumIcon type="family" size={48} />
+          </div>
           <h3 className="font-bold">No friends yet</h3>
           <p className="text-muted text-sm mt-1">Add friends to compare progress, send nudges, and duel!</p>
         </div>
@@ -169,9 +172,13 @@ export function SocialTab({
                 <div>
                   <h4 className="font-bold">{friend.username}</h4>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: 'var(--text-3)', marginTop: '2px' }}>
-                    <span>⭐ {friend.xp} XP</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                      <PremiumIcon type="xp" size={12} /> {friend.xp} XP
+                    </span>
                     <span>•</span>
-                    <span>🔥 {friend.streak}d streak</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                      <PremiumIcon type="streak" size={12} /> {friend.streak}d streak
+                    </span>
                     <span>•</span>
                     <span>{timeSince(friend.lastActive)}</span>
                   </div>
@@ -185,17 +192,17 @@ export function SocialTab({
                       className={`btn-ghost ${friend.nudged_today ? 'disabled' : ''}`}
                       disabled={friend.nudged_today}
                       onClick={() => handleNudgeLocal(friend.friend_id)}
-                      style={{ padding: '6px 12px', fontSize: '11px', minHeight: 'unset', background: friend.nudged_today ? 'var(--surface-3)' : 'var(--primary-light)', color: friend.nudged_today ? 'var(--text-3)' : 'var(--primary)', border: 'none', borderRadius: 'var(--radius)' }}
+                      style={{ padding: '6px 12px', fontSize: '11px', minHeight: 'unset', background: friend.nudged_today ? 'var(--surface-3)' : 'var(--primary-light)', color: friend.nudged_today ? 'var(--text-3)' : 'var(--primary)', border: 'none', borderRadius: 'var(--radius)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                     >
-                      {friend.nudged_today ? '👋 Sent' : '👋 Nudge'}
+                      <PremiumIcon type="greetings" size={12} /> {friend.nudged_today ? 'Sent' : 'Nudge'}
                     </button>
                     <button
                       className="btn-ghost"
                       onClick={() => handleChallenge(friend.friend_id)}
-                      style={{ padding: '6px', borderRadius: 'var(--radius)', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)' }}
+                      style={{ padding: '6px', borderRadius: 'var(--radius)', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       title="Challenge to a duel"
                     >
-                      ⚔️
+                      <PremiumIcon type="swords" size={14} />
                     </button>
                   </>
                 ) : (
@@ -253,7 +260,9 @@ export function SocialTab({
       
       {duelsList.length === 0 ? (
         <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>⚔️</div>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <PremiumIcon type="swords" size={48} />
+          </div>
           <h3 className="font-bold">No active duels</h3>
           <p className="text-muted text-sm mt-1">Challenge a friend to a lesson duel. Whoever scores higher wins!</p>
         </div>
@@ -278,8 +287,8 @@ export function SocialTab({
                     
                     <div style={{ padding: '0 12px', textAlign: 'center' }}>
                       <span style={{ fontSize: '12px', fontWeight: 'bold', color: 'var(--error)' }}>VS</span>
-                      <p style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '2px', background: 'var(--surface-3)', padding: '2px 6px', borderRadius: '4px' }}>
-                        {duel.xp_stake} XP
+                      <p style={{ fontSize: '9px', color: 'var(--text-3)', marginTop: '2px', background: 'var(--surface-3)', padding: '2px 6px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                        <PremiumIcon type="xp" size={8} /> {duel.xp_stake} XP
                       </p>
                     </div>
 
@@ -290,8 +299,18 @@ export function SocialTab({
                     </div>
                   </div>
 
-                  <span style={{ fontSize: '11px', fontWeight: 'bold', color: duel.status === 'completed' ? 'var(--success)' : 'var(--primary)', background: duel.status === 'completed' ? 'var(--success-light)' : 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px', textTransform: 'capitalize' }}>
-                    {duel.status === 'pending' ? '⏳ Pending' : duel.status === 'active' ? '⚡ Active' : duel.status}
+                  <span style={{ fontSize: '11px', fontWeight: 'bold', color: duel.status === 'completed' ? 'var(--success)' : 'var(--primary)', background: duel.status === 'completed' ? 'var(--success-light)' : 'var(--primary-light)', padding: '4px 8px', borderRadius: '4px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    {duel.status === 'pending' ? (
+                      <>
+                        <PremiumIcon type="time" size={10} /> Pending
+                      </>
+                    ) : duel.status === 'active' ? (
+                      <>
+                        <PremiumIcon type="xp" size={10} /> Active
+                      </>
+                    ) : (
+                      duel.status
+                    )}
                   </span>
                 </div>
               </div>
@@ -312,7 +331,9 @@ export function SocialTab({
 
       {circlesList.length === 0 ? (
         <div className="social-empty text-center" style={{ padding: 'var(--sp-10)' }}>
-          <div style={{ fontSize: '48px', marginBottom: '12px' }}>🔵</div>
+          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+            <PremiumIcon type="family" size={48} />
+          </div>
           <h3 className="font-bold">No circles yet</h3>
           <p className="text-muted text-sm mt-1">Join a study circle to collaborate on weekly missions.</p>
         </div>
@@ -330,9 +351,13 @@ export function SocialTab({
                     <h4 className="font-bold">{circle.name}</h4>
                     <p style={{ fontSize: '12px', color: 'var(--text-2)', marginTop: '2px' }}>{circle.description}</p>
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '11px', color: 'var(--text-3)', marginTop: '6px' }}>
-                      <span>👥 {circle.member_count} members</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <PremiumIcon type="family" size={12} /> {circle.member_count} members
+                      </span>
                       <span>•</span>
-                      <span>⚡ {circle.weekly_xp} weekly XP</span>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                        <PremiumIcon type="xp" size={12} /> {circle.weekly_xp} weekly XP
+                      </span>
                     </div>
 
                     <div style={{ marginTop: '8px' }}>
@@ -373,7 +398,9 @@ export function SocialTab({
   return (
     <div className="social-view page-transition animate-fadein" style={{ padding: 'var(--sp-4)', maxWidth: '600px', margin: '0 auto' }}>
       <div className="home-header" style={{ marginBottom: 'var(--sp-4)' }}>
-        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800 }}>👥 Social Hub</h2>
+        <h2 style={{ fontSize: 'var(--text-lg)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <PremiumIcon type="family" size={24} /> Social Hub
+        </h2>
         <p style={{ color: 'var(--text-2)', fontSize: 'var(--text-sm)', marginTop: '2px' }}>Friends, duels, and study circles</p>
       </div>
 
@@ -386,9 +413,21 @@ export function SocialTab({
             onClick={() => setSubTab(tab)}
             style={{ flex: 1, textAlign: 'center', padding: '8px 0', border: 'none', borderRadius: 'var(--radius)', textTransform: 'capitalize' }}
           >
-            {tab === 'friends' && '👫 Friends'}
-            {tab === 'duels' && '⚔️ Duels'}
-            {tab === 'circles' && '🔵 Circles'}
+            {tab === 'friends' && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+                <PremiumIcon type="family" size={14} /> Friends
+              </span>
+            )}
+            {tab === 'duels' && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+                <PremiumIcon type="swords" size={14} /> Duels
+              </span>
+            )}
+            {tab === 'circles' && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+                <PremiumIcon type="book" size={14} /> Circles
+              </span>
+            )}
           </button>
         ))}
       </div>
