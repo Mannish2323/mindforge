@@ -1,0 +1,16 @@
+jlpt_level,word_japanese,hiragana,katakana,romaji,english,hindi,meaning,part_of_speech,example_japanese,example_english,example_hindi,audio_url,difficulty,tags,frequency_rank
+N5,食べる,たべる,,taberu,to eat,खाना,to eat / to consume,verb,毎日ご飯を食べる。,I eat rice every day.,मैं हर दिन चावल खाता हूँ।,,1,food|verb|n5,15
+N5,飲む,のむ,,nomu,to drink,पीना,to drink / to swallow,verb,水を飲む。,I drink water.,मैं पानी पीता हूँ।,,1,drink|verb|n5,18
+N5,行く,いく,,iku,to go,जाना,to go / to move towards,verb,学校に行く。,I go to school.,मैं स्कूल जाता हूँ।,,1,movement|verb|n5,5
+N5,来る,くる,,kuru,to come,आना,to come / to arrive,verb,友達が来る。,My friend is coming.,मेरा दोस्त आ रहा है।,,1,movement|verb|n5,8
+N5,見る,みる,,miru,to see,देखना,to see / to watch / to look,verb,テレビを見る。,I watch TV.,मैं टीवी देखता हूँ।,,1,perception|verb|n5,10
+N5,する,する,,suru,to do,करना,to do / to make,verb,宿題をする。,I do homework.,मैं होमवर्क करता हूँ।,,1,action|verb|n5,1
+N5,聞く,きく,,kiku,to listen,सुनना,to listen / to ask / to hear,verb,音楽を聞く。,I listen to music.,मैं संगीत सुनता हूँ।,,1,perception|verb|n5,22
+N5,話す,はなす,,hanasu,to speak,बोलना,to speak / to talk / to tell,verb,日本語を話す。,I speak Japanese.,मैं जापानी बोलता हूँ।,,1,communication|verb|n5,30
+N5,読む,よむ,,yomu,to read,पढ़ना,to read,verb,本を読む。,I read a book.,मैं किताब पढ़ता हूँ।,,1,study|verb|n5,35
+N5,書く,かく,,kaku,to write,लिखना,to write / to draw,verb,手紙を書く。,I write a letter.,मैं पत्र लिखता हूँ।,,1,study|verb|n5,40
+N5,大きい,おおきい,,ookii,big,बड़ा,large / big,adjective,大きい犬。,A big dog.,एक बड़ा कुत्ता।,,1,size|adjective|n5,55
+N5,小さい,ちいさい,,chiisai,small,छोटा,small / little,adjective,小さい猫。,A small cat.,एक छोटी बिल्ली।,,1,size|adjective|n5,58
+N5,新しい,あたらしい,,atarashii,new,नया,new / fresh,adjective,新しい本。,A new book.,एक नई किताब।,,2,description|adjective|n5,70
+N5,古い,ふるい,,furui,old,पुराना,old / ancient (for things),adjective,古い車。,An old car.,एक पुरानी गाड़ी।,,2,description|adjective|n5,72
+N5,高い,たかい,,takai,expensive / tall,महंगा|ऊँचा,expensive or tall / high,adjective,高いビル。,A tall building.,एक ऊँची इमारत।,,2,price|height|adjective|n5,65
