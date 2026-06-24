@@ -164,6 +164,9 @@ export function ExerciseCard({
             <p style={{ fontSize: '13px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '4px' }}>
               /{question.romaji}/
             </p>
+            <Button variant="ghost" size="sm" onClick={() => playTTS(question.japanese)} style={{ marginTop: '8px' }}>
+              <Volume2 size={16} style={{ marginRight: '4px' }} /> Speak
+            </Button>
           </>
         )}
 
@@ -191,6 +194,9 @@ export function ExerciseCard({
             <p style={{ fontSize: '13px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '8px' }}>
               Meaning: "{question.english}"
             </p>
+            <Button variant="ghost" size="sm" onClick={() => playTTS(question.japanese)} style={{ marginTop: '8px' }}>
+              <Volume2 size={16} style={{ marginRight: '4px' }} /> Speak
+            </Button>
           </>
         )}
 
@@ -208,6 +214,9 @@ export function ExerciseCard({
             <p style={{ fontSize: '14px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '4px' }}>
               /{question.romaji}/
             </p>
+            <Button variant="ghost" size="sm" onClick={() => playTTS(question.japanese)} style={{ marginTop: '8px' }}>
+              <Volume2 size={16} style={{ marginRight: '4px' }} /> Listen
+            </Button>
             <p style={{ fontSize: '12px', color: 'var(--text-secondary, #b3b3b9)', margin: '12px 0 0 0' }}>
               Press microphone button below and read aloud.
             </p>
@@ -434,6 +443,39 @@ export function ExerciseCard({
         )}
 
       </div>
+
+      {/* Post-Answer Explanation Box */}
+      {isAnswered && (question.meaning_hi || question.notes) && (
+        <div style={{
+          marginTop: '16px',
+          padding: '16px',
+          borderRadius: '12px',
+          background: 'var(--surface-2, #2d2d34)',
+          border: '1px solid var(--border-strong, #3a3a42)',
+          animation: 'fadeIn 300ms ease both',
+        }}>
+          {question.meaning_hi && (
+            <div style={{ marginBottom: '8px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary, #b3b3b9)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '2px' }}>
+                Hindi Translation
+              </span>
+              <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--primary, #16A34A)', margin: 0 }}>
+                {question.meaning_hi}
+              </p>
+            </div>
+          )}
+          {question.notes && (
+            <div>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary, #b3b3b9)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '2px' }}>
+                Explanation & Context
+              </span>
+              <p style={{ fontSize: '13px', color: 'var(--text-2, #e8f5e9)', margin: 0, lineHeight: '1.5' }}>
+                {question.notes}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

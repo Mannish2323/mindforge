@@ -34,6 +34,7 @@ export interface UserProfile {
   words_learned: number;
   lessons_done: number;
   reviews_done: number;
+  xp_today: number; // daily XP earned today, from user_stats.xp_today
   createdAt: string;
   heartsTotal: number;
   heartsUsedToday: number;
@@ -188,19 +189,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         name: profileData.display_name || '',
         email: supabaseUser.email || '',
         xp: statsData.xp_total ?? 0,
-        level: Math.floor((statsData.xp_total ?? 0) / 100) + 1,
+        // Progressive level curve: L1=0-99, L2=100-299, L3=300-599, L4=600-999 (+100*level each step)
+        level: (() => {
+          const xp = statsData.xp_total ?? 0;
+          let level = 1;
+          let threshold = 100;
+          let accumulated = 0;
+          while (xp >= accumulated + threshold) {
+            accumulated += threshold;
+            threshold += 100;
+            level++;
+            if (level >= 100) break; // safety cap
+          }
+          return level;
+        })(),
         streak: streakData.streak ?? 0,
         leafBalance: statsData.gems_balance ?? 5,
-        isPremium: ['starter', 'plus', 'pro', 'yearly', 'cancelled'].includes(entitlementsData.status) &&
-                   (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true),
+        // isPremium: only true if plan is active AND not expired (cancelled + expired = not premium)
+        isPremium: ((['starter', 'plus', 'pro', 'yearly'].includes(entitlementsData.status)) &&
+                    (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
+                   (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date()),
         planId: entitlementsData.plan_id || 'free',
         planStatus: entitlementsData.status || 'free',
         heartsLimit: entitlementsData.hearts_limit ?? 25,
         aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
         lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
         adsEnabled: !(
-          (['pro', 'pro_yearly', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'yearly'].includes(entitlementsData.status)) &&
-          (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)
+          ((['pro', 'pro_yearly', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'yearly'].includes(entitlementsData.status)) &&
+          (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
+          (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date())
         ),
         isAdmin: !!adminData,
         avatarUrl: profileData.avatar_url || '🦊',
@@ -216,6 +233,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         words_learned: statsData.words_learned ?? 0,
         lessons_done: statsData.lessons_done ?? 0,
         reviews_done: statsData.reviews_done ?? 0,
+        xp_today: statsData.xp_today ?? 0, // daily XP from DB (resets at midnight)
         createdAt: profileData.created_at || new Date().toISOString(),
         heartsTotal: statsData.hearts_total ?? (entitlementsData.status === 'free' ? 25 : (entitlementsData.status === 'starter' ? 75 : (entitlementsData.status === 'plus' ? 90 : 100))),
         heartsUsedToday: statsData.hearts_used_today ?? 0,
@@ -417,12 +435,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user || !profile) return;
     const newXp = profile.xp + xpDelta;
     const newGems = Math.max(0, profile.leafBalance + leafDelta);
+    const newXpToday = (profile.xp_today ?? 0) + xpDelta;
 
     // Optimistically update local profile state
+    const calcLevel = (xp: number) => {
+      let level = 1, threshold = 100, accumulated = 0;
+      while (xp >= accumulated + threshold) {
+        accumulated += threshold; threshold += 100; level++;
+        if (level >= 100) break;
+      }
+      return level;
+    };
     setProfile(prev => prev ? {
       ...prev,
       xp: newXp,
-      level: Math.floor(newXp / 100) + 1,
+      xp_today: newXpToday,
+      level: calcLevel(newXp),
       leafBalance: newGems,
     } : null);
 
@@ -431,6 +459,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .from('user_stats')
         .update({
           xp_total: newXp,
+          xp_today: newXpToday,
           gems_balance: newGems,
           last_active: new Date().toISOString().split('T')[0],
         })

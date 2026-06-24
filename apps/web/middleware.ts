@@ -11,6 +11,7 @@ const PROTECTED_ROUTES = [
   '/review',
   '/profile',
   '/admin',
+  '/billing',
 ];
 
 // Routes accessible only when NOT authenticated (redirect to /home if already logged in)
@@ -81,6 +82,20 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/home', request.url));
     } else {
       return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+  }
+
+  // ── Guard: Admin routes → require admin role ──
+  if (pathname.startsWith('/admin') && user) {
+    const { data: adminRole } = await supabase
+      .from('admin_roles')
+      .select('user_id')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (!adminRole) {
+      // Not an admin — redirect to /home
+      return NextResponse.redirect(new URL('/home', request.url));
     }
   }
 

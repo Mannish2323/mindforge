@@ -43,10 +43,9 @@ export default function HomePage() {
   // isLoaded is checked within the SplashScreen loading progress condition
 
   // Daily goal: each lesson = ~10-20 XP. Target 100 XP ≈ 5-7 lessons.
-  // goalMinutes is a time setting but XP is the actual trackable unit.
   const goalXp = Math.max(50, (activeState.goalMinutes || 20) * 5);
-  const todayXp = (activeState.xp || 0) % goalXp;
-  const currentDailyXP = todayXp;
+  // Use actual daily XP from DB (profile.xp_today), fallback to 0
+  const currentDailyXP = profile?.xp_today ?? 0;
   const todayStudied = currentDailyXP > 0;
   const isNewUser = (activeState.xp || 0) === 0;
 
@@ -112,7 +111,7 @@ export default function HomePage() {
 
         {/* 4. Daily Goal Progress Card */}
         <DailyGoalCard
-          xp={activeState.xp || 0}
+          dailyXp={currentDailyXP}
           goalXp={goalXp}
         />
 

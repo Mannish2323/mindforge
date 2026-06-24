@@ -56,13 +56,31 @@ export function AdminView() {
       const supabase = createClient();
       const [
         { count: totalUsers },
-        { count: premiumUsers },
         { count: totalMessages },
       ] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('entitlements').select('*', { count: 'exact', head: true }).neq('status', 'free'),
         supabase.from('ai_chat_messages').select('*', { count: 'exact', head: true }),
       ]);
+
+      const { data: activeSubs } = await supabase
+        .from('entitlements')
+        .select('plan_id, status')
+        .neq('status', 'free');
+
+      const premiumUsers = activeSubs?.length || 0;
+      let revenue = 0;
+      activeSubs?.forEach(sub => {
+        if (sub.status === 'yearly') {
+          if (sub.plan_id === 'starter') revenue += 499;
+          else if (sub.plan_id === 'plus') revenue += 749;
+          else if (sub.plan_id === 'pro') revenue += 999;
+        } else {
+          // monthly plans
+          if (sub.plan_id === 'starter') revenue += 99;
+          else if (sub.plan_id === 'plus') revenue += 149;
+          else if (sub.plan_id === 'pro') revenue += 199;
+        }
+      });
 
       const today = new Date().toISOString().split('T')[0];
       const { count: activeToday } = await supabase
@@ -73,9 +91,10 @@ export function AdminView() {
       setStats(s => ({
         ...s,
         totalUsers: totalUsers || 0,
-        premiumUsers: premiumUsers || 0,
+        premiumUsers,
         totalMessages: totalMessages || 0,
         activeToday: activeToday || 0,
+        revenueEstimate: `₹${revenue.toLocaleString('en-IN')}`,
       }));
     } catch { /* silent */ }
   }, []);

@@ -71,21 +71,21 @@ export function Topbar({ onToggleSidebar }: { onToggleSidebar?: () => void }) {
       }}>
         {/* Left: Hamburger menu + Brand Icon + Wordmark */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Hamburger button - visible on mobile only */}
+          {/* Hamburger button - CSS controls responsive display (mobile-menu-toggle class) */}
           <button
             onClick={onToggleSidebar}
             className="mobile-menu-toggle"
             style={{
-              display: 'none',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '6px',
-              background: 'var(--surface-2, #2d2d34)',
-              border: '1px solid var(--border-strong, #2d2d34)',
-              color: 'var(--text, #fff)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '8px',
+              background: 'var(--surface-2)',
+              border: '1px solid var(--border)',
+              color: 'var(--text)',
               cursor: 'pointer',
+              flexShrink: 0,
             }}
             aria-label="Toggle Navigation Menu"
           >

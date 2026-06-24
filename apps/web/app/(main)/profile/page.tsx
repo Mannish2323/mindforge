@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { AppShell } from '../../components/layout/AppShell';
 import { ProfileTab } from '../../components/profile/ProfileTab';
 import { SettingsTab } from '../../components/profile/SettingsTab';
 
 function ProfilePageInner() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'settings' ? 'settings' : 'profile';
   const [activeTab, setActiveTab] = useState<'profile' | 'settings'>(initialTab);
@@ -33,7 +34,10 @@ function ProfilePageInner() {
         marginBottom: '20px',
       }}>
         <button
-          onClick={() => setActiveTab('profile')}
+          onClick={() => {
+            setActiveTab('profile');
+            router.push('/profile?tab=profile');
+          }}
           style={{
             flex: 1,
             background: 'none',
@@ -52,7 +56,10 @@ function ProfilePageInner() {
           Profile
         </button>
         <button
-          onClick={() => setActiveTab('settings')}
+          onClick={() => {
+            setActiveTab('settings');
+            router.push('/profile?tab=settings');
+          }}
           style={{
             flex: 1,
             background: 'none',
@@ -86,7 +93,7 @@ function ProfilePageInner() {
       {/* Tab Content rendering */}
       <div>
         {activeTab === 'profile' ? (
-          <ProfileTab onNavigateToBilling={() => {}} />
+          <ProfileTab onNavigateToBilling={() => router.push('/billing')} />
         ) : (
           <SettingsTab />
         )}

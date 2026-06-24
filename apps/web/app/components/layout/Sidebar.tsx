@@ -2,14 +2,16 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { Home, BookOpen, PenLine, Mic, Medal, RotateCcw, User, Settings, CreditCard, Crown, BarChart2, X, Briefcase } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { cn } from '@evlo/utils';
 
 export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { profile } = useAuth();
+  const activeTab = searchParams.get('tab');
 
   const mainNav = [
     { label: 'Home', path: '/home', icon: Home },
@@ -108,11 +110,11 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
                 gap: '12px',
                 padding: '10px 16px',
                 borderRadius: '8px',
-                color: isActive ? 'var(--primary, #ff9800)' : 'var(--text-secondary, #b3b3b9)',
+                color: isActive ? 'var(--primary)' : 'var(--text-2)',
                 textDecoration: 'none',
                 fontWeight: isActive ? 700 : 500,
                 fontSize: '14px',
-                background: isActive ? 'var(--surface-2, #2d2d34)' : 'transparent',
+                background: isActive ? 'var(--surface-2)' : 'transparent',
                 transition: 'background 0.2s, color 0.2s',
               }}
             >
@@ -132,14 +134,14 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
         <Link
           href="/profile?tab=profile"
           onClick={onClose}
-          className={cn({ active: pathname === '/profile' && !global?.window?.location?.search?.includes('settings') })}
+          className={cn({ active: pathname === '/profile' && activeTab !== 'settings' })}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
             padding: '10px 16px',
             borderRadius: '8px',
-            color: pathname === '/profile' ? 'var(--primary, #ff9800)' : 'var(--text-secondary, #b3b3b9)',
+            color: (pathname === '/profile' && activeTab !== 'settings') ? 'var(--primary)' : 'var(--text-2)',
             textDecoration: 'none',
             fontWeight: 500,
             fontSize: '14px',
@@ -154,13 +156,14 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
         <Link
           href="/profile?tab=settings"
           onClick={onClose}
+          className={cn({ active: pathname === '/profile' && activeTab === 'settings' })}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
             padding: '10px 16px',
             borderRadius: '8px',
-            color: 'var(--text-secondary, #b3b3b9)',
+            color: (pathname === '/profile' && activeTab === 'settings') ? 'var(--primary)' : 'var(--text-2)',
             textDecoration: 'none',
             fontWeight: 500,
             fontSize: '14px',
@@ -182,7 +185,7 @@ export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () =>
             gap: '12px',
             padding: '10px 16px',
             borderRadius: '8px',
-            color: pathname === '/billing' ? 'var(--primary, #ff9800)' : 'var(--text-secondary, #b3b3b9)',
+            color: pathname === '/billing' ? 'var(--primary)' : 'var(--text-2)',
             textDecoration: 'none',
             fontWeight: 500,
             fontSize: '14px',

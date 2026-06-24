@@ -9,7 +9,7 @@
       "total_lessons": 3,
       "is_premium": false,
       "icon": "🙇",
-      "file": "lessons/japanese/ja_u01_greetings.json"
+      "file": "lessons/ja_u01_greetings.json"
     },
     {
       "unit_id": "ja_u02_numbers",
@@ -17,7 +17,7 @@
       "total_lessons": 3,
       "is_premium": false,
       "icon": "🔢",
-      "file": "lessons/japanese/ja_u02_numbers.json"
+      "file": "lessons/ja_u02_numbers.json"
     },
     {
       "unit_id": "ja_u03_self_intro",
@@ -25,7 +25,7 @@
       "total_lessons": 3,
       "is_premium": false,
       "icon": "👤",
-      "file": "lessons/japanese/ja_u03_self_intro.json"
+      "file": "lessons/ja_u03_self_intro.json"
     },
     {
       "unit_id": "ja_u04_objects",
@@ -33,7 +33,7 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "📦",
-      "file": "lessons/japanese/ja_u04_objects.json"
+      "file": "lessons/ja_u04_objects.json"
     },
     {
       "unit_id": "ja_u05_time",
@@ -41,15 +41,15 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "🕐",
-      "file": "lessons/japanese/ja_u05_time.json"
+      "file": "lessons/ja_u05_time.json"
     },
     {
       "unit_id": "ja_u06_family",
       "unit_title": "Family",
       "total_lessons": 3,
       "is_premium": true,
-      "icon": "👨👩👧",
-      "file": "lessons/japanese/ja_u06_family.json"
+      "icon": "👨‍👩‍👧",
+      "file": "lessons/ja_u06_family.json"
     },
     {
       "unit_id": "ja_u07_food",
@@ -57,7 +57,7 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "🍜",
-      "file": "lessons/japanese/ja_u07_food.json"
+      "file": "lessons/ja_u07_food.json"
     },
     {
       "unit_id": "ja_u08_colors",
@@ -65,7 +65,7 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "🎨",
-      "file": "lessons/japanese/ja_u08_colors.json"
+      "file": "lessons/ja_u08_colors.json"
     },
     {
       "unit_id": "ja_u09_locations",
@@ -73,7 +73,7 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "📍",
-      "file": "lessons/japanese/ja_u09_locations.json"
+      "file": "lessons/ja_u09_locations.json"
     },
     {
       "unit_id": "ja_u10_verbs",
@@ -81,7 +81,7 @@
       "total_lessons": 3,
       "is_premium": true,
       "icon": "🏃",
-      "file": "lessons/japanese/ja_u10_verbs.json"
+      "file": "lessons/ja_u10_verbs.json"
     }
   ]
 }

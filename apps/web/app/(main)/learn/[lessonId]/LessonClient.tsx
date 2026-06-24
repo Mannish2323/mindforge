@@ -91,6 +91,8 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               japanese: v.kanji,
               romaji: v.romaji,
               correct: v.meaning_en,
+              meaning_hi: v.meaning_hi,
+              notes: v.notes,
               options: shuffle([
                 v.meaning_en,
                 ...shuffle(vocab.filter((_: any, idx: number) => idx !== i).map((x: any) => x.meaning_en)).slice(0, 3)
@@ -103,6 +105,8 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               prompt: 'How do you say this in Japanese?',
               english: v.meaning_en,
               correct: v.kanji,
+              meaning_hi: v.meaning_hi,
+              notes: v.notes,
               options: shuffle([
                 v.kanji,
                 ...shuffle(vocab.filter((_: any, idx: number) => idx !== i).map((x: any) => x.kanji)).slice(0, 3)
@@ -116,7 +120,9 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               japanesePrompt: `${v.kanji} (___)`,
               correct: v.romaji.toLowerCase(),
               japanese: v.kanji,
-              english: v.meaning_en
+              english: v.meaning_en,
+              meaning_hi: v.meaning_hi,
+              notes: v.notes
             });
 
             // Q4: Speak and Match (Pro simulation)
@@ -124,7 +130,9 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               type: 'speak-match',
               japanese: v.kanji,
               romaji: v.romaji,
-              correct: v.kanji
+              correct: v.kanji,
+              meaning_hi: v.meaning_hi,
+              notes: v.notes
             });
           });
 
@@ -137,6 +145,8 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               japanese: ex.japanese,
               romaji: ex.romaji,
               correct: ex.translation_en,
+              meaning_hi: ex.translation_hi,
+              notes: ex.context_note,
               options: shuffle([
                 ex.translation_en,
                 'Excuse me, where is the station?',
@@ -156,6 +166,8 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               prompt: 'Listen and choose the correct word:',
               listenText: listenVocab.kanji,
               correct: listenVocab.kanji,
+              meaning_hi: listenVocab.meaning_hi,
+              notes: listenVocab.notes,
               options: shuffle([listenVocab, ...distractors]),
             });
           }
@@ -169,12 +181,21 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
               if (item) matches[k] = item.meaning_en;
             });
             const rightOptions = shuffle(Object.values(matches));
+            
+            // Build vocabulary list for match pair explanation
+            const listHi = leftOptions.map(k => {
+              const item = vocab.find((x: any) => x.kanji === k);
+              return item ? `${k}: ${item.meaning_en} (${item.meaning_hi || ''})` : '';
+            }).filter(Boolean).join(' | ');
+
             qs.push({
               type: 'match-pair',
               leftOptions,
               rightOptions,
               matches,
-              correct: JSON.stringify(matches)
+              correct: JSON.stringify(matches),
+              meaning_hi: 'जोड़े मिलाएं',
+              notes: `Matches: ${listHi}`
             });
           }
 
@@ -227,7 +248,9 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
         correct = false;
       }
     } else {
-      correct = selectedAns === q.correct;
+      const normSel = (selectedAns || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      const normCorrect = (q.correct || '').trim().toLowerCase().replace(/\s+/g, ' ');
+      correct = normSel === normCorrect;
     }
     setIsCorrect(correct);
     setIsAnswered(true);
@@ -270,10 +293,38 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
   if (loading) {
     return (
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh',
-        background: 'var(--bg-root, #121216)', color: '#fff', fontSize: '18px', fontWeight: 'bold'
+        background: 'var(--bg, #0B1E12)',
+        color: 'var(--text, #E8F5E9)',
+        minHeight: '100vh',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
       }}>
-        Loading Lesson...
+        <div style={{
+          maxWidth: '440px',
+          margin: '0 auto',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+        }}>
+          {/* Progress bar skeleton */}
+          <div className="skeleton" style={{ height: '6px', borderRadius: '99px', width: '100%' }} />
+          {/* Header skeleton */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="skeleton" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+            <div className="skeleton" style={{ width: '80px', height: '28px', borderRadius: '16px' }} />
+          </div>
+          {/* Question card skeleton */}
+          <div className="skeleton skeleton-card" style={{ height: '240px', borderRadius: '20px' }} />
+          {/* Options skeleton */}
+          {[1,2,3,4].map(i => (
+            <div key={i} className="skeleton" style={{ height: '52px', borderRadius: '12px', animationDelay: `${i * 60}ms` }} />
+          ))}
+          {/* Button skeleton */}
+          <div className="skeleton" style={{ height: '48px', borderRadius: '12px' }} />
+        </div>
       </div>
     );
   }

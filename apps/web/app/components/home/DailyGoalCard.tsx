@@ -4,13 +4,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface DailyGoalCardProps {
-  xp: number;
+  dailyXp: number;  // actual daily XP earned today (from profile.xp_today)
   goalXp: number;
+  // Legacy compat: if 'xp' passed, ignored (use dailyXp)
+  xp?: number;
 }
 
-export function DailyGoalCard({ xp, goalXp }: DailyGoalCardProps) {
-  const currentDailyXP = xp % goalXp;
-  const progressPct = Math.min(100, Math.round((currentDailyXP / goalXp) * 100));
+export function DailyGoalCard({ dailyXp = 0, goalXp }: DailyGoalCardProps) {
+  const progressPct = Math.min(100, Math.round((dailyXp / Math.max(1, goalXp)) * 100));
+  const isComplete = progressPct >= 100;
 
   return (
     <motion.div
@@ -18,37 +20,46 @@ export function DailyGoalCard({ xp, goalXp }: DailyGoalCardProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
       style={{
-        background: 'var(--surface-2, #2d2d34)',
-        border: '1px solid var(--border-strong, #2d2d34)',
-        borderRadius: '16px',
+        background: 'var(--surface)',
+        border: `1px solid ${isComplete ? 'rgba(74,222,128,0.3)' : 'var(--border)'}`,
+        borderRadius: 'var(--radius-lg)',
         padding: '16px 20px',
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
+        transition: 'border-color 0.3s ease',
+        boxShadow: isComplete ? '0 0 0 1px rgba(74,222,128,0.15)' : 'none',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <span style={{
             fontSize: '11px',
-            color: 'var(--text-secondary, #b3b3b9)',
+            color: 'var(--text-3)',
             fontWeight: 700,
             textTransform: 'uppercase',
-            letterSpacing: '0.05em'
+            letterSpacing: '0.06em'
           }}>Daily Goal</span>
-          <h4 style={{ fontWeight: 800, fontSize: '18px', margin: '4px 0 0 0', color: 'var(--text-primary, #fff)' }}>
-            {currentDailyXP} / {goalXp} XP
+          <h4 style={{ fontWeight: 800, fontSize: '18px', margin: '4px 0 0 0', color: 'var(--text)' }}>
+            {dailyXp} / {goalXp} <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-2)' }}>XP</span>
           </h4>
+          {isComplete && (
+            <span style={{ fontSize: '11px', color: 'var(--success)', fontWeight: 700, marginTop: '2px', display: 'block' }}>
+              ✓ Goal complete!
+            </span>
+          )}
         </div>
-        <div style={{ position: 'relative', width: '52px', height: '52px' }}>
+
+        {/* Circular progress */}
+        <div style={{ position: 'relative', width: '52px', height: '52px', flexShrink: 0 }}>
           <svg width="52" height="52" viewBox="0 0 52 52" style={{ transform: 'rotate(-90deg)' }}>
-            <circle cx="26" cy="26" r="22" fill="none" stroke="var(--surface-3, #3a3a42)" strokeWidth="4" />
+            <circle cx="26" cy="26" r="22" fill="none" stroke="var(--surface-3)" strokeWidth="4" />
             <motion.circle
               cx="26"
               cy="26"
               r="22"
               fill="none"
-              stroke={progressPct >= 100 ? 'var(--success, #4caf50)' : 'var(--primary, #ff9800)'}
+              stroke={isComplete ? 'var(--success)' : 'var(--primary)'}
               strokeWidth="4"
               strokeDasharray="138.2"
               initial={{ strokeDashoffset: 138.2 }}
@@ -63,20 +74,24 @@ export function DailyGoalCard({ xp, goalXp }: DailyGoalCardProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px',
+            fontSize: '11px',
             fontWeight: 800,
-            color: progressPct >= 100 ? 'var(--success, #4caf50)' : 'var(--primary, #ff9800)'
+            color: isComplete ? 'var(--success)' : 'var(--primary)'
           }}>{progressPct}%</span>
         </div>
       </div>
-      <div style={{ height: '6px', background: 'var(--surface-3, #3a3a42)', borderRadius: '10px', overflow: 'hidden' }}>
+
+      {/* Progress bar */}
+      <div style={{ height: '6px', background: 'var(--surface-3)', borderRadius: '10px', overflow: 'hidden' }}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${progressPct}%` }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          transition={{ duration: 0.7, ease: 'easeOut' }}
           style={{
             height: '100%',
-            background: 'var(--grad-primary, linear-gradient(135deg, #ffc107, #ff9800))',
+            background: isComplete
+              ? 'linear-gradient(90deg, #22c55e, #4ade80)'
+              : 'var(--grad-primary)',
             borderRadius: '10px'
           }}
         />

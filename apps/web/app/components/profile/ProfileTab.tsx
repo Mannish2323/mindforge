@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, X, PenLine } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useStoreContext } from '../../context/StoreContext';
 import { Button } from '@evlo/ui';
@@ -12,12 +13,13 @@ import { ActivityList } from './ActivityList';
 import { AvatarEditor } from './AvatarEditor';
 
 interface ProfileTabProps {
-  onNavigateToBilling: () => void;
+  onNavigateToBilling?: () => void; // kept for API compat but internal router is used
 }
 
 const AVATARS = ['🐼', '🦊', '🐸', '🐺', '🦁', '🐻', '🐯', '🦉', '🐨', '🐱', '🦅', '🦋'];
 
 export function ProfileTab({ onNavigateToBilling }: ProfileTabProps) {
+  const router = useRouter();
   const { state } = useStoreContext();
   const { user, profile, updateProfileDetails } = useAuth();
 
