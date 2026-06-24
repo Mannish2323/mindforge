@@ -1,16 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import { ScriptLab } from '../../components/ScriptLab';
+import { WritingPracticeView } from '../../components/writing/WritingPracticeView';
 import { AppShell } from '../../components/layout/AppShell';
 
 export default function ScriptPage() {
-  const router = useRouter();
-
   return (
     <AppShell>
-      <ScriptLab onBack={() => router.push('/home')} />
+      <WritingPracticeView />
     </AppShell>
   );
 }
+

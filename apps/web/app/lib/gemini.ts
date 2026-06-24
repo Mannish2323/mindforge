@@ -30,9 +30,13 @@ Do not generate harmful, adult, or off-topic content.
 Always encourage the learner.`;
 
 export interface GeminiContent {
-  parts: { text: string }[];
+  parts: (
+    | { text: string }
+    | { inlineData: { mimeType: string; data: string } }
+  )[];
   role?: 'user' | 'model';
 }
+
 
 /**
  * Call Gemini with automatic key rotation.
