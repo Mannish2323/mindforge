@@ -1,0 +1,1 @@
+﻿export default function JlptPage() { return (<div className='space-y-6'><h1 className='text-2xl font-bold text-white'>JLPT Preparation</h1><div className='bg-purple-950/40 border border-purple-800/30 rounded-2xl p-8 text-center text-purple-300/50'>N5-N1 study packs — JLPT encyclopedia data connected.</div></div>); }

@@ -1,0 +1,1 @@
+﻿export default function JobPrepPage() { return (<div className='space-y-6'><h1 className='text-2xl font-bold text-white'>Job Preparation</h1><div className='bg-purple-950/40 border border-purple-800/30 rounded-2xl p-8 text-center text-purple-300/50'>Business Japanese, Keigo, and Job vocabulary.</div></div>); }

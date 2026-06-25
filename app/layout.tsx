@@ -2,11 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
-import { ThemeProvider } from '@/components/ThemeProvider';
 
 export const metadata: Metadata = {
   title: 'Learn with Velmorth — Japanese Made Effortless',
-  description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice. Built by Velmorth Labs.',
+  description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice.',
   manifest: '/manifest.json',
   keywords: ['Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji', 'Velmorth'],
   authors: [{ name: 'Velmorth Labs', url: 'https://learn-with-velmorth.vercel.app' }],
@@ -20,11 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
@@ -36,32 +31,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <link rel="icon" href="/icons/icon-192.png" />
-        {/* Inline theme script to prevent flash of wrong theme */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var t = localStorage.getItem('velmorth_theme') || 'dark';
-                  document.documentElement.setAttribute('data-theme', t);
-                } catch(e) {}
-              })();
-            `,
-          }}
-        />
       </head>
       <body>
-        <div id="root">
-          <div id="app-shell">
-            <ThemeProvider>
-              <AuthProvider>
-                <StoreProvider>
-                  {children}
-                </StoreProvider>
-              </AuthProvider>
-            </ThemeProvider>
-          </div>
-        </div>
+        <AuthProvider>
+          <StoreProvider>
+            {children}
+          </StoreProvider>
+        </AuthProvider>
       </body>
     </html>
   );

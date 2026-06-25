@@ -1,0 +1,1 @@
+﻿export default function ScriptPage() { return (<div className='space-y-6'><h1 className='text-2xl font-bold text-white'>Script Lab</h1><div className='bg-purple-950/40 border border-purple-800/30 rounded-2xl p-8 text-center text-purple-300/50'>Hiragana and Katakana writing practice. Writing evaluator API ready.</div></div>); }
