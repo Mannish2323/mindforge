@@ -538,7 +538,6 @@ export default function BillingPage() {
   const FAQS = [
     { q: 'How do the billing periods work?', a: 'Each plan is valid for its stated duration from the time of purchase: Starter=7 days, Plus=10 days, Pro=15 days, AI Max=30 days. After expiry, you can renew at the same price.' },
     { q: 'Can I upgrade mid-plan?', a: 'Yes! Upgrading starts a new billing period immediately. Your old plan is replaced and any remaining days on the current plan are forfeited.' },
-    { q: 'How does the money-back guarantee work?', a: 'If you are not satisfied within 7 days of purchase, contact our support team and we will process a full refund.' },
     { q: 'Can I cancel anytime?', a: 'Yes. You can cancel at any time from your Profile → Subscription. Your plan stays active until the end of the current period.' },
     { q: 'Are AI chats reset daily?', a: 'Yes. Your AI chat limit resets every day at midnight (IST). Unused chats do not roll over.' },
     { q: 'Is my payment secure?', a: 'All payments are processed by Razorpay, a PCI-DSS compliant payment gateway. We never store your card details.' },
@@ -586,7 +585,7 @@ export default function BillingPage() {
               </span>
             </h1>
             <p className="text-base max-w-lg mx-auto" style={{ color: 'rgba(200,196,255,0.6)' }}>
-              Flexible plans for every learner. Cancel anytime. 7-day money-back guarantee.
+              Flexible plans for every learner. Cancel anytime.
             </p>
           </motion.div>
         </div>
@@ -872,7 +871,7 @@ export default function BillingPage() {
               ))}
             </div>
             <p className="text-[11px] mt-6" style={{ color: 'rgba(160,150,220,0.35)' }}>
-              Cancel anytime · 7-day money-back guarantee · Secure payment via Razorpay
+              Cancel anytime · Secure payment via Razorpay
             </p>
           </div>
         </motion.div>

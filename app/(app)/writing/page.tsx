@@ -495,7 +495,7 @@ function PremiumWritingPreview() {
           <ArrowRight className="w-4 h-4" />
         </button>
         <p className="text-[11px] mt-3" style={{ color: 'rgba(160,150,220,0.35)' }}>
-          Cancel anytime · 7-day money-back guarantee
+          Cancel anytime · Secure payment
         </p>
       </div>
     </div>
