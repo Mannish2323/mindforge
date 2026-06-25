@@ -16,9 +16,7 @@ const PROTECTED_ROUTES = [
 
 // Routes accessible only when NOT authenticated (redirect to /home if already logged in)
 const AUTH_ONLY_ROUTES = [
-  '/auth/login',
-  '/auth/signup',
-  '/auth/forgot-password',
+  '/auth',
 ];
 
 export async function middleware(request: NextRequest) {
@@ -65,7 +63,7 @@ export async function middleware(request: NextRequest) {
   // ── Guard: Protected routes → redirect to /auth/login if not authenticated ──
   const isProtected = PROTECTED_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
   if (isProtected && !user) {
-    const loginUrl = new URL('/auth/login', request.url);
+    const loginUrl = new URL('/auth', request.url);
     loginUrl.searchParams.set('next', pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -81,7 +79,7 @@ export async function middleware(request: NextRequest) {
     if (user) {
       return NextResponse.redirect(new URL('/home', request.url));
     } else {
-      return NextResponse.redirect(new URL('/auth/login', request.url));
+      return NextResponse.redirect(new URL('/auth', request.url));
     }
   }
 
