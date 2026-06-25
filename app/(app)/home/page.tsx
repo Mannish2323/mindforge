@@ -107,7 +107,7 @@ export default function HomePage() {
             <div>
               <div className="font-jp font-black text-white text-xl leading-snug">「毎日少しずつ、</div>
               <div className="font-jp font-black text-white text-xl leading-snug">大きな成果に。」</div>
-              <div className="text-xs italic mt-2" style={{ color: 'rgba(200,196,255,0.6)' }}>"Little by little, one goes a long way."</div>
+              <div className="text-xs italic mt-2" style={{ color: 'rgba(200,196,255,0.6)' }}>&quot;Little by little, one goes a long way.&quot;</div>
               <div className="text-[10px] mt-0.5" style={{ color: 'rgba(167,139,250,0.4)' }}>— Japanese Proverb</div>
             </div>
             <div className="flex items-center gap-3">

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Tabs } from '@/components/ui/Tabs';
 import {
   Bell, Volume2, Globe, Shield, Palette,
-  ChevronRight, LogOut, Trash2, Lock, HelpCircle, FileText, Info
+  ChevronRight, LogOut, Trash2, Lock, HelpCircle, FileText, Info, Download
 } from 'lucide-react';
 
 function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
