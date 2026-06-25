@@ -12,8 +12,6 @@ node_modules
 **/.turbo
 
 # Android / non-web code
-/app/
-/services/
 /build/
 /gradle/
 /.gradle/
