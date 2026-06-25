@@ -7,6 +7,8 @@ import { cookies } from 'next/headers';
 // Returns aggregated dashboard stats for the current user
 // ================================================================
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const cookieStore = cookies();

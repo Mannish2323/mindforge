@@ -6,6 +6,9 @@ import { createClient } from '@supabase/supabase-js';
  * Returns the user's current daily usage vs their plan limits.
  * Used by lesson start, AI chat, and review flows to gate access.
  */
+
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const token = req.headers.get('authorization')?.replace('Bearer ', '');

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { JLPTBadge } from '@/components/shared/JLPTBadge';
@@ -28,17 +28,7 @@ export default function WritingPage() {
   const [strokeCount, setStrokeCount] = useState(0);
   const current = KANJI_LIST[kanjiIdx];
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
-    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    drawBackground(ctx, canvas.offsetWidth, canvas.offsetHeight);
-  }, [kanjiIdx]);
-
-  const drawBackground = (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+  const drawBackground = useCallback((ctx: CanvasRenderingContext2D, w: number, h: number) => {
     ctx.clearRect(0, 0, w, h);
     // Grid lines
     ctx.strokeStyle = 'rgba(139,92,246,0.15)';
@@ -54,7 +44,17 @@ export default function WritingPage() {
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillStyle = 'rgba(139,92,246,0.06)';
     ctx.fillText(current.char, w/2, h/2);
-  };
+  }, [current.char]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    drawBackground(ctx, canvas.offsetWidth, canvas.offsetHeight);
+  }, [kanjiIdx, drawBackground]);
 
   const getPos = (e: React.MouseEvent | React.TouchEvent, canvas: HTMLCanvasElement) => {
     const rect = canvas.getBoundingClientRect();

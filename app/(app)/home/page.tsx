@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/app/context/AuthContext';
 import { useStore } from '@/hooks/useStore';
 import { ProgressBar, CircularProgress } from '@/components/ui/ProgressBar';
@@ -90,14 +91,14 @@ export default function HomePage() {
     <div className="space-y-5 animate-fade-up">
 
       {/* ── HERO ───────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
 
         {/* Hero Card */}
-        <div className="lg:col-span-2 relative overflow-hidden rounded-2xl cursor-pointer group h-52"
+        <div className="md:col-span-2 relative overflow-hidden rounded-2xl cursor-pointer group h-44 sm:h-52"
           onClick={() => router.push('/path')}
           style={{ border: '1px solid rgba(139,92,246,0.25)' }}>
-          <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&q=80"
-            alt="Tokyo" className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:opacity-55 transition-opacity duration-500" />
+          <Image src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&q=80"
+            alt="Tokyo" fill sizes="(max-width: 768px) 100vw, 66vw" className="object-cover opacity-45 group-hover:opacity-55 transition-opacity duration-500" />
           <div className="absolute inset-0" style={{ background: 'linear-gradient(110deg, rgba(9,7,26,0.97) 35%, rgba(9,7,26,0.3) 100%)' }} />
           {/* Torii */}
           <div className="absolute right-12 top-0 bottom-0 flex items-center opacity-25 pointer-events-none">
@@ -124,17 +125,17 @@ export default function HomePage() {
         </div>
 
         {/* Daily Goal Ring */}
-        <Card className="flex flex-col items-center justify-center p-5 gap-4">
+        <Card className="flex flex-col items-center justify-center p-4 sm:p-5 gap-3 sm:gap-4">
           <SectionTitle>Daily Goal</SectionTitle>
-          <CircularProgress value={studiedMin} max={goalMin} size={100} strokeWidth={8} color="#7c3aed">
+          <CircularProgress value={studiedMin} max={goalMin} size={88} strokeWidth={7} color="#7c3aed">
             <div className="text-center">
-              <div className="text-xl font-black text-white">{studiedMin}</div>
+              <div className="text-lg sm:text-xl font-black text-white">{studiedMin}</div>
               <div className="text-[9px]" style={{ color: 'rgba(160,150,220,0.5)' }}>/ {goalMin} min</div>
             </div>
           </CircularProgress>
           <div className="w-full text-center">
             <div className="text-xs font-bold text-white mb-1">
-              {goalPct >= 100 ? '🎉 Goal reached!' : `${Math.round(goalPct)}% of daily goal`}
+              {goalPct >= 100 ? '🎉 Goal!' : `${Math.round(goalPct)}% done`}
             </div>
             <ProgressBar value={goalPct} size="sm" color={goalPct >= 100 ? 'success' : 'brand'} />
           </div>
@@ -142,7 +143,7 @@ export default function HomePage() {
       </div>
 
       {/* ── STATS ROW ─────────────────────────────────── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 stagger-children">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 stagger-children">
         {[
           { icon: Zap,       color: '#f59e0b', label: 'Total XP',          val: xp.toLocaleString(),        sub: `Level ${level}`,         badge: '' },
           { icon: Flame,     color: '#f97316', label: 'Day Streak',        val: `${streak}`,                sub: 'Keep it up! 🔥',         badge: '' },
@@ -150,23 +151,23 @@ export default function HomePage() {
           { icon: Target,    color: '#ec4899', label: 'Words Learned',     val: words.toLocaleString(),     sub: 'Vocabulary',             badge: '' },
           { icon: Star,      color: '#22c55e', label: 'Kanji Mastered',    val: kanji.toLocaleString(),     sub: `N5 + ${profile?.jlpt_target || 'N5'}`, badge: '' },
         ].map(s => (
-          <Card key={s.label} hover className="p-4 animate-fade-up">
-            <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-3"
+          <Card key={s.label} hover className="p-3 sm:p-4 animate-fade-up">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3"
               style={{ background: `${s.color}22` }}>
-              <s.icon className="w-4 h-4" style={{ color: s.color }} />
+              <s.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: s.color }} />
             </div>
-            <div className="text-[10px] mb-1" style={{ color: 'rgba(160,150,220,0.5)' }}>{s.label}</div>
-            <div className="text-xl font-black text-white">{s.val}</div>
-            <div className="flex items-center justify-between mt-1 gap-1">
-              <div className="text-[10px]" style={{ color: 'rgba(160,150,220,0.4)' }}>{s.sub}</div>
-              {s.badge && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full text-green-400" style={{ background: 'rgba(34,197,94,0.12)' }}>{s.badge}</span>}
+            <div className="text-[9px] sm:text-[10px] mb-0.5 sm:mb-1 truncate" style={{ color: 'rgba(160,150,220,0.5)' }}>{s.label}</div>
+            <div className="text-base sm:text-xl font-black text-white">{s.val}</div>
+            <div className="flex items-center justify-between mt-1 gap-1 min-w-0">
+              <div className="text-[9px] sm:text-[10px] truncate" style={{ color: 'rgba(160,150,220,0.4)' }}>{s.sub}</div>
+              {s.badge && <span className="text-[9px] font-black px-1 py-0.5 rounded-full text-green-400 flex-shrink-0" style={{ background: 'rgba(34,197,94,0.12)' }}>{s.badge}</span>}
             </div>
           </Card>
         ))}
       </div>
 
       {/* ── MAIN CONTENT ──────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
 
         {/* LEFT + CENTER 2/3 */}
         <div className="lg:col-span-2 space-y-5">
@@ -174,13 +175,13 @@ export default function HomePage() {
           {/* Quick Actions */}
           <Card padding="md">
             <SectionTitle>Quick Actions</SectionTitle>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
               {QUICK_ACTIONS.map(a => (
                 <button key={a.label} onClick={() => router.push(a.href)}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl transition-all hover:scale-105 group"
+                  className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-xl transition-all hover:scale-105 group"
                   style={{ background: a.bg, border: `1px solid ${a.color}22` }}>
-                  <a.icon className="w-5 h-5" style={{ color: a.color }} />
-                  <span className="text-[10px] font-bold text-white">{a.label}</span>
+                  <a.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: a.color }} />
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white leading-none">{a.label}</span>
                 </button>
               ))}
             </div>
@@ -189,37 +190,39 @@ export default function HomePage() {
           {/* JLPT Roadmap */}
           <Card padding="md">
             <SectionTitle action="Full Roadmap" href="/jlpt">JLPT Roadmap</SectionTitle>
-            <div className="flex items-center justify-between">
-              {JLPT_LEVELS.map((lvl, i) => {
-                const done = xp >= lvl.minXP;
-                const current = profile?.jlpt_target === lvl.level;
-                const locked = !done && !current;
-                return (
-                  <div key={lvl.level} className="flex items-center flex-1">
-                    <div className="flex flex-col items-center flex-1">
-                      <div className="w-13 h-13 rounded-full flex items-center justify-center font-black text-sm transition-all"
-                        style={locked ? {
-                          width: 48, height: 48, background: 'rgba(139,92,246,0.06)', border: '2px solid rgba(139,92,246,0.12)', color: 'rgba(139,92,246,0.3)',
-                        } : {
-                          width: 48, height: 48, background: `linear-gradient(135deg, ${lvl.color}33, ${lvl.color}11)`,
-                          border: `2px solid ${lvl.color}`,  color: lvl.color,
-                          boxShadow: current ? `0 0 20px ${lvl.color}44` : undefined,
-                          transform: current ? 'scale(1.12)' : undefined,
-                        }}>
-                        {locked ? <Lock className="w-4 h-4" style={{ color: 'rgba(139,92,246,0.3)' }} />
-                          : done && !current ? <CheckCircle2 className="w-5 h-5" style={{ color: lvl.color }} />
-                          : lvl.level}
+            {/* Scrollable horizontally on tiny screens */}
+            <div className="overflow-x-auto -mx-1 px-1 scrollbar-none">
+              <div className="flex items-center min-w-max">
+                {JLPT_LEVELS.map((lvl, i) => {
+                  const done = xp >= lvl.minXP;
+                  const current = profile?.jlpt_target === lvl.level;
+                  const locked = !done && !current;
+                  return (
+                    <div key={lvl.level} className="flex items-center">
+                      <div className="flex flex-col items-center">
+                        <div className="rounded-full flex items-center justify-center font-black text-xs sm:text-sm transition-all"
+                          style={locked ? {
+                            width: 40, height: 40, background: 'rgba(139,92,246,0.06)', border: '2px solid rgba(139,92,246,0.12)', color: 'rgba(139,92,246,0.3)',
+                          } : {
+                            width: 40, height: 40, background: `linear-gradient(135deg, ${lvl.color}33, ${lvl.color}11)`,
+                            border: `2px solid ${lvl.color}`, color: lvl.color,
+                            boxShadow: current ? `0 0 16px ${lvl.color}44` : undefined,
+                            transform: current ? 'scale(1.1)' : undefined,
+                          }}>
+                          {locked ? <Lock className="w-3.5 h-3.5" style={{ color: 'rgba(139,92,246,0.3)' }} />
+                            : done && !current ? <CheckCircle2 className="w-4 h-4" style={{ color: lvl.color }} />
+                            : lvl.level}
+                        </div>
+                        <div className="text-[10px] font-bold mt-1 text-white/70">{lvl.level}</div>
+                        <div className="text-[9px] whitespace-nowrap" style={{ color: 'rgba(160,150,220,0.4)' }}>{(lvl.words/1000).toFixed(0)}K</div>
                       </div>
-                      <div className="text-[10px] font-bold mt-1.5 text-white/70">{lvl.level}</div>
-                      <div className="text-[9px]" style={{ color: 'rgba(160,150,220,0.4)' }}>{(lvl.words/1000).toFixed(1)}K words</div>
+                      {i < JLPT_LEVELS.length - 1 && (
+                        <div className="h-0.5 mx-1 sm:mx-2" style={{ width: 20, flexShrink: 0, background: JLPT_LEVELS[i+1] && xp >= JLPT_LEVELS[i+1].minXP ? 'linear-gradient(90deg,#22c55e,#3b82f6)' : 'rgba(139,92,246,0.12)' }} />
+                      )}
                     </div>
-                    {i < JLPT_LEVELS.length - 1 && (
-                      <div className="h-0.5 w-6 flex-shrink-0"
-                        style={{ background: JLPT_LEVELS[i+1] && xp >= JLPT_LEVELS[i+1].minXP ? 'linear-gradient(90deg,#22c55e,#3b82f6)' : 'rgba(139,92,246,0.12)' }} />
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </Card>
 
@@ -272,16 +275,16 @@ export default function HomePage() {
             <SectionTitle action="View All" href="/progress">Weak Areas</SectionTitle>
             <div className="space-y-3">
               {WEAK_AREAS.map(w => (
-                <div key={w.topic} className="flex items-center gap-3">
+                <div key={w.topic} className="flex items-center gap-2 sm:gap-3">
                   <JLPTBadge level={w.level} size="xs" />
-                  <div className="flex-1">
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-white font-medium">{w.topic}</span>
-                      <span style={{ color: 'rgba(160,150,220,0.5)' }}>{w.pct}%</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between text-xs mb-1 gap-1">
+                      <span className="text-white font-medium truncate">{w.topic}</span>
+                      <span className="flex-shrink-0" style={{ color: 'rgba(160,150,220,0.5)' }}>{w.pct}%</span>
                     </div>
                     <ProgressBar value={w.pct} color={w.pct < 40 ? 'error' : 'warning'} size="xs" />
                   </div>
-                  <button onClick={() => router.push('/review')} className="btn btn-ghost btn-sm !py-1 !px-2 text-[10px]">
+                  <button onClick={() => router.push('/review')} className="btn btn-ghost btn-sm !py-1 !px-2 text-[10px] flex-shrink-0">
                     Fix
                   </button>
                 </div>

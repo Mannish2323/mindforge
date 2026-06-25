@@ -299,7 +299,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       active = false;
       subscription.unsubscribe();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   const signInWithGoogle = async () => {
     setLoading(true);

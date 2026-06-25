@@ -15,8 +15,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <Topbar />
-        <main className="flex-1 overflow-y-auto pb-20 lg:pb-0">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-5">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-20 lg:pb-6" style={{ overscrollBehavior: 'contain' }}>
+          <div className="max-w-[1400px] mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5">
             {children}
           </div>
         </main>

@@ -8,6 +8,8 @@ import { createClient } from '@supabase/supabase-js';
 // Returns full admin analytics — restricted to admin_roles table
 // ================================================================
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   try {
     const cookieStore = cookies();
