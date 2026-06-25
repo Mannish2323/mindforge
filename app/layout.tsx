@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
@@ -39,7 +40,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </StoreProvider>
         </AuthProvider>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8150181705727957"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
 }
+
