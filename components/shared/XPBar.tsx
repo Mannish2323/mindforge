@@ -1,6 +1,6 @@
 'use client';
 import { Flame, Zap, Heart, Diamond } from 'lucide-react';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../app/context/AuthContext';
 import { useStore } from '@/hooks/useStore';
 import { CircularProgress } from '@/components/ui/ProgressBar';
 

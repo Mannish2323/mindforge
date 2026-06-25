@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname } from 'next/navigation';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../app/context/AuthContext';
 import { useStore } from '@/hooks/useStore';
 import {
   Home, Map, BookOpen, Pen, Mic, Headphones, BookOpenCheck,

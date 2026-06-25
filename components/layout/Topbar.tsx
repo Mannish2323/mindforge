@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Bell, Search, X, ChevronRight } from 'lucide-react';
-import { useAuth } from '@/app/context/AuthContext';
+import { useAuth } from '../../app/context/AuthContext';
 import { useStore } from '@/hooks/useStore';
 import { StatPills } from '@/components/shared/XPBar';
 import { JLPTBadge } from '@/components/shared/JLPTBadge';
