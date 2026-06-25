@@ -10,6 +10,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar, CircularProgress } from '@/components/ui/ProgressBar';
 import { JLPTBadge, PlanBadge } from '@/components/shared/JLPTBadge';
+import { SubscriptionCard } from '@/components/shared/SubscriptionCard';
 import {
   Flame, Zap, BookOpen, Star, Award, RotateCcw,
   Mic, Pencil, Camera, Edit3, Check, X, Settings,
@@ -295,6 +296,9 @@ export default function ProfilePage() {
           </Card>
         ))}
       </div>
+
+      {/* ── Subscription Card ─────────────────── */}
+      <SubscriptionCard />
 
       {/* ── Badges ───────────────────────────── */}
       {badges.length > 0 && (

@@ -7,8 +7,8 @@ import { useAuth } from '@/app/context/AuthContext';
 interface PremiumGateProps {
   /** Feature name shown in the lock overlay */
   featureName: string;
-  /** Minimum plan required: 'starter' | 'plus' | 'pro' */
-  requiredPlan?: 'starter' | 'plus' | 'pro';
+  /** Minimum plan required: 'starter' | 'plus' | 'pro' | 'ai_max' */
+  requiredPlan?: 'starter' | 'plus' | 'pro' | 'ai_max';
   /** The full preview content to render (visible but locked) */
   children: React.ReactNode;
   /** Optional extra benefits to highlight */
@@ -21,6 +21,7 @@ const PLAN_LABELS: Record<string, { label: string; color: string; icon: React.Re
   starter: { label: 'Starter', color: '#60a5fa', icon: <Zap className="w-4 h-4" /> },
   plus:    { label: 'Plus',    color: '#a78bfa', icon: <Star className="w-4 h-4" /> },
   pro:     { label: 'Pro',     color: '#f59e0b', icon: <Crown className="w-4 h-4" /> },
+  ai_max:  { label: 'AI Max',  color: '#e879f9', icon: <Sparkles className="w-4 h-4" /> },
 };
 
 export function PremiumGate({

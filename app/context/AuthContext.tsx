@@ -13,9 +13,10 @@ export interface UserProfile {
   level: number; // computed from xp
   streak: number; // user_streaks.streak
   leafBalance: number; // gems_balance
-  isPremium: boolean; // true for starter/plus/pro/yearly
-  planId: string;           // 'free' | 'starter' | 'plus' | 'pro'
-  planStatus: string;       // 'free' | 'starter' | 'plus' | 'pro' | 'yearly' | 'cancelled'
+  isPremium: boolean; // true for starter/plus/pro/ai_max/yearly
+  planId: string;           // 'free' | 'starter' | 'plus' | 'pro' | 'ai_max'
+  planStatus: string;       // 'free' | 'starter' | 'plus' | 'pro' | 'ai_max' | 'yearly' | 'cancelled'
+  endsAt: string | null;    // ISO timestamp of subscription expiry
   heartsLimit: number;      // 5 | 25 | 50 | 100
   aiLimitDaily: number;     // 5 | 15 | 30 | 99
   lessonsLimitDaily: number;// 5 | 15 | 30 | 99
@@ -205,17 +206,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })(),
         streak: streakData.streak ?? 0,
         leafBalance: statsData.gems_balance ?? 5,
-        // isPremium: only true if plan is active AND not expired (cancelled + expired = not premium)
-        isPremium: ((['starter', 'plus', 'pro', 'yearly'].includes(entitlementsData.status)) &&
+        // isPremium: active if plan is paid AND not expired
+        isPremium: ((['starter', 'plus', 'pro', 'ai_max', 'yearly'].includes(entitlementsData.status)) &&
                     (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
                    (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date()),
         planId: entitlementsData.plan_id || 'free',
         planStatus: entitlementsData.status || 'free',
+        endsAt: entitlementsData.ends_at || null,
         heartsLimit: entitlementsData.hearts_limit ?? 25,
         aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
         lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
         adsEnabled: !(
-          ((['pro', 'pro_yearly', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'yearly'].includes(entitlementsData.status)) &&
+          ((['pro', 'ai_max', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'ai_max', 'yearly'].includes(entitlementsData.status)) &&
           (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
           (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date())
         ),
