@@ -94,9 +94,9 @@ export async function GET(req: NextRequest) {
 
       const activeLast30d = new Set<string>();
       for (const set of Object.values(dailyActive)) {
-        for (const userId of set) {
+        set.forEach(userId => {
           activeLast30d.add(userId);
-        }
+        });
       }
 
       return NextResponse.json({
