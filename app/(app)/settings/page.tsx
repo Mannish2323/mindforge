@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Tabs } from '@/components/ui/Tabs';
 import {
   Bell, Volume2, Globe, Shield, Palette,
-  ChevronRight, LogOut, Trash2, Download, Lock, HelpCircle, FileText, Info
+  ChevronRight, LogOut, Trash2, Lock, HelpCircle, FileText, Info
 } from 'lucide-react';
 
 function ToggleSwitch({ on, onToggle }: { on: boolean; onToggle: () => void }) {
@@ -65,7 +65,7 @@ export default function SettingsPage() {
             <div className="divider mx-4" />
             <SettingRow icon={Globe} label="App Language" description="English" onClick={() => {}} />
             <div className="divider mx-4" />
-            <SettingRow icon={Download} label="Download Offline Content" description="Download lessons for offline use" onClick={() => router.push('/downloads')} />
+
           </Card>
 
           <Card padding="none">
