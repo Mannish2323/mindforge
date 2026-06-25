@@ -27,7 +27,7 @@ function RankIcon({ rank }: { rank: number }) {
 
 function LeaderRow({ entry }: { entry: LeaderEntry }) {
   return (
-    <div className={`flex items-center gap-3 p-3 rounded-xl transition-all ${entry.isYou ? 'ring-1 ring-purple-500' : 'hover:bg-[rgba(139,92,246,0.06)]'}`}
+    <div className={`flex items-center gap-2 sm:gap-3 p-3 rounded-xl transition-all ${entry.isYou ? 'ring-1 ring-purple-500' : 'hover:bg-[rgba(139,92,246,0.06)]'}`}
       style={entry.isYou ? { background: 'rgba(124,58,237,0.12)' } : {}}>
       <div className="w-7 flex items-center justify-center flex-shrink-0"><RankIcon rank={entry.rank} /></div>
       <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
@@ -35,12 +35,12 @@ function LeaderRow({ entry }: { entry: LeaderEntry }) {
         {entry.avatar}
       </div>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-sm font-bold text-white truncate">{entry.name}</span>
-          {entry.isYou && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300">YOU</span>}
+        <div className="flex items-center gap-1 min-w-0">
+          <span className="text-sm font-bold text-white truncate min-w-0">{entry.name}</span>
+          {entry.isYou && <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 flex-shrink-0">YOU</span>}
           <span className="text-sm flex-shrink-0">{entry.country}</span>
         </div>
-        <div className="flex items-center gap-3 text-xs mt-0.5" style={{ color: 'rgba(160,150,220,0.5)' }}>
+        <div className="flex items-center gap-2 sm:gap-3 text-xs mt-0.5" style={{ color: 'rgba(160,150,220,0.5)' }}>
           <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-orange-400" />{entry.streak}d</span>
           <span className="flex items-center gap-1"><Zap className="w-3 h-3 text-yellow-400" />{entry.xp.toLocaleString()} XP</span>
         </div>
@@ -81,36 +81,36 @@ export default function LeaderboardPage() {
 
       {/* Top 3 podium */}
       {!loading && entries.length >= 3 && (
-        <div className="flex items-end justify-center gap-4 py-4">
+        <div className="flex items-end justify-center gap-2 sm:gap-4 py-4">
           {/* 2nd */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-2xl">{entries[1]?.avatar}</div>
-            <div className="text-xs font-bold text-white">{entries[1]?.name}</div>
-            <div className="w-20 h-20 rounded-xl flex items-center justify-center"
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="text-xl sm:text-2xl">{entries[1]?.avatar}</div>
+            <div className="text-[10px] sm:text-xs font-bold text-white text-center max-w-[60px] sm:max-w-[80px] truncate">{entries[1]?.name}</div>
+            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(180deg, rgba(156,163,175,0.2), rgba(156,163,175,0.1))', border: '1px solid rgba(156,163,175,0.3)' }}>
-              <Medal className="w-8 h-8 text-gray-300" />
+              <Medal className="w-6 h-6 sm:w-8 sm:h-8 text-gray-300" />
             </div>
-            <div className="text-xs text-gray-300 font-black">{entries[1]?.xp.toLocaleString()} XP</div>
+            <div className="text-[10px] sm:text-xs text-gray-300 font-black">{entries[1]?.xp.toLocaleString()} XP</div>
           </div>
           {/* 1st */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-2xl">{entries[0]?.avatar}</div>
-            <div className="text-xs font-bold text-white">{entries[0]?.name}</div>
-            <div className="w-24 h-28 rounded-xl flex items-center justify-center"
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="text-xl sm:text-2xl">{entries[0]?.avatar}</div>
+            <div className="text-[10px] sm:text-xs font-bold text-white text-center max-w-[70px] sm:max-w-[96px] truncate">{entries[0]?.name}</div>
+            <div className="w-20 sm:w-24 h-24 sm:h-28 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(180deg, rgba(250,204,21,0.2), rgba(234,179,8,0.1))', border: '1px solid rgba(250,204,21,0.4)' }}>
-              <Crown className="w-10 h-10 text-yellow-400" />
+              <Crown className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400" />
             </div>
-            <div className="text-xs text-yellow-400 font-black">{entries[0]?.xp.toLocaleString()} XP</div>
+            <div className="text-[10px] sm:text-xs text-yellow-400 font-black">{entries[0]?.xp.toLocaleString()} XP</div>
           </div>
           {/* 3rd */}
-          <div className="flex flex-col items-center gap-2">
-            <div className="text-2xl">{entries[2]?.avatar}</div>
-            <div className="text-xs font-bold text-white">{entries[2]?.name}</div>
-            <div className="w-20 h-16 rounded-xl flex items-center justify-center"
+          <div className="flex flex-col items-center gap-1.5">
+            <div className="text-xl sm:text-2xl">{entries[2]?.avatar}</div>
+            <div className="text-[10px] sm:text-xs font-bold text-white text-center max-w-[60px] sm:max-w-[80px] truncate">{entries[2]?.name}</div>
+            <div className="w-16 sm:w-20 h-14 sm:h-16 rounded-xl flex items-center justify-center"
               style={{ background: 'linear-gradient(180deg, rgba(180,83,9,0.2), rgba(180,83,9,0.1))', border: '1px solid rgba(180,83,9,0.3)' }}>
-              <Medal className="w-7 h-7 text-amber-600" />
+              <Medal className="w-6 h-6 sm:w-7 sm:h-7 text-amber-600" />
             </div>
-            <div className="text-xs text-amber-600 font-black">{entries[2]?.xp.toLocaleString()} XP</div>
+            <div className="text-[10px] sm:text-xs text-amber-600 font-black">{entries[2]?.xp.toLocaleString()} XP</div>
           </div>
         </div>
       )}

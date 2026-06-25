@@ -107,8 +107,8 @@ export default function ProfilePage() {
         </div>
 
         <div className="px-4 sm:px-5 pb-5">
-          {/* Avatar row — absolutely positioned avatar + offset content below */}
-          <div className="flex items-end gap-3 -mt-8 sm:-mt-10 mb-3">
+        {/* Avatar row — flex-wrap to prevent overlap on tiny screens */}
+          <div className="flex flex-wrap items-end gap-3 -mt-8 sm:-mt-10 mb-3">
             {/* Avatar */}
             <div className="relative flex-shrink-0">
               <div
@@ -140,9 +140,9 @@ export default function ProfilePage() {
               <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
             </div>
 
-            {/* Plan badge and date — aligned to bottom of avatar */}
-            <div className="flex-1 min-w-0 pb-1">
-              <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Plan badge and date — aligned to bottom of avatar, wraps on very small */}
+            <div className="flex-1 min-w-0 pb-1" style={{ minWidth: '0' }}>
+              <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                 <PlanBadge plan={profile?.planId || 'free'} />
                 {profile?.isAdmin && (
                   <span className="text-[9px] sm:text-[10px] font-black px-1.5 sm:px-2 py-0.5 rounded-full flex-shrink-0"
@@ -160,9 +160,9 @@ export default function ProfilePage() {
           </div>
 
           {/* Name row */}
-          <div className="mb-2">
+          <div className="mb-2 min-w-0">
             {editingName ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <input
                   value={nameVal}
                   onChange={e => setNameVal(e.target.value)}
@@ -180,8 +180,8 @@ export default function ProfilePage() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2 min-w-0">
-                <h1 className="text-xl sm:text-2xl font-black text-white truncate min-w-0">
+              <div className="flex items-center gap-2 min-w-0 overflow-hidden">
+                <h1 className="text-xl sm:text-2xl font-black text-white truncate min-w-0 max-w-[calc(100%-2.5rem)]">
                   {profile?.name || 'Learner'}
                 </h1>
                 <button
@@ -196,7 +196,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Username + email */}
-          <div className="text-xs sm:text-sm mb-2 truncate" style={{ color: 'rgba(160,150,220,0.5)' }}>
+          <div className="text-xs sm:text-sm mb-2 truncate min-w-0 overflow-hidden" style={{ color: 'rgba(160,150,220,0.5)' }}>
             @{profile?.username || 'user'} · {profile?.email}
           </div>
 
@@ -284,15 +284,15 @@ export default function ProfilePage() {
       </Card>
 
       {/* ── Stats Grid ────────────────────────── */}
-      <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
         {stats.map(s => (
           <Card key={s.label} padding="sm" className="sm:p-4">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 flex-shrink-0"
               style={{ background: `${s.color}18` }}>
               <s.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: s.color }} />
             </div>
-            <div className="text-base sm:text-lg font-black text-white">{s.value}</div>
-            <div className="text-[9px] sm:text-[10px] mt-0.5" style={{ color: 'rgba(160,150,220,0.5)' }}>{s.label}</div>
+            <div className="text-base sm:text-lg font-black text-white truncate">{s.value}</div>
+            <div className="text-[9px] sm:text-[10px] mt-0.5 truncate" style={{ color: 'rgba(160,150,220,0.5)' }}>{s.label}</div>
           </Card>
         ))}
       </div>

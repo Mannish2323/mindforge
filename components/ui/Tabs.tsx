@@ -14,41 +14,45 @@ interface TabsProps {
 export function Tabs({ tabs, activeTab, onChange, variant = 'pill', className }: TabsProps) {
   if (variant === 'underline') {
     return (
-      <div className={cn('flex gap-0 border-b border-[rgba(139,92,246,0.15)]', className)}>
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => onChange(tab.id)}
-            className={cn(
-              'flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all',
-              tab.id === activeTab
-                ? 'border-purple-500 text-white'
-                : 'border-transparent text-[rgba(160,150,220,0.5)] hover:text-[rgba(200,196,255,0.8)]'
-            )}>
-            {tab.icon}
-            {tab.label}
-            {tab.badge !== undefined && (
-              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full"
-                style={{ background: tab.id === activeTab ? 'rgba(124,58,237,0.3)' : 'rgba(139,92,246,0.1)', color: tab.id === activeTab ? '#a78bfa' : 'rgba(160,150,220,0.5)' }}>
-                {tab.badge}
-              </span>
-            )}
-          </button>
-        ))}
+      <div className={cn('border-b border-[rgba(139,92,246,0.15)] overflow-x-auto scrollbar-none', className)}>
+        <div className="flex gap-0 min-w-max">
+          {tabs.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => onChange(tab.id)}
+              className={cn(
+                'flex items-center gap-2 px-3 sm:px-4 py-3 text-xs sm:text-sm font-semibold border-b-2 transition-all whitespace-nowrap',
+                tab.id === activeTab
+                  ? 'border-purple-500 text-white'
+                  : 'border-transparent text-[rgba(160,150,220,0.5)] hover:text-[rgba(200,196,255,0.8)]'
+              )}>
+              {tab.icon}
+              {tab.label}
+              {tab.badge !== undefined && (
+                <span className="text-[10px] font-black px-1.5 py-0.5 rounded-full"
+                  style={{ background: tab.id === activeTab ? 'rgba(124,58,237,0.3)' : 'rgba(139,92,246,0.1)', color: tab.id === activeTab ? '#a78bfa' : 'rgba(160,150,220,0.5)' }}>
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </div>
     );
   }
 
   if (variant === 'segment') {
     return (
-      <div className={cn('tab-nav', className)}>
-        {tabs.map(tab => (
-          <button key={tab.id} onClick={() => onChange(tab.id)}
-            className={cn('tab-item', tab.id === activeTab && 'active')}>
-            {tab.icon && <span className="inline-block mr-1">{tab.icon}</span>}
-            {tab.label}
-          </button>
-        ))}
+      <div className={cn('overflow-x-auto scrollbar-none', className)}>
+        <div className="tab-nav min-w-max">
+          {tabs.map(tab => (
+            <button key={tab.id} onClick={() => onChange(tab.id)}
+              className={cn('tab-item whitespace-nowrap', tab.id === activeTab && 'active')}>
+              {tab.icon && <span className="inline-block mr-1">{tab.icon}</span>}
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
     );
   }

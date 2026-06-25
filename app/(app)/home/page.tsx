@@ -90,11 +90,11 @@ export default function HomePage() {
   return (
     <div className="space-y-5 animate-fade-up">
 
-      {/* ── HERO ───────────────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+      {/* ── HERO ──────────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-5">
 
         {/* Hero Card */}
-        <div className="md:col-span-2 relative overflow-hidden rounded-2xl cursor-pointer group h-44 sm:h-52"
+        <div className="md:col-span-2 relative overflow-hidden rounded-2xl cursor-pointer group h-40 sm:h-52"
           onClick={() => router.push('/path')}
           style={{ border: '1px solid rgba(139,92,246,0.25)' }}>
           <Image src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&q=80"
@@ -142,14 +142,14 @@ export default function HomePage() {
         </Card>
       </div>
 
-      {/* ── STATS ROW ─────────────────────────────────── */}
+      {/* ── STATS ROW ─────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 stagger-children">
         {[
-          { icon: Zap,       color: '#f59e0b', label: 'Total XP',          val: xp.toLocaleString(),        sub: `Level ${level}`,         badge: '' },
-          { icon: Flame,     color: '#f97316', label: 'Day Streak',        val: `${streak}`,                sub: 'Keep it up! 🔥',         badge: '' },
-          { icon: BookOpen,  color: '#3b82f6', label: 'Lessons Done',      val: completedLessons,           sub: 'Total completed',        badge: dueCards > 0 ? `${dueCards} due` : '' },
-          { icon: Target,    color: '#ec4899', label: 'Words Learned',     val: words.toLocaleString(),     sub: 'Vocabulary',             badge: '' },
-          { icon: Star,      color: '#22c55e', label: 'Kanji Mastered',    val: kanji.toLocaleString(),     sub: `N5 + ${profile?.jlpt_target || 'N5'}`, badge: '' },
+          { icon: Zap,       color: '#f59e0b', label: 'Total XP',        val: xp.toLocaleString(),            sub: `Level ${level}`,         badge: '' },
+          { icon: Flame,     color: '#f97316', label: 'Day Streak',      val: `${streak}`,                    sub: 'Keep it up! 🔥',         badge: '' },
+          { icon: BookOpen,  color: '#3b82f6', label: 'Lessons Done',    val: completedLessons,               sub: 'Total completed',        badge: dueCards > 0 ? `${dueCards} due` : '' },
+          { icon: Target,    color: '#ec4899', label: 'Words Learned',   val: words.toLocaleString(),         sub: 'Vocabulary',             badge: '' },
+          { icon: Star,      color: '#22c55e', label: 'Kanji Mastered',  val: kanji.toLocaleString(),         sub: `N5 + ${profile?.jlpt_target || 'N5'}`, badge: '' },
         ].map(s => (
           <Card key={s.label} hover className="p-3 sm:p-4 animate-fade-up">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-3"
@@ -157,7 +157,7 @@ export default function HomePage() {
               <s.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" style={{ color: s.color }} />
             </div>
             <div className="text-[9px] sm:text-[10px] mb-0.5 sm:mb-1 truncate" style={{ color: 'rgba(160,150,220,0.5)' }}>{s.label}</div>
-            <div className="text-base sm:text-xl font-black text-white">{s.val}</div>
+            <div className="text-base sm:text-xl font-black text-white truncate">{s.val}</div>
             <div className="flex items-center justify-between mt-1 gap-1 min-w-0">
               <div className="text-[9px] sm:text-[10px] truncate" style={{ color: 'rgba(160,150,220,0.4)' }}>{s.sub}</div>
               {s.badge && <span className="text-[9px] font-black px-1 py-0.5 rounded-full text-green-400 flex-shrink-0" style={{ background: 'rgba(34,197,94,0.12)' }}>{s.badge}</span>}
@@ -175,13 +175,13 @@ export default function HomePage() {
           {/* Quick Actions */}
           <Card padding="md">
             <SectionTitle>Quick Actions</SectionTitle>
-            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {QUICK_ACTIONS.map(a => (
                 <button key={a.label} onClick={() => router.push(a.href)}
                   className="flex flex-col items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded-xl transition-all hover:scale-105 group"
                   style={{ background: a.bg, border: `1px solid ${a.color}22` }}>
                   <a.icon className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: a.color }} />
-                  <span className="text-[9px] sm:text-[10px] font-bold text-white leading-none">{a.label}</span>
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white leading-none text-center">{a.label}</span>
                 </button>
               ))}
             </div>

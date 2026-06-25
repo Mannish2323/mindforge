@@ -568,14 +568,14 @@ export default function BillingPage() {
             transition={{ duration: 0.6 }}
           >
             <motion.div
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black mb-6"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black mb-6 text-center"
               style={{ background: 'rgba(232,121,249,0.12)', border: '1px solid rgba(232,121,249,0.3)', color: '#e879f9' }}
               animate={{ scale: [1, 1.02, 1] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              <Sparkles className="w-3.5 h-3.5" /> 12,000+ learners · Trusted subscription platform
+              <Sparkles className="w-3.5 h-3.5 flex-shrink-0" /> <span className="truncate">12,000+ learners &middot; Trusted</span>
             </motion.div>
-            <h1 className="text-5xl sm:text-6xl font-black text-white leading-[1.05] mb-4">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-white leading-[1.05] mb-4">
               Pick Your<br />
               <span
                 className="inline-block"
@@ -584,7 +584,7 @@ export default function BillingPage() {
                 Japanese Path
               </span>
             </h1>
-            <p className="text-base max-w-lg mx-auto" style={{ color: 'rgba(200,196,255,0.6)' }}>
+            <p className="text-base sm:text-lg max-w-lg mx-auto px-4" style={{ color: 'rgba(200,196,255,0.6)' }}>
               Flexible plans for every learner. Cancel anytime.
             </p>
           </motion.div>

@@ -174,7 +174,7 @@ export function Sidebar() {
       <div className="p-2.5 flex-shrink-0">
         <button
           onClick={() => router.push('/profile')}
-          className="w-full flex items-center gap-2 p-2 rounded-xl transition-all hover:bg-[rgba(139,92,246,0.08)] min-w-0"
+          className="w-full flex items-center gap-2 p-2 rounded-xl transition-all hover:bg-[rgba(139,92,246,0.08)] min-w-0 overflow-hidden"
         >
           {/* Avatar — fixed size */}
           <div className="relative flex-shrink-0">
@@ -188,15 +188,15 @@ export function Sidebar() {
 
           {/* Name + level — truncate to prevent overflow */}
           <div className="flex-1 min-w-0 overflow-hidden text-left">
-            <div className="text-xs font-bold text-white truncate">{profile?.name || 'Learner'}</div>
-            <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+            <div className="text-xs font-bold text-white truncate leading-tight">{profile?.name || 'Learner'}</div>
+            <div className="flex items-center gap-1 mt-0.5 flex-nowrap overflow-hidden">
               <JLPTBadge level={profile?.jlpt_target || 'N5'} size="xs" />
               <span className="text-[9px] flex-shrink-0" style={{ color: 'rgba(160,150,220,0.5)' }}>Lv.{level}</span>
             </div>
           </div>
 
-          {/* Plan badge — always visible */}
-          <div className="flex-shrink-0">
+          {/* Plan badge — always visible, flex-shrink-0 */}
+          <div className="flex-shrink-0 ml-auto">
             <PlanBadge plan={profile?.planId || 'free'} className="!text-[8px] !px-1 !py-0" />
           </div>
         </button>

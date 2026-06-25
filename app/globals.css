@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* ── Custom breakpoints ─────────────────────── */
+@custom-media --xs (min-width: 475px);
+
 /* ═══════════════════════════════════════════════
    VELMORTH DESIGN SYSTEM — TAILWIND V4 TOKENS
 ═══════════════════════════════════════════════ */
@@ -660,7 +663,7 @@ body {
 }
 
 /* ── Responsive container ────────────────────── */
-/* Extra small: 320px-374px */
+/* Extra small (320–374px) */
 @media (max-width: 374px) {
   .xs-stack {
     flex-direction: column !important;
@@ -681,6 +684,33 @@ body {
   .xs-p-3 {
     padding: 0.75rem !important;
   }
+
+  /* Prevent tiny screens from showing 4-col grids */
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* 475px xs breakpoint utilities */
+@media (min-width: 475px) {
+  .xs\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .xs\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .xs\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .xs\:flex-row    { flex-direction: row; }
+  .xs\:flex-nowrap { flex-wrap: nowrap; }
+  .xs\:text-sm     { font-size: 0.875rem; }
+  .xs\:hidden      { display: none; }
+  .xs\:block       { display: block; }
+}
+
+/* ── Min-width zero safety (flex children) ──── */
+.min-w-0 {
+  min-width: 0;
+}
+
+/* ── Overflow guard for all flex/grid roots ─── */
+.overflow-x-clip {
+  overflow-x: clip;
 }
 
 /* ── Prevent horizontal body scroll everywhere ── */

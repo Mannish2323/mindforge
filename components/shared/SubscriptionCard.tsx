@@ -161,22 +161,22 @@ export function SubscriptionCard() {
     >
       <div className="p-5">
         {/* Header row */}
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <div className="text-lg font-black" style={{ color: plan.color }}>
+        <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <div className="text-lg font-black truncate" style={{ color: plan.color }}>
                 {plan.emoji} {plan.name}
               </div>
               {isPremium && (
                 <div
-                  className="px-2 py-0.5 rounded-full text-[10px] font-black"
+                  className="px-2 py-0.5 rounded-full text-[10px] font-black flex-shrink-0"
                   style={{ background: `${plan.color}20`, color: plan.color, border: `1px solid ${plan.color}30` }}
                 >
                   Active
                 </div>
               )}
             </div>
-            <div className="text-xs" style={{ color: 'rgba(160,150,220,0.55)' }}>
+            <div className="text-xs truncate" style={{ color: 'rgba(160,150,220,0.55)' }}>
               {plan.subtitle}
             </div>
           </div>
