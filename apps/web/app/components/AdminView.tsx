@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { createClient } from '../lib/supabase';
+import { AdminAnalyticsTab } from './dashboard/AdminAnalyticsTab';
+
 
 type AdminTab =
   | 'overview' | 'users' | 'content' | 'billing'
@@ -50,6 +52,9 @@ export function AdminView() {
     ssw_mode_enabled: true,
   });
   const [actionMsg, setActionMsg] = useState('');
+  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+  const [analyticsDays, setAnalyticsDays] = useState(30);
 
   const loadStats = useCallback(async () => {
     try {
@@ -75,7 +80,6 @@ export function AdminView() {
           else if (sub.plan_id === 'plus') revenue += 749;
           else if (sub.plan_id === 'pro') revenue += 999;
         } else {
-          // monthly plans
           if (sub.plan_id === 'starter') revenue += 99;
           else if (sub.plan_id === 'plus') revenue += 149;
           else if (sub.plan_id === 'pro') revenue += 199;
@@ -88,15 +92,37 @@ export function AdminView() {
         .select('*', { count: 'exact', head: true })
         .eq('last_active', today);
 
+      // Also fetch lessons done today from daily_activity
+      const { count: lessonsToday } = await supabase
+        .from('daily_activity')
+        .select('*', { count: 'exact', head: true })
+        .eq('activity_date', today);
+
       setStats(s => ({
         ...s,
         totalUsers: totalUsers || 0,
         premiumUsers,
         totalMessages: totalMessages || 0,
         activeToday: activeToday || 0,
+        lessonsToday: lessonsToday || 0,
         revenueEstimate: `₹${revenue.toLocaleString('en-IN')}`,
       }));
     } catch { /* silent */ }
+  }, []);
+
+  const loadAnalytics = useCallback(async (days = 30) => {
+    setLoadingAnalytics(true);
+    try {
+      const res = await fetch(`/api/admin/analytics?days=${days}`);
+      if (res.ok) {
+        const json = await res.json();
+        setAnalyticsData(json);
+      }
+    } catch (err) {
+      console.error('[Admin] Analytics load failed:', err);
+    } finally {
+      setLoadingAnalytics(false);
+    }
   }, []);
 
   const loadUsers = useCallback(async () => {

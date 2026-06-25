@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStoreContext } from '../../../context/StoreContext';
 import { useAuth } from '../../../context/AuthContext';
@@ -8,6 +8,10 @@ import { AppShell } from '../../../components/layout/AppShell';
 import { speakText } from '@evlo/utils';
 import confetti from 'canvas-confetti';
 import { LessonPlayer } from '../../../components/learn/LessonPlayer';
+import { useProgress } from '../../../hooks/useProgress';
+import { useVocabProgress } from '../../../hooks/useVocabProgress';
+import { useAchievements } from '../../../hooks/useAchievements';
+import { useOfflineQueue } from '../../../hooks/useOfflineQueue';
 
 interface LessonClientProps {
   lessonId: string;
@@ -15,8 +19,12 @@ interface LessonClientProps {
 
 export default function LessonClient({ lessonId }: LessonClientProps) {
   const router = useRouter();
-  const { state, completeLesson, loseHeart, refillHearts } = useStoreContext();
+  const { state, completeLesson: completeLocalLesson, loseHeart, refillHearts } = useStoreContext();
   const { user, profile, updateProfileStats, updateHearts } = useAuth();
+  const { completeLesson: saveProgress, updateLessonProgress } = useProgress();
+  const { markWordsBulk } = useVocabProgress();
+  const { checkAchievements } = useAchievements();
+  const { enqueue, flush } = useOfflineQueue();
 
   const [lesson, setLesson] = useState<any>(null);
   const [unitId, setUnitId] = useState<string>('');
@@ -29,6 +37,9 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
   const [lessonFinished, setLessonFinished] = useState(false);
   const [lessonTimeStart, setLessonTimeStart] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [newlyUnlockedBadges, setNewlyUnlockedBadges] = useState<string[]>([]);
+  const wordIdsRef = useRef<string[]>([]);
+  const progressSavedRef = useRef(false);
 
   // Animations & Floating badges
   const [showXPBadge, setShowXPBadge] = useState(false);
@@ -78,6 +89,13 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
           setLesson(foundLesson);
           setUnitId(foundUnitId);
           setLessonTimeStart(Date.now());
+          // Collect word IDs from vocabulary for progress tracking
+          const vocabIds = (foundLesson.vocabulary || []).map((v: any) => v.kanji || v.id || v.word_id).filter(Boolean);
+          wordIdsRef.current = vocabIds;
+          // Mark lesson as in_progress
+          if (user) {
+            updateLessonProgress({ lessonId, completionPercentage: 0, timeSeconds: 0 });
+          }
 
           // Build Questions
           const vocab = foundLesson.vocabulary || [];
@@ -278,13 +296,74 @@ export default function LessonClient({ lessonId }: LessonClientProps) {
   };
 
   const handleFinishLesson = async () => {
+    if (progressSavedRef.current) return; // Prevent double submission
+    progressSavedRef.current = true;
     setLessonFinished(true);
+
     const xpGranted = lesson.xp_reward || 15;
+    const timeElapsed = Math.round((Date.now() - lessonTimeStart) / 1000);
+    const score = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+    const wordIds = wordIdsRef.current;
 
-    completeLesson(lessonId, xpGranted);
-
+    // 1. Update local store (optimistic)
+    completeLocalLesson(lessonId, xpGranted);
     if (user && profile) {
-      await updateProfileStats(xpGranted, 5); // Add 5 gems as bonus
+      await updateProfileStats(xpGranted, 5);
+    }
+
+    // 2. Save to Supabase via production RPC
+    if (user) {
+      try {
+        const result = await saveProgress({
+          lessonId,
+          score,
+          xp: xpGranted,
+          timeSeconds: timeElapsed,
+          wordsLearnedCount: wordIds.length,
+          wordIds,
+          metadata: { unit_id: unitId, correct_count: correctCount, question_count: questions.length },
+        });
+
+        if (result) {
+          // Update local streak display
+          setNewlyUnlockedBadges(result.newlyUnlockedBadges ?? []);
+        }
+
+        // 3. Mark words as learned in vocab_progress
+        if (wordIds.length > 0) {
+          await markWordsBulk(wordIds);
+        }
+
+        // 4. Check achievements
+        await checkAchievements();
+
+      } catch (err) {
+        console.error('[LessonClient] Progress save failed, queuing offline:', err);
+        // Enqueue for retry when online
+        await enqueue({
+          type: 'complete_lesson',
+          payload: {
+            lessonId, score, xp: xpGranted,
+            timeSeconds: timeElapsed,
+            wordsCount: wordIds.length,
+            wordIds,
+          },
+        });
+      }
+
+      // 5. Flush any previously queued offline actions
+      flush(async (action) => {
+        try {
+          const res = await fetch('/api/progress/complete-lesson', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(action.payload),
+          });
+          return res.ok;
+        } catch {
+          return false;
+        }
+      });
     }
 
     confetti({ particleCount: 150, spread: 80, origin: { y: 0.5 } });

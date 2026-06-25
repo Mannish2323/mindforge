@@ -3,18 +3,18 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, PenLine, Mic, User } from 'lucide-react';
+import { Home, BookOpen, BarChart2, Mic, User } from 'lucide-react';
 import { cn } from '@evlo/utils';
 
 export function BottomNav() {
   const pathname = usePathname();
 
   const navItems = [
-    { label: 'HOME',   path: '/home',   icon: Home },
-    { label: 'PATH',   path: '/path',   icon: BookOpen },
-    { label: 'SCRIPT', path: '/script', icon: PenLine },
-    { label: 'SPEAK',  path: '/speak',  icon: Mic },
-    { label: 'PROFILE', path: '/profile', icon: User },
+    { label: 'HOME',     path: '/home',     icon: Home },
+    { label: 'PATH',     path: '/path',     icon: BookOpen },
+    { label: 'PROGRESS', path: '/progress', icon: BarChart2 },
+    { label: 'SPEAK',    path: '/speak',    icon: Mic },
+    { label: 'PROFILE',  path: '/profile',  icon: User },
   ];
 
   return (
