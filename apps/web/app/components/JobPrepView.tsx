@@ -772,13 +772,13 @@ export function JobPrepView({ onBack }: JobPrepViewProps) {
                   onClick={() => handleResumeChange('selfPR', resumeData.selfPR + ' これまでの経験を活かし、貴社に貢献したいと考えております。')}
                   className="btn-ghost" style={{ padding: '3px 8px', fontSize: '10px', background: 'var(--surface-3)', borderRadius: '4px' }}
                 >
-                  + Add "Contribute using experience"
+                  + Add &quot;Contribute using experience&quot;
                 </button>
                 <button 
                   onClick={() => handleResumeChange('selfPR', resumeData.selfPR + ' 現在に至るまで、技術力の向上に努めてまいりました。')}
                   className="btn-ghost" style={{ padding: '3px 8px', fontSize: '10px', background: 'var(--surface-3)', borderRadius: '4px' }}
                 >
-                  + Add "Strive to improve tech skills"
+                  + Add &quot;Strive to improve tech skills&quot;
                 </button>
               </div>
             </div>

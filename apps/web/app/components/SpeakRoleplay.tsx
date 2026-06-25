@@ -400,7 +400,7 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
 
                   {analysisResult.transcript && (
                     <div style={{ fontSize: '12px', background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius)', marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textAlign: 'center' }}>
-                      <strong>We heard:</strong> "{analysisResult.transcript}"
+                      <strong>We heard:</strong> &ldquo;{analysisResult.transcript}&rdquo;
                     </div>
                   )}
                   {analysisResult.isMock && (
@@ -587,7 +587,7 @@ export function SpeakRoleplay({ onBack }: SpeakRoleplayProps) {
 
                   {pronunciationResult.transcript && (
                     <div style={{ fontSize: '12px', background: 'var(--surface-2)', border: '1px solid var(--border)', padding: 'var(--sp-2) var(--sp-3)', borderRadius: 'var(--radius)', marginBottom: 'var(--sp-3)', color: 'var(--text-2)', textAlign: 'center' }}>
-                      <strong>We heard:</strong> "{pronunciationResult.transcript}"
+                      <strong>We heard:</strong> &ldquo;{pronunciationResult.transcript}&rdquo;
                     </div>
                   )}
                   {pronunciationResult.isMock && (

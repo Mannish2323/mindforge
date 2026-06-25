@@ -285,7 +285,7 @@ export function WordExplainer({ initialWord }: { initialWord?: string }) {
             <div className="card" style={{ padding: '16px', background: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
               <h4 style={{ fontWeight: 800, fontSize: '13px', color: 'var(--warn)' }} className="flex gap-2"><Lightbulb size={16} /> Mnemonic & Memory Tricks</h4>
               <p className="mt-2" style={{ fontSize: '13px', fontWeight: 600 }}>
-                💡 "{explanation.memoryTrick}"
+                💡 &ldquo;{explanation.memoryTrick}&rdquo;
               </p>
               <div className="mt-2" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                 <strong>Visual Association:</strong> {explanation.visualAssociation}

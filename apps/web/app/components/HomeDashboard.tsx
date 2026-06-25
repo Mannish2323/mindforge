@@ -24,21 +24,8 @@ const WORD_OF_DAY = [
 ];
 
 export function HomeDashboard({ state, profile, user, onNavigate, onContinueLesson, onActivateShield }: HomeDashboardProps) {
-  if (!state) {
-    return (
-      <div className="animate-fadein flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)', padding: 'var(--sp-4)' }}>
-        {[100, 140, 110, 80, 120].map((h, i) => (
-          <div key={i} className="skeleton skeleton-card" style={{ height: `${h}px` }} />
-        ))}
-      </div>
-    );
-  }
-
-  const dueReviewsCount = Object.values(state.srsData || {}).filter(
-    (c: any) => new Date(c.dueDate) <= new Date()
-  ).length;
-
   const weeklyXpData: number[] = useMemo(() => {
+    if (!state) return [0, 0, 0, 0, 0, 0, 0];
     const xpArray = [0, 0, 0, 0, 0, 0, 0]; // Mon, Tue, Wed, Thu, Fri, Sat, Sun
     const today = new Date();
     
@@ -91,6 +78,43 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
     return xpArray;
   }, [state?.lessonProgress, state?.stories]);
 
+  // Missions
+  const missions = useMemo(() => {
+    if (!state) return [];
+    return [
+      {
+        id: 'lesson', label: 'Complete 1 Lesson', icon: '📖',
+        done: Object.values(state.lessonProgress || {}).some((l: any) => {
+          const ts = l.completedAt;
+          return ts && new Date(ts).toDateString() === new Date().toDateString();
+        }),
+        xp: 20,
+      },
+      {
+        id: 'review', label: 'Do 5 Reviews', icon: '🔁',
+        done: false, xp: 15,
+      },
+      {
+        id: 'speak', label: 'Speak 1 Session', icon: '🎤',
+        done: false, xp: 25,
+      },
+    ];
+  }, [state]);
+
+  if (!state) {
+    return (
+      <div className="animate-fadein flex" style={{ flexDirection: 'column', gap: 'var(--sp-4)', padding: 'var(--sp-4)' }}>
+        {[100, 140, 110, 80, 120].map((h, i) => (
+          <div key={i} className="skeleton skeleton-card" style={{ height: `${h}px` }} />
+        ))}
+      </div>
+    );
+  }
+
+  const dueReviewsCount = Object.values(state.srsData || {}).filter(
+    (c: any) => new Date(c.dueDate) <= new Date()
+  ).length;
+
   const goalXp = state.goalXp || 50;
   const dailyGoalProgress = Math.min(100, Math.round(((state.xp % goalXp) / goalXp) * 100));
   const currentDailyXP = state.xp % goalXp;
@@ -102,26 +126,6 @@ export function HomeDashboard({ state, profile, user, onNavigate, onContinueLess
   const wordIdx = new Date().getDate() % WORD_OF_DAY.length;
   const wordOfDay = WORD_OF_DAY[wordIdx];
   const weeklyTotal = weeklyXpData.reduce((a, b) => a + b, 0);
-
-  // Missions
-  const missions = useMemo(() => [
-    {
-      id: 'lesson', label: 'Complete 1 Lesson', icon: '📖',
-      done: Object.values(state.lessonProgress || {}).some((l: any) => {
-        const ts = l.completedAt;
-        return ts && new Date(ts).toDateString() === new Date().toDateString();
-      }),
-      xp: 20,
-    },
-    {
-      id: 'review', label: 'Do 5 Reviews', icon: '🔁',
-      done: false, xp: 15,
-    },
-    {
-      id: 'speak', label: 'Speak 1 Session', icon: '🎤',
-      done: false, xp: 25,
-    },
-  ], [state]);
 
   const completedMissions = missions.filter(m => m.done).length;
 

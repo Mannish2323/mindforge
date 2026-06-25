@@ -192,7 +192,7 @@ export function ExerciseCard({
               {question.japanesePrompt.replace('___', '______')}
             </h2>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary, #b3b3b9)', marginTop: '8px' }}>
-              Meaning: "{question.english}"
+              Meaning: &ldquo;{question.english}&rdquo;
             </p>
             <Button variant="ghost" size="sm" onClick={() => playTTS(question.japanese)} style={{ marginTop: '8px' }}>
               <Volume2 size={16} style={{ marginRight: '4px' }} /> Speak

@@ -46,7 +46,7 @@ export default function TermsPage() {
           </section>
           <section>
             <h2>7. Disclaimer</h2>
-            <p>Learn with Velmorth is provided "as is". We make no guarantees about language learning outcomes or exam results.</p>
+            <p>Learn with Velmorth is provided &quot;as is&quot;. We make no guarantees about language learning outcomes or exam results.</p>
           </section>
           <section>
             <h2>8. Contact</h2>

@@ -874,7 +874,7 @@ export function WritingPracticeView() {
                         <h4 className="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wide flex items-center gap-1">
                           <MessageSquare size={12} /> Sensei Review
                         </h4>
-                        <p className="font-ja text-sm italic">"{aiFeedback}"</p>
+                        <p className="font-ja text-sm italic">&ldquo;{aiFeedback}&rdquo;</p>
                       </motion.div>
                     ) : (
                       <div className="py-12 text-center border-2 border-dashed border-zinc-850 rounded-2xl">
