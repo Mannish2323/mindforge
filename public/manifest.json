@@ -1,13 +1,14 @@
 {
-  "name": "Velmorth — Learn Japanese",
+  "name": "Learn with Velmorth",
   "short_name": "Velmorth",
-  "description": "Learn Japanese with Velmorth — JLPT N5 to N1, Hiragana, Lessons and more.",
-  "start_url": "/",
+  "description": "Japanese learning app with gamified progression, AI tutor, and spaced repetition.",
+  "start_url": "/home",
   "display": "standalone",
-  "background_color": "#0a1a0f",
-  "theme_color": "#0a1a0f",
-  "orientation": "portrait-primary",
+  "orientation": "portrait",
+  "background_color": "#0B1220",
+  "theme_color": "#16A34A",
   "lang": "en",
+  "categories": ["education", "language"],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -22,6 +23,21 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["education", "lifestyle"],
-  "screenshots": []
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Continue Learning",
+      "short_name": "Learn",
+      "description": "Jump straight to your lesson path",
+      "url": "/path",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Review Cards",
+      "short_name": "Review",
+      "description": "Start your spaced-repetition review",
+      "url": "/review",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
 }
