@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS public.xp_events (
 
 CREATE INDEX IF NOT EXISTS idx_xp_events_user ON public.xp_events(user_id, earned_at DESC);
 CREATE INDEX IF NOT EXISTS idx_xp_events_type ON public.xp_events(user_id, event_type);
-CREATE INDEX IF NOT EXISTS idx_xp_events_date ON public.xp_events(user_id, (earned_at::date));
+CREATE INDEX IF NOT EXISTS idx_xp_events_date ON public.xp_events(user_id, ((earned_at AT TIME ZONE 'UTC')::date));
 
 ALTER TABLE public.xp_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view own xp events" ON public.xp_events
@@ -659,7 +659,7 @@ BEGIN
         'completions', cnt,
         'avg_score', avg_score,
         'avg_time_secs', avg_time
-      ) ORDER BY cnt DESC LIMIT 20)
+      ))
       FROM (
         SELECT lesson_id,
                COUNT(*) AS cnt,
@@ -669,6 +669,8 @@ BEGIN
         WHERE status = 'completed'
           AND completed_at >= NOW() - make_interval(days => p_days)
         GROUP BY lesson_id
+        ORDER BY cnt DESC
+        LIMIT 20
       ) t
     ),
     'xp_by_type', (
@@ -707,15 +709,20 @@ BEGIN
     ),
     'top_learners', (
       SELECT jsonb_agg(jsonb_build_object(
-        'user_id', s.user_id,
-        'username', p.username,
-        'xp_total', s.xp_total,
-        'streak', st.streak,
-        'lessons_done', s.lessons_done
-      ) ORDER BY s.xp_total DESC LIMIT 10)
-      FROM public.user_stats s
-      JOIN public.profiles p ON p.id = s.user_id
-      LEFT JOIN public.user_streaks st ON st.user_id = s.user_id
+        'user_id', t.user_id,
+        'username', t.username,
+        'xp_total', t.xp_total,
+        'streak', t.streak,
+        'lessons_done', t.lessons_done
+      ))
+      FROM (
+        SELECT s.user_id, p.username, s.xp_total, st.streak, s.lessons_done
+        FROM public.user_stats s
+        JOIN public.profiles p ON p.id = s.user_id
+        LEFT JOIN public.user_streaks st ON st.user_id = s.user_id
+        ORDER BY s.xp_total DESC
+        LIMIT 10
+      ) t
     )
   ) INTO v_result;
 

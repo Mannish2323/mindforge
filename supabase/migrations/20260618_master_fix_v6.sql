@@ -20,14 +20,17 @@ CREATE TABLE IF NOT EXISTS public.user_learned_words (
 -- RLS for user_learned_words
 ALTER TABLE public.user_learned_words ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own learned words" ON public.user_learned_words;
 CREATE POLICY "Users can view their own learned words"
   ON public.user_learned_words FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own learned words" ON public.user_learned_words;
 CREATE POLICY "Users can insert their own learned words"
   ON public.user_learned_words FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own learned words" ON public.user_learned_words;
 CREATE POLICY "Users can update their own learned words"
   ON public.user_learned_words FOR UPDATE
   USING (auth.uid() = user_id);
@@ -43,7 +46,7 @@ CREATE TABLE IF NOT EXISTS public.review_queue (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id         UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   word_id         TEXT NOT NULL,
-  due_at          TIMESTAMPTZ DEFAULT NOW(),
+  next_review_at  TIMESTAMPTZ DEFAULT NOW(),
   interval_days   INTEGER DEFAULT 1,
   ease_factor     FLOAT DEFAULT 2.5,
   fail_count      INTEGER DEFAULT 0,
@@ -53,19 +56,20 @@ CREATE TABLE IF NOT EXISTS public.review_queue (
 
 ALTER TABLE public.review_queue ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own review queue" ON public.review_queue;
 CREATE POLICY "Users can manage their own review queue"
   ON public.review_queue FOR ALL
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE INDEX IF NOT EXISTS idx_review_queue_due ON public.review_queue(user_id, due_at);
+CREATE INDEX IF NOT EXISTS idx_review_queue_due ON public.review_queue(user_id, next_review_at);
 
 
 -- ── 3. admin_audit_logs ───────────────────────────────────────
 -- Records all admin actions for accountability.
 CREATE TABLE IF NOT EXISTS public.admin_audit_logs (
   id              UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  actor_id        UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  admin_id        UUID REFERENCES auth.users(id) ON DELETE SET NULL,
   action          TEXT NOT NULL,           -- e.g., 'grant_pro', 'suspend_user', 'update_flag'
   target_type     TEXT,                    -- e.g., 'user', 'feature_flag', 'plan'
   target_id       TEXT,                    -- e.g., user UUID or flag key
@@ -77,6 +81,7 @@ CREATE TABLE IF NOT EXISTS public.admin_audit_logs (
 ALTER TABLE public.admin_audit_logs ENABLE ROW LEVEL SECURITY;
 
 -- Only admins can read audit logs (via service role or admin role check)
+DROP POLICY IF EXISTS "Admins can read audit logs" ON public.admin_audit_logs;
 CREATE POLICY "Admins can read audit logs"
   ON public.admin_audit_logs FOR SELECT
   USING (
@@ -84,13 +89,14 @@ CREATE POLICY "Admins can read audit logs"
   );
 
 -- Only service role (server-side) or admins can insert
+DROP POLICY IF EXISTS "Admins can insert audit logs" ON public.admin_audit_logs;
 CREATE POLICY "Admins can insert audit logs"
   ON public.admin_audit_logs FOR INSERT
   WITH CHECK (
     EXISTS (SELECT 1 FROM public.admin_roles WHERE user_id = auth.uid())
   );
 
-CREATE INDEX IF NOT EXISTS idx_audit_logs_actor ON public.admin_audit_logs(actor_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_admin ON public.admin_audit_logs(admin_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON public.admin_audit_logs(created_at DESC);
 
 
@@ -108,10 +114,12 @@ CREATE TABLE IF NOT EXISTS public.usage_log (
 
 ALTER TABLE public.usage_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own usage log" ON public.usage_log;
 CREATE POLICY "Users can view their own usage log"
   ON public.usage_log FOR SELECT
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert their own usage log" ON public.usage_log;
 CREATE POLICY "Users can insert their own usage log"
   ON public.usage_log FOR INSERT
   WITH CHECK (auth.uid() = user_id);
@@ -134,6 +142,7 @@ CREATE TABLE IF NOT EXISTS public.ai_chat_messages (
 
 ALTER TABLE public.ai_chat_messages ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own chat messages" ON public.ai_chat_messages;
 CREATE POLICY "Users can manage their own chat messages"
   ON public.ai_chat_messages FOR ALL
   USING (auth.uid() = user_id)
@@ -151,6 +160,7 @@ CREATE TABLE IF NOT EXISTS public.admin_roles (
 ALTER TABLE public.admin_roles ENABLE ROW LEVEL SECURITY;
 
 -- Only existing admins can read/modify admin_roles
+DROP POLICY IF EXISTS "Admins can read admin_roles" ON public.admin_roles;
 CREATE POLICY "Admins can read admin_roles"
   ON public.admin_roles FOR SELECT
   USING (EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid()));
