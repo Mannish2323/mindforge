@@ -1,10 +1,20 @@
 packages:
   - '.'
+allowBuilds:
+  '@tailwindcss/oxide': true
+  esbuild: true
+  unrs-resolver: true
+  lightningcss: true
 supportedArchitectures:
   os:
     - linux
+    - win32
+    - current
   cpu:
     - x64
     - arm64
+    - current
   libc:
     - glibc
+    - musl
+    - current

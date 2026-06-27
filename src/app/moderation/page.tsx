@@ -1,1 +1,9 @@
-﻿export default function ModerationPage(){return(<div className='min-h-screen bg-[#0d0d18] p-8 text-white'><h1 className='text-2xl font-bold mb-4'>Moderation</h1><p className='text-purple-300/50'>Admin moderation panel.</p></div>)}
+'use client';
+
+export default function ModerationPage() {
+  return (
+    <div className="p-8">
+      <h1 className="text-2xl font-bold">Moderation</h1>
+    </div>
+  );
+}

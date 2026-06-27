@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import { AppShell } from '@/components/layout/AppShell';
-import { SplashScreen } from '@/components/ui/SplashScreen';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -17,7 +16,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [user, loading, router]);
 
   if (loading) {
-    return <SplashScreen duration={1200} />;
+    return <div className="min-h-screen bg-[#09071a] flex items-center justify-center text-white">Loading...</div>;
   }
 
   if (!user) return null;
