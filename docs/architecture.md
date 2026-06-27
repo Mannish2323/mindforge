@@ -8,42 +8,362 @@
 ## System Architecture Overview
 
 ```
+                              USERS
+                                 │
+             ┌───────────────────┴───────────────────┐
+             │                                       │
+      🌐 Web Application                     📱 Android APK
+        (Next.js PWA)                         (Capacitor)
+             │                                       │
+             └────────────── Shared Frontend ────────┘
+                           React + TypeScript
+                                   │
+                    UI Components + Animations
+                                   │
+                    Business Logic / Feature Layer
+                                   │
+                     Authentication Middleware
+                                   │
+             ┌─────────────────────┼──────────────────────┐
+             │                     │                      │
+         Sakura AI            Learning Engine       Premium Engine
+             │                     │                      │
+             └─────────────────────┼──────────────────────┘
+                                   │
+                            API Gateway Layer
+                                   │
+             ┌─────────────────────┼─────────────────────┐
+             │                     │                     │
+       Gemini API            Razorpay API         Notification API
+             │                     │                     │
+             └─────────────────────┼─────────────────────┘
+                                   │
+                            Supabase Backend
+                                   │
+     ┌───────────────┬─────────────┼──────────────┬───────────────┐
+     │               │             │              │
+  Auth API      PostgreSQL      Storage      Realtime      Edge Functions
+     │               │             │              │               │
+     └───────────────┴─────────────┴──────────────┴───────────────┘
+                                   │
+                             Admin Dashboard
+                                   │
+                         Analytics + Monitoring
+```
+
+### Client Architectures
+
+```
 Clients
-├── Next.js Web App (Browser)
-├── PWA (Installable)
-├── Android APK (Capacitor)
-└── Admin Panel (/admin route group)
 
-         │
-         ▼
-
-Shared Application Layer
-├── Presentation Layer      ← UI, Design System, Motion, Accessibility
-├── Feature Layer           ← All product features (Auth, Learn, AI, Premium...)
-├── Domain Layer            ← Business Logic Engines
-├── Data Layer              ← Supabase, Repositories, Cache, Edge Functions
-└── Infrastructure Layer    ← Logging, Analytics, Flags, Monitoring
-
-         │
-         ▼
-
-Supabase Backend
-├── Auth
-├── PostgreSQL
-├── Storage
-├── Realtime
-└── Edge Functions
-
-         │
-         ▼
-
-External Services
-├── Google Gemini API     ← Sakura AI Engine
-├── Razorpay              ← Payments
-└── Vercel                ← Deployment
+├── Web Application
+│      ├── Desktop
+│      ├── Tablet
+│      └── Mobile Browser
+│
+├── Progressive Web App (PWA)
+│      ├── Offline Cache
+│      ├── Install Prompt
+│      ├── Push Notifications
+│      └── Background Sync
+│
+├── Android APK
+│      ├── Native Splash
+│      ├── Native Notifications
+│      ├── File System
+│      ├── Camera
+│      ├── Microphone
+│      ├── Haptics
+│      └── App Updates
+│
+└── Admin Panel
+       ├── Content Management
+       ├── User Management
+       ├── Analytics
+       ├── Payments
+       └── Moderation
 ```
 
 > **Golden Rule:** All AI requests go through a server-side Edge Function or server action — never called directly from the client. API keys, prompt engineering, rate limiting, and usage tracking all live server-side.
+
+---
+
+## App Lifecycle & Navigation Flow
+
+```
+🚀 APP LAUNCH
+│
+├── Animated Splash Screen
+│      ├── Velmorth Logo Animation
+│      ├── Sakura Intro Animation
+│      ├── Background Particles
+│      ├── Load Fonts
+│      ├── Load Assets
+│      ├── Check Internet
+│      ├── Check App Version
+│      ├── Check Maintenance Mode
+│      ├── Restore Session
+│      └── Initialize App
+│
+▼
+Authentication Check
+│
+├── Existing Session?
+│      │
+│      ├── YES
+│      │      │
+│      │      ▼
+│      │  Load User Profile
+│      │
+│      └── NO
+│             │
+│             ▼
+│      Login / Register
+│
+▼
+AUTHENTICATION
+│
+├── Email Login
+├── Google Login
+├── Apple Login
+├── Magic Link
+├── Forgot Password
+├── Email Verification
+├── Terms & Privacy
+├── Create Username
+├── Upload Avatar
+└── Create Profile
+│
+▼
+NEW USER?
+│
+├── YES
+│      │
+│      ▼
+│  ONBOARDING
+│      │
+│      ├── Sakura Welcome
+│      ├── Choose Goal
+│      ├── Choose JLPT Target
+│      ├── Placement Test
+│      ├── Daily Goal
+│      ├── Reminder Permission
+│      ├── Notification Permission
+│      ├── Theme Selection
+│      ├── Language Selection
+│      └── Finish Setup
+│
+└── NO
+       │
+       ▼
+HOME DASHBOARD
+│
+├── Greeting
+├── Daily XP
+├── Level Ring
+├── Daily Streak
+├── Continue Learning
+├── Daily Missions
+├── AI Sakura Card
+├── Notifications
+├── Recent Activity
+├── Community Feed
+├── Leaderboard
+├── Premium Banner
+└── Search
+│
+▼
+MAIN NAVIGATION
+│
+├── 🏠 Home
+├── 📚 Learn
+├── 🤖 Sakura AI
+├── 📈 Progress
+├── 👤 Profile
+└── ☰ More
+        │
+        ├── Vocabulary
+        ├── Grammar
+        ├── Kanji
+        ├── Speaking
+        ├── Listening
+        ├── Writing
+        ├── Reading
+        ├── Mock Tests
+        ├── Achievements
+        ├── Community
+        ├── Shop
+        ├── Premium
+        ├── Downloads
+        ├── Bookmarks
+        ├── Settings
+        └── Help
+│
+▼
+LEARNING FLOW
+│
+Course
+│
+▼
+Module
+│
+▼
+Lesson
+│
+▼
+Vocabulary
+│
+▼
+Grammar
+│
+▼
+Kanji Practice
+│
+▼
+Reading
+│
+▼
+Listening
+│
+▼
+Speaking
+│
+▼
+Writing
+│
+▼
+Mini Quiz
+│
+▼
+Lesson Completed?
+│
+├── NO
+│      │
+│      ├── Sakura Help
+│      ├── Retry
+│      ├── Hint
+│      └── Practice Again
+│
+└── YES
+       │
+       ▼
+Reward Engine
+│
+├── XP
+├── Coins
+├── Gems
+├── Hearts
+├── Achievement
+├── Badge
+├── Daily Streak
+├── Lesson Unlock
+├── Review Queue
+└── Save Progress
+│
+▼
+SAKURA AI
+│
+├── Chat
+├── Explain Grammar
+├── Explain Vocabulary
+├── Conversation
+├── Pronunciation
+├── Speaking Coach
+├── Writing Coach
+├── Homework Help
+├── Motivation
+├── Daily Reminder
+├── Notifications
+├── Study Planner
+├── Smart Recommendations
+└── Save Conversation
+│
+▼
+PROGRESS
+│
+├── XP History
+├── Level Progress
+├── JLPT Progress
+├── Vocabulary Progress
+├── Grammar Progress
+├── Kanji Progress
+├── Speaking Progress
+├── Reading Progress
+├── Writing Progress
+├── Listening Progress
+├── Weak Areas
+├── Calendar
+└── Statistics
+│
+▼
+COMMUNITY
+│
+├── Feed
+├── Friends
+├── Leaderboard
+├── Study Groups
+├── Challenges
+├── Daily Rankings
+├── Comments
+├── Likes
+└── Share Achievement
+│
+▼
+PREMIUM
+│
+├── View Plans
+├── Compare Plans
+├── Razorpay Checkout
+├── Verify Payment
+├── Activate Premium
+├── Unlock Features
+├── Billing History
+└── Manage Subscription
+│
+▼
+PROFILE
+│
+├── Avatar
+├── Username
+├── Level
+├── XP
+├── Statistics
+├── Bookmarks
+├── Downloads
+├── Notes
+├── Certificates
+├── Settings
+└── Logout
+│
+▼
+SETTINGS
+│
+├── Theme
+├── Language
+├── Notifications
+├── AI Voice
+├── Privacy
+├── Security
+├── Connected Accounts
+├── Delete Account
+├── Export Data
+└── About App
+│
+▼
+SYNC ENGINE
+│
+├── Save Progress
+├── Sync XP
+├── Sync Lessons
+├── Sync Achievements
+├── Sync Purchases
+├── Sync AI Chats
+├── Offline Queue
+└── Cloud Backup
+│
+▼
+END
+```
 
 ---
 
@@ -82,6 +402,56 @@ External Services
 | Gateway | Server-side Edge Function (never client-direct) |
 | Persona | Sakura AI Assistant |
 
+#### Sakura AI Execution Flow
+
+```
+User
+
+↓
+
+Chat UI
+
+↓
+
+Prompt Builder
+
+↓
+
+Context Builder
+
+↓
+
+Conversation Memory
+
+↓
+
+Safety Check
+
+↓
+
+Gemini API
+
+↓
+
+Response Formatter
+
+↓
+
+Study Recommendation
+
+↓
+
+Store Conversation
+
+↓
+
+Notification Engine
+
+↓
+
+Return Response
+```
+
 ### Infrastructure
 
 | Layer | Technology |
@@ -92,6 +462,48 @@ External Services
 | Monitoring | Sentry (Phase 14+) |
 | Feature Flags | Custom feature_flags table or Posthog |
 | Analytics | Custom analytics_events table |
+
+#### Premium Subscription Payment Flow
+
+```
+User
+
+↓
+
+Select Plan
+
+↓
+
+Create Order
+
+↓
+
+Razorpay Checkout
+
+↓
+
+Verify Signature
+
+↓
+
+Webhook
+
+↓
+
+Update Subscription
+
+↓
+
+Unlock Premium
+
+↓
+
+Refresh Session
+
+↓
+
+Premium Enabled
+```
 
 ---
 
@@ -108,6 +520,33 @@ Responsible for everything the user sees and interacts with.
 | Responsive Layout | Mobile-first grid, breakpoint strategy, adaptive components |
 | Accessibility | ARIA, keyboard navigation, focus management, contrast compliance |
 | Theme Engine | Dark/light mode, data-theme tokens, persisted preference |
+
+#### Presentation Views Hierarchy
+
+```
+Presentation Layer
+
+├── Splash Screen
+├── Login
+├── Onboarding
+├── Dashboard
+├── Learn
+├── Vocabulary
+├── Grammar
+├── Kanji
+├── Writing
+├── Speaking
+├── Listening
+├── Reading
+├── Sakura AI
+├── Progress
+├── Achievements
+├── Community
+├── Premium
+├── Notifications
+├── Settings
+└── Profile
+```
 
 > **Design rule:** All spacing, color, font-size, and radius values must reference design tokens — never hardcoded pixel values. UI components never contain business logic.
 
@@ -136,6 +575,37 @@ Each feature is a self-contained unit with its own `components/`, `hooks/`, and 
 | Premium | Plan comparison, Razorpay checkout, entitlement gating |
 | Admin | CMS for content, user management, analytics, payment reports |
 
+#### Feature Modules Hierarchy
+
+```
+Feature Layer
+Feature Modules
+
+├── Authentication
+├── User Profile
+├── Daily Goals
+├── XP System
+├── Level System
+├── Streak System
+├── Lesson Engine
+├── Quiz Engine
+├── Writing Engine
+├── Speaking Engine
+├── Reading Engine
+├── Listening Engine
+├── Vocabulary Engine
+├── Grammar Engine
+├── Kanji Engine
+├── Flashcards
+├── Review Queue
+├── AI Sakura
+├── Community
+├── Leaderboards
+├── Premium
+├── Notifications
+└── Settings
+```
+
 ---
 
 ### Layer 3 — Domain Layer
@@ -152,6 +622,63 @@ Pure business logic. No Supabase calls, no UI code — framework-agnostic and fu
 | Daily Goal Engine | Goal setting, progress tracking, completion rewards, push trigger |
 | Notification Rules | When and what to notify: lesson reminders, streak alerts, achievement unlocks |
 | AI Usage Rules | Free-tier limits, premium allowances, abuse detection thresholds |
+
+#### Business Logic Hierarchy
+
+```
+Business Logic Layer
+Core Logic
+
+├── XP Calculator
+├── Level Calculator
+├── Lesson Unlock
+├── Achievement Engine
+├── Daily Mission Engine
+├── Hearts System
+├── Gems System
+├── Premium Access
+├── Review Scheduler
+├── Recommendation Engine
+├── Reminder Engine
+├── Study Planner
+├── Weak Area Detection
+├── Offline Sync
+└── Conflict Resolver
+```
+
+#### Notification System Flow
+
+```
+Lesson Reminder
+
+↓
+
+Daily Goal
+
+↓
+
+Achievement
+
+↓
+
+Streak Warning
+
+↓
+
+Premium Expiry
+
+↓
+
+Community Mention
+
+↓
+
+AI Reminder
+
+↓
+
+Push Notification
+```
 
 > **Domain rule:** These engines are called by services and server actions. They return computed results. They never write to the database directly.
 
@@ -170,6 +697,79 @@ Handles all data access, mutations, and synchronisation.
 | Cache Layer | TanStack Query cache for read-heavy data; revalidation strategy per entity type |
 | Queries | Named query functions used by repositories, never duplicated across features |
 
+#### Backend Layer Hierarchy
+
+```text
+Supabase Backend
+
+├── Authentication
+│   ├── Email / Password
+│   ├── Google OAuth
+│   ├── Apple OAuth
+│   ├── Magic Link
+│   ├── Session Management
+│   └── JWT Authentication
+│
+├── PostgreSQL Database
+│   ├── User Profiles
+│   ├── Courses
+│   ├── Lessons
+│   ├── Vocabulary
+│   ├── Grammar
+│   ├── Kanji
+│   ├── Progress
+│   ├── Achievements
+│   ├── Community
+│   ├── Notifications
+│   ├── Premium
+│   └── Analytics
+│
+├── Storage Buckets
+│   ├── User Avatars
+│   ├── Course Images
+│   ├── Audio Files
+│   ├── Certificates
+│   ├── Downloads
+│   └── App Assets
+│
+├── Realtime Engine
+│   ├── Live Notifications
+│   ├── Leaderboards
+│   ├── Community Feed
+│   ├── Messages
+│   └── Progress Sync
+│
+├── Edge Functions
+│   ├── Sakura AI Gateway
+│   ├── Payment Verification
+│   ├── Subscription Updates
+│   ├── Email Services
+│   ├── Scheduled Jobs
+│   └── Background Tasks
+│
+├── Security Layer
+│   ├── Row Level Security (RLS)
+│   ├── API Validation
+│   ├── Rate Limiting
+│   ├── Input Sanitization
+│   ├── Encryption
+│   └── Audit Logs
+│
+├── Monitoring
+│   ├── Error Logs
+│   ├── Performance Metrics
+│   ├── API Monitoring
+│   ├── Usage Analytics
+│   └── Health Checks
+│
+└── Backup & Recovery
+    ├── Automatic Backups
+    ├── Database Recovery
+    ├── Version History
+    ├── Disaster Recovery
+    └── Data Integrity Checks
+```
+
 ---
 
 ### Layer 5 — Infrastructure Layer
@@ -184,6 +784,152 @@ Runs silently in the background for every request and action.
 | Error Handling | Centralised error boundaries, typed error classes, user-facing error messages |
 | Feature Flags | feature_flags table with per-user/per-role overrides for gradual rollout |
 | Environment Config | env.ts typed wrapper for all process.env values; no direct access in features |
+
+#### Security Layer Hierarchy
+
+```
+Security Layer
+Security
+
+├── JWT
+├── Supabase Auth
+├── Row Level Security
+├── Protected Routes
+├── API Validation
+├── Rate Limiting
+├── Input Sanitization
+├── XSS Protection
+├── CSRF Protection
+├── Encryption
+├── Secret Manager
+└── Audit Logs
+```
+
+#### Analytics Event Flow
+
+```
+User Event
+
+↓
+
+Track Event
+
+↓
+
+Analytics Queue
+
+↓
+
+Database
+
+↓
+
+Dashboard
+
+↓
+
+Reports
+
+↓
+
+Charts
+
+↓
+
+Insights
+```
+
+#### Production Deployment Flow
+
+```
+GitHub
+
+↓
+
+CI/CD
+
+↓
+
+Vercel
+
+↓
+
+Supabase
+
+↓
+
+Domain
+
+↓
+
+CDN
+
+↓
+
+Users
+```
+
+#### External Services Breakdown
+
+```
+Third Party Services
+
+├── Gemini API
+├── Razorpay
+├── Google OAuth
+├── Apple OAuth
+├── Firebase Cloud Messaging (Optional)
+├── Vercel
+├── GitHub
+├── Google Analytics
+└── Sentry
+```
+
+#### Complete User-to-Backend Data Flow
+
+```
+User
+
+↓
+
+Frontend
+
+↓
+
+Validation
+
+↓
+
+API Route
+
+↓
+
+Business Logic
+
+↓
+
+Supabase
+
+↓
+
+Database
+
+↓
+
+Response
+
+↓
+
+Animation
+
+↓
+
+UI Update
+
+↓
+
+Realtime Sync
+```
 
 ---
 

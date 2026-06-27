@@ -1,7 +1,14 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { callGemini, extractGeminiText, VELMORTH_SENSEI_PROMPT } from '@/lib/gemini';
 
-// Rate-limit map: userId → last request timestamps (simple in-memory sliding window)
+export const dynamic = 'force-dynamic';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+// Rate-limit map: userId → last request timestamps (sliding window)
 const rateLimitMap = new Map<string, number[]>();
 const MAX_REQUESTS_PER_MIN = 10;
 
@@ -15,8 +22,7 @@ function isRateLimited(userId: string): boolean {
   return false;
 }
 
-// Enforced JSON suffix — appended to every system prompt so Gemini always
-// returns a parseable structure instead of free-form text.
+// Enforced JSON suffix
 const JSON_STRUCTURE_SUFFIX = `
 
 IMPORTANT — You MUST respond ONLY with a valid JSON object. No prose, no markdown fences.
@@ -37,33 +43,72 @@ If the user writes something unrelated to Japanese language learning, respond:
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { session_id, messages = [], topic, difficulty, user_id } = body;
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
+    
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized: Missing token' }, { status: 401 });
+    }
 
-    // Per-user rate limiting
-    if (user_id && isRateLimited(user_id)) {
+    // Verify user
+    const userClient = createClient(supabaseUrl, anonKey);
+    const { data: { user }, error: authErr } = await userClient.auth.getUser(token);
+    if (authErr || !user) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { message, history = [], session_id, jlptLevel } = body;
+
+    // 1. Per-user rate limiting (sliding window)
+    if (isRateLimited(user.id)) {
       return NextResponse.json(
         { error: 'Too many requests. Please wait a moment.' },
         { status: 429 }
       );
     }
 
+    const adminSupabase = createClient(supabaseUrl, serviceKey);
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+    // 2. Fetch daily AI limit from entitlements
+    const { data: ent } = await adminSupabase
+      .from('entitlements')
+      .select('ai_limit_daily')
+      .eq('user_id', user.id)
+      .maybeSingle();
+      
+    // 3. Fetch today's AI usage
+    const { data: usage } = await adminSupabase
+      .from('usage_counters')
+      .select('ai_requests')
+      .eq('user_id', user.id)
+      .eq('date', today)
+      .maybeSingle();
+
+    const limit = ent?.ai_limit_daily ?? 5; // default fallback
+    const used = usage?.ai_requests ?? 0;
+
+    if (used >= limit) {
+      return NextResponse.json(
+        { error: `You have reached your daily limit of ${limit} AI messages. Please upgrade your plan or try again tomorrow.` },
+        { status: 403 }
+      );
+    }
+
     // Build conversation history for Gemini
-    const contents = messages.map((m: any) => ({
+    const contents = history.map((m: any) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     }));
 
-    // Add current user turn if no history provided
-    if (contents.length === 0) {
-      const contextText = topic
-        ? `Let's practice Japanese conversation about: ${topic}. Difficulty: ${difficulty || 'beginner'}.`
-        : 'こんにちは！Let\'s start our Japanese lesson.';
-      contents.push({ role: 'user', parts: [{ text: contextText }] });
-    }
+    // Add current user turn
+    contents.push({ role: 'user', parts: [{ text: message }] });
 
     // Combine master sensei prompt with strict JSON enforcement
-    const systemPrompt = VELMORTH_SENSEI_PROMPT + JSON_STRUCTURE_SUFFIX;
+    const systemPrompt = VELMORTH_SENSEI_PROMPT + 
+      (jlptLevel ? `\nTarget JLPT Level: ${jlptLevel}` : '') + 
+      JSON_STRUCTURE_SUFFIX;
 
     const data = await callGemini(contents, systemPrompt);
     const responseText = extractGeminiText(data);
@@ -84,13 +129,11 @@ export async function POST(request: Request) {
         .trim();
       parsed = JSON.parse(cleaned);
     } catch {
-      // Fallback: extract fields using regex if JSON parse fails
+      // Fallback extraction
       const jaMatch     = responseText.match(/"content_ja"\s*:\s*"([^"]+)"/);
       const romajiMatch = responseText.match(/"content_romaji"\s*:\s*"([^"]+)"/);
       const enMatch     = responseText.match(/"content_en"\s*:\s*"([^"]+)"/);
       const noteMatch   = responseText.match(/"grammar_note"\s*:\s*"([^"]+)"/);
-
-      // Ultimate fallback: pull first Japanese line
       const jaFallback  = responseText.match(/[ぁ-んァ-ヶ一-龥][^\n]*/)?.[0] ?? responseText;
 
       parsed = {
@@ -100,6 +143,32 @@ export async function POST(request: Request) {
         grammar_note:   noteMatch?.[1]   ?? '',
       };
     }
+
+    const formattedResponse = parsed.content_ja
+      ? `${parsed.content_ja}\n\n*${parsed.content_romaji}*\n\n${parsed.content_en}${parsed.grammar_note ? '\n\n' + parsed.grammar_note : ''}`
+      : responseText;
+
+    // Save user message to database
+    await adminSupabase.from('ai_chat_messages').insert({
+      user_id: user.id,
+      role: 'user',
+      content: message,
+      session_id: session_id || null
+    });
+
+    // Save assistant message to database
+    await adminSupabase.from('ai_chat_messages').insert({
+      user_id: user.id,
+      role: 'assistant',
+      content: formattedResponse,
+      session_id: session_id || null
+    });
+
+    // Increment daily AI requests count
+    await adminSupabase.rpc('increment_daily_usage', {
+      p_user_id: user.id,
+      p_counter: 'ai_requests'
+    });
 
     return NextResponse.json({
       message_id:     `ai-${Date.now()}`,

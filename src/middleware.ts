@@ -12,6 +12,7 @@ const PROTECTED_ROUTES = [
   '/profile',
   '/admin',
   '/billing',
+  '/onboarding',
 ];
 
 // Routes accessible only when NOT authenticated (redirect to /home if already logged in)

@@ -241,7 +241,7 @@ export function useStore() {
         // 1. Hydrate User Stats & Streaks
         const { data: statsData } = await supabase
           .from('user_stats')
-          .select('xp_total, gems_balance, hearts_total, hearts_max, hearts_recover_at, hearts_last_debit_at')
+          .select('xp_total, xp_today, gems_balance, hearts_total, hearts_max, hearts_recover_at, hearts_last_debit_at')
           .eq('user_id', user.id)
           .maybeSingle();
 
@@ -325,7 +325,8 @@ export function useStore() {
           lastStudyDate: streakData?.last_study_at ?? state.lastStudyDate,
           lessonProgress,
           badges,
-          srsData
+          srsData,
+          dailyXPEarned: statsData?.xp_today ?? state.dailyXPEarned
         };
 
         save(updatedState);

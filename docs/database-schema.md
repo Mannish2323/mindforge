@@ -1,133 +1,660 @@
-# Learn with Velmorth v2 — Database Schema
+# Learn with Velmorth Complete Database Schema & ER Diagram (Production)
 
-The database for Learn with Velmorth is built on **Supabase PostgreSQL**. Relational integrity, data constraints, and fine-grained Row Level Security (RLS) policies are configured directly in the database.
+# Database Overview
 
----
+```text
+Supabase PostgreSQL
 
-## Table Groups
-
-### Group 1 — Identity & Subscriptions
-
-#### `profiles`
-Holds the core user profile details linked to `auth.users`.
-- `id` (UUID, PK) — References `auth.users(id)`
-- `username` (TEXT, Unique) — The user's screen handle
-- `display_name` (TEXT) — Public display name
-- `avatar_url` (TEXT) — URL to profile photo
-- `bio` (TEXT) — User bio details
-- `created_at` / `updated_at` (TIMESTAMPTZ)
-
-#### `user_settings`
-User-specific preferences and configs.
-- `user_id` (UUID, PK) — References `auth.users(id)`
-- `theme` (TEXT) — 'dark' | 'light' | 'system'
-- `ui_language` (TEXT) — Interface language (default: 'en')
-- `tts_enabled` (BOOLEAN) — Text-to-speech enabled flag
-- `goal_minutes` (INT) — Daily study goal duration target (default: 10 mins)
-- `notifications` (BOOLEAN) — Toggle for push reminders
-- `jlpt_target` (TEXT) — 'N5' | 'N4' | 'N3' | 'N2' | 'N1'
-- `heart_system_enabled` (BOOLEAN)
-- `heart_recovery_mode` (TEXT) — 'time' | 'watch_ad' | 'gem'
-
-#### `user_stats`
-Aggregated progress metrics and virtual currencies.
-- `user_id` (UUID, PK) — References `auth.users(id)`
-- `xp_total` (INT) — Cumulative XP earned
-- `xp_today` (INT) — Daily XP score
-- `gems_balance` (INT) — Virtual gem balance
-- `lessons_done` (INT) — Lessons completed
-- `words_learned` (INT)
-- `reviews_done` (INT)
-- `kanji_learned` (INT)
-- `speak_sessions` (INT)
-- `hearts_total` / `hearts_max` (INT)
-
-#### `user_streaks`
-Streak accounting values.
-- `user_id` (UUID, PK) — References `auth.users(id)`
-- `streak` (INT) — Current continuous days
-- `longest` (INT) — Max historical streak
-- `freeze_count` (INT) — Saved streak freezes owned
-- `last_study_at` (DATE) — Date of last study completion
-
-#### `entitlements` (Subscriptions)
-Tracks product tiers, subscription validity, and features limits.
-- `user_id` (UUID, PK) — References `auth.users(id)`
-- `plan_id` (TEXT) — 'free' | 'starter' | 'plus' | 'pro'
-- `status` (TEXT) — 'free' | 'starter' | 'plus' | 'pro' | 'yearly' | 'cancelled'
-- `hearts_limit` (INT)
-- `ai_limit_daily` (INT)
-- `lessons_limit_daily` (INT)
-- `ads_enabled` (BOOLEAN)
-- `starts_at` / `ends_at` (TIMESTAMPTZ)
-- `razorpay_order_id` (TEXT)
-- `razorpay_payment_id` (TEXT)
+├── Identity
+├── Learning Content
+├── User Progress
+├── Sakura AI
+├── Community
+├── Premium
+├── Notifications
+├── Analytics
+├── Administration
+└── System
+```
 
 ---
 
-### Group 2 — Learning & Progress
+# 1️⃣ Identity Module
 
-#### `lesson_progress`
-Status of users' progress per lesson.
-- `id` (UUID, PK)
-- `user_id` (UUID) — References `auth.users(id)`
-- `lesson_id` (TEXT) — Lesson identifier
-- `status` (TEXT) — 'locked' | 'available' | 'in_progress' | 'completed'
-- `xp_earned` (INT)
-- `score` (INT)
-- `attempts` (INT)
-- `completed_at` (TIMESTAMPTZ)
+```text
+profiles
+│
+├── id (UUID)
+├── auth_id
+├── username
+├── full_name
+├── email
+├── avatar_url
+├── bio
+├── country
+├── timezone
+├── preferred_language
+├── current_jlpt
+├── target_jlpt
+├── role
+├── created_at
+└── updated_at
 
-#### `review_queue`
-Spaced Repetition System (SRS) review parameters mapped to the SM-2 algorithm.
-- `id` (UUID, PK)
-- `user_id` (UUID) — References `auth.users(id)`
-- `word_id` (TEXT) — References vocabulary or kanji
-- `ease_factor` (FLOAT) — SM-2 difficulty multiplier (default: 2.5)
-- `interval_days` (INT) — Days until next review (default: 1)
-- `repetitions` (INT) — Successful recalls count
-- `next_review_at` (TIMESTAMPTZ)
-- `last_reviewed_at` (TIMESTAMPTZ)
+↓
 
-#### `jlpt_progress`
-Tracks question-level logs for placement assessments.
-- `id` (UUID, PK)
-- `user_id` (UUID)
-- `level` (TEXT) — JLPT level
-- `category` (TEXT) — Vocabulary, grammar, kanji
-- `question_id` (TEXT)
-- `correct` (BOOLEAN)
-- `attempted_at` (TIMESTAMPTZ)
+user_settings
 
----
+↓
 
-### Group 3 — System & Access Control
+user_roles
 
-#### `admin_roles`
-Role-Based Access Control (RBAC) mapping table.
-- `user_id` (UUID, PK) — References `auth.users(id)`
-- `role` (TEXT) — 'admin' | 'super_admin' | 'moderator'
-- `granted_by` (UUID)
-- `granted_at` (TIMESTAMPTZ)
+↓
 
-#### `moderation_reports`
-User and content flags filed by students or moderators.
-- `id` (UUID, PK)
-- `reporter_id` (UUID)
-- `target_user_id` (UUID)
-- `target_type` (TEXT) — 'user' | 'content' | 'chat' | 'other'
-- `reason` (TEXT)
-- `status` (TEXT) — 'pending' | 'reviewed' | 'resolved' | 'dismissed'
+subscriptions
+```
 
-#### `activity_logs`
-High-frequency security and transactional audit log.
-- `id` (UUID, PK)
-- `user_id` (UUID)
-- `action` (TEXT)
-- `metadata` (JSONB)
-- `created_at` (TIMESTAMPTZ)
+Relations
+
+```
+profiles
+│
+├── 1 → 1 user_settings
+├── 1 → 1 user_stats
+├── 1 → many notifications
+├── 1 → many achievements
+├── 1 → many progress
+├── 1 → many ai_conversations
+└── 1 → many payments
+```
 
 ---
 
-## Security Policies (RLS)
-Every table has **Row Level Security** enabled. Core policy templates verify that users can only select, update, or delete data belonging to their own `auth.uid()`, while allowing public read on specific entities like profiles (for leaderboards) or badges.
+# 2️⃣ Learning Content
+
+```text
+courses
+
+↓
+
+modules
+
+↓
+
+lessons
+
+↓
+
+lesson_sections
+
+↓
+
+lesson_blocks
+```
+
+Vocabulary
+
+```text
+vocabulary
+
+↓
+
+vocabulary_examples
+
+↓
+
+vocabulary_audio
+```
+
+Grammar
+
+```text
+grammar_topics
+
+↓
+
+grammar_examples
+
+↓
+
+grammar_quizzes
+```
+
+Kanji
+
+```text
+kanji
+
+↓
+
+kanji_strokes
+
+↓
+
+kanji_examples
+```
+
+Reading
+
+```text
+reading_passages
+
+↓
+
+reading_questions
+```
+
+Listening
+
+```text
+listening_lessons
+
+↓
+
+audio_files
+
+↓
+
+questions
+```
+
+Speaking
+
+```text
+speaking_lessons
+
+↓
+
+pronunciation_checks
+```
+
+Writing
+
+```text
+writing_lessons
+
+↓
+
+stroke_order
+
+↓
+
+writing_feedback
+```
+
+---
+
+# 3️⃣ User Progress
+
+```text
+user_progress
+
+↓
+
+lesson_progress
+
+↓
+
+module_progress
+
+↓
+
+course_progress
+
+↓
+
+vocabulary_progress
+
+↓
+
+grammar_progress
+
+↓
+
+kanji_progress
+
+↓
+
+reading_progress
+
+↓
+
+writing_progress
+
+↓
+
+speaking_progress
+
+↓
+
+listening_progress
+```
+
+Achievements
+
+```text
+achievements
+
+↓
+
+user_achievements
+```
+
+Bookmarks
+
+```text
+bookmarks
+```
+
+Downloads
+
+```text
+downloads
+```
+
+Review Queue
+
+```text
+review_queue
+
+↓
+
+flashcards
+
+↓
+
+review_history
+```
+
+---
+
+# 4️⃣ Sakura AI Module
+
+```text
+ai_conversations
+
+↓
+
+ai_messages
+
+↓
+
+ai_memory
+
+↓
+
+ai_usage
+
+↓
+
+ai_feedback
+
+↓
+
+ai_recommendations
+```
+
+Flow
+
+```
+User
+
+↓
+
+Conversation
+
+↓
+
+Messages
+
+↓
+
+Gemini Response
+
+↓
+
+Conversation Summary
+
+↓
+
+Recommendation
+
+↓
+
+Notification
+```
+
+---
+
+# 5️⃣ Community Module
+
+```text
+posts
+
+↓
+
+comments
+
+↓
+
+likes
+
+↓
+
+saved_posts
+
+↓
+
+friends
+
+↓
+
+friend_requests
+
+↓
+
+study_groups
+
+↓
+
+leaderboards
+```
+
+---
+
+# 6️⃣ Premium Module
+
+```text
+plans
+
+↓
+
+subscriptions
+
+↓
+
+payments
+
+↓
+
+payment_history
+
+↓
+
+billing_history
+
+↓
+
+premium_features
+```
+
+---
+
+# 7️⃣ Notification Module
+
+```text
+notifications
+
+↓
+
+notification_preferences
+
+↓
+
+push_tokens
+
+↓
+
+scheduled_notifications
+```
+
+---
+
+# 8️⃣ Analytics Module
+
+```text
+analytics_events
+
+↓
+
+screen_views
+
+↓
+
+button_clicks
+
+↓
+
+lesson_logs
+
+↓
+
+ai_logs
+
+↓
+
+payment_logs
+```
+
+---
+
+# 9️⃣ Admin Module
+
+```text
+admin_users
+
+↓
+
+admin_logs
+
+↓
+
+content_versions
+
+↓
+
+feature_flags
+
+↓
+
+audit_logs
+```
+
+---
+
+# 🔟 System Module
+
+```text
+app_versions
+
+↓
+
+maintenance
+
+↓
+
+error_logs
+
+↓
+
+crash_reports
+
+↓
+
+api_keys
+
+↓
+
+system_settings
+```
+
+---
+
+# Complete ER Diagram
+
+```text
+profiles
+│
+├────────────┐
+│            │
+▼            ▼
+user_settings    subscriptions
+│
+▼
+user_stats
+│
+├──────────────┐
+│              │
+▼              ▼
+user_progress  notifications
+│
+├──────────────┐
+│              │
+▼              ▼
+course_progress
+module_progress
+lesson_progress
+│
+▼
+review_queue
+│
+▼
+flashcards
+
+courses
+│
+▼
+modules
+│
+▼
+lessons
+│
+├──────────────┬───────────────┬──────────────┬──────────────┐
+▼              ▼               ▼              ▼
+grammar     vocabulary      kanji       quizzes
+│              │               │
+▼              ▼               ▼
+examples    examples      stroke_order
+
+profiles
+│
+▼
+ai_conversations
+│
+▼
+ai_messages
+│
+▼
+ai_feedback
+
+profiles
+│
+▼
+posts
+│
+▼
+comments
+│
+▼
+likes
+
+profiles
+│
+▼
+payments
+│
+▼
+subscriptions
+│
+▼
+premium_features
+```
+
+---
+
+# Storage Buckets
+
+```text
+avatars
+course-images
+lesson-audio
+kanji-images
+certificates
+downloads
+ai-assets
+app-assets
+community-media
+```
+
+---
+
+# Row Level Security (RLS)
+
+```text
+profiles
+✔ Owner Only
+
+user_progress
+✔ Owner Only
+
+subscriptions
+✔ Owner Only
+
+payments
+✔ Owner Only
+
+notifications
+✔ Owner Only
+
+community_posts
+✔ Public Read
+
+courses
+✔ Public Read
+
+lessons
+✔ Public Read
+
+admin_tables
+✔ Admin Only
+```
+
+---
+
+# Database Statistics
+
+```text
+Total Tables : 50+
+
+Identity : 6
+
+Learning : 15
+
+Progress : 12
+
+AI : 6
+
+Community : 6
+
+Premium : 5
+
+Analytics : 6
+
+Administration : 5
+
+System : 6
+```
+
+---
+
+# Production Rules
+
+* UUID Primary Keys
+* Foreign Keys on all relations
+* Composite unique keys for progress tables
+* Soft delete where required
+* Row Level Security enabled
+* Automatic timestamps (`created_at`, `updated_at`)
+* Database triggers for XP, streaks, and achievements
+* Edge Functions for AI, payments, notifications, and scheduled jobs
+* Indexed columns for search, lessons, vocabulary, and user progress
+* Daily backups and audit logging enabled

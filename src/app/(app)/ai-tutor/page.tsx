@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Tabs } from '@/components/ui/Tabs';
@@ -287,7 +288,7 @@ function PremiumAITutorPreview() {
 
 // ─── Full AI Tutor (Premium) ─────────────────────────────────────────────────
 function FullAITutorPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, session } = useAuth();
   const [tab, setTab] = useState('chat');
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
@@ -300,6 +301,34 @@ function FullAITutorPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const recRef = useRef<any>(null);
 
+  // Load chat history from Supabase on mount
+  useEffect(() => {
+    if (!user) return;
+    const fetchHistory = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('ai_chat_messages')
+          .select('role, content, created_at')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: true })
+          .limit(30);
+
+        if (error) throw error;
+        if (data && data.length > 0) {
+          setMessages(data.map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content,
+            ts: new Date(m.created_at).getTime()
+          })));
+        }
+      } catch (err) {
+        console.error('Error fetching chat history:', err);
+      }
+    };
+    fetchHistory();
+  }, [user]);
+
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   const sendMessage = useCallback(async (text?: string) => {
@@ -311,15 +340,37 @@ function FullAITutorPage() {
     try {
       const res = await fetch('/api/ai/conversation', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg, history: messages.slice(-8).map(m => ({ role: m.role, content: m.content })), userId: user?.id, jlptLevel: profile?.jlpt_target || 'N5' }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`
+        },
+        body: JSON.stringify({
+          message: msg,
+          history: messages.slice(-8).map(m => ({ role: m.role, content: m.content })),
+          userId: user?.id,
+          jlptLevel: profile?.jlpt_target || 'N5'
+        }),
       });
       const d = await res.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: d.response || d.message || d.content || 'Sorry, I could not process that.', ts: Date.now() }]);
+      
+      if (!res.ok) {
+        setMessages(prev => [...prev, { role: 'assistant', content: d.error || 'Failed to process request.', ts: Date.now() }]);
+      } else {
+        let formatted = '';
+        if (d.content_ja) {
+          formatted = `${d.content_ja}\n\n*${d.content_romaji}*\n\n${d.content_en}`;
+          if (d.grammar_note) {
+            formatted += `\n\n${d.grammar_note}`;
+          }
+        } else {
+          formatted = d.response || d.message || d.content || 'Sorry, I could not process that.';
+        }
+        setMessages(prev => [...prev, { role: 'assistant', content: formatted, ts: Date.now() }]);
+      }
     } catch {
       setMessages(prev => [...prev, { role: 'assistant', content: 'Connection error. Please try again.', ts: Date.now() }]);
     } finally { setLoading(false); }
-  }, [input, loading, messages, user, profile]);
+  }, [input, loading, messages, user, profile, session]);
 
   const startVoice = () => {
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;

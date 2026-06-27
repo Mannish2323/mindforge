@@ -9,6 +9,7 @@ import {
   Bookmark, Download, User, CreditCard, Settings, Shield,
   ChevronRight, GraduationCap, Brain, FileText, Gamepad2, Briefcase
 } from 'lucide-react';
+import { Logo } from '@/components/ui/Logo';
 import { JLPTBadge, PlanBadge } from '@/components/shared/JLPTBadge';
 
 const NAV_GROUPS = [
@@ -89,12 +90,7 @@ export function Sidebar() {
           onClick={() => router.push('/home')}
           className="flex items-center gap-2 w-full hover:opacity-80 transition-opacity min-w-0"
         >
-          <div
-            className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)', boxShadow: '0 4px 12px rgba(124,58,237,0.4)' }}
-          >
-            <span className="text-white font-black text-xs">V</span>
-          </div>
+          <Logo size={28} glow={false} />
           <div className="text-left min-w-0 overflow-hidden">
             <div className="text-white font-black text-sm tracking-wide leading-none truncate">Velmorth</div>
             <div className="text-[9px] font-jp tracking-widest mt-0.5 truncate" style={{ color: 'rgba(167,139,250,0.5)' }}>ベルモルス</div>

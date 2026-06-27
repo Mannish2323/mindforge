@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
 import { useStore } from '@/hooks/useStore';
 import { CheckCircle2, Lock, ChevronRight, Loader2 } from 'lucide-react';
@@ -19,6 +20,7 @@ interface Unit {
 }
 
 export default function PathPage() {
+  const router = useRouter();
   const { profile } = useAuth();
   const { state } = useStore();
   const [units, setUnits] = useState<Unit[]>([]);
@@ -70,6 +72,7 @@ export default function PathPage() {
                 <button
                   key={lesson.lesson_id}
                   disabled={!!locked}
+                  onClick={() => router.push(`/path/${lesson.lesson_id}`)}
                   className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all text-left ${
                     done
                       ? 'bg-green-500/10 border border-green-500/20 text-green-300'
