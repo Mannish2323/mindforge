@@ -50,143 +50,184 @@ export default function SettingsPage() {
   const [speechSpeed, setSpeechSpeed] = useState(0.85);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  const tabsList = [
+    { id: 'general', label: 'General', icon: <Palette className="w-4 h-4" /> },
+    { id: 'notifications', label: 'Notifications', icon: <Bell className="w-4 h-4" /> },
+    { id: 'learning', label: 'Learning', icon: <Volume2 className="w-4 h-4" /> },
+    { id: 'privacy', label: 'Privacy & Legal', icon: <Shield className="w-4 h-4" /> }
+  ];
+
   return (
-    <div className="max-w-2xl mx-auto space-y-5 animate-fade-up">
-      <Tabs
-        tabs={[{id:'general',label:'General'},{id:'notifications',label:'Notifications'},{id:'learning',label:'Learning'},{id:'privacy',label:'Privacy & Legal'}]}
-        activeTab={tab} onChange={setTab} variant="underline" />
+    <div className="max-w-[1400px] mx-auto animate-fade-up">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start">
+        
+        {/* Settings Navigation (Left Column) - Hidden on Mobile, Vertical list on MD+ */}
+        <div className="hidden md:flex flex-col gap-1.5 md:col-span-1">
+          <div className="px-3 py-2 text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">Settings</div>
+          {tabsList.map(t => {
+            const active = tab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`flex items-center gap-3 px-4 py-3.5 rounded-xl font-bold text-sm transition-all text-left ${
+                  active
+                    ? 'text-white'
+                    : 'text-[rgba(160,150,220,0.5)] hover:text-white hover:bg-[rgba(139,92,246,0.06)]'
+                }`}
+                style={active ? { background: 'linear-gradient(135deg, rgba(124,58,237,0.35), rgba(124,58,237,0.15))', border: '1px solid rgba(124,58,237,0.4)' } : { border: '1px solid transparent' }}
+              >
+                {t.icon}
+                {t.label}
+              </button>
+            );
+          })}
+        </div>
 
-      {tab === 'general' && (
-        <div className="space-y-3">
-          <Card padding="none">
-            <SettingRow icon={Palette} label="Theme" description="Dark mode (recommended)" onClick={() => {}}>
-              <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ background: 'rgba(124,58,237,0.2)', color: '#a78bfa' }}>Dark</span>
-            </SettingRow>
-            <div className="divider mx-4" />
-            <SettingRow icon={Globe} label="App Language" description="English" onClick={() => {}} />
-            <div className="divider mx-4" />
+        {/* Mobile Tabs Header - Hidden on MD+ */}
+        <div className="block md:hidden">
+          <Tabs
+            tabs={tabsList}
+            activeTab={tab}
+            onChange={setTab}
+            variant="underline"
+            className="mb-4"
+          />
+        </div>
 
-          </Card>
+        {/* Active Tab Contents (Right Column) - Spans 2 columns on MD+ */}
+        <div className="md:col-span-2 space-y-4">
+          {tab === 'general' && (
+            <div className="space-y-3">
+              <Card padding="none">
+                <SettingRow icon={Palette} label="Theme" description="Dark mode (recommended)" onClick={() => {}}>
+                  <span className="text-xs font-bold px-2 py-1 rounded-lg" style={{ background: 'rgba(124,58,237,0.2)', color: '#a78bfa' }}>Dark</span>
+                </SettingRow>
+                <div className="divider mx-4" />
+                <SettingRow icon={Globe} label="App Language" description="English" onClick={() => {}} />
+              </Card>
 
-          <Card padding="none">
-            <SettingRow icon={Lock} label="Change Password" onClick={() => {}} />
-            <div className="divider mx-4" />
-            <SettingRow icon={Shield} label="Two-Factor Authentication" description="Add extra security" onClick={() => {}} />
-            <div className="divider mx-4" />
-            <SettingRow icon={Download} label="Export My Data" description="Download all your learning data" onClick={() => {}} />
-          </Card>
+              <Card padding="none">
+                <SettingRow icon={Lock} label="Change Password" onClick={() => {}} />
+                <div className="divider mx-4" />
+                <SettingRow icon={Shield} label="Two-Factor Authentication" description="Add extra security" onClick={() => {}} />
+                <div className="divider mx-4" />
+                <SettingRow icon={Download} label="Export My Data" description="Download all your learning data" onClick={() => {}} />
+              </Card>
 
-          <Card padding="none">
-            <SettingRow icon={LogOut} label="Sign Out" description={profile?.email} onClick={logout}>
-              <span />
-            </SettingRow>
-          </Card>
+              <Card padding="none">
+                <SettingRow icon={LogOut} label="Sign Out" description={profile?.email} onClick={logout}>
+                  <span />
+                </SettingRow>
+              </Card>
 
-          <Card padding="none" style={{ border: '1px solid rgba(239,68,68,0.2)' }}>
-            <button className="w-full flex items-center gap-3 py-3 px-4 rounded-xl transition-all hover:bg-[rgba(239,68,68,0.06)] text-left"
-              onClick={() => setShowDeleteConfirm(true)}>
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(239,68,68,0.1)' }}>
-                <Trash2 className="w-4 h-4 text-red-400" />
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-bold text-red-400">Delete Account</div>
-                <div className="text-xs mt-0.5" style={{ color: 'rgba(239,68,68,0.5)' }}>Permanently delete all data. Irreversible.</div>
-              </div>
-            </button>
-          </Card>
+              <Card padding="none" style={{ border: '1px solid rgba(239,68,68,0.2)' }}>
+                <button className="w-full flex items-center gap-3 py-3 px-4 rounded-xl transition-all hover:bg-[rgba(239,68,68,0.06)] text-left"
+                  onClick={() => setShowDeleteConfirm(true)}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(239,68,68,0.1)' }}>
+                    <Trash2 className="w-4 h-4 text-red-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm font-bold text-red-400">Delete Account</div>
+                    <div className="text-xs mt-0.5" style={{ color: 'rgba(239,68,68,0.5)' }}>Permanently delete all data. Irreversible.</div>
+                  </div>
+                </button>
+              </Card>
 
-          {showDeleteConfirm && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
-              <Card padding="lg" className="max-w-sm w-full animate-scale-in">
-                <div className="text-center mb-4">
-                  <div className="text-4xl mb-3">⚠️</div>
-                  <div className="text-base font-black text-white mb-2">Delete Account?</div>
-                  <div className="text-sm" style={{ color: 'rgba(160,150,220,0.6)' }}>This will permanently delete all your data including progress, XP, and achievements. This cannot be undone.</div>
+              {showDeleteConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(4px)' }}>
+                  <Card padding="lg" className="max-w-sm w-full animate-scale-in">
+                    <div className="text-center mb-4">
+                      <div className="text-4xl mb-3">⚠️</div>
+                      <div className="text-base font-black text-white mb-2">Delete Account?</div>
+                      <div className="text-sm" style={{ color: 'rgba(160,150,220,0.6)' }}>This will permanently delete all your data including progress, XP, and achievements. This cannot be undone.</div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button variant="ghost" className="flex-1" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
+                      <Button variant="danger" className="flex-1">Delete Forever</Button>
+                    </div>
+                  </Card>
                 </div>
-                <div className="flex gap-3">
-                  <Button variant="ghost" className="flex-1" onClick={() => setShowDeleteConfirm(false)}>Cancel</Button>
-                  <Button variant="danger" className="flex-1">Delete Forever</Button>
+              )}
+            </div>
+          )}
+
+          {tab === 'notifications' && (
+            <Card padding="none">
+              <SettingRow icon={Bell} label="Lesson Reminders" description="Daily study reminder">
+                <ToggleSwitch on={notifLesson} onToggle={() => setNotifLesson(!notifLesson)} />
+              </SettingRow>
+              <div className="divider mx-4" />
+              <SettingRow icon={Bell} label="Streak Alerts" description="Lose streak warning">
+                <ToggleSwitch on={notifStreak} onToggle={() => setNotifStreak(!notifStreak)} />
+              </SettingRow>
+              <div className="divider mx-4" />
+              <SettingRow icon={Bell} label="Community" description="Likes, comments, challenges">
+                <ToggleSwitch on={notifCommunity} onToggle={() => setNotifCommunity(!notifCommunity)} />
+              </SettingRow>
+            </Card>
+          )}
+
+          {tab === 'learning' && (
+            <div className="space-y-3">
+              <Card padding="none">
+                <SettingRow icon={Volume2} label="Sound Effects" description="Audio cues and feedback">
+                  <ToggleSwitch on={soundEnabled} onToggle={() => setSoundEnabled(!soundEnabled)} />
+                </SettingRow>
+              </Card>
+
+              <Card padding="md">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.1)' }}>
+                    <Volume2 className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-white">Speech Speed</div>
+                    <div className="text-xs" style={{ color: 'rgba(160,150,220,0.5)' }}>Controls native audio playback rate</div>
+                  </div>
+                  <div className="ml-auto text-sm font-black text-purple-400">{speechSpeed}x</div>
+                </div>
+                <input type="range" min="0.5" max="1.5" step="0.05" value={speechSpeed}
+                  onChange={e => setSpeechSpeed(parseFloat(e.target.value))}
+                  className="w-full accent-purple-500" />
+                <div className="flex justify-between text-[10px] mt-1" style={{ color: 'rgba(160,150,220,0.4)' }}>
+                  <span>0.5x Slow</span><span>1.0x Normal</span><span>1.5x Fast</span>
                 </div>
               </Card>
             </div>
           )}
-        </div>
-      )}
 
-      {tab === 'notifications' && (
-        <Card padding="none">
-          <SettingRow icon={Bell} label="Lesson Reminders" description="Daily study reminder">
-            <ToggleSwitch on={notifLesson} onToggle={() => setNotifLesson(!notifLesson)} />
-          </SettingRow>
-          <div className="divider mx-4" />
-          <SettingRow icon={Bell} label="Streak Alerts" description="Lose streak warning">
-            <ToggleSwitch on={notifStreak} onToggle={() => setNotifStreak(!notifStreak)} />
-          </SettingRow>
-          <div className="divider mx-4" />
-          <SettingRow icon={Bell} label="Community" description="Likes, comments, challenges">
-            <ToggleSwitch on={notifCommunity} onToggle={() => setNotifCommunity(!notifCommunity)} />
-          </SettingRow>
-        </Card>
-      )}
+          {tab === 'privacy' && (
+            <div className="space-y-3">
+              <Card padding="none">
+                {[
+                  { icon: FileText, label: 'Terms of Service',    href: '/terms' },
+                  { icon: Shield,   label: 'Privacy Policy',      href: '/privacy' },
+                  { icon: FileText, label: 'Refund Policy',       href: '/refund' },
+                  { icon: FileText, label: 'Cookie Policy',       href: '/cookies' },
+                ].map((item, i) => (
+                  <div key={item.label}>
+                    {i > 0 && <div className="divider mx-4" />}
+                    <SettingRow icon={item.icon} label={item.label} onClick={() => router.push(item.href)} />
+                  </div>
+                ))}
+              </Card>
 
-      {tab === 'learning' && (
-        <div className="space-y-3">
-          <Card padding="none">
-            <SettingRow icon={Volume2} label="Sound Effects" description="Audio cues and feedback">
-              <ToggleSwitch on={soundEnabled} onToggle={() => setSoundEnabled(!soundEnabled)} />
-            </SettingRow>
-          </Card>
-
-          <Card padding="md">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'rgba(139,92,246,0.1)' }}>
-                <Volume2 className="w-4 h-4 text-purple-400" />
-              </div>
-              <div>
-                <div className="text-sm font-bold text-white">Speech Speed</div>
-                <div className="text-xs" style={{ color: 'rgba(160,150,220,0.5)' }}>Controls native audio playback rate</div>
-              </div>
-              <div className="ml-auto text-sm font-black text-purple-400">{speechSpeed}x</div>
+              <Card padding="none">
+                {[
+                  { icon: HelpCircle, label: 'Help Center', desc: 'FAQs and tutorials' },
+                  { icon: Info,       label: 'About Velmorth', desc: 'Version 1.0.0 · Built with ❤️' },
+                ].map((item, i) => (
+                  <div key={item.label}>
+                    {i > 0 && <div className="divider mx-4" />}
+                    <SettingRow icon={item.icon} label={item.label} description={item.desc} />
+                  </div>
+                ))}
+              </Card>
             </div>
-            <input type="range" min="0.5" max="1.5" step="0.05" value={speechSpeed}
-              onChange={e => setSpeechSpeed(parseFloat(e.target.value))}
-              className="w-full accent-purple-500" />
-            <div className="flex justify-between text-[10px] mt-1" style={{ color: 'rgba(160,150,220,0.4)' }}>
-              <span>0.5x Slow</span><span>1.0x Normal</span><span>1.5x Fast</span>
-            </div>
-          </Card>
+          )}
         </div>
-      )}
-
-      {tab === 'privacy' && (
-        <div className="space-y-3">
-          <Card padding="none">
-            {[
-              { icon: FileText, label: 'Terms of Service',    href: '/terms' },
-              { icon: Shield,   label: 'Privacy Policy',      href: '/privacy' },
-              { icon: FileText, label: 'Refund Policy',       href: '/refund' },
-              { icon: FileText, label: 'Cookie Policy',       href: '/cookies' },
-            ].map((item, i) => (
-              <div key={item.label}>
-                {i > 0 && <div className="divider mx-4" />}
-                <SettingRow icon={item.icon} label={item.label} onClick={() => router.push(item.href)} />
-              </div>
-            ))}
-          </Card>
-
-          <Card padding="none">
-            {[
-              { icon: HelpCircle, label: 'Help Center', desc: 'FAQs and tutorials' },
-              { icon: Info,       label: 'About Velmorth', desc: 'Version 1.0.0 · Built with ❤️' },
-            ].map((item, i) => (
-              <div key={item.label}>
-                {i > 0 && <div className="divider mx-4" />}
-                <SettingRow icon={item.icon} label={item.label} description={item.desc} />
-              </div>
-            ))}
-          </Card>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

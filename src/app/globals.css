@@ -63,6 +63,9 @@
   --shadow-brand: 0 0 24px rgba(124, 58, 237, 0.35);
   --shadow-glow: 0 0 40px rgba(124, 58, 237, 0.2);
   --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+
+  /* Animations */
+  --animate-petal-fall: sakura-fall 12s linear infinite;
 }
 
 /* ── Base ───────────────────────────────────── */
@@ -366,7 +369,8 @@ body {
   font-weight: 700;
   font-size: 0.875rem;
   line-height: 1;
-  padding: 0.625rem 1.25rem;
+  height: 3.5rem; /* 56px optimized thumb triggers */
+  padding: 0 1.5rem;
   transition: all 0.2s ease;
   cursor: pointer;
   white-space: nowrap;
@@ -425,19 +429,23 @@ body {
 }
 
 .btn-sm {
-  padding: 0.4rem 0.875rem;
+  height: 2.5rem !important; /* 40px */
+  padding: 0 1rem !important;
   font-size: 0.75rem;
   border-radius: 0.625rem;
 }
 
 .btn-lg {
-  padding: 0.875rem 1.75rem;
+  height: 4rem !important; /* 64px */
+  padding: 0 2rem !important;
   font-size: 1rem;
   border-radius: 1rem;
 }
 
 .btn-icon {
-  padding: 0.5rem;
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  padding: 0 !important;
   border-radius: 0.625rem;
 }
 
@@ -466,7 +474,8 @@ body {
   background: rgba(139, 92, 246, 0.06);
   border: 1px solid rgba(139, 92, 246, 0.2);
   border-radius: 0.75rem;
-  padding: 0.625rem 1rem;
+  height: 3.5rem; /* 56px optimized thumb triggers */
+  padding: 0 1.25rem;
   color: #f0efff;
   font-size: 0.875rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;

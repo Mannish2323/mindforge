@@ -7,6 +7,7 @@ import { Eye, EyeOff, Sparkles, Mail, Lock, User, Chrome } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Logo } from '@/components/ui/Logo';
+import { SakuraPetals } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, fadeIn, scaleIn } from '@/lib/motion/motion.config';
 
@@ -52,15 +53,6 @@ export default function AuthPage() {
     }
   }
 
-  // Create an array of petals with randomized left offsets and animation delays
-  const petals = Array.from({ length: 12 }).map((_, idx) => ({
-    id: idx,
-    left: `${8 + Math.random() * 84}%`,
-    delay: `${Math.random() * 8}s`,
-    duration: `${8 + Math.random() * 6}s`,
-    scale: 0.6 + Math.random() * 0.8,
-  }));
-
   return (
     <div className="min-h-screen bg-[#09071a] flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
       {/* Background auras */}
@@ -68,23 +60,7 @@ export default function AuthPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDelay: '2.5s' }} />
 
       {/* Falling Sakura Petals Background */}
-      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {petals.map(p => (
-          <div
-            key={p.id}
-            className="absolute top-[-5%] bg-gradient-to-tr from-pink-300 to-pink-200/80 rounded-full animate-petal-fall"
-            style={{
-              left: p.left,
-              animationDelay: p.delay,
-              animationDuration: p.duration,
-              width: `${12 * p.scale}px`,
-              height: `${6 * p.scale}px`,
-              opacity: 0.45,
-              borderRadius: '50% 0 50% 50%',
-            }}
-          />
-        ))}
-      </div>
+      <SakuraPetals />
 
       <div className="w-full max-w-md relative z-10 text-center space-y-6">
         {/* Header Branding */}
