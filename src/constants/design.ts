@@ -35,7 +35,7 @@ export const PLAN_LIMITS = {
     custom_decks: false,
   },
   PREMIUM: {
-    hearts_max: 999, // Infinite hearts
+    hearts_max: 999,
     ai_limit_daily: 100,
     speaking_limit_daily: 50,
     custom_decks: true,
@@ -54,3 +54,21 @@ export const APP_ROUTES = {
   ONBOARDING: '/onboarding',
   AUTH: '/auth',
 };
+
+export const VELMORTH_COLORS = {
+  primary: '#7C3AED',
+  accent: '#EC4899',
+  background: '#09060F',
+  cards: '#110C1E',
+  border: 'rgba(139, 92, 246, 0.13)',
+  borderLight: 'rgba(139, 92, 246, 0.25)',
+  glassDark: 'rgba(17, 12, 30, 0.4)',
+  glassLight: 'rgba(139, 92, 246, 0.1)',
+} as const;
+
+export const ANIMATION_DURATION = {
+  fast: 150,
+  normal: 300,
+  slow: 500,
+  verySlow: 800,
+} as const;

@@ -3,12 +3,24 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
-import { Eye, EyeOff, Sparkles, Mail, Lock, User, Chrome } from 'lucide-react';
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  Chrome,
+  Apple,
+  Github,
+  ArrowRight,
+  CheckCircle2,
+} from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Logo } from '@/components/ui/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, fadeIn, scaleIn } from '@/lib/motion/motion.config';
+import Image from 'next/image';
 
 export default function AuthPage() {
   const { loginWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
@@ -52,82 +64,248 @@ export default function AuthPage() {
     }
   }
 
-  // Create an array of petals with randomized left offsets and animation delays
-  const petals = Array.from({ length: 12 }).map((_, idx) => ({
+  const petals = Array.from({ length: 15 }).map((_, idx) => ({
     id: idx,
-    left: `${8 + Math.random() * 84}%`,
+    left: `${Math.random() * 100}%`,
     delay: `${Math.random() * 8}s`,
     duration: `${8 + Math.random() * 6}s`,
-    scale: 0.6 + Math.random() * 0.8,
+    scale: 0.5 + Math.random() * 1,
   }));
 
   return (
-    <div className="min-h-screen bg-[#09071a] flex flex-col items-center justify-center p-4 relative overflow-hidden select-none">
-      {/* Background auras */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" style={{ animationDelay: '2.5s' }} />
+    <div
+      className="min-h-screen flex flex-col lg:flex-row items-center justify-center p-4 relative overflow-hidden select-none"
+      style={{
+        background:
+          'linear-gradient(135deg, rgb(9, 7, 26) 0%, rgb(14, 11, 34) 50%, rgb(19, 9, 48) 100%)',
+      }}
+    >
+      {/* Animated background elements */}
+      <div
+        className="absolute top-[-20%] left-[-10%] w-96 h-96 rounded-full blur-3xl opacity-20 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent)',
+        }}
+      />
+      <div
+        className="absolute -bottom-40 right-[-5%] w-80 h-80 rounded-full blur-3xl opacity-15 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle, rgba(236, 72, 153, 0.2), transparent)',
+        }}
+      />
 
-      {/* Falling Sakura Petals Background */}
+      {/* Floating petals */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {petals.map(p => (
-          <div
+        {petals.map((p) => (
+          <motion.div
             key={p.id}
-            className="absolute top-[-5%] bg-gradient-to-tr from-pink-300 to-pink-200/80 rounded-full animate-petal-fall"
-            style={{
+            className="absolute text-pink-500"
+            initial={{
               left: p.left,
-              animationDelay: p.delay,
-              animationDuration: p.duration,
-              width: `${12 * p.scale}px`,
-              height: `${6 * p.scale}px`,
-              opacity: 0.45,
-              borderRadius: '50% 0 50% 50%',
+              top: '-20px',
+              opacity: 0.3,
+              scale: p.scale,
             }}
-          />
+            animate={{
+              top: '100vh',
+              rotate: 360,
+            }}
+            transition={{
+              duration: parseFloat(p.duration),
+              delay: parseFloat(p.delay),
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2.69l3.66 7.41h8.15l-6.59 4.78 2.52 8.12L12 20.82l-6.74 4.18 2.52-8.12-6.59-4.78h8.15L12 2.69z" />
+            </svg>
+          </motion.div>
         ))}
       </div>
 
-      <div className="w-full max-w-md relative z-10 text-center space-y-6">
-        {/* Header Branding */}
-        <motion.div
-          initial="initial"
-          animate="animate"
-          variants={fadeInUp}
-          className="flex flex-col items-center gap-3.5"
-        >
-          <Logo size="lg" glow />
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-widest uppercase bg-gradient-to-r from-purple-100 to-purple-300 bg-clip-text text-transparent">
-              Velmorth
-            </h1>
-            <p className="text-[11px] font-bold text-purple-300/40 uppercase tracking-widest mt-1">
-              Sensei at your fingertips
-            </p>
-          </div>
-        </motion.div>
+      {/* Left side - Hero */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2, duration: 0.6 }}
+        className="hidden lg:flex flex-1 flex-col items-center justify-center gap-8 relative z-10 max-w-md"
+      >
+        {/* Hero illustration */}
+        <div className="relative w-full h-80">
+          <motion.div
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <div
+              className="absolute inset-0 rounded-full blur-3xl opacity-40"
+              style={{
+                background:
+                  'radial-gradient(circle, rgba(124, 58, 237, 0.5), transparent)',
+              }}
+            />
+            <motion.div
+              className="relative w-64 h-64"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, linear: true }}
+            >
+              <svg
+                width="256"
+                height="256"
+                viewBox="0 0 256 256"
+                className="w-full h-full"
+              >
+                {/* Decorative book */}
+                <circle
+                  cx="128"
+                  cy="128"
+                  r="120"
+                  fill="none"
+                  stroke="rgba(124, 58, 237, 0.2)"
+                  strokeWidth="2"
+                  strokeDasharray="10 5"
+                />
+                <path
+                  d="M 80 100 L 80 180 Q 80 200 100 200 L 176 200 Q 200 200 200 180 L 200 100 Z"
+                  fill="rgba(200, 196, 255, 0.08)"
+                  stroke="rgba(124, 58, 237, 0.4)"
+                  strokeWidth="2"
+                />
+                {/* Pages */}
+                <rect
+                  x="90"
+                  y="110"
+                  width="35"
+                  height="85"
+                  fill="rgba(236, 72, 153, 0.1)"
+                  stroke="rgba(236, 72, 153, 0.3)"
+                  strokeWidth="1"
+                />
+                <rect
+                  x="131"
+                  y="110"
+                  width="35"
+                  height="85"
+                  fill="rgba(124, 58, 237, 0.1)"
+                  stroke="rgba(124, 58, 237, 0.3)"
+                  strokeWidth="1"
+                />
+                {/* Kanji */}
+                <text
+                  x="128"
+                  y="160"
+                  fontSize="48"
+                  fontWeight="900"
+                  textAnchor="middle"
+                  fill="url(#gradientText)"
+                >
+                  学
+                </text>
+                <defs>
+                  <linearGradient
+                    id="gradientText"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="rgba(124, 58, 237, 0.8)" />
+                    <stop
+                      offset="100%"
+                      stopColor="rgba(236, 72, 153, 0.8)"
+                    />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </motion.div>
+          </motion.div>
+        </div>
 
-        {/* Auth Glassmorphism Card */}
+        {/* Benefits */}
+        <div className="space-y-4 text-left">
+          <h2 className="text-2xl font-black text-white">
+            Master Japanese the Smart Way
+          </h2>
+          <div className="space-y-3">
+            {[
+              'AI-Powered Lessons',
+              'Spaced Repetition Learning',
+              'Track Progress & Achievements',
+            ].map((benefit) => (
+              <div key={benefit} className="flex items-center gap-3">
+                <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                <span className="text-sm text-gray-200">{benefit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Right side - Auth Form */}
+      <motion.div
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3, duration: 0.6 }}
+        className="flex-1 w-full max-w-md relative z-10"
+      >
+        {/* Greeting message */}
+        <div className="mb-8 text-center lg:text-left">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <h1 className="text-3xl font-black text-white mb-2 flex items-center gap-2 justify-center lg:justify-start">
+              <Logo size="md" />
+              Konnichiwa!
+            </h1>
+            <p
+              className="text-sm"
+              style={{ color: 'rgba(167, 139, 250, 0.6)' }}
+            >
+              {mode === 'login'
+                ? 'Welcome back to your Japanese journey'
+                : 'Begin your path to fluency'}
+            </p>
+          </motion.div>
+        </div>
+
+        {/* Main auth card */}
         <motion.div
-          initial="initial"
-          animate="animate"
-          variants={scaleIn}
-          className="bg-[#120f26]/80 border border-purple-800/30 rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl shadow-purple-950/40"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="rounded-2xl backdrop-blur-xl border p-6 sm:p-8 shadow-2xl"
+          style={{
+            background: 'rgba(17, 12, 30, 0.4)',
+            border: '1px solid rgba(139, 92, 246, 0.25)',
+          }}
         >
-          {/* Mode Switcher Tabs */}
-          <div className="flex p-1 bg-[#0a0815] border border-purple-900/10 rounded-2xl mb-6">
-            {(['login', 'signup'] as const).map(m => (
+          {/* Mode tabs */}
+          <div className="flex gap-2 mb-6 bg-black/30 p-1 rounded-xl">
+            {(['login', 'signup'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => {
                   setMode(m);
                   setError('');
                 }}
-                className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  mode === m
-                    ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/10'
-                    : 'text-purple-300/40 hover:text-purple-200'
-                }`}
+                className="flex-1 py-2 px-3 rounded-lg font-bold text-xs sm:text-sm transition-all"
+                style={{
+                  background:
+                    mode === m
+                      ? 'linear-gradient(135deg, rgba(124, 58, 237, 0.6), rgba(236, 72, 153, 0.4))'
+                      : 'transparent',
+                  color: mode === m ? '#fff' : 'rgba(160, 150, 220, 0.5)',
+                }}
               >
-                {m === 'login' ? 'Sign In' : 'Create Account'}
+                {m === 'login' ? 'Sign In' : 'Sign Up'}
               </button>
             ))}
           </div>
@@ -137,18 +315,17 @@ export default function AuthPage() {
             <AnimatePresence mode="wait">
               {mode === 'signup' && (
                 <motion.div
-                  key="signup-name"
+                  key="name-field"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
                 >
                   <Input
-                    label="Display Name"
+                    label="Full Name"
                     type="text"
                     value={name}
-                    onChange={e => setName(e.target.value)}
-                    placeholder="Your nickname"
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
                     required={mode === 'signup'}
                     leftIcon={<User className="w-4 h-4" />}
                   />
@@ -160,17 +337,17 @@ export default function AuthPage() {
               label="Email Address"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
               leftIcon={<Mail className="w-4 h-4" />}
             />
 
             <Input
-              label="Secret Password"
+              label="Password"
               type={showPw ? 'text' : 'password'}
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
               leftIcon={<Lock className="w-4 h-4" />}
@@ -180,17 +357,46 @@ export default function AuthPage() {
                   onClick={() => setShowPw(!showPw)}
                   className="text-purple-400/60 hover:text-white transition-colors"
                 >
-                  {showPw ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                  {showPw ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               }
             />
 
+            {mode === 'login' && (
+              <div className="flex items-center justify-between text-xs">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 rounded"
+                    style={{
+                      background: 'rgba(124, 58, 237, 0.2)',
+                      border: '1px solid rgba(124, 58, 237, 0.4)',
+                    }}
+                  />
+                  <span style={{ color: 'rgba(160, 150, 220, 0.6)' }}>
+                    Remember me
+                  </span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => router.push('/reset-password')}
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
             {error && (
               <motion.div
-                initial="initial"
-                animate="animate"
-                variants={fadeIn}
-                className="bg-red-500/10 border border-red-500/25 text-red-400 text-xs px-4 py-3 rounded-xl text-left"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-xs px-3 py-2 rounded-lg text-red-400"
+                style={{ background: 'rgba(239, 68, 68, 0.1)' }}
               >
                 {error}
               </motion.div>
@@ -198,45 +404,116 @@ export default function AuthPage() {
 
             <Button
               type="submit"
-              variant="primary"
-              loading={loading}
-              className="w-full py-3.5 rounded-xl font-bold text-sm mt-2"
+              disabled={loading}
+              className="w-full py-3 rounded-xl font-bold text-sm mt-6 flex items-center justify-center gap-2"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(124, 58, 237, 0.8), rgba(219, 39, 119, 0.6))',
+                border: '1px solid rgba(124, 58, 237, 0.3)',
+              }}
             >
-              {mode === 'login' ? 'Sign In to Dashboard' : 'Get Started Now'}
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 rounded-full border-2 border-transparent border-t-white animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                <>
+                  {mode === 'login' ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </Button>
           </form>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-purple-900/15" />
-            <span className="text-[10px] font-black text-purple-400/35 tracking-widest">OR</span>
-            <div className="flex-1 h-px bg-purple-900/15" />
+          <div className="flex items-center gap-3 my-6">
+            <div className="flex-1 h-px" style={{ background: 'rgba(139, 92, 246, 0.1)' }} />
+            <span
+              className="text-xs font-bold"
+              style={{ color: 'rgba(160, 150, 220, 0.4)' }}
+            >
+              OR CONTINUE WITH
+            </span>
+            <div className="flex-1 h-px" style={{ background: 'rgba(139, 92, 246, 0.1)' }} />
           </div>
 
-          {/* Social Google Login */}
-          <Button
-            variant="outline"
-            disabled={loading}
-            onClick={handleGoogle}
-            className="w-full py-3.5 rounded-xl font-bold text-sm bg-transparent border border-purple-900/20 hover:bg-purple-900/5 text-purple-200 transition-colors flex items-center justify-center gap-2.5"
-            leftIcon={<Chrome className="w-4 h-4 text-purple-400" />}
+          {/* Social buttons */}
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={handleGoogle}
+              disabled={loading}
+              className="p-3 rounded-lg border transition-all hover:scale-105"
+              style={{
+                background: 'rgba(139, 92, 246, 0.05)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+              }}
+              title="Sign in with Google"
+            >
+              <Chrome className="w-5 h-5 mx-auto text-white" />
+            </button>
+            <button
+              disabled={loading}
+              className="p-3 rounded-lg border transition-all hover:scale-105"
+              style={{
+                background: 'rgba(139, 92, 246, 0.05)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+              }}
+              title="Sign in with Apple"
+            >
+              <Apple className="w-5 h-5 mx-auto text-white" />
+            </button>
+            <button
+              disabled={loading}
+              className="p-3 rounded-lg border transition-all hover:scale-105"
+              style={{
+                background: 'rgba(139, 92, 246, 0.05)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+              }}
+              title="Sign in with GitHub"
+            >
+              <Github className="w-5 h-5 mx-auto text-white" />
+            </button>
+          </div>
+
+          {/* Continue as guest */}
+          <button
+            onClick={() => router.push('/home')}
+            className="w-full mt-4 py-2 rounded-lg text-sm font-bold transition-all"
+            style={{
+              color: 'rgba(167, 139, 250, 0.8)',
+              background: 'transparent',
+              border: '1px solid rgba(124, 58, 237, 0.2)',
+            }}
           >
-            Continue with Google
-          </Button>
+            Continue as Guest
+          </button>
         </motion.div>
 
-        {/* Footer legal disclaimer */}
-        <p className="text-[10px] text-purple-300/25 leading-normal max-w-xs mx-auto">
-          By registering, you agree to Velmorth&apos;s{' '}
-          <a href="/terms" className="hover:underline text-purple-300/40">
-            Terms of Service
+        {/* Footer */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-center text-xs mt-6"
+          style={{ color: 'rgba(160, 150, 220, 0.4)' }}
+        >
+          By continuing, you agree to our{' '}
+          <a
+            href="/terms"
+            className="text-purple-400 hover:text-purple-300 transition-colors"
+          >
+            Terms
           </a>{' '}
           and{' '}
-          <a href="/privacy" className="hover:underline text-purple-300/40">
+          <a
+            href="/privacy"
+            className="text-purple-400 hover:text-purple-300 transition-colors"
+          >
             Privacy Policy
-          </a>.
-        </p>
-      </div>
+          </a>
+        </motion.p>
+      </motion.div>
     </div>
   );
 }
