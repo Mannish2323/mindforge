@@ -114,7 +114,6 @@ export default function AuthPage() {
               duration: parseFloat(p.duration),
               delay: parseFloat(p.delay),
               repeat: Infinity,
-              ease: 'linear',
             }}
           >
             <svg

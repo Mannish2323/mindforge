@@ -86,7 +86,7 @@ export function StatsCard({
     visible: {
       scale: 1,
       rotate: 0,
-      transition: { type: 'spring', duration: 0.6, bounce: 0.4 },
+      transition: { type: 'spring' as const, bounce: 0.4 },
     },
   };
 

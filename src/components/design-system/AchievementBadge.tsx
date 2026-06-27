@@ -64,7 +64,7 @@ export function AchievementBadge({
       scale: 1,
       rotate: 0,
       opacity: 1,
-      transition: { type: 'spring', duration: 0.8, bounce: 0.5 },
+      transition: { type: 'spring' as const, bounce: 0.5 },
     },
   };
 
@@ -72,7 +72,7 @@ export function AchievementBadge({
     hidden: { opacity: 0 },
     visible: {
       opacity: [0.3, 0.6, 0.3],
-      transition: { duration: 2, repeat: Infinity },
+      transition: { duration: 2, repeat: Infinity as const },
     },
   };
 
