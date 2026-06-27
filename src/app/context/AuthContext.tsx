@@ -256,6 +256,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let active = true;
 
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
+      const dummyUser = {
+        id: 'dummy-user-id',
+        email: 'test@velmorth.com',
+        user_metadata: {
+          full_name: 'Test Learner',
+          username: 'test_learner'
+        }
+      } as any;
+      setUser(dummyUser);
+      setSession({
+        access_token: 'dummy-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        refresh_token: 'dummy-refresh',
+        user: dummyUser
+      });
+      setProfile({
+        uid: "dummy-user-id",
+        username: "test_learner",
+        name: "Test Learner",
+        email: "test@velmorth.com",
+        xp: 120,
+        level: 2,
+        streak: 5,
+        leafBalance: 15,
+        isPremium: true,
+        planId: 'pro',
+        planStatus: 'pro',
+        endsAt: null,
+        heartsLimit: 100,
+        aiLimitDaily: 99,
+        lessonsLimitDaily: 99,
+        adsEnabled: false,
+        isAdmin: true,
+        avatarUrl: '🦊',
+        bio: 'Learning Japanese!',
+        theme: 'dark',
+        ui_language: 'en',
+        tts_enabled: true,
+        goal_minutes: 15,
+        notifications: true,
+        jlpt_target: 'N5',
+        kanji_learned: 4,
+        speak_sessions: 3,
+        words_learned: 12,
+        lessons_done: 2,
+        reviews_done: 8,
+        xp_today: 45,
+        createdAt: new Date().toISOString(),
+        heartsTotal: 100,
+        heartsUsedToday: 0,
+        heartsMax: 100,
+        heartsRecoverAt: null,
+        heartsLastDebitAt: null,
+        heartSystemEnabled: true,
+        heartRecoveryMode: 'time',
+        heartRecoveryHours: 24,
+      });
+      setLoading(false);
+      return;
+    }
+
     // Validate session on mount to prevent stale localstorage session loops
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!active) return;

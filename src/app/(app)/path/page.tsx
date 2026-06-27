@@ -32,7 +32,7 @@ export default function PathPage() {
       .then(async (index: { units: { unit_id: string; file: string }[] }) => {
         const loaded: Unit[] = await Promise.all(
           index.units.map(async u => {
-            const data = await fetch(`/data/lessons/${u.file}`).then(r => r.json()).catch(() => ({ unit_id: u.unit_id, unit_title: u.unit_id, lessons: [] }));
+            const data = await fetch(`/data/${u.file}`).then(r => r.json()).catch(() => ({ unit_id: u.unit_id, unit_title: u.unit_id, lessons: [] }));
             return data as Unit;
           })
         );

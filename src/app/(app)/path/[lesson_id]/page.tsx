@@ -95,6 +95,66 @@ export default function LessonPlayerPage() {
   useEffect(() => {
     if (!lesson_id) return;
     const fetchLessonContent = async () => {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
+        // High fidelity mock fallback lesson
+        setLesson({
+          id: lesson_id || 'ja_u01_l01_hello_basic',
+          title: 'Hello & Basic Greetings',
+          description: 'Learn standard Japanese greetings like Konnichiwa and Arigatou.',
+          xp_reward: 20,
+          content: {
+            pronunciation: {
+              tips_en: ['Keep pitch flat', 'Pronounce all vowels clearly'],
+              tips_hi: ['आवाज को सपाट रखें', 'स्वरों का स्पष्ट उच्चारण करें']
+            },
+            examples: [
+              {
+                example_id: 'ex_1',
+                japanese: 'こんにちは、元気ですか？',
+                romaji: 'Konnichiwa, genki desu ka?',
+                translation_en: 'Hello, how are you?',
+                translation_hi: 'नमस्ते, आप कैसे हैं?'
+              }
+            ]
+          }
+        });
+        setVocab([
+          {
+            id: 'vocab_1',
+            word_japanese: 'こんにちは',
+            hiragana: 'こんにちは',
+            romaji: 'Konnichiwa',
+            english: 'Hello / Good afternoon',
+            hindi: 'नमस्ते / शुभ दोपहर',
+            meaning: 'Standard daytime greeting',
+            part_of_speech: 'Expression'
+          },
+          {
+            id: 'vocab_2',
+            word_japanese: 'ありがとう',
+            hiragana: 'ありがとう',
+            romaji: 'Arigatou',
+            english: 'Thank you',
+            hindi: 'धन्यवाद',
+            meaning: 'Casual gratitude',
+            part_of_speech: 'Expression'
+          }
+        ]);
+        setGrammar({
+          id: 'grammar_1',
+          pattern: 'A は B です',
+          title: 'Topic Marker & Polite Copula',
+          meaning_english: 'A is B',
+          meaning_hindi: 'A, B है',
+          formation: 'Noun + は + Noun + です',
+          notes: 'は is pronounced as "wa" when used as a topic marker.',
+          example_japanese: '私は学生です。',
+          example_english: 'I am a student.'
+        });
+        setLoading(false);
+        return;
+      }
+
       try {
         const supabase = createClient();
 
