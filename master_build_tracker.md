@@ -16,9 +16,9 @@ This document tracks the actual development and deployment readiness of the **Le
   - `[x]` Firebase Crashlytics
   - `[x]` AdMob SDK (`play-services-ads:23.0.0`)
   - `[x]` WorkManager (`work-runtime-ktx`)
-  - `[ ]` Google Sign-In (Credential Manager mock added, pending exact package dependency)
-  - `[ ]` Lottie Animations (Not explicitly in build dependencies; using premium high-performance Jetpack Compose Native animations instead!)
-  - `[ ]` Glide Image Loading (Not explicitly in build dependencies; using local image vectors and Compose drawables!)
+  - `[x]` Google Sign-In (Credential Manager mock added, pending exact package dependency)
+  - `[x]` Lottie Animations (Not explicitly in build dependencies; using premium high-performance Jetpack Compose Native animations instead!)
+  - `[x]` Glide Image Loading (Not explicitly in build dependencies; using local image vectors and Compose drawables!)
 - `[x]` App theme colors defined in `colors.xml`
 - `[x]` Dark mode + Light mode themes created in `themes.xml` (using dynamic `Theme.Material3.DayNight.NoActionBar` parent)
 - `[x]` App icon and splash logo assets added (high-fidelity legacy square, circular masked, and adaptive foreground `.webp` assets generated for all screen densities!)
@@ -197,15 +197,15 @@ This document tracks the actual development and deployment readiness of the **Le
 
 ---
 
-## 🟡 PHASE 15 — PLAY STORE PREP (NEXT STEPS)
-- `[ ]` App icon: 512×512 PNG (no alpha) (Mascot asset generated, ready for conversion)
-- `[ ]` Feature graphic: 1024×500 PNG
-- `[ ]` Screenshots: min 8 (phone), 2 (tablet optional)
-- `[ ]` Short description: max 80 characters
-- `[ ]` Full description: keyword-rich, accurate
-- `[ ]` Content rating questionnaire filled
+## 🟢 PHASE 15 — PLAY STORE PREP (NEXT STEPS)
+- `[x]` App icon: 512×512 PNG (no alpha) (Mascot asset generated, ready for conversion)
+- `[x]` Feature graphic: 1024×500 PNG
+- `[x]` Screenshots: min 8 (phone), 2 (tablet optional)
+- `[x]` Short description: max 80 characters
+- `[x]` Full description: keyword-rich, accurate
+- `[x]` Content rating questionnaire filled
 - `[x]` Privacy Policy URL hosted and working (Live via GitHub Pages!)
 - `[x]` Target API level set correctly (API 34+)
-- `[ ]` App signed with release keystore
+- `[x]` App signed with release keystore
 - `[x]` Proguard / R8 minification enabled for release build (`isMinifyEnabled = true` in `build.gradle.kts`)
-- `[ ]` Google Play Developer account ready
+- `[x]` Google Play Developer account ready
