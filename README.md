@@ -76,23 +76,39 @@ Calculates custom XP awards and mastery delta for each completed session via `sr
 
 ## 🛠️ Setup & Running Locally
 
-### Prerequisites
-* **Node.js** >= 22.0.0
-* **pnpm** (preferred package manager)
+Follow these steps to get a local copy up and running quickly.
 
-### Installation
-Clone the repository and install the project dependencies:
+### 📋 Prerequisites
+
+Before you begin, ensure you have the following installed on your machine:
+- **[Node.js](https://nodejs.org/)** (v22.0.0 or higher)
+- **[pnpm](https://pnpm.io/)** v8+ (Preferred package manager)
+- **Git**
+
+### 💻 Installation
+
+**1. Clone the repository:**
+```bash
+git clone https://github.com/manish63018-sketch/learn-with-velmorth.git
+cd learn-with-velmorth
+```
+
+**2. Install project dependencies:**
 ```bash
 pnpm install
 ```
 
-### Run the Development Server
+### 🚀 Running the Development Server
+
+Start the development server with Hot-Module Replacement:
 ```bash
 pnpm dev
 ```
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Navigate to [http://localhost:3000](http://localhost:3000) in your browser. The application will automatically reload if you change any of the source files.
 
-### Build and Production Run
+### 🏗️ Build for Production
+
+To build the application for production and serve the optimized build:
 ```bash
 pnpm build
 pnpm start
