@@ -102,7 +102,7 @@ pnpm start
 
 # Architecture Overview
 
-![Architecture Diagram](file:///c:/Users/ADMIN/.gemini/antigravity-ide/brain/544f1605-5973-4706-aa19-734569654849/architecture_diagram_1782627244712.png)
+![Architecture Diagram](docs/architecture_diagram.png)
 
 Learn more about the platform's architecture in the **docs/architecture.md** file.
 
