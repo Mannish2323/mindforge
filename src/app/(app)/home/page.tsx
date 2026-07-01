@@ -9,9 +9,11 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 import { motion } from 'framer-motion';
+import { useDashboard } from '@/hooks/useDashboard';
 
 export default function HomePage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const { data: dbData, isLoading } = useDashboard();
   const [greeting, setGreeting] = useState('Welcome back');
   const [checklist, setChecklist] = useState([
     { id: 1, text: '15 New Vocabulary', checked: false, value: '0/15' },
@@ -37,7 +39,7 @@ export default function HomePage() {
   const completedCount = checklist.filter(c => c.checked).length;
   const planProgressPercentage = Math.round((completedCount / checklist.length) * 100);
 
-  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner';
+  const userName = profile?.name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner';
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -132,11 +134,11 @@ export default function HomePage() {
             className="grid grid-cols-2 sm:grid-cols-5 gap-4"
           >
             {[
-              { label: 'XP', val: '120', sub: 'Level 2', icon: Zap, color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20' },
-              { label: 'Day Streak', val: '5', sub: 'Keep it up! 🔥', icon: Flame, color: 'text-orange-400 bg-orange-400/10 border-orange-400/20' },
-              { label: 'Lessons Done', val: '0', sub: 'Total completed', icon: BookOpen, color: 'text-purple-400 bg-purple-400/10 border-purple-400/20' },
-              { label: 'Words Learned', val: '12', sub: 'Vocabulary', icon: Brain, color: 'text-pink-400 bg-pink-400/10 border-pink-400/20' },
-              { label: 'Quizzes Done', val: '4', sub: 'All time', icon: Award, color: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' },
+              { label: 'XP', val: isLoading ? '...' : `${dbData.xpTotal}`, sub: `Level ${dbData.level}`, icon: Zap, color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20' },
+              { label: 'Day Streak', val: isLoading ? '...' : `${dbData.streak}`, sub: `Longest: ${dbData.longestStreak}d`, icon: Flame, color: 'text-orange-400 bg-orange-400/10 border-orange-400/20' },
+              { label: 'Lessons Done', val: isLoading ? '...' : `${dbData.lessonsDone}`, sub: 'Total completed', icon: BookOpen, color: 'text-purple-400 bg-purple-400/10 border-purple-400/20' },
+              { label: 'Words Learned', val: isLoading ? '...' : `${dbData.wordsLearned}`, sub: 'Vocabulary', icon: Brain, color: 'text-pink-400 bg-pink-400/10 border-pink-400/20' },
+              { label: 'Quizzes Done', val: isLoading ? '...' : `${dbData.reviewsDone}`, sub: 'All time', icon: Award, color: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20' },
             ].map((stat, i) => (
               <div 
                 key={i} 
@@ -278,43 +280,58 @@ export default function HomePage() {
 
             {/* Circular Progress Display */}
             <div className="flex flex-col items-center justify-center py-4 space-y-4">
-              <div className="relative w-36 h-36 flex items-center justify-center">
-                <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="40" 
-                    stroke="rgba(255,255,255,0.03)" 
-                    strokeWidth="8" 
-                    fill="transparent" 
-                  />
-                  <circle 
-                    cx="50" 
-                    cy="50" 
-                    r="40" 
-                    stroke="url(#purplePinkGrad)" 
-                    strokeWidth="8" 
-                    fill="transparent" 
-                    strokeDasharray={251.2}
-                    strokeDashoffset={251.2} // 0% completed
-                    strokeLinecap="round"
-                    className="transition-all duration-1000 ease-out"
-                  />
-                  <defs>
-                    <linearGradient id="purplePinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#7c3aed" />
-                      <stop offset="100%" stopColor="#f472b6" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div className="flex flex-col items-center">
-                  <span className="text-3xl font-extrabold text-white font-orbitron">0</span>
-                  <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">/ 25 XP</span>
-                </div>
-              </div>
-              <p className="text-xs font-semibold text-purple-300/60 text-center">
-                0% completed today. Practice daily to build memory hooks!
-              </p>
+              {(() => {
+                const targetXp = profile?.daily_goal_xp || 25;
+                const xpToday = dbData.xpToday || 0;
+                const progressPercent = Math.min(100, Math.round((xpToday / targetXp) * 100));
+                const offset = 251.2 - (251.2 * progressPercent) / 100;
+                
+                return (
+                  <>
+                    <div className="relative w-36 h-36 flex items-center justify-center">
+                      <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          stroke="rgba(255,255,255,0.03)" 
+                          strokeWidth="8" 
+                          fill="transparent" 
+                        />
+                        <circle 
+                          cx="50" 
+                          cy="50" 
+                          r="40" 
+                          stroke="url(#purplePinkGrad)" 
+                          strokeWidth="8" 
+                          fill="transparent" 
+                          strokeDasharray={251.2}
+                          strokeDashoffset={isLoading ? 251.2 : offset}
+                          strokeLinecap="round"
+                          className="transition-all duration-1000 ease-out"
+                        />
+                        <defs>
+                          <linearGradient id="purplePinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#7c3aed" />
+                            <stop offset="100%" stopColor="#f472b6" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                      <div className="flex flex-col items-center">
+                        <span className="text-3xl font-extrabold text-white font-orbitron">
+                          {isLoading ? '...' : xpToday}
+                        </span>
+                        <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">
+                          / {targetXp} XP
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-xs font-semibold text-purple-300/60 text-center">
+                      {progressPercent}% completed today. Practice daily to build memory hooks!
+                    </p>
+                  </>
+                );
+              })()}
             </div>
           </motion.div>
 

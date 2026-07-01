@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { 
   Sparkles, Send, Mic, Volume2, HelpCircle, History, Book, 
   MessageSquare, Lightbulb, Trash2, ArrowLeft, RefreshCw, Star
@@ -51,6 +52,57 @@ export default function AITutorPage() {
       });
     }
   }, [profile]);
+
+  // Load conversation history from DB
+  useEffect(() => {
+    const loadHistory = async () => {
+      if (!session?.user) return;
+      
+      const { data, error } = await supabase
+        .from('ai_chat_messages')
+        .select('*')
+        .order('created_at', { ascending: true })
+        .limit(50);
+      
+      if (error) {
+        console.error('Error loading chat history:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const parsedMsgs: Message[] = data.map(m => {
+          if (m.role === 'user') {
+            return { role: 'user', content: m.content };
+          }
+          
+          // Format layout is: Japanese\n\n*Romaji*\n\nEnglish\n\n💡 Grammar note
+          const parts = m.content.split('\n\n');
+          if (parts.length >= 3) {
+            const content_ja = parts[0];
+            const content_romaji = parts[1].replace(/^\*|\*$/g, ''); // strip asterisks
+            const content_en = parts[2];
+            const grammar_note = parts[3] || '';
+            return {
+              role: 'model',
+              content: content_en,
+              content_ja,
+              content_romaji,
+              content_en,
+              grammar_note
+            };
+          }
+          
+          return {
+            role: 'model',
+            content: m.content
+          };
+        });
+        setMessages(parsedMsgs);
+      }
+    };
+
+    loadHistory();
+  }, [session, supabase]);
 
   const speakJapanese = (text: string) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {

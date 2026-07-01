@@ -45,6 +45,7 @@ export interface UserProfile {
   heartSystemEnabled: boolean;
   heartRecoveryMode: string;
   heartRecoveryHours: number;
+  daily_goal_xp: number;
 }
 
 interface AuthContextType {
@@ -143,6 +144,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .select('*')
         .eq('user_id', supabaseUser.id)
         .single();
+
+      // 4.5. Fetch Preferences
+      let { data: prefsData, error: prefsErr } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', supabaseUser.id)
+        .single();
+
+      if (prefsErr || !prefsData) {
+        const { data: newPrefs } = await supabase
+          .from('user_preferences')
+          .insert({ user_id: supabaseUser.id, daily_goal_xp: 25 })
+          .select()
+          .single();
+        prefsData = newPrefs || { daily_goal_xp: 25 };
+      }
 
       if (streakErr || !streakData) {
         const { data: newStreak } = await supabase
@@ -245,6 +262,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         heartSystemEnabled: settingsData.heart_system_enabled ?? true,
         heartRecoveryMode: settingsData.heart_recovery_mode || 'time',
         heartRecoveryHours: settingsData.heart_recovery_hours ?? 24,
+        daily_goal_xp: prefsData.daily_goal_xp ?? 25,
       };
 
       setProfile(mergedProfile);
@@ -314,6 +332,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         heartSystemEnabled: true,
         heartRecoveryMode: 'time',
         heartRecoveryHours: 24,
+        daily_goal_xp: 25,
       });
       setLoading(false);
       return;
