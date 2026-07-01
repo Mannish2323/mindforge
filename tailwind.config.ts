@@ -25,9 +25,10 @@ const config: Config = {
           light: '#f472b6',
         },
         bg: {
-          DEFAULT: '#09071a',
+          DEFAULT: '#09071a', // main dark background
           alt: '#0e0b22',
           deep: '#130930',
+          card: 'rgba(255,255,255,0.05)', // glass card backdrop
         },
       },
       fontFamily: {

@@ -11,9 +11,29 @@ build/
 # Environment variables
 .env
 .env.local
+.env.development
+.env.test
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
+.env*.local
+
+# Supabase
+supabase/.temp/
+
+# Android Properties / API Keys
+apikey.properties
+local.properties
+
+# Certificates and keys
+*.pem
+*.key
+*.p12
+*.pfx
+*service-account*.json
+*serviceAccount*.json
 
 # Vercel
 .vercel
@@ -41,3 +61,11 @@ yarn-error.log*
 
 # Test artifacts
 coverage/
+
+# NVIDIA Riva Python Clients (cloned locally)
+python-clients/
+
+# Audio output files
+*.wav
+*.mp3
+*.ogg

@@ -1,0 +1,43 @@
+/* src/styles/theme.css */
+:root {
+  /* Color palette */
+  --color-brand: #7c3aed;
+  --color-brand-dark: #6d28d9;
+  --color-brand-light: #a78bfa;
+
+  --color-sakura: #ffb7c5;
+  --color-sakura-dark: #f472b6;
+  --color-sakura-light: #ffe4e1;
+
+  --color-accent: #db2777;
+  --color-accent-light: #f472b6;
+
+  --color-bg: #09071a; /* main dark background */
+  --color-bg-alt: #0e0b22;
+  --color-bg-deep: #130930;
+  --color-bg-card: rgba(255,255,255,0.05); /* glass card backdrop */
+
+  /* Spacing */
+  --spacing-xs: 4px;   /* p-4 */
+  --spacing-sm: 6px;   /* p-6 */
+  --spacing-md: 8px;   /* p-8 */
+
+  /* Border radius */
+  --radius-sm: 16px;
+  --radius-md: 20px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
+
+  /* Shadows */
+  --shadow-soft: 0 4px 30px rgba(0,0,0,0.12);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-sakura), var(--color-accent));
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* keep same palette for dark mode */
+  }
+}

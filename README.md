@@ -1,4 +1,4 @@
-# 🌸 Learn with Velmorth
+//# 🌸 Learn with Velmorth
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.35-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.3.1-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
@@ -97,6 +97,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 pnpm build
 pnpm start
 ```
+
+---
+
+# Architecture Overview
+
+![Architecture Diagram](file:///c:/Users/ADMIN/.gemini/antigravity-ide/brain/544f1605-5973-4706-aa19-734569654849/architecture_diagram_1782627244712.png)
+
+Learn more about the platform's architecture in the **docs/architecture.md** file.
 
 ---
 

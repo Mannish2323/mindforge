@@ -1,51 +1,23 @@
-'use server';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+// src/lib/auth.ts
 
-function createSupabaseServer() {
-  const cookieStore = cookies();
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) { return cookieStore.get(name)?.value; },
-        set(name: string, value: string, options: any) { cookieStore.set({ name, value, ...options }); },
-        remove(name: string, options: any) { cookieStore.set({ name, value: '', ...options }); },
-      },
-    }
-  );
-}
+import { supabase, supabaseServer } from "./supabaseClient";
+import { Provider } from "@supabase/supabase-js";
 
-export async function signUp(email: string, password: string, username: string) {
-  const supabase = createSupabaseServer();
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { username, full_name: username },
-    },
-  });
-  if (error) return { error: error.message };
-  return { success: true };
-}
+/** Initiate Google sign‑in (client side) */
+export const signInWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({ provider: "google" as Provider });
+  if (error) throw new Error(error.message);
+};
 
-export async function signIn(email: string, password: string) {
-  const supabase = createSupabaseServer();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) return { error: error.message };
-  redirect('/');
-}
+/** Server‑side verification of the session */
+export const getUserFromServer = async (accessToken: string) => {
+  const { data, error } = await supabaseServer.auth.getUser(accessToken);
+  if (error) throw new Error(error.message);
+  return data.user;
+};
 
-export async function signOut() {
-  const supabase = createSupabaseServer();
-  await supabase.auth.signOut();
-  redirect('/');
-}
-
-export async function getSession() {
-  const supabase = createSupabaseServer();
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
-}
+/** Sign out (client side) */
+export const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
+};

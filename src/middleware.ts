@@ -80,7 +80,9 @@ export async function middleware(request: NextRequest) {
   // ── Guard: Auth-only routes → redirect to /home if already authenticated ──
   const isAuthOnly = AUTH_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
   if (isAuthOnly && user) {
-    return NextResponse.redirect(new URL('/home', request.url));
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://dummy.supabase.co') {
+      return NextResponse.redirect(new URL('/home', request.url));
+    }
   }
 
   // ── Guard: Root / redirect ──
