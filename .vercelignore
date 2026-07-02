@@ -11,13 +11,13 @@ node_modules
 .turbo
 **/.turbo
 
-# Android / non-web code
+# Android / non-web code (specific paths only — do NOT ignore /src/ as that contains the Next.js app)
 /build/
 /gradle/
 /.gradle/
 /.kotlin/
 /.idea/
-/src/
+/android/
 *.apk
 *.aab
 *.keystore
