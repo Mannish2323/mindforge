@@ -330,13 +330,13 @@ export default function AITutorPage() {
               className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {msg.role === 'model' && (
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-purple to-sakura-dark flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-neon-purple to-neon-pink flex-shrink-0 flex items-center justify-center overflow-hidden p-1">
                   <Image 
-                    src="/velmorth_mascot.png" 
+                    src="/sakura_ai_avatar.png" 
                     alt="AI Mascot" 
                     width={32}
                     height={32}
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
               )}
@@ -391,7 +391,7 @@ export default function AITutorPage() {
             <div className="flex items-start gap-3 justify-start">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-purple to-sakura-dark flex-shrink-0 flex items-center justify-center overflow-hidden">
                 <Image 
-                  src="/velmorth_mascot.png" 
+                  src="/sakura_ai_avatar.png" 
                   alt="AI Mascot" 
                   width={32}
                   height={32}
@@ -477,7 +477,7 @@ export default function AITutorPage() {
           <div className="relative w-36 h-36 rounded-2xl bg-gradient-to-tr from-brand-purple to-sakura-dark p-[1.5px] overflow-hidden shadow-lg animate-float-avatar">
             <div className="relative w-full h-full bg-[#120f26] rounded-[15px] overflow-hidden">
               <Image 
-                src="/velmorth_mascot.png" 
+                src="/sakura_ai_avatar.png" 
                 alt="AI Mascot" 
                 fill 
                 className="object-cover object-top"

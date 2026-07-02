@@ -160,10 +160,10 @@ export function SakuraMascotWidget() {
           
           <div className="relative w-full h-full bg-[#0e0a1a] rounded-full overflow-hidden flex items-center justify-center">
             <Image
-              src="/velmorth_mascot.png"
+              src="/sakura_ai_avatar.png"
               alt="Sakura AI Tutor Mascot"
               fill
-              className="object-cover object-top p-1"
+              className="object-contain p-1.5"
             />
           </div>
           
@@ -190,10 +190,10 @@ export function SakuraMascotWidget() {
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-neon-purple to-neon-pink p-[1px] relative overflow-hidden flex-shrink-0">
                   <div className="w-full h-full bg-[#120f26] rounded-[11px] overflow-hidden relative">
                     <Image
-                      src="/velmorth_mascot.png"
+                      src="/sakura_ai_avatar.png"
                       alt="Sakura mascot"
                       fill
-                      className="object-cover object-top"
+                      className="object-contain p-1"
                     />
                   </div>
                 </div>

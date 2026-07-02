@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://learn-with-velmorth.vercel.app'),
   title: 'Learn with Velmorth — Japanese Made Effortless',
   description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice.',
   manifest: '/manifest.json',
