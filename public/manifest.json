@@ -5,8 +5,8 @@
   "start_url": "/home",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0B1220",
-  "theme_color": "#16A34A",
+  "background_color": "#0B0717",
+  "theme_color": "#6D3CFF",
   "lang": "en",
   "categories": ["education", "language"],
   "icons": [

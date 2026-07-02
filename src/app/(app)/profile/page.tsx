@@ -1,198 +1,204 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/app/context/AuthContext';
-import { 
-  Award, ShieldCheck, Zap, Flame, BookOpen, Brain, CreditCard, 
-  Settings, User, MapPin, Calendar, Clock, Smile
+import {
+  Zap, Flame, BookOpen, Brain, CreditCard,
+  Settings, Calendar, Award, TrendingUp, PenTool,
+  ChevronRight, Clock, Bookmark, BarChart3
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-interface Badge {
-  id: string;
-  name: string;
-  desc: string;
-  icon: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-}
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Avatar } from '@/components/ui/Avatar';
+import { ProgressRing } from '@/components/ui/ProgressRing';
+import { ProgressBar } from '@/components/ui/ProgressBar';
+import { HeatmapCalendar } from '@/components/charts/HeatmapCalendar';
 
 export default function ProfilePage() {
   const { user, profile } = useAuth();
-  
-  const earnedBadges: Badge[] = [
-    { id: '1', name: 'First Step', desc: 'Complete your first lesson', icon: '🌱', rarity: 'common' },
-    { id: '2', name: 'On a Roll', desc: 'Maintain a 3-day streak', icon: '🔥', rarity: 'common' },
-    { id: '3', name: 'Week Warrior', desc: 'Maintain a 7-day streak', icon: '⚡', rarity: 'rare' },
-    { id: '4', name: 'Vocabulary Builder', desc: 'Learn 50 words', icon: '🈶', rarity: 'rare' }
+
+  const userName = profile?.name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner';
+  const userEmail = user?.email || '';
+  const xpTotal = profile?.xp ?? 0;
+  const level = profile?.level ?? 1;
+  const streak = profile?.streak ?? 0;
+  const jlptTarget = profile?.jlpt_target || 'N5';
+  const wordsLearned = profile?.words_learned ?? 0;
+  const kanjiLearned = profile?.kanji_learned ?? 0;
+  const lessonsDone = profile?.lessons_done ?? 0;
+  const reviewsDone = profile?.reviews_done ?? 0;
+  const bio = profile?.bio || 'Learning Japanese one step at a time 🌸';
+  const joinedDate = profile?.createdAt || user?.created_at;
+
+  const earnedBadges = [
+    { id: '1', emoji: '🌱', name: 'First Step', desc: 'Complete first lesson' },
+    { id: '2', emoji: '🔥', name: 'On a Roll', desc: '3-day streak' },
+    { id: '3', emoji: '⚡', name: 'Week Warrior', desc: '7-day streak' },
+    { id: '4', emoji: '🈶', name: 'Vocab Builder', desc: 'Learn 50 words' },
   ];
 
-  // Dummy activity array for the heatmap calendar (12 months representation)
-  const heatmapData = Array.from({ length: 28 }).map((_, i) => ({
-    day: i + 1,
-    active: i % 4 !== 0,
-    intensity: (i % 3) + 1
-  }));
+  // Level progress calc
+  const calcLevelProgress = () => {
+    let threshold = 100;
+    let accumulated = 0;
+    for (let l = 1; l < level; l++) {
+      accumulated += threshold;
+      threshold += 100;
+    }
+    const xpInLevel = xpTotal - accumulated;
+    return Math.min(100, Math.round((xpInLevel / threshold) * 100));
+  };
 
-  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner';
-  const userEmail = user?.email || 'email@example.com';
-  
-  const currentLevelXp = user?.user_metadata?.xp || 120;
-  const targetXp = 300;
-  const xpPercentage = Math.round((currentLevelXp / targetXp) * 100);
+  // Heatmap data (simulated)
+  const heatmapData = Array.from({ length: 84 }).map((_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - (83 - i));
+    return { date: date.toISOString().split('T')[0], value: Math.random() > 0.35 ? Math.floor(Math.random() * 40) + 5 : 0 };
+  });
+
+  const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
+  const item = { hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 120, damping: 14 } } };
 
   return (
-    <div className="space-y-8">
-      {/* Profile Header banner */}
-      <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 relative overflow-hidden flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
-        {/* Ambient glow */}
-        <div className="absolute right-[-20px] top-[-20px] w-48 h-48 bg-brand-purple/10 rounded-full blur-[40px] pointer-events-none" />
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-8">
+      {/* Profile Header */}
+      <motion.div variants={item}>
+        <Card variant="gradient" padding="lg" className="relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-neon-pink/10 rounded-full blur-[60px] pointer-events-none" />
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
+            {/* Avatar */}
+            <Avatar
+              name={userName}
+              emoji={profile?.avatarUrl}
+              size="xl"
+              level={level}
+              showLevel
+            />
 
-        <div className="flex flex-col md:flex-row items-center md:items-start gap-5 relative z-10 text-center md:text-left">
-          {/* Avatar avatar */}
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-brand-purple to-sakura-dark p-[2px] shadow-lg flex-shrink-0 relative overflow-hidden animate-float-avatar">
-            <div className="w-full h-full bg-[#120f26] rounded-[14px] flex items-center justify-center font-bold text-white text-3xl">
-              {userName[0].toUpperCase()}
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-              <h2 className="text-xl md:text-2xl font-extrabold text-white font-orbitron">{userName}</h2>
-              <span className="flex items-center gap-1 text-[9px] font-extrabold text-brand-purple-light bg-brand-purple/20 border border-brand-purple/30 px-2 py-0.5 rounded-md uppercase">
-                <ShieldCheck className="w-3 h-3" />
-                <span>Premium Starter</span>
-              </span>
-            </div>
-            <p className="text-xs font-semibold text-purple-300/40">{userEmail}</p>
-            <p className="text-xs text-purple-300/60 font-semibold flex items-center justify-center md:justify-start gap-1">
-              <Smile className="w-3.5 h-3.5 text-sakura-dark" />
-              <span>&ldquo;Practice makes permanent, keep grinding.&rdquo;</span>
-            </p>
-          </div>
-        </div>
-
-        <div className="flex-shrink-0 flex items-center gap-3">
-          <div className="text-center md:text-right">
-            <span className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">LEVEL PROGRESS</span>
-            <div className="flex items-center gap-2 mt-1.5 justify-center md:justify-end">
-              <span className="text-xs font-bold text-white">N5</span>
-              <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-brand-purple to-sakura-dark rounded-full" style={{ width: `${xpPercentage}%` }} />
+            <div className="flex-1 text-center md:text-left space-y-3">
+              <div>
+                <h1 className="text-2xl font-extrabold text-white font-orbitron">{userName}</h1>
+                <p className="text-sm text-purple-300/40 mt-0.5">{userEmail}</p>
               </div>
-              <span className="text-xs font-extrabold text-sakura-dark">{xpPercentage}%</span>
+              <p className="text-sm text-purple-200/50 italic">{bio}</p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+                <Badge variant="neon" size="sm" icon={<Zap className="w-3 h-3" />}>
+                  {xpTotal.toLocaleString()} XP
+                </Badge>
+                <Badge variant="amber" size="sm" icon={<Flame className="w-3 h-3 fill-amber-500" />}>
+                  {streak} day streak
+                </Badge>
+                <Badge variant="purple" size="sm">
+                  {jlptTarget}
+                </Badge>
+                {joinedDate && (
+                  <Badge variant="default" size="sm" icon={<Calendar className="w-3 h-3" />}>
+                    Joined {new Date(joinedDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
+                  </Badge>
+                )}
+              </div>
+              {/* Level Progress */}
+              <ProgressBar value={calcLevelProgress()} label={`Level ${level}`} showLabel size="md" />
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Stats counter row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Settings link */}
+            <Link href="/settings" className="hidden md:flex p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-all">
+              <Settings className="w-5 h-5 text-purple-300/50" />
+            </Link>
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'XP TOTAL', value: '1,240', desc: 'All time points', icon: Zap, color: 'text-yellow-400 bg-yellow-400/10' },
-          { label: 'DAY STREAK', value: '5 Days', desc: 'Daily consistency', icon: Flame, color: 'text-orange-400 bg-orange-400/10' },
-          { label: 'WORDS LEARNED', value: '12 Words', desc: 'Active vocabulary', icon: BookOpen, color: 'text-pink-400 bg-pink-400/10' },
-          { label: 'SPEAK SESSIONS', value: '4 Rounds', desc: 'Pronunciation checks', icon: Brain, color: 'text-purple-400 bg-purple-400/10' }
-        ].map((s, idx) => (
-          <div key={idx} className="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-purple-300/40 tracking-wider uppercase">{s.label}</span>
-              <div className={`p-1.5 rounded-lg ${s.color.split(' ').slice(1).join(' ')}`}>
-                <s.icon className={`w-4 h-4 ${s.color.split(' ')[0]}`} />
-              </div>
-            </div>
-            <div>
-              <h3 className="text-xl font-extrabold text-white font-orbitron">{s.value}</h3>
-              <p className="text-[10px] font-medium text-purple-300/45 mt-0.5">{s.desc}</p>
-            </div>
-          </div>
+          { label: 'Lessons', value: lessonsDone, icon: BookOpen, color: 'text-brand-light' },
+          { label: 'Words', value: wordsLearned, icon: BookOpen, color: 'text-neon-pink' },
+          { label: 'Kanji', value: kanjiLearned, icon: PenTool, color: 'text-amber-400' },
+          { label: 'Reviews', value: reviewsDone, icon: Brain, color: 'text-emerald-400' },
+        ].map(stat => (
+          <Card key={stat.label} variant="glass" padding="md" className="flex flex-col items-center gap-2">
+            <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <span className="text-xl font-bold text-white font-orbitron">{stat.value}</span>
+            <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">{stat.label}</span>
+          </Card>
         ))}
-      </div>
+      </motion.div>
 
-      {/* Activity Heatmap & Achievements panel */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* Left column: Activity Heatmap */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left column */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6">
-            <div className="flex items-center justify-between border-b border-white/5 pb-4">
-              <h3 className="text-base font-bold text-white font-orbitron">Activity heatmap</h3>
-              <span className="text-xs font-semibold text-purple-300/40">Past 4 weeks study consistency</span>
-            </div>
+          {/* Activity Calendar */}
+          <motion.div variants={item}>
+            <Card variant="glass" padding="md" className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Study Calendar</h3>
+                <Badge variant="default" size="sm" icon={<Calendar className="w-3 h-3" />}>12 weeks</Badge>
+              </div>
+              <HeatmapCalendar data={heatmapData} weeks={12} />
+            </Card>
+          </motion.div>
 
-            {/* Heatmap grid */}
-            <div className="flex flex-wrap gap-2.5 items-center justify-center">
-              {heatmapData.map((d) => {
-                let colorStyle = 'bg-white/5 border border-white/5';
-                if (d.active) {
-                  if (d.intensity === 1) colorStyle = 'bg-brand-purple/20 border-brand-purple/20 text-white';
-                  else if (d.intensity === 2) colorStyle = 'bg-brand-purple/40 border-brand-purple/35 text-white';
-                  else colorStyle = 'bg-brand-purple/70 border-brand-purple/60 text-white shadow-[0_0_8px_rgba(124,58,237,0.3)]';
-                }
-
-                return (
-                  <div 
-                    key={d.day}
-                    title={`Day ${d.day}: Study session active`}
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-bold font-orbitron ${colorStyle}`}
-                  >
-                    {d.day}
+          {/* Badges */}
+          <motion.div variants={item}>
+            <Card variant="glass" padding="md" className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Badges Earned</h3>
+                <Link href="/achievements" className="text-xs text-brand-light hover:text-neon-pink flex items-center gap-1">
+                  View All <ChevronRight className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {earnedBadges.map(badge => (
+                  <div key={badge.id} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+                    <span className="text-2xl">{badge.emoji}</span>
+                    <span className="text-[11px] font-bold text-white text-center">{badge.name}</span>
+                    <span className="text-[9px] text-purple-300/30 text-center">{badge.desc}</span>
                   </div>
-                );
-              })}
-            </div>
-            
-            <div className="flex justify-center gap-6 text-[10px] font-bold text-purple-300/40 uppercase">
-              <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-white/5 rounded" />
-                <span>INACTIVE</span>
+                ))}
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-brand-purple/20 rounded" />
-                <span>LOW INTENSITY</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-3.5 h-3.5 bg-brand-purple/70 rounded" />
-                <span>HIGH INTENSITY</span>
-              </div>
-            </div>
-          </div>
+            </Card>
+          </motion.div>
         </div>
 
-        {/* Right column: Badges / Achievements list */}
+        {/* Right column */}
         <div className="lg:col-span-4 space-y-6">
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-5">
-            <h3 className="text-base font-bold text-white font-orbitron">Achievements</h3>
-            <div className="space-y-3">
-              {earnedBadges.map((badge) => {
-                let rarityColor = 'text-purple-300 bg-purple-500/10 border-purple-500/20';
-                if (badge.rarity === 'rare') rarityColor = 'text-sky-300 bg-sky-500/10 border-sky-500/20';
-                else if (badge.rarity === 'epic') rarityColor = 'text-pink-300 bg-pink-500/10 border-pink-500/20';
-
-                return (
-                  <div 
-                    key={badge.id}
-                    className="p-3.5 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center gap-3.5 hover:border-white/10 transition-all"
-                  >
-                    <div className="w-11 h-11 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl">
-                      {badge.icon}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <h4 className="text-sm font-bold text-white truncate">{badge.name}</h4>
-                        <span className={`text-[8px] font-extrabold tracking-wider border px-1.5 py-0.5 rounded uppercase ${rarityColor}`}>
-                          {badge.rarity}
-                        </span>
-                      </div>
-                      <p className="text-[10px] font-medium text-purple-300/40 mt-0.5 truncate">{badge.desc}</p>
-                    </div>
+          {/* Quick Links */}
+          <motion.div variants={item}>
+            <Card variant="glass" padding="none" className="divide-y divide-white/[0.03]">
+              {[
+                { name: 'Settings', href: '/settings', icon: Settings },
+                { name: 'Subscription', href: '/billing', icon: CreditCard },
+                { name: 'Progress', href: '/progress', icon: BarChart3 },
+                { name: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
+              ].map(link => (
+                <Link key={link.name} href={link.href}
+                  className="flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <link.icon className="w-4 h-4 text-purple-300/40" />
+                    <span className="text-sm font-medium text-white">{link.name}</span>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-purple-300/20" />
+                </Link>
+              ))}
+            </Card>
+          </motion.div>
 
+          {/* JLPT Goal Card */}
+          <motion.div variants={item}>
+            <Card variant="glass" padding="md" className="flex flex-col items-center gap-3">
+              <ProgressRing value={35} size={100} strokeWidth={8} label={jlptTarget} />
+              <div className="text-center">
+                <p className="text-xs font-semibold text-white">JLPT Readiness</p>
+                <p className="text-[10px] text-purple-300/40">Keep studying to improve!</p>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

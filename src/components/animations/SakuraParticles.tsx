@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 interface Petal {
   id: number;
@@ -14,27 +14,41 @@ interface Petal {
 
 export function SakuraParticles() {
   const [petals, setPetals] = useState<Petal[]>([]);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Generate static petals on mount to avoid hydration mismatch
-    const generated: Petal[] = Array.from({ length: 24 }).map((_, i) => ({
+    // Detect mobile for reduced particle count
+    const mobile = window.innerWidth < 768;
+    setIsMobile(mobile);
+    const count = mobile ? 12 : 20;
+
+    // Check reduced motion preference
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      setPetals([]);
+      return;
+    }
+
+    const generated: Petal[] = Array.from({ length: count }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,
       delay: `${Math.random() * 10}s`,
-      duration: `${8 + Math.random() * 8}s`,
-      size: `${6 + Math.random() * 12}px`,
-      opacity: 0.4 + Math.random() * 0.5,
+      duration: `${10 + Math.random() * 10}s`,
+      size: `${6 + Math.random() * 10}px`,
+      opacity: 0.3 + Math.random() * 0.4,
       rotation: `${Math.random() * 360}deg`,
     }));
     setPetals(generated);
   }, []);
 
+  if (petals.length === 0) return null;
+
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
       {petals.map((petal) => (
         <span
           key={petal.id}
-          className="absolute block bg-gradient-to-br from-sakura-medium to-sakura-dark animate-petal-fall rounded-[100%_0%_60%_40%/_60%_0%_100%_40%] origin-center"
+          className="absolute block bg-gradient-to-br from-sakura-medium to-sakura-dark animate-petal-fall rounded-[100%_0%_60%_40%_/_60%_0%_100%_40%] origin-center will-change-transform"
           style={{
             left: petal.left,
             animationDelay: petal.delay,

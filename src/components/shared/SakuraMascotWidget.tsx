@@ -154,9 +154,9 @@ export function SakuraMascotWidget() {
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
       >
-        <div className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-brand-purple to-sakura-dark p-[2px] shadow-[0_8px_32px_rgba(236,72,153,0.35)] group">
+        <div className="relative w-16 h-16 rounded-full bg-gradient-to-tr from-neon-purple to-neon-pink p-[2px] shadow-[0_8px_32px_rgba(193,91,255,0.35)] group">
           {/* Pulsing Outer Ring */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand-purple to-sakura-dark opacity-40 blur-md group-hover:opacity-75 transition-opacity duration-300" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-neon-purple to-neon-pink opacity-40 blur-md group-hover:opacity-75 transition-opacity duration-300" />
           
           <div className="relative w-full h-full bg-[#0e0a1a] rounded-full overflow-hidden flex items-center justify-center">
             <Image
@@ -187,7 +187,7 @@ export function SakuraMascotWidget() {
             {/* Header */}
             <div className="p-4 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-purple to-sakura-dark p-[1px] relative overflow-hidden flex-shrink-0">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-neon-purple to-neon-pink p-[1px] relative overflow-hidden flex-shrink-0">
                   <div className="w-full h-full bg-[#120f26] rounded-[11px] overflow-hidden relative">
                     <Image
                       src="/velmorth_mascot.png"
@@ -223,7 +223,7 @@ export function SakuraMascotWidget() {
                 >
                   <div className={`max-w-[85%] rounded-[18px] p-3 text-sm font-medium leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white rounded-br-none shadow-md'
+                      ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-br-none shadow-md'
                       : 'bg-white/[0.04] border border-white/5 text-purple-100 rounded-bl-none'
                   }`}>
                     {msg.role === 'model' && msg.content_ja ? (
@@ -281,7 +281,7 @@ export function SakuraMascotWidget() {
               
               <button
                 onClick={() => handleSend(inputText)}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer flex-shrink-0 disabled:opacity-50"
+                className="p-2.5 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer flex-shrink-0 disabled:opacity-50"
                 disabled={!inputText.trim() || loading}
               >
                 <Send className="w-3.5 h-3.5" />
