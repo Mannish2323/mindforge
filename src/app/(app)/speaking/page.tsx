@@ -6,6 +6,7 @@ import {
   Play, Sparkles, ChevronRight, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PremiumGate } from '@/components/shared/PremiumGate';
 
 interface SpeakingPhrase {
   id: string;

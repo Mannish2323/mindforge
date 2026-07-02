@@ -80,25 +80,38 @@ export async function POST(request: Request) {
     if (supabaseUrl !== 'https://dummy.supabase.co') {
       try {
         const adminSupabase = createClient(supabaseUrl, serviceKey);
-        const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const today = new Date().toISOString().slice(0, 10);
 
-        // 2. Fetch daily AI limit from entitlements
+        // 2. Fetch entitlements (limit + subscription expiry + fallback usage)
         const { data: ent } = await adminSupabase
           .from('entitlements')
-          .select('ai_limit_daily')
+          .select('ai_limit_daily, ends_at, status, ai_chats_used_today, ai_chats_reset_at')
           .eq('user_id', user.id)
           .maybeSingle();
-          
-        // 3. Fetch today's AI usage
-        const { data: usage } = await adminSupabase
+
+        // Check subscription expiry
+        if (ent?.ends_at && new Date(ent.ends_at) < new Date()) {
+          // Expired — downgrade to free limits
+          limit = 5;
+        } else {
+          limit = ent?.ai_limit_daily ?? 5;
+        }
+
+        // 3. Try usage_counters first, fall back to entitlements.ai_chats_used_today
+        const { data: usage, error: usageErr } = await adminSupabase
           .from('usage_counters')
           .select('ai_requests')
           .eq('user_id', user.id)
           .eq('date', today)
           .maybeSingle();
 
-        limit = ent?.ai_limit_daily ?? 5; // default fallback
-        used = usage?.ai_requests ?? 0;
+        if (usageErr || usage === null) {
+          // Fallback: use ai_chats_used_today on entitlements (reset if date differs)
+          const resetDate = ent?.ai_chats_reset_at;
+          used = (resetDate === today) ? (ent?.ai_chats_used_today ?? 0) : 0;
+        } else {
+          used = usage.ai_requests ?? 0;
+        }
       } catch (err) {
         console.error('Error fetching limits:', err);
       }
@@ -106,8 +119,13 @@ export async function POST(request: Request) {
 
     if (used >= limit) {
       return NextResponse.json(
-        { error: `You have reached your daily limit of ${limit} AI messages. Please upgrade your plan or try again tomorrow.` },
-        { status: 403 }
+        {
+          error: `Daily AI limit reached (${limit}/day). Upgrade your plan to continue.`,
+          upgrade: true,
+          used,
+          limit,
+        },
+        { status: 429 }
       );
     }
 

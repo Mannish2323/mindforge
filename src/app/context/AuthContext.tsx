@@ -53,6 +53,7 @@ interface AuthContextType {
   session: Session | null;
   profile: UserProfile | null;
   loading: boolean;
+  refreshProfile: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   signUpWithEmail: (email: string, pass: string, name: string) => Promise<{ user: User | null; session: Session | null }>;
@@ -269,6 +270,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error syncing user profile:', error);
     }
+  };
+
+  // ── Public: re-fetch profile from DB without page reload ─────────────────
+  const refreshProfile = async () => {
+    const currentUser = user;
+    if (!currentUser) return;
+    await syncUserProfile(currentUser);
   };
 
   useEffect(() => {
@@ -665,6 +673,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         session,
         profile,
         loading,
+        refreshProfile,
         signInWithGoogle,
         loginWithEmail,
         signUpWithEmail,

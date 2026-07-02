@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useEntitlements } from '@/hooks/useEntitlements';
+import { useUpgradeDialog } from '@/components/shared/UpgradeDialog';
 import { 
   Sparkles, Send, Mic, Volume2, HelpCircle, History, Book, 
   MessageSquare, Lightbulb, Trash2, ArrowLeft, RefreshCw, Star
@@ -21,6 +23,8 @@ interface Message {
 
 export default function AITutorPage() {
   const { session, profile } = useAuth();
+  const entitlements = useEntitlements();
+  const { openUpgradeDialog } = useUpgradeDialog();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'model',
@@ -34,7 +38,6 @@ export default function AITutorPage() {
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [apiUsage, setApiUsage] = useState({ used: 0, limit: 15 });
   const [selectedLanguage, setSelectedLanguage] = useState<'ja' | 'en'>('ja');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,15 +46,6 @@ export default function AITutorPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
-  // Fetch or mock API limits
-  useEffect(() => {
-    if (profile) {
-      setApiUsage({
-        used: profile.reviews_done % 15, // dynamic mockup based on actual profile counter
-        limit: profile.aiLimitDaily || 15
-      });
-    }
-  }, [profile]);
 
   // Load conversation history from DB
   useEffect(() => {
@@ -150,6 +144,20 @@ export default function AITutorPage() {
 
       const data = await res.json();
 
+      // Handle quota exceeded — show upgrade dialog
+      if (res.status === 429 && data.upgrade) {
+        openUpgradeDialog({
+          feature: 'AI Tutor',
+          description: 'Upgrade to get more daily AI conversations.',
+          used: data.used ?? entitlements.aiUsedToday,
+          limit: data.limit ?? entitlements.aiLimit,
+          suggestedPlan: 'starter',
+        });
+        // Remove the optimistic user message on limit exceeded
+        setMessages(prev => prev.slice(0, -1));
+        return;
+      }
+
       if (!res.ok) {
         throw new Error(data.error || 'Failed to generate response');
       }
@@ -165,7 +173,7 @@ export default function AITutorPage() {
       };
 
       setMessages(prev => [...prev, modelMsg]);
-      setApiUsage(prev => ({ ...prev, used: Math.min(prev.limit, prev.used + 1) }));
+
 
       // Auto speak response
       if (data.content_ja) {
@@ -284,12 +292,12 @@ export default function AITutorPage() {
         <div className="glass-card p-6 rounded-[24px] space-y-4">
           <div className="flex justify-between items-center text-xs font-bold text-purple-300/60">
             <span>AI TUTOR USAGE</span>
-            <span className="text-sakura-dark">{apiUsage.used} / {apiUsage.limit} Daily Limit</span>
+            <span className="text-sakura-dark">{entitlements.aiUsedToday} / {entitlements.aiLimit} Daily Limit</span>
           </div>
           <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-brand-purple to-sakura-dark rounded-full transition-all duration-300"
-              style={{ width: `${(apiUsage.used / apiUsage.limit) * 100}%` }}
+              style={{ width: `${entitlements.aiLimit > 0 ? (entitlements.aiUsedToday / entitlements.aiLimit) * 100 : 0}%` }}
             />
           </div>
           <p className="text-[10px] font-semibold text-purple-300/40 leading-relaxed">

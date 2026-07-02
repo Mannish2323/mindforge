@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { invalidateEntitlementCache } from '@/hooks/useEntitlements';
 import { PLANS, PlanId } from '@/lib/plans';
 import { createBrowserClient } from '@supabase/ssr';
 import {
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/Badge';
 import { motion } from 'framer-motion';
 
 export default function BillingPage() {
-  const { profile } = useAuth();
+  const { profile, refreshProfile } = useAuth();
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError]   = useState('');
   const [success, setSuccess] = useState('');
@@ -93,8 +94,10 @@ export default function BillingPage() {
           });
 
           if (verifyRes.ok) {
-            setSuccess('🎉 Subscription activated! Refreshing your account...');
-            setTimeout(() => window.location.reload(), 1800);
+            setSuccess('🎉 Subscription activated! Your plan is now live.');
+            // Invalidate cached limits and refresh profile — no page reload needed
+            invalidateEntitlementCache();
+            await refreshProfile();
           } else {
             const errData = await verifyRes.json();
             setError(errData.error || 'Payment verification failed. Contact support.');

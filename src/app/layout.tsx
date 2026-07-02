@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
+import { UpgradeDialogProvider } from '@/components/shared/UpgradeDialog';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://learn-with-velmorth.vercel.app'),
@@ -55,7 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <AuthProvider>
           <StoreProvider>
-            {children}
+            <UpgradeDialogProvider>
+              {children}
+            </UpgradeDialogProvider>
           </StoreProvider>
         </AuthProvider>
       </body>
