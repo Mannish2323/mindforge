@@ -9,13 +9,25 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   keywords: ['Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji', 'Velmorth'],
   authors: [{ name: 'Velmorth Labs', url: 'https://learn-with-velmorth.vercel.app' }],
+  icons: {
+    icon: '/velmorth_logo.png',
+    shortcut: '/velmorth_logo.png',
+    apple: '/velmorth_logo.png',
+  },
   openGraph: {
     title: 'Learn with Velmorth',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
     url: 'https://learn-with-velmorth.vercel.app',
     siteName: 'Velmorth',
+    images: [{ url: '/velmorth_logo.png', width: 512, height: 512, alt: 'Velmorth Logo' }],
     locale: 'en_US',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Learn with Velmorth',
+    description: 'Learn Japanese the smart way — AI + SRS + Speaking',
+    images: ['/velmorth_logo.png'],
   },
 };
 
@@ -31,7 +43,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/icons/icon-192.png" />
+        <link rel="icon" href="/velmorth_logo.png" />
+        <link rel="apple-touch-icon" href="/velmorth_logo.png" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8150181705727957"

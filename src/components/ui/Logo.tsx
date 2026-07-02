@@ -22,7 +22,7 @@ export function Logo({ size = 'md', glow = true, className, ...props }: LogoProp
       )}
       
       <Image
-        src="/icons/icon-512.png"
+        src="/velmorth_logo.png"
         alt="Velmorth Logo"
         width={dimensions}
         height={dimensions}

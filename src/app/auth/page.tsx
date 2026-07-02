@@ -73,6 +73,11 @@ export default function AuthPage() {
         {/* Left: Hero Section */}
         <motion.div variants={itemVariants} className="flex-1 max-w-xl space-y-8 text-center lg:text-left">
           <div className="space-y-5">
+            {/* Large Logo for mobile / desktop hero */}
+            <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
+              <Logo size={96} glow={true} className="rounded-3xl" />
+            </motion.div>
+
             <motion.div variants={itemVariants}>
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neon-purple/15 border border-neon-purple/30 text-xs font-bold text-brand-light">
                 <Sparkles className="w-3.5 h-3.5" />
