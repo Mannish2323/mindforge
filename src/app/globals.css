@@ -6,11 +6,11 @@
   --font-orbitron: 'Orbitron', monospace;
 
   /* ─── Master Palette: Dark Japanese Sakura × Purple ─── */
-  --color-dark-base: #0B0717;
-  --color-dark-surface: #120B24;
+  --color-dark-base: #09070F;
+  --color-dark-surface: #12101D;
   --color-dark-elevated: #1A1033;
-  --color-dark-card: rgba(18, 11, 36, 0.55);
-  --color-dark-border: rgba(255, 255, 255, 0.06);
+  --color-dark-card: rgba(18, 16, 29, 0.85);
+  --color-dark-border: rgba(255, 255, 255, 0.08);
 
   /* Primary purples */
   --color-neon-purple: #6D3CFF;
@@ -34,7 +34,7 @@
   --color-glow-blue: #00e5ff;
   --color-glow-pink: #ec4899;
 
-  --color-dark-bg: #0B0717;
+  --color-dark-bg: #09070F;
 
   /* Border radii */
   --radius-sm: 12px;
@@ -155,10 +155,16 @@
   100% { transform: translateX(100%) scale(0.95); opacity: 0; }
 }
 
+@keyframes typing-dots {
+  0%, 20% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+  80%, 100% { opacity: 0.2; transform: scale(0.8); }
+}
+
 /* ─── Global Reset ─── */
 
 html, body {
-  background-color: var(--color-dark-base);
+  background-color: #09070F;
   color: #f0efff;
   font-family: var(--font-sans);
   min-height: 100vh;
@@ -194,11 +200,11 @@ html {
 /* ─── Glass Utilities ─── */
 
 @utility glass-card {
-  background: rgba(18, 11, 36, 0.55);
+  background: rgba(18, 16, 29, 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 @utility glass-card-hover {

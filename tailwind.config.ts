@@ -32,13 +32,13 @@ const config: Config = {
           magenta: '#FF6BD6',
         },
         bg: {
-          DEFAULT: '#0B0717',
-          surface: '#120B24',
+          DEFAULT: '#09070F',
+          surface: '#12101D',
           elevated: '#1A1033',
-          card: 'rgba(18, 11, 36, 0.55)',
+          card: 'rgba(18, 16, 29, 0.85)',
         },
         surface: {
-          DEFAULT: '#120B24',
+          DEFAULT: '#12101D',
           light: '#1A1033',
           lighter: '#221640',
         },

@@ -7,13 +7,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home, Map, BookOpen, Book, Volume2, Mic, FileText, PenTool,
   Brain, LayoutGrid, Trophy, Users, Award, User, CreditCard,
-  Settings, Flame, Zap, Bell, Menu, X, ChevronRight,
-  Sparkles, LogOut, Bookmark, Download, BarChart3
+  Settings, Flame, Zap, Menu, X, ChevronRight,
+  Sparkles, LogOut, Bookmark, BarChart3
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/app/context/AuthContext';
 import { SakuraParticles } from '@/components/animations/SakuraParticles';
 import { SakuraMascotWidget } from '@/components/shared/SakuraMascotWidget';
+import { NotificationBell } from '@/components/layout/NotificationBell';
+import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -232,7 +234,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-dark-base text-white flex relative overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-[#09070F] text-white flex relative overflow-hidden">
       {/* Sakura Petals Background */}
       <SakuraParticles />
 
@@ -279,7 +281,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen h-[100dvh] overflow-y-auto scrollbar-thin">
         {/* Top Bar */}
-        <header className="sticky top-0 z-40 bg-dark-base/80 backdrop-blur-xl border-b border-white/[0.04] px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top">
+        <header className="sticky top-0 z-40 bg-[#09070F]/90 backdrop-blur-xl border-b border-white/[0.06] px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top">
           <div className="flex items-center gap-3">
             {/* Mobile menu trigger */}
             <button
@@ -321,13 +323,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Badge>
 
             {/* Notifications */}
-            <button
-              className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.04] text-purple-300/50 hover:text-white transition-all relative cursor-pointer"
-              aria-label="Notifications"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-neon-pink rounded-full" />
-            </button>
+            <NotificationBell />
 
             {/* Profile */}
             <Link href="/profile">
@@ -338,7 +334,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* Page Content */}
         <main className="flex-1 p-4 md:p-6 lg:p-8 relative z-10 pb-24 md:pb-8">
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </main>
       </div>
 
@@ -346,7 +344,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SakuraMascotWidget />
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-dark-surface/95 backdrop-blur-xl border-t border-white/[0.04] px-2 py-1.5 safe-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#12101D]/95 backdrop-blur-xl border-t border-white/[0.06] px-2 py-1.5 safe-bottom">
         <div className="flex items-center justify-around max-w-lg mx-auto">
           {[
             { name: 'Home', href: '/home', icon: Home },

@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Award, Lock, Star, Flame, BookOpen, Brain, Users, Zap } from 'lucide-react';
+import { Award, Lock } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { BadgeIcon, resolveBadgeType, getBadgeLabel } from '@/components/ui/BadgeIcons';
 import { useAuth } from '@/app/context/AuthContext';
 
 const ACHIEVEMENTS = [
@@ -35,7 +36,7 @@ export default function AchievementsPage() {
   const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04 } } };
-  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 120, damping: 14 } } };
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
@@ -55,7 +56,7 @@ export default function AchievementsPage() {
       <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-1">
         {tabs.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.04] hover:border-white/10'}`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.06] hover:border-white/10'}`}
           >{tab}</button>
         ))}
       </motion.div>
@@ -65,13 +66,16 @@ export default function AchievementsPage() {
         {filtered.map((achievement) => (
           <motion.div key={achievement.id} variants={item}>
             <Card variant="glass" padding="md"
-              className={`space-y-3 ${!achievement.unlocked ? 'opacity-60' : ''}`}
+              className={`space-y-3 ${!achievement.unlocked ? 'opacity-70' : ''}`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${achievement.unlocked ? 'bg-amber-500/10 border border-amber-500/20' : 'bg-white/[0.03] border border-white/[0.04]'}`}>
-                    {achievement.unlocked ? achievement.emoji : <Lock className="w-5 h-5 text-purple-300/30" />}
-                  </div>
+                  {/* Premium SVG Badge Icon */}
+                  <BadgeIcon
+                    type={achievement.emoji}
+                    unlocked={achievement.unlocked}
+                    size="md"
+                  />
                   <div>
                     <h3 className="text-sm font-bold text-white">{achievement.name}</h3>
                     <p className="text-[11px] text-purple-300/40">{achievement.desc}</p>

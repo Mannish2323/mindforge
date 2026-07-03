@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { Logo } from '@/components/ui/Logo';
-import { Button } from '@/components/ui/Button';
 import { SakuraParticles } from '@/components/animations/SakuraParticles';
 import { motion } from 'framer-motion';
-import { Sparkles, BookOpen, Mic, Brain, Trophy, Shield, ArrowRight } from 'lucide-react';
+import { Sparkles, BookOpen, Mic, Brain, Trophy, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AuthPage() {
@@ -36,22 +35,28 @@ export default function AuthPage() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
+    show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.3 } },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100 } },
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 16 } },
   };
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-[#0B0717] text-white flex flex-col relative overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="min-h-screen min-h-[100dvh] bg-[#09070F] text-white flex flex-col relative overflow-hidden"
+    >
       {/* Sakura Petals */}
       <SakuraParticles />
 
-      {/* Background glows */}
-      <div className="absolute w-[50vw] h-[50vw] rounded-full bg-neon-purple/8 blur-[120px] pointer-events-none top-[10%] left-[10%] animate-pulse-glow" />
-      <div className="absolute w-[40vw] h-[40vw] rounded-full bg-neon-pink/5 blur-[100px] pointer-events-none bottom-[10%] right-[10%]" />
+      {/* Background glows — larger, more atmospheric */}
+      <div className="absolute w-[60vw] h-[60vw] rounded-full bg-neon-purple/6 blur-[160px] pointer-events-none top-[5%] left-[5%] animate-pulse-glow" />
+      <div className="absolute w-[50vw] h-[50vw] rounded-full bg-neon-pink/4 blur-[140px] pointer-events-none bottom-[5%] right-[5%]" />
+      <div className="absolute w-[30vw] h-[30vw] rounded-full bg-sakura-dark/5 blur-[100px] pointer-events-none top-[40%] right-[30%]" />
 
       {/* Top Bar */}
       <header className="w-full flex items-center justify-between px-6 py-4 z-20 max-w-7xl mx-auto">
@@ -79,13 +84,13 @@ export default function AuthPage() {
             </motion.div>
 
             <motion.div variants={itemVariants}>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neon-purple/15 border border-neon-purple/30 text-xs font-bold text-brand-light">
+              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-[11px] font-bold text-brand-light tracking-wide">
                 <Sparkles className="w-3.5 h-3.5" />
                 AI-Powered Japanese Learning
               </span>
             </motion.div>
 
-            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.1]">
+            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
               Learn Japanese{' '}
               <br className="hidden sm:block" />
               <span className="bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta bg-clip-text text-transparent">
@@ -93,7 +98,7 @@ export default function AuthPage() {
               </span>
             </motion.h1>
 
-            <motion.p variants={itemVariants} className="text-purple-200/50 text-base md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
+            <motion.p variants={itemVariants} className="text-purple-200/45 text-base md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
               AI-powered lessons, practice, and real-time feedback.
               Master JLPT N5 to N1 with Sakura AI, your personal tutor.
             </motion.p>
@@ -108,14 +113,15 @@ export default function AuthPage() {
               <motion.div
                 key={f.title}
                 variants={itemVariants}
-                className="flex flex-col items-center lg:items-start gap-2 p-4 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:border-neon-purple/20 hover:bg-white/[0.04] transition-all"
+                whileHover={{ y: -3, borderColor: 'rgba(109, 60, 255, 0.25)' }}
+                className="flex flex-col items-center lg:items-start gap-2.5 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] transition-all"
               >
-                <div className="p-2 rounded-lg bg-neon-purple/10">
+                <div className="p-2.5 rounded-xl bg-neon-purple/10 border border-neon-purple/15">
                   <f.icon className="w-4 h-4 text-brand-light" />
                 </div>
                 <div className="text-center lg:text-left">
                   <span className="text-xs font-bold text-white block">{f.title}</span>
-                  <span className="text-[10px] text-purple-300/40 font-medium">{f.desc}</span>
+                  <span className="text-[10px] text-purple-300/35 font-medium">{f.desc}</span>
                 </div>
               </motion.div>
             ))}
@@ -123,15 +129,25 @@ export default function AuthPage() {
         </motion.div>
 
         {/* Right: Login Card */}
-        <motion.div variants={itemVariants} className="w-full max-w-[420px]">
+        <motion.div
+          variants={itemVariants}
+          className="w-full max-w-[420px] relative"
+        >
           {/* Neon border glow */}
-          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple to-neon-pink rounded-[28px] opacity-15 blur-sm pointer-events-none" />
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-neon-purple via-neon-pink to-neon-purple rounded-[28px] opacity-20 blur-sm pointer-events-none" />
 
-          <div className="glass-card rounded-[28px] p-8 md:p-10 border border-white/[0.08] shadow-2xl relative z-10 space-y-8">
+          <div className="relative rounded-[28px] p-8 md:p-10 border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.5)] z-10 space-y-8 bg-[#12101D] backdrop-blur-2xl">
             {/* Header */}
             <div className="space-y-2 text-center">
-              <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
-              <p className="text-sm text-purple-300/50">
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="text-2xl font-extrabold text-white"
+              >
+                Welcome Back
+              </motion.h2>
+              <p className="text-sm text-purple-300/45">
                 Continue your Japanese learning journey
               </p>
             </div>
@@ -148,13 +164,22 @@ export default function AuthPage() {
             )}
 
             {/* Google Login Button */}
-            <button
+            <motion.button
               onClick={handleGoogleLogin}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 h-14 rounded-xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all shadow-lg disabled:opacity-50 cursor-pointer"
+              whileHover={{ scale: 1.02, boxShadow: '0 8px 32px rgba(255,255,255,0.1)' }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] disabled:opacity-50 cursor-pointer relative overflow-hidden group"
             >
+              {/* Hover glow ring */}
+              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-neon-purple/10 via-transparent to-neon-pink/10" />
+              
               {loading ? (
-                <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  className="w-5 h-5 border-2 border-neon-purple border-t-transparent rounded-full"
+                />
               ) : (
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -163,28 +188,28 @@ export default function AuthPage() {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                 </svg>
               )}
-              <span>Continue with Google</span>
-            </button>
+              <span className="relative z-10">Continue with Google</span>
+            </motion.button>
 
             {/* Divider */}
             <div className="relative flex items-center">
               <div className="flex-grow border-t border-white/[0.06]" />
-              <span className="px-4 text-[10px] font-bold text-purple-300/25 uppercase tracking-widest">
+              <span className="px-4 text-[10px] font-bold text-purple-300/20 uppercase tracking-widest">
                 secure login
               </span>
               <div className="flex-grow border-t border-white/[0.06]" />
             </div>
 
             {/* Info text */}
-            <p className="text-center text-[11px] text-purple-300/30 leading-relaxed">
+            <p className="text-center text-[11px] text-purple-300/25 leading-relaxed">
               By continuing, you agree to our{' '}
-              <Link href="/terms" className="text-neon-purple hover:underline">Terms of Service</Link>
+              <Link href="/terms" className="text-brand-light hover:text-neon-pink hover:underline transition-colors">Terms of Service</Link>
               {' '}and{' '}
-              <Link href="/privacy" className="text-neon-purple hover:underline">Privacy Policy</Link>
+              <Link href="/privacy" className="text-brand-light hover:text-neon-pink hover:underline transition-colors">Privacy Policy</Link>
             </p>
 
             {/* Security badge */}
-            <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold text-purple-300/20 uppercase tracking-wider">
+            <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold text-purple-300/15 uppercase tracking-wider">
               <Shield className="w-3 h-3" />
               <span>End-to-end encrypted</span>
             </div>
@@ -193,9 +218,9 @@ export default function AuthPage() {
       </motion.main>
 
       {/* Footer */}
-      <footer className="w-full text-center py-4 z-20 text-[10px] text-purple-300/15 font-bold uppercase tracking-widest px-6">
+      <footer className="w-full text-center py-4 z-20 text-[10px] text-purple-300/12 font-bold uppercase tracking-widest px-6">
         &copy; {new Date().getFullYear()} Velmorth Labs. All rights reserved.
       </footer>
-    </div>
+    </motion.div>
   );
 }

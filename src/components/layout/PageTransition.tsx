@@ -15,14 +15,12 @@ export function PageTransition({ children }: PageTransitionProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -8 }}
+        exit={{ opacity: 0, y: -4 }}
         transition={{
-          type: 'spring',
-          stiffness: 260,
-          damping: 25,
-          mass: 0.8,
+          duration: 0.25,
+          ease: [0.25, 0.1, 0.25, 1],
         }}
       >
         {children}

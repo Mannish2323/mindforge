@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { usePathname } from 'next/navigation';
-import { Sparkles, MessageSquare, Send, X, Mic, Volume2, HelpCircle } from 'lucide-react';
+import { Sparkles, Send, X, Mic, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -158,7 +158,7 @@ export function SakuraMascotWidget() {
           {/* Pulsing Outer Ring */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-neon-purple to-neon-pink opacity-40 blur-md group-hover:opacity-75 transition-opacity duration-300" />
           
-          <div className="relative w-full h-full bg-[#0e0a1a] rounded-full overflow-hidden flex items-center justify-center">
+          <div className="relative w-full h-full bg-[#09070F] rounded-full overflow-hidden flex items-center justify-center">
             <Image
               src="/sakura_ai_avatar.png"
               alt="Sakura AI Tutor Mascot"
@@ -168,27 +168,27 @@ export function SakuraMascotWidget() {
           </div>
           
           {/* Sparkles / Message indicator badge */}
-          <span className="absolute -top-1 -right-1 bg-pink-500 text-white rounded-full p-1 border border-[#09060F] shadow-md animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-full p-1 border-2 border-[#09070F] shadow-md">
             <Sparkles className="w-3.5 h-3.5" />
           </span>
         </div>
       </motion.div>
 
-      {/* Glassmorphic Conversation Panel */}
+      {/* Chat Conversation Panel — SOLID background, fully readable */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-28 right-6 w-[calc(100vw-48px)] sm:w-[380px] h-[480px] rounded-[24px] glass-card border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-50 flex flex-col overflow-hidden"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="fixed bottom-28 right-6 w-[calc(100vw-48px)] sm:w-[380px] h-[480px] rounded-[24px] bg-[#12101D] border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.6)] z-50 flex flex-col overflow-hidden"
+            initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 28 }}
           >
             {/* Header */}
-            <div className="p-4 bg-white/[0.02] border-b border-white/5 flex items-center justify-between">
+            <div className="p-4 bg-[#0F0D18] border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-neon-purple to-neon-pink p-[1px] relative overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full bg-[#120f26] rounded-[11px] overflow-hidden relative">
+                  <div className="w-full h-full bg-[#12101D] rounded-[11px] overflow-hidden relative">
                     <Image
                       src="/sakura_ai_avatar.png"
                       alt="Sakura mascot"
@@ -208,29 +208,32 @@ export function SakuraMascotWidget() {
               
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg text-purple-300/40 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                className="p-1.5 rounded-lg text-purple-300/40 hover:text-white hover:bg-white/[0.06] transition-all cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Chat Messages */}
+            {/* Chat Messages — solid bg, premium scrollbar */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
               {messages.map((msg, i) => (
-                <div 
-                  key={i} 
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: 0.05 }}
                   className={`flex flex-col space-y-1.5 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                 >
-                  <div className={`max-w-[85%] rounded-[18px] p-3 text-sm font-medium leading-relaxed ${
+                  <div className={`max-w-[85%] rounded-[18px] p-3.5 text-sm font-medium leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-br-none shadow-md'
-                      : 'bg-white/[0.04] border border-white/5 text-purple-100 rounded-bl-none'
+                      ? 'bg-gradient-to-r from-neon-purple to-neon-pink text-white rounded-br-sm shadow-[0_4px_12px_rgba(109,60,255,0.2)]'
+                      : 'bg-[#1A1728] border border-white/[0.06] text-purple-100 rounded-bl-sm'
                   }`}>
                     {msg.role === 'model' && msg.content_ja ? (
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <p className="font-jp text-[15px] font-semibold text-white leading-normal">{msg.content_ja}</p>
-                        <p className="text-[11px] text-purple-300/60 font-semibold italic">{msg.content_romaji}</p>
-                        <p className="text-xs text-purple-200 mt-1.5 border-t border-white/5 pt-1.5">{msg.content_en}</p>
+                        <p className="text-[11px] text-purple-300/50 font-semibold italic">{msg.content_romaji}</p>
+                        <p className="text-xs text-purple-200/80 mt-1.5 border-t border-white/[0.06] pt-1.5">{msg.content_en}</p>
                       </div>
                     ) : (
                       <p>{msg.content}</p>
@@ -238,36 +241,62 @@ export function SakuraMascotWidget() {
                   </div>
 
                   {msg.grammar_note && (
-                    <span className="text-[10px] text-purple-300/50 font-bold px-2 py-0.5 bg-sakura-dark/5 border border-sakura-dark/10 rounded-md">
+                    <span className="text-[10px] text-purple-300/45 font-bold px-2.5 py-1 bg-sakura-dark/8 border border-sakura-dark/12 rounded-lg">
                       {msg.grammar_note}
                     </span>
                   )}
-                </div>
+
+                  {/* Listen button for AI messages */}
+                  {msg.role === 'model' && msg.content_ja && (
+                    <button
+                      onClick={() => speakJapanese(msg.content_ja!)}
+                      className="p-1 text-purple-300/30 hover:text-white rounded-lg hover:bg-white/[0.04] transition-colors cursor-pointer ml-1"
+                      title="Listen"
+                    >
+                      <Volume2 className="w-3 h-3" />
+                    </button>
+                  )}
+                </motion.div>
               ))}
               
+              {/* Typing indicator — animated dots */}
               {loading && (
-                <div className="flex items-center gap-2 text-xs font-bold text-purple-300/40 italic p-1 animate-pulse">
-                  <Sparkles className="w-3.5 h-3.5 animate-spin text-sakura-dark" />
-                  <span>Sakura is thinking...</span>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-3 bg-[#1A1728] border border-white/[0.06] rounded-[18px] rounded-bl-sm w-fit"
+                >
+                  <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '200ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '400ms' }} />
+                </motion.div>
               )}
               
               <div ref={chatEndRef} />
             </div>
 
-            {/* Input form */}
-            <div className="p-3 bg-white/[0.01] border-t border-white/5 flex gap-2 items-center">
-              <button
+            {/* Input form — solid bg */}
+            <div className="p-3 bg-[#0F0D18] border-t border-white/[0.06] flex gap-2 items-center">
+              {/* Voice button with recording pulse */}
+              <motion.button
                 onClick={handleVoiceInput}
+                whileTap={{ scale: 0.9 }}
                 className={`p-2.5 rounded-xl border transition-all cursor-pointer flex-shrink-0 ${
                   isRecording 
-                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-400 animate-pulse' 
-                    : 'bg-white/5 border-white/5 text-purple-300/60 hover:text-white hover:bg-white/10'
+                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-400' 
+                    : 'bg-white/[0.04] border-white/[0.06] text-purple-300/50 hover:text-white hover:bg-white/[0.08]'
                 }`}
-                title="Voice Input (mocked)"
+                title="Voice Input"
               >
                 <Mic className="w-4 h-4" />
-              </button>
+                {isRecording && (
+                  <motion.div
+                    className="absolute inset-0 rounded-xl border-2 border-rose-400/50"
+                    animate={{ scale: [1, 1.3, 1], opacity: [1, 0, 1] }}
+                    transition={{ repeat: Infinity, duration: 1.5 }}
+                  />
+                )}
+              </motion.button>
               
               <input
                 type="text"
@@ -275,17 +304,18 @@ export function SakuraMascotWidget() {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend(inputText)}
-                className="flex-1 bg-white/[0.03] border border-white/5 rounded-xl px-3 py-2 text-xs placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/50 transition-all"
+                className="flex-1 bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-2.5 text-xs placeholder-purple-300/25 text-white outline-none focus:border-neon-purple/40 focus:ring-1 focus:ring-neon-purple/15 transition-all"
                 disabled={loading}
               />
               
-              <button
+              <motion.button
                 onClick={() => handleSend(inputText)}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer flex-shrink-0 disabled:opacity-50"
+                whileTap={{ scale: 0.9 }}
+                className="p-2.5 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white shadow-md transition-all cursor-pointer flex-shrink-0 disabled:opacity-50"
                 disabled={!inputText.trim() || loading}
               >
                 <Send className="w-3.5 h-3.5" />
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         )}

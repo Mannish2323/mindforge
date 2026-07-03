@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import {
   Settings, User, Volume2, Bell, Globe, Trash2,
-  Clock, Moon, Sun, Monitor, Shield, Save, AlertTriangle
+  Clock, Moon, Sun, Monitor, Shield, Save, AlertTriangle,
+  LogOut, HelpCircle, Lock, Mail
 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -12,9 +13,11 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Toggle } from '@/components/ui/Toggle';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
-  const { profile, updateSettings, updateProfileDetails, deleteAccount } = useAuth();
+  const { profile, updateSettings, updateProfileDetails, deleteAccount, logout } = useAuth();
+  const router = useRouter();
 
   const [displayName, setDisplayName] = useState(profile?.name || '');
   const [bio, setBio] = useState(profile?.bio || '');
@@ -69,8 +72,17 @@ export default function SettingsPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/auth');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
-  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 120, damping: 14 } } };
 
   const themeOptions = [
     { key: 'dark' as const, label: 'Dark', icon: Moon },
@@ -106,7 +118,7 @@ export default function SettingsPage() {
         {/* Account Section */}
         <motion.div variants={item}>
           <Card variant="glass" padding="md" className="space-y-5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
               <User className="w-4 h-4 text-brand-light" />
               <h2 className="text-sm font-bold text-white">Account</h2>
             </div>
@@ -122,7 +134,7 @@ export default function SettingsPage() {
                 <textarea
                   value={bio}
                   onChange={(e) => setBio(e.target.value)}
-                  className="w-full bg-[#0a0815] border border-purple-900/20 hover:border-purple-800/40 text-white placeholder-purple-300/20 text-sm rounded-xl h-24 p-4 transition-all outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20 resize-none"
+                  className="w-full bg-[#0D0B16] border border-white/[0.06] hover:border-white/[0.1] text-white placeholder-purple-300/20 text-sm rounded-xl h-24 p-4 transition-all outline-none focus:border-neon-purple/40 focus:ring-1 focus:ring-neon-purple/15 resize-none"
                   placeholder="Tell us about yourself..."
                   maxLength={160}
                 />
@@ -134,9 +146,9 @@ export default function SettingsPage() {
         {/* Learning Section */}
         <motion.div variants={item}>
           <Card variant="glass" padding="md" className="space-y-5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
               <Globe className="w-4 h-4 text-brand-light" />
-              <h2 className="text-sm font-bold text-white">Learning</h2>
+              <h2 className="text-sm font-bold text-white">Language & Learning</h2>
             </div>
 
             {/* JLPT Target */}
@@ -165,16 +177,16 @@ export default function SettingsPage() {
           </Card>
         </motion.div>
 
-        {/* Appearance Section */}
+        {/* Theme Section */}
         <motion.div variants={item}>
           <Card variant="glass" padding="md" className="space-y-5">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
               <Moon className="w-4 h-4 text-brand-light" />
-              <h2 className="text-sm font-bold text-white">Appearance</h2>
+              <h2 className="text-sm font-bold text-white">Theme</h2>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">Theme</label>
+              <label className="block text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">Appearance</label>
               <div className="flex gap-2">
                 {themeOptions.map(t => (
                   <button key={t.key} type="button" onClick={() => setTheme(t.key)}
@@ -189,10 +201,10 @@ export default function SettingsPage() {
           </Card>
         </motion.div>
 
-        {/* Notifications Section */}
+        {/* Notifications & Audio Section */}
         <motion.div variants={item}>
           <Card variant="glass" padding="md" className="space-y-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
               <Bell className="w-4 h-4 text-brand-light" />
               <h2 className="text-sm font-bold text-white">Notifications & Audio</h2>
             </div>
@@ -211,6 +223,33 @@ export default function SettingsPage() {
           </Card>
         </motion.div>
 
+        {/* Privacy Section */}
+        <motion.div variants={item}>
+          <Card variant="glass" padding="md" className="space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
+              <Lock className="w-4 h-4 text-brand-light" />
+              <h2 className="text-sm font-bold text-white">Privacy</h2>
+            </div>
+            <p className="text-xs text-purple-300/40 leading-relaxed">
+              Your data is encrypted and stored securely. We never share your personal information with third parties.
+            </p>
+          </Card>
+        </motion.div>
+
+        {/* Support Section */}
+        <motion.div variants={item}>
+          <Card variant="glass" padding="md" className="space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-white/[0.04]">
+              <HelpCircle className="w-4 h-4 text-brand-light" />
+              <h2 className="text-sm font-bold text-white">Support</h2>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-purple-300/40">
+              <Mail className="w-3.5 h-3.5" />
+              <span>support@velmorth.com</span>
+            </div>
+          </Card>
+        </motion.div>
+
         {/* Save Button */}
         <motion.div variants={item}>
           <Button
@@ -224,10 +263,21 @@ export default function SettingsPage() {
         </motion.div>
       </form>
 
+      {/* Logout */}
+      <motion.div variants={item}>
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-semibold text-purple-300/50 hover:text-white hover:bg-white/[0.03] border border-white/[0.04] hover:border-white/[0.08] transition-all cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Logout</span>
+        </button>
+      </motion.div>
+
       {/* Danger Zone */}
       <motion.div variants={item}>
         <Card variant="glass" padding="md" className="space-y-4 border-rose-500/10">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 pb-2 border-b border-rose-500/10">
             <AlertTriangle className="w-4 h-4 text-rose-400" />
             <h2 className="text-sm font-bold text-rose-400">Danger Zone</h2>
           </div>

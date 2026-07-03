@@ -236,7 +236,7 @@ export default function AITutorPage() {
       
       {/* Left panel: Quick Topics & Presets */}
       <div className="xl:col-span-3 space-y-6">
-        <div className="glass-card p-6 rounded-[24px] space-y-6">
+        <div className="glass-card p-6 rounded-[24px] space-y-6 hidden xl:block">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
             <h3 className="text-base font-bold text-white font-orbitron flex items-center gap-2">
               <History className="w-4 h-4 text-sakura-dark" />
@@ -307,9 +307,9 @@ export default function AITutorPage() {
       </div>
 
       {/* Main Chat Screen Area */}
-      <div className="xl:col-span-6 flex flex-col glass-card rounded-[28px] border border-white/5 overflow-hidden h-[calc(100vh-140px)] shadow-2xl relative">
+      <div className="xl:col-span-6 flex flex-col bg-[#12101D] rounded-[28px] border border-white/[0.08] overflow-hidden h-[calc(100vh-140px)] shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative">
         {/* Header toolbar */}
-        <div className="p-4 border-b border-white/5 bg-white/[0.01] flex items-center justify-between">
+        <div className="p-4 border-b border-white/[0.06] bg-[#0F0D18] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-brand-purple/20 flex items-center justify-center border border-brand-purple/30">
               <Sparkles className="w-5 h-5 text-sakura-dark animate-pulse" />
@@ -353,8 +353,8 @@ export default function AITutorPage() {
                 {/* Bubble box */}
                 <div className={`p-4 rounded-2xl shadow-md border ${
                   msg.role === 'user' 
-                    ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark border-brand-purple/30 text-white rounded-tr-none' 
-                    : 'bg-[#120f26]/80 border-white/5 text-purple-100 rounded-tl-none'
+                    ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark border-brand-purple/30 text-white rounded-tr-sm' 
+                    : 'bg-[#1A1728] border-white/[0.06] text-purple-100 rounded-tl-sm'
                 }`}>
                   {msg.role === 'model' && msg.content_ja ? (
                     <div className="space-y-2">
@@ -406,10 +406,10 @@ export default function AITutorPage() {
                   className="object-cover"
                 />
               </div>
-              <div className="p-4 rounded-2xl bg-[#120f26]/80 border border-white/5 flex items-center gap-1.5 rounded-tl-none">
-                <span className="w-2 h-2 rounded-full bg-sakura-dark animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-2 h-2 rounded-full bg-sakura-dark animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-2 h-2 rounded-full bg-sakura-dark animate-bounce" style={{ animationDelay: '300ms' }} />
+              <div className="p-4 rounded-2xl bg-[#1A1728] border border-white/[0.06] flex items-center gap-1.5 rounded-tl-sm">
+                <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '0ms' }} />
+                <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '200ms' }} />
+                <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '400ms' }} />
               </div>
             </div>
           )}
@@ -418,7 +418,7 @@ export default function AITutorPage() {
         </div>
 
         {/* Input layout actions */}
-        <div className="p-4 border-t border-white/5 bg-white/[0.01]">
+        <div className="p-4 border-t border-white/[0.06] bg-[#0F0D18]">
           {/* Wave animation if recording */}
           <AnimatePresence>
             {isRecording && (
@@ -479,7 +479,7 @@ export default function AITutorPage() {
       </div>
 
       {/* Right panel: Sakura mascot float frame & feedback widget */}
-      <div className="xl:col-span-3 space-y-6">
+      <div className="xl:col-span-3 space-y-6 hidden xl:block">
         {/* Sakura Mascot card with floating animation */}
         <div className="glass-card p-6 rounded-[24px] flex flex-col items-center text-center space-y-4 border border-white/5">
           <div className="relative w-36 h-36 rounded-2xl bg-gradient-to-tr from-brand-purple to-sakura-dark p-[1.5px] overflow-hidden shadow-lg animate-float-avatar">

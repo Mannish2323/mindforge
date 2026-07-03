@@ -12,10 +12,10 @@
   --color-accent: #db2777;
   --color-accent-light: #f472b6;
 
-  --color-bg: #09071a; /* main dark background */
-  --color-bg-alt: #0e0b22;
+  --color-bg: #09070F; /* main dark background */
+  --color-bg-alt: #12101D;
   --color-bg-deep: #130930;
-  --color-bg-card: rgba(255,255,255,0.05); /* glass card backdrop */
+  --color-bg-card: rgba(18, 16, 29, 0.85); /* glass card backdrop */
 
   /* Spacing */
   --spacing-xs: 4px;   /* p-4 */
@@ -41,3 +41,4 @@
     /* keep same palette for dark mode */
   }
 }
+

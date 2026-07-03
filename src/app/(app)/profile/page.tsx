@@ -15,6 +15,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { ProgressRing } from '@/components/ui/ProgressRing';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { HeatmapCalendar } from '@/components/charts/HeatmapCalendar';
+import { BadgeIcon } from '@/components/ui/BadgeIcons';
 
 export default function ProfilePage() {
   const { user, profile } = useAuth();
@@ -68,14 +69,21 @@ export default function ProfilePage() {
         <Card variant="gradient" padding="lg" className="relative overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-neon-pink/10 rounded-full blur-[60px] pointer-events-none" />
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
-            {/* Avatar */}
-            <Avatar
-              name={userName}
-              emoji={profile?.avatarUrl}
-              size="xl"
-              level={level}
-              showLevel
-            />
+            {/* Avatar with edit indicator */}
+            <div className="relative group">
+              <div className="group-hover:shadow-[0_0_24px_rgba(109,60,255,0.25)] rounded-full transition-all duration-300">
+                <Avatar
+                  name={userName}
+                  emoji={profile?.avatarUrl}
+                  size="xl"
+                  level={level}
+                  showLevel
+                />
+              </div>
+              <Link href="/settings" className="absolute -bottom-0.5 -right-0.5 p-1.5 rounded-full bg-[#12101D] border border-white/[0.1] hover:border-neon-purple/30 hover:bg-neon-purple/15 transition-all cursor-pointer z-10 opacity-0 group-hover:opacity-100">
+                <PenTool className="w-3 h-3 text-purple-300/60" />
+              </Link>
+            </div>
 
             <div className="flex-1 text-center md:text-left space-y-3">
               <div>
@@ -152,8 +160,8 @@ export default function ProfilePage() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {earnedBadges.map(badge => (
-                  <div key={badge.id} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-                    <span className="text-2xl">{badge.emoji}</span>
+                  <div key={badge.id} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-neon-purple/20 transition-all">
+                    <BadgeIcon type={badge.emoji} unlocked size="md" />
                     <span className="text-[11px] font-bold text-white text-center">{badge.name}</span>
                     <span className="text-[9px] text-purple-300/30 text-center">{badge.desc}</span>
                   </div>

@@ -16,6 +16,7 @@ import { ProgressRing } from '@/components/ui/ProgressRing';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 import { Skeleton, CardSkeleton } from '@/components/ui/Skeleton';
 import { WeeklyChart } from '@/components/charts/WeeklyChart';
+import { BadgeIcon } from '@/components/ui/BadgeIcons';
 
 export default function HomePage() {
   const { profile } = useAuth();
@@ -86,7 +87,7 @@ export default function HomePage() {
       {/* Greeting */}
       <motion.div variants={item} className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-          {greeting}, <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">{userName}</span> 👋
+          {greeting}, <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">{userName}</span>
         </h1>
         <p className="text-purple-300/45 text-sm font-medium">
           Keep pushing forward — consistency is the key to mastery.
@@ -237,10 +238,8 @@ export default function HomePage() {
                   <ChevronRight className="w-3.5 h-3.5 text-purple-300/30" />
                 </div>
                 <div className="flex gap-2">
-                  {['🏆', '⭐', '🔥', '📚', '🎯'].map((emoji, i) => (
-                    <div key={i} className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.04] flex items-center justify-center text-lg">
-                      {emoji}
-                    </div>
+                  {['fire-starter', 'rising-star', 'streak-7', 'bookworm', 'sharpshooter'].map((badgeType) => (
+                    <BadgeIcon key={badgeType} type={badgeType} unlocked size="sm" />
                   ))}
                 </div>
               </Card>
