@@ -137,7 +137,7 @@ export default function QuizPage() {
       {activeQuizType === null ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* MCQ challenge card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <HelpCircle className="w-6 h-6" />
@@ -157,7 +157,7 @@ export default function QuizPage() {
           </div>
 
           {/* Match Pairs Challenge card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
                 <Layers className="w-6 h-6" />
@@ -178,10 +178,10 @@ export default function QuizPage() {
         </div>
       ) : (
         /* Quiz Gameplay Panel */
-        <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6 relative overflow-hidden">
+        <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 relative overflow-hidden">
           
           {/* Top toolbar */}
-          <div className="flex justify-between items-center border-b border-white/5 pb-4">
+          <div className="flex justify-between items-center border-b border-white/[0.08] pb-4">
             <div className="flex items-center gap-2 text-xs font-bold text-purple-300/40 uppercase">
               <span>Challenge: {activeQuizType.toUpperCase()}</span>
             </div>
@@ -218,7 +218,7 @@ export default function QuizPage() {
                     {mcqQuestions[quizIndex].options?.map((opt, idx) => {
                       const isSelected = selectedAnswer === idx;
                       const isCorrect = String(idx) === mcqQuestions[quizIndex].correctAnswer;
-                      let btnStyle = 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                      let btnStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
 
                       if (selectedAnswer !== null) {
                         if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
@@ -238,7 +238,7 @@ export default function QuizPage() {
                     })}
                   </div>
 
-                  <div className="flex justify-end pt-4 border-t border-white/5">
+                  <div className="flex justify-end pt-4 border-t border-white/[0.08]">
                     <button
                       disabled={selectedAnswer === null}
                       onClick={handleNextMCQ}
@@ -253,7 +253,7 @@ export default function QuizPage() {
 
               {activeQuizType === 'match' && (
                 <div className="space-y-6">
-                  <div className="flex justify-between text-xs font-bold text-purple-300/40 uppercase border-b border-white/5 pb-3">
+                  <div className="flex justify-between text-xs font-bold text-purple-300/40 uppercase border-b border-white/[0.08] pb-3">
                     <span>Grid Match</span>
                     <span>MATCHED: {matchedPairs.length} / {matchingPairs.length}</span>
                   </div>
@@ -267,7 +267,7 @@ export default function QuizPage() {
                       {matchingPairs.map(p => {
                         const isMatched = matchedPairs.includes(p.left);
                         const isSelected = selectedLeft === p.left;
-                        let itemStyle = 'bg-white/[0.02] border-white/5 hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
+                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
                         
                         if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
                         else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
@@ -296,7 +296,7 @@ export default function QuizPage() {
                           return matching?.right === p.right;
                         });
                         const isSelected = selectedRight === p.right;
-                        let itemStyle = 'bg-white/[0.02] border-white/5 hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
+                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
                         
                         if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
                         else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
@@ -332,7 +332,7 @@ export default function QuizPage() {
                 🎉 Earned +25 XP and +5 gems reward.
               </div>
 
-              <div className="flex gap-4 pt-4 border-t border-white/5">
+              <div className="flex gap-4 pt-4 border-t border-white/[0.08]">
                 <button
                   onClick={resetQuiz}
                   className="flex-1 btn btn-ghost btn-sm font-bold flex items-center justify-center gap-1 cursor-pointer"

@@ -173,7 +173,7 @@ export default function KanjiPage() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
             Kanji Writing Coach
@@ -187,7 +187,7 @@ export default function KanjiPage() {
           <button
             onClick={() => setKanjiIndex(prev => Math.max(0, prev - 1))}
             disabled={kanjiIndex === 0}
-            className="p-3 bg-white/5 border border-white/10 rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -197,7 +197,7 @@ export default function KanjiPage() {
           <button
             onClick={() => setKanjiIndex(prev => Math.min(kanjis.length - 1, prev + 1))}
             disabled={kanjiIndex === kanjis.length - 1}
-            className="p-3 bg-white/5 border border-white/10 rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -209,7 +209,7 @@ export default function KanjiPage() {
         
         {/* Left Column: Drawing Canvas */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-extrabold text-white font-orbitron flex items-center gap-2">
                 <PenTool className="w-4 h-4 text-sakura-dark" />
@@ -219,7 +219,7 @@ export default function KanjiPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={clearCanvas}
-                  className="p-2 text-purple-300/40 hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-purple-300/40 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors cursor-pointer"
                   title="Reset Canvas"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -228,7 +228,7 @@ export default function KanjiPage() {
             </div>
 
             {/* Drawing Canvas Box */}
-            <div className="relative aspect-square w-full max-w-[400px] mx-auto bg-black/40 border border-white/5 rounded-3xl overflow-hidden flex items-center justify-center">
+            <div className="relative aspect-square w-full max-w-[400px] mx-auto bg-black/40 border border-white/[0.08] rounded-3xl overflow-hidden flex items-center justify-center">
               {/* Stroke Order Trace backdrop (semi-transparent) */}
               <div className="absolute text-[120px] font-extrabold text-purple-300/5 select-none font-jp pointer-events-none">
                 {currentKanji.kanji}
@@ -251,7 +251,7 @@ export default function KanjiPage() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/5">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/[0.08]">
               <div className="flex items-center gap-2">
                 {recognitionScore !== null && (
                   <div className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs font-bold flex items-center gap-1.5 animate-in fade-in">
@@ -294,7 +294,7 @@ export default function KanjiPage() {
         <div className="lg:col-span-5 space-y-6">
           
           {/* Main Info Card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <h2 className="text-4xl font-extrabold text-white font-jp">{currentKanji.kanji}</h2>
@@ -302,7 +302,7 @@ export default function KanjiPage() {
               </div>
               <button 
                 onClick={() => speakAudio(currentKanji.kanji)}
-                className="p-3 bg-white/5 border border-white/10 rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
+                className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
                 title="Speak Audio"
               >
                 <Volume2 className="w-5 h-5" />
@@ -310,7 +310,7 @@ export default function KanjiPage() {
             </div>
 
             {/* Onyomi / Kunyomi */}
-            <div className="space-y-3.5 border-t border-white/5 pt-4">
+            <div className="space-y-3.5 border-t border-white/[0.08] pt-4">
               <div>
                 <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
                   Onyomi (Chinese Reading)
@@ -334,13 +334,13 @@ export default function KanjiPage() {
             </div>
 
             {/* Stroke Guide Steps list */}
-            <div className="space-y-3 border-t border-white/5 pt-4">
+            <div className="space-y-3 border-t border-white/[0.08] pt-4">
               <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
                 Stroke Order Guide
               </p>
               <div className="space-y-2">
                 {currentKanji.strokeSteps.map((step, idx) => (
-                  <div key={idx} className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-xs font-semibold text-purple-200 leading-relaxed">
+                  <div key={idx} className="p-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-xs font-semibold text-purple-200 leading-relaxed">
                     {step}
                   </div>
                 ))}
@@ -349,7 +349,7 @@ export default function KanjiPage() {
           </div>
 
           {/* Vocabulary using the Kanji */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-4">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-4">
             <h3 className="text-xs font-extrabold tracking-widest text-purple-300/40 uppercase">
               Common Vocabulary
             </h3>
@@ -357,7 +357,7 @@ export default function KanjiPage() {
               {currentKanji.vocabulary.map((vocab, idx) => (
                 <div 
                   key={idx}
-                  className="p-4 bg-white/[0.01] border border-white/5 rounded-xl flex items-center justify-between hover:border-white/10 transition-all"
+                  className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between hover:border-white/10 transition-all"
                 >
                   <div className="space-y-0.5">
                     <p className="text-base font-bold text-white font-jp">{vocab.word}</p>

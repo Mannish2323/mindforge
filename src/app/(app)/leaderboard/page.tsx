@@ -41,7 +41,7 @@ export default function LeaderboardPage() {
     if (rank === 1) return 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border-amber-500/20';
     if (rank === 2) return 'bg-gradient-to-r from-gray-400/10 to-gray-300/5 border-gray-400/20';
     if (rank === 3) return 'bg-gradient-to-r from-amber-700/10 to-amber-600/5 border-amber-700/20';
-    return 'border-white/[0.04]';
+    return 'border-white/[0.08]';
   };
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04 } } };
@@ -60,7 +60,7 @@ export default function LeaderboardPage() {
       <motion.div variants={item} className="flex gap-2">
         {tabs.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === tab.key ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.04]'}`}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === tab.key ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.08]'}`}
           >{tab.label}</button>
         ))}
       </motion.div>
@@ -72,7 +72,7 @@ export default function LeaderboardPage() {
           const u = LEADERBOARD_DATA[order[i]];
           const isFirst = order[i] === 0;
           return (
-            <div key={u.rank} className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${getRankBg(u.rank)} ${isFirst ? 'scale-105' : ''}`}>
+            <div key={u.rank} className={`flex flex-col items-center gap-2 p-4 rounded-xl border border-white/[0.08] transition-all ${getRankBg(u.rank)} ${isFirst ? 'scale-105' : ''}`}>
               <div className="relative">
                 <Avatar emoji={u.avatar} name={u.name} size={isFirst ? 'lg' : 'md'} />
                 <div className="absolute -top-2 -right-2">{getRankIcon(u.rank)}</div>

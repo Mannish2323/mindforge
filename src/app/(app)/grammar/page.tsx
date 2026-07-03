@@ -122,7 +122,7 @@ export default function GrammarPage() {
   return (
     <div className="space-y-8">
       {/* Header title */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
             Grammar Reference
@@ -132,7 +132,7 @@ export default function GrammarPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 p-1 bg-white/5 border border-white/10 rounded-2xl">
+        <div className="flex items-center gap-1.5 p-1 bg-white/[0.04] border border-white/[0.08] rounded-2xl">
           {(['all', 'particle', 'verb', 'adjective'] as const).map((cat) => {
             const isActive = selectedCategory === cat;
             return (
@@ -160,13 +160,13 @@ export default function GrammarPage() {
           placeholder="Search by grammar structure, definition or meanings..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+          className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
         />
       </div>
 
       {/* Grammar point grid timeline */}
       {filteredGrammar.length === 0 ? (
-        <div className="glass-card p-12 text-center rounded-[28px] border border-white/5">
+        <div className="glass-card p-12 text-center rounded-[28px] border border-white/[0.08]">
           <Book className="w-12 h-12 text-purple-300/20 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-white font-orbitron">No Grammar Points found</h3>
           <p className="text-xs text-purple-300/40 mt-1">Try a different search query.</p>
@@ -181,7 +181,7 @@ export default function GrammarPage() {
             return (
               <div 
                 key={grammar.id}
-                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6 hover:border-white/10 transition-all"
+                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 hover:border-white/10 transition-all"
               >
                 {/* Header structure row */}
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -196,7 +196,7 @@ export default function GrammarPage() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleSave(grammar.id)}
-                      className="p-3 bg-white/5 border border-white/5 hover:border-white/10 rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
+                      className="p-3 bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.12] rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
                     >
                       {isSaved ? <BookmarkCheck className="w-4 h-4 text-sakura-dark" /> : <Bookmark className="w-4 h-4" />}
                     </button>
@@ -210,7 +210,7 @@ export default function GrammarPage() {
                 </div>
 
                 {/* Explanation text */}
-                <div className="space-y-2 border-t border-white/5 pt-4 leading-relaxed font-semibold">
+                <div className="space-y-2 border-t border-white/[0.08] pt-4 leading-relaxed font-semibold">
                   <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">DEFINITION</p>
                   <p className="text-sm text-purple-100/90">{grammar.meaning}</p>
                   <p className="text-xs text-purple-300/60 font-medium leading-relaxed">{grammar.explanation}</p>
@@ -223,7 +223,7 @@ export default function GrammarPage() {
                     {grammar.examples.map((ex, idx) => (
                       <div 
                         key={idx}
-                        className="p-4 bg-white/[0.01] border border-white/5 rounded-2xl flex items-center justify-between"
+                        className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl flex items-center justify-between"
                       >
                         <div>
                           <p className="text-sm font-bold text-white font-jp">{ex.jp}</p>
@@ -266,7 +266,7 @@ export default function GrammarPage() {
                         {quiz.opts.map((opt, idx) => {
                           const isSelected = quizAnswer === idx;
                           const isCorrect = idx === quiz.correctIdx;
-                          let btnStyle = 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                          let btnStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
                           
                           if (quizAnswer !== null) {
                             if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';

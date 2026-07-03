@@ -67,7 +67,7 @@ export default function VocabularyPage() {
   return (
     <div className="space-y-8">
       {/* Page Header toolbar */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
             Vocabulary Bank
@@ -97,7 +97,7 @@ export default function VocabularyPage() {
             placeholder="Search words by Kanji, Kana, Romaji or English..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
           />
         </div>
 
@@ -106,7 +106,7 @@ export default function VocabularyPage() {
           <select
             value={selectedPos}
             onChange={(e) => setSelectedPos(e.target.value)}
-            className="w-full bg-[#0e0a1a] border border-white/5 hover:border-white/10 text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
+            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
           >
             <option value="all">POS: All Categories</option>
             <option value="noun">Noun</option>
@@ -122,7 +122,7 @@ export default function VocabularyPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full bg-[#0e0a1a] border border-white/5 hover:border-white/10 text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
+            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
           >
             <option value="all">SRS: All Status</option>
             <option value="new">New</option>
@@ -137,7 +137,7 @@ export default function VocabularyPage() {
 
       {/* Vocabulary Cards Grid */}
       {filteredWords.length === 0 ? (
-        <div className="glass-card p-12 text-center rounded-[28px] border border-white/5">
+        <div className="glass-card p-12 text-center rounded-[28px] border border-white/[0.08]">
           <BookOpen className="w-12 h-12 text-purple-300/20 mx-auto mb-3" />
           <h3 className="text-lg font-bold text-white font-orbitron">No Matching Words</h3>
           <p className="text-xs text-purple-300/40 mt-1">Try refining search phrases or selection filters.</p>
@@ -172,12 +172,12 @@ export default function VocabularyPage() {
                   <p className="text-[10px] font-semibold text-sakura-dark italic">{vocab.romaji}</p>
                 </div>
 
-                <div className="border-t border-white/5 my-1 pt-3">
+                <div className="border-t border-white/[0.08] my-1 pt-3">
                   <p className="text-sm font-semibold text-white/90 leading-relaxed">{vocab.meaning}</p>
                 </div>
 
                 {/* Action button row */}
-                <div className="flex items-center justify-between pt-3 border-t border-white/5">
+                <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
                   <button 
                     onClick={() => speakWord(vocab.kanji)}
                     className="p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-purple-300 hover:text-white transition-all cursor-pointer"

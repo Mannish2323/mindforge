@@ -69,7 +69,7 @@ export default function SpeakingPage() {
   return (
     <div className="space-y-8">
       {/* Header title */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
             Speaking Practice
@@ -87,7 +87,7 @@ export default function SpeakingPage() {
               className={`w-8 h-8 rounded-lg font-bold text-xs border transition-all cursor-pointer ${
                 phraseIdx === idx 
                   ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white border-transparent' 
-                  : 'bg-white/5 border-white/5 text-purple-300/60 hover:text-white'
+                  : 'bg-white/[0.04] border-white/[0.08] text-purple-300/60 hover:text-white'
               }`}
             >
               {idx + 1}
@@ -101,7 +101,7 @@ export default function SpeakingPage() {
         
         {/* Left Column: Target Phrase card */}
         <div className="lg:col-span-8 space-y-6">
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6 text-center">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 text-center">
             
             <div className="space-y-4">
               <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 w-max mx-auto block font-orbitron">
@@ -129,7 +129,7 @@ export default function SpeakingPage() {
             </div>
 
             {/* Simulated audio waveform */}
-            <div className="py-8 flex flex-col items-center justify-center space-y-6 border-t border-white/5 mt-6">
+            <div className="py-8 flex flex-col items-center justify-center space-y-6 border-t border-white/[0.08] mt-6">
               
               {/* Animated Speech waves */}
               <div className="h-16 flex items-center justify-center gap-1.5 w-full">
@@ -183,7 +183,7 @@ export default function SpeakingPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 text-center py-16 space-y-4"
+                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] text-center py-16 space-y-4"
               >
                 <RefreshCw className="w-10 h-10 text-sakura-dark animate-spin mx-auto" />
                 <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
@@ -199,7 +199,7 @@ export default function SpeakingPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-6"
+                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6"
               >
                 <div className="text-center space-y-2">
                   <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
@@ -209,7 +209,7 @@ export default function SpeakingPage() {
                   {/* Score circle SVG */}
                   <div className="relative w-32 h-32 mx-auto flex items-center justify-center">
                     <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.03)" strokeWidth="6" fill="transparent" />
+                      <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.06)" strokeWidth="6" fill="transparent" />
                       <circle 
                         cx="50" 
                         cy="50" 
@@ -231,7 +231,7 @@ export default function SpeakingPage() {
                 </div>
 
                 {/* Score breakdown metrics */}
-                <div className="space-y-3.5 border-t border-white/5 pt-4">
+                <div className="space-y-3.5 border-t border-white/[0.08] pt-4">
                   <div className="flex items-start gap-2 text-xs font-semibold">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <div>
@@ -261,7 +261,7 @@ export default function SpeakingPage() {
                   )}
                 </div>
 
-                <div className="flex gap-3 border-t border-white/5 pt-4">
+                <div className="flex gap-3 border-t border-white/[0.08] pt-4">
                   <button 
                     onClick={handleRecordTrigger}
                     className="flex-1 btn btn-ghost btn-sm font-bold flex items-center justify-center gap-1 cursor-pointer"
@@ -286,7 +286,7 @@ export default function SpeakingPage() {
                 </div>
               </motion.div>
             ) : (
-              <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 text-center py-16 space-y-4">
+              <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] text-center py-16 space-y-4">
                 <Sparkles className="w-10 h-10 text-sakura-dark animate-pulse mx-auto" />
                 <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
                   AI Assessor ready

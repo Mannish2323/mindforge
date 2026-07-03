@@ -268,7 +268,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
       </div>
 
       {/* Tab Panel contents */}
-      <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 min-h-[350px] flex flex-col justify-between">
+      <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] min-h-[350px] flex flex-col justify-between">
         
         {activeTab === 'vocab' && (
           <div className="space-y-6">
@@ -298,7 +298,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   <p className="text-lg font-bold text-white max-w-md">
                     {vocabulary[vocabIndex].english}
                   </p>
-                  <p className="text-xs text-purple-300/40 max-w-md italic font-semibold leading-relaxed border-t border-white/5 pt-4">
+                  <p className="text-xs text-purple-300/40 max-w-md italic font-semibold leading-relaxed border-t border-white/[0.08] pt-4">
                     {vocabulary[vocabIndex].meaning || vocabulary[vocabIndex].part_of_speech || ''}
                   </p>
                 </motion.div>
@@ -307,7 +307,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               <p className="text-center text-purple-300/50 py-8">No vocabulary words for this lesson.</p>
             )}
 
-            <div className="flex items-center justify-between pt-6 border-t border-white/5">
+            <div className="flex items-center justify-between pt-6 border-t border-white/[0.08]">
               <button 
                 onClick={() => speakJapanese(vocabulary[vocabIndex]?.word_japanese || '')}
                 disabled={vocabulary.length === 0}
@@ -351,7 +351,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   GRAMMAR RULES
                 </span>
                 <h2 className="text-xl md:text-2xl font-extrabold text-white font-orbitron">{currentGrammar.title}</h2>
-                <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl font-semibold">
+                <div className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-2xl font-semibold">
                   <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider mb-2">STRUCTURE</p>
                   <p className="text-sm font-bold text-white font-jp">{currentGrammar.pattern}</p>
                   <p className="text-xs text-sakura-dark italic mt-1">{currentGrammar.formation || ''}</p>
@@ -366,7 +366,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   <div className="space-y-2">
                     <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">EXAMPLES</p>
                     <div className="space-y-2">
-                      <div className="p-3 bg-white/[0.01] border border-white/5 rounded-xl flex items-center justify-between">
+                      <div className="p-3 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between">
                         <div>
                           <p className="text-sm font-bold text-white font-jp">{currentGrammar.example_japanese}</p>
                           {currentGrammar.example_english && (
@@ -388,7 +388,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               <p className="text-center text-purple-300/50 py-8">No grammar topic for this lesson.</p>
             )}
 
-            <div className="flex justify-end pt-6 border-t border-white/5">
+            <div className="flex justify-end pt-6 border-t border-white/[0.08]">
               <Button 
                 onClick={() => setActiveTab('speaking')}
                 className="btn btn-primary btn-sm font-bold cursor-pointer"
@@ -410,7 +410,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               </p>
 
               {vocabulary.length > 0 ? (
-                <div className="p-6 bg-white/[0.02] border border-white/5 rounded-3xl max-w-md mx-auto space-y-4 shadow-lg">
+                <div className="p-6 bg-white/[0.03] border border-white/[0.08] rounded-3xl max-w-md mx-auto space-y-4 shadow-lg">
                   <h3 className="text-2xl font-extrabold text-white font-jp">
                     {vocabulary[0].word_japanese}
                   </h3>
@@ -484,7 +484,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                       {quizQuestions[quizIndex].options.map((opt, idx) => {
                         const isSelected = selectedQuizAnswer === idx;
                         const isCorrect = idx === quizQuestions[quizIndex].correctIdx;
-                        let optionStyle = 'bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                        let optionStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
                         
                         if (selectedQuizAnswer !== null) {
                           if (isCorrect) optionStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
@@ -508,7 +508,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   <p className="text-center text-purple-300/50 py-8">Generating quiz questions...</p>
                 )}
 
-                <div className="flex justify-end pt-6 border-t border-white/5">
+                <div className="flex justify-end pt-6 border-t border-white/[0.08]">
                   <Button
                     disabled={selectedQuizAnswer === null}
                     onClick={nextQuizQuestion}
@@ -529,7 +529,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   </p>
                 </div>
 
-                <div className="flex justify-center gap-4 pt-6 border-t border-white/5">
+                <div className="flex justify-center gap-4 pt-6 border-t border-white/[0.08]">
                   <Button 
                     onClick={() => {
                       setQuizIndex(0);
