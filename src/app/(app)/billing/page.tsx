@@ -6,47 +6,72 @@ import { useAuth } from '@/app/context/AuthContext';
 import { invalidateEntitlementCache } from '@/hooks/useEntitlements';
 import { PLANS, PlanId } from '@/lib/plans';
 import { createBrowserClient } from '@supabase/ssr';
-import { Check, ShieldCheck, Crown, ArrowRight, Sparkles, X, Star } from 'lucide-react';
+import { Check, ShieldCheck, Crown, ArrowRight, Sparkles, X, Star, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// ─── Lightweight stagger variants (ONE-TIME entrance only, no loops) ──────────
-const container: Variants = {
+// ─────────────────────────────────────────────────────────────────────────────
+// Animation Variants — ONE-TIME entrance. No loops. Smooth spring physics.
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Hero stagger parent
+const heroContainer: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
-};
-const cardItem: Variants = {
-  hidden: { opacity: 0, y: 32, scale: 0.96 },
-  show:   { opacity: 1, y: 0,  scale: 1,
-    transition: { type: 'spring' as const, stiffness: 110, damping: 18 } },
-};
-const heroItem: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0,
-    transition: { duration: 0.4, ease: 'easeOut' } },
-};
-const featureItem: Variants = {
-  hidden: { opacity: 0, x: -12 },
-  show:   { opacity: 1, x: 0,
-    transition: { duration: 0.28, ease: 'easeOut' } },
+  show: { transition: { staggerChildren: 0.10, delayChildren: 0.04 } },
 };
 
-// ─── Tiny confetti (CSS keyframes, no Framer loop) ───────────────────────────
+// Hero child
+const heroItem: Variants = {
+  hidden: { opacity: 0, y: 22 },
+  show:   { opacity: 1, y: 0,
+    transition: { type: 'spring' as const, stiffness: 90, damping: 16 } },
+};
+
+// Card grid parent — stagger each card
+const cardGrid: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.10, delayChildren: 0.15 } },
+};
+
+// Card child — spring from below + slight scale
+const cardItem: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.94 },
+  show:   { opacity: 1, y: 0,  scale: 1,
+    transition: { type: 'spring' as const, stiffness: 100, damping: 18, mass: 0.9 } },
+};
+
+// Feature rows — stagger inside each card
+const featureContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
+};
+const featureItem: Variants = {
+  hidden: { opacity: 0, x: -14 },
+  show:   { opacity: 1, x: 0,
+    transition: { type: 'spring' as const, stiffness: 140, damping: 18 } },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Confetti — CSS keyframe only, fires once on success
+// ─────────────────────────────────────────────────────────────────────────────
+const COLORS = ['#6D3CFF', '#EC4899', '#10B981', '#F59E0B', '#C15BFF', '#38BDF8'];
+
 function Confetti() {
-  const dots = ['#6D3CFF','#EC4899','#10B981','#F59E0B','#C15BFF'];
   return (
-    <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden">
-      {Array.from({ length: 18 }, (_, i) => (
+    <div className="fixed inset-0 z-50 pointer-events-none overflow-hidden" aria-hidden>
+      {Array.from({ length: 22 }, (_, i) => (
         <span
           key={i}
-          className="absolute w-2 h-2 rounded-full animate-confetti-burst"
+          className="absolute rounded-full"
           style={{
-            background: dots[i % 5],
-            left: `${20 + Math.random() * 60}%`,
-            top: '45%',
-            animationDelay: `${i * 0.04}s`,
-            animationDuration: `${0.9 + Math.random() * 0.5}s`,
+            width:  `${5 + (i % 4) * 3}px`,
+            height: `${5 + (i % 4) * 3}px`,
+            background: COLORS[i % COLORS.length],
+            left: `${10 + (i / 22) * 80}%`,
+            top: '48%',
+            animation: `velmorth-confetti ${0.8 + (i % 3) * 0.25}s cubic-bezier(0,.9,.57,1) ${i * 0.035}s forwards`,
+            willChange: 'transform, opacity',
           }}
         />
       ))}
@@ -54,19 +79,21 @@ function Confetti() {
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Page
+// ─────────────────────────────────────────────────────────────────────────────
 export default function BillingPage() {
   const { profile, refreshProfile } = useAuth();
-  const [loading, setLoading]       = useState<string | null>(null);
-  const [error,   setError]         = useState('');
-  const [success, setSuccess]       = useState('');
-  const [confetti, setConfetti]     = useState(false);
+  const [loading, setLoading]   = useState<string | null>(null);
+  const [error,   setError]     = useState('');
+  const [success, setSuccess]   = useState('');
+  const [confetti, setConfetti] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // ─── Razorpay (unchanged) ─────────────────────────────────────────────────
+  // ─── Razorpay (logic unchanged) ──────────────────────────────────────────
   const handleCheckout = async (planId: PlanId) => {
     if (planId === 'free') return;
     setError(''); setSuccess(''); setLoading(planId);
-
     try {
       const res = await fetch('/api/billing/create-order', {
         method: 'POST',
@@ -103,14 +130,17 @@ export default function BillingPage() {
           const token = session?.access_token || '';
           const verifyRes = await fetch('/api/billing/verify', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
             body: JSON.stringify({ ...response, planId, endsAt: orderData.endsAt }),
           });
           if (verifyRes.ok) {
             setSuccess(`🎉 ${PLANS[planId].name} activated! Your plan is now live.`);
             setConfetti(true);
             if (timerRef.current) clearTimeout(timerRef.current);
-            timerRef.current = setTimeout(() => setConfetti(false), 2000);
+            timerRef.current = setTimeout(() => setConfetti(false), 2200);
             invalidateEntitlementCache();
             await refreshProfile();
           } else {
@@ -121,7 +151,6 @@ export default function BillingPage() {
         },
         modal: { ondismiss: () => setLoading(null) },
       };
-
       const rzp = new (window as any).Razorpay(options);
       rzp.on('payment.failed', (r: any) => {
         setError(r.error?.description || 'Payment failed. Please try again.');
@@ -139,15 +168,23 @@ export default function BillingPage() {
 
   return (
     <div className="space-y-10 max-w-6xl mx-auto pb-12">
-      {confetti && <Confetti />}
+
+      {/* Confetti */}
+      <AnimatePresence>{confetti && <Confetti />}</AnimatePresence>
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <motion.div
-        variants={container} initial="hidden" animate="show"
+        variants={heroContainer}
+        initial="hidden"
+        animate="show"
         className="text-center space-y-5 pt-2"
       >
         <motion.div variants={heroItem}>
-          <Badge variant="neon" size="md" icon={<Crown className="w-3.5 h-3.5 text-amber-400" />} glow>
+          <Badge
+            variant="neon" size="md"
+            icon={<Crown className="w-3.5 h-3.5 text-amber-400" />}
+            glow
+          >
             VELMORTH PREMIUM
           </Badge>
         </motion.div>
@@ -162,14 +199,20 @@ export default function BillingPage() {
           </span>
         </motion.h1>
 
-        <motion.p variants={heroItem} className="text-sm text-purple-300/45 max-w-lg mx-auto leading-relaxed">
-          Unlock unlimited vocabulary, AI-powered conversations, and the complete N5→N1 learning path.
-          All prices in INR — secured by Razorpay.
+        <motion.p
+          variants={heroItem}
+          className="text-sm text-purple-300/45 max-w-lg mx-auto leading-relaxed"
+        >
+          Unlock unlimited vocabulary, AI-powered conversations, and the complete N5→N1
+          learning path. All prices in INR — secured by Razorpay.
         </motion.p>
 
         <motion.div variants={heroItem} className="flex flex-wrap items-center justify-center gap-3">
           {['🌸 50,000+ learners', '⭐ 4.9 avg rating', '🔒 Cancel anytime'].map(t => (
-            <span key={t} className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.07] text-[11px] text-purple-200/50 font-semibold">
+            <span
+              key={t}
+              className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.07] text-[11px] text-purple-200/50 font-semibold"
+            >
               {t}
             </span>
           ))}
@@ -179,16 +222,24 @@ export default function BillingPage() {
       {/* ── Alerts ───────────────────────────────────────────────────────── */}
       <AnimatePresence mode="wait">
         {success && (
-          <motion.div key="s"
-            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+          <motion.div
+            key="success"
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1,
+              transition: { type: 'spring' as const, stiffness: 180, damping: 18 } }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
             className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-400 font-semibold"
           >
             <Sparkles className="w-4 h-4 flex-shrink-0" />{success}
           </motion.div>
         )}
         {error && (
-          <motion.div key="e"
-            initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+          <motion.div
+            key="error"
+            initial={{ opacity: 0, y: -12, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1,
+              transition: { type: 'spring' as const, stiffness: 180, damping: 18 } }}
+            exit={{ opacity: 0, y: -8, transition: { duration: 0.2 } }}
             className="flex items-center gap-3 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-sm text-rose-400 font-semibold"
           >
             <X className="w-4 h-4 flex-shrink-0" />{error}
@@ -198,7 +249,9 @@ export default function BillingPage() {
 
       {/* ── Plan Cards ───────────────────────────────────────────────────── */}
       <motion.div
-        variants={container} initial="hidden" animate="show"
+        variants={cardGrid}
+        initial="hidden"
+        animate="show"
         className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-5 items-stretch"
       >
         {displayPlanIds.map((planId) => {
@@ -206,45 +259,65 @@ export default function BillingPage() {
           const isActive = currentPlan === planId;
 
           return (
-            <motion.div key={planId} variants={cardItem} className="h-full">
-              {/* Card wrapper — CSS hover only (no Framer loop) */}
+            <motion.div
+              key={planId}
+              variants={cardItem}
+              /* ── Smooth hover lift + glow — event-driven, zero continuous JS ── */
+              whileHover={{
+                y: -10,
+                scale: 1.018,
+                transition: { type: 'spring', stiffness: 260, damping: 22 },
+              }}
+              whileTap={{ scale: 0.97, transition: { duration: 0.12 } }}
+              className="h-full cursor-default"
+              style={{ willChange: 'transform' }}
+            >
+              {/* ── Card shell ─────────────────────────────────────────────── */}
               <div
-                className={`group relative flex flex-col h-full rounded-2xl overflow-hidden
-                  border transition-all duration-300 cursor-default
-                  hover:-translate-y-2 hover:shadow-2xl
+                className={`
+                  relative flex flex-col h-full rounded-2xl overflow-hidden
+                  border transition-shadow duration-300
                   ${isActive
-                    ? 'border-emerald-500/40 bg-emerald-950/30 shadow-[0_0_30px_rgba(16,185,129,0.08)]'
+                    ? 'border-emerald-500/40 bg-emerald-950/30 shadow-[0_0_28px_rgba(16,185,129,0.10)]'
                     : plan.popular
-                    ? 'border-neon-purple/30 bg-[#0f0b1e] shadow-[0_0_30px_rgba(109,60,255,0.08)] hover:shadow-[0_0_40px_rgba(109,60,255,0.18)]'
-                    : 'border-white/[0.07] bg-[#0c0a18]/80 hover:border-white/[0.14] hover:shadow-[0_0_30px_rgba(109,60,255,0.07)]'}`}
+                    ? 'border-neon-purple/30 bg-[#0f0b1e] shadow-[0_0_24px_rgba(109,60,255,0.10)]'
+                    : 'border-white/[0.08] bg-[#0c0a18]/80 hover:border-white/[0.14] hover:shadow-[0_2px_32px_rgba(109,60,255,0.09)]'
+                  }
+                `}
               >
-                {/* Gradient overlay */}
+                {/* Gradient tint */}
                 <div
-                  className="absolute inset-0 pointer-events-none opacity-30"
-                  style={{ background: `linear-gradient(135deg, ${plan.gradFrom}55, ${plan.gradTo}18)` }}
+                  className="absolute inset-0 pointer-events-none opacity-30 rounded-2xl"
+                  style={{ background: `linear-gradient(135deg, ${plan.gradFrom}55 0%, ${plan.gradTo}18 100%)` }}
                 />
 
-                {/* Popular plan — static glow ring (CSS, not animated) */}
-                {plan.popular && !isActive && (
-                  <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-neon-purple/20 via-transparent to-neon-pink/20 pointer-events-none" />
+                {/* Popular card — subtle purple edge highlight */}
+                {plan.popular && (
+                  <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-neon-purple/60 to-transparent pointer-events-none" />
                 )}
 
-                {/* Badge */}
+                {/* Badge ribbon */}
                 {plan.badge && (
-                  <div className={`absolute top-0 right-0 px-3 py-1 text-[9px] font-extrabold text-white uppercase tracking-wider rounded-bl-xl rounded-tr-2xl z-10
-                    ${plan.popular ? 'bg-gradient-to-r from-neon-purple to-neon-pink' : 'bg-gradient-to-r from-amber-500 to-orange-600'}`}>
+                  <div className={`
+                    absolute top-0 right-0 px-3 py-1 text-[9px] font-extrabold text-white
+                    uppercase tracking-wider rounded-bl-xl rounded-tr-2xl z-10
+                    ${plan.popular
+                      ? 'bg-gradient-to-r from-neon-purple to-neon-pink'
+                      : 'bg-gradient-to-r from-amber-500 to-orange-600'}
+                  `}>
                     {plan.popular
-                      ? <span className="flex items-center gap-1"><Star className="w-2.5 h-2.5 fill-white" />{plan.badge}</span>
+                      ? <span className="flex items-center gap-1"><Star className="w-2.5 h-2.5 fill-white inline" />{plan.badge}</span>
                       : plan.badge}
                   </div>
                 )}
 
+                {/* ── Content ──────────────────────────────────────────────── */}
                 <div className="relative z-10 p-6 md:p-7 flex flex-col h-full">
 
                   {/* Plan header */}
                   <div className="space-y-3 mb-5">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl">{plan.emoji}</span>
+                      <span className="text-2xl select-none">{plan.emoji}</span>
                       <div>
                         <h3 className="text-base font-bold text-white">{plan.name}</h3>
                         <p className="text-[10px] text-purple-300/40">{plan.subtitle}</p>
@@ -255,12 +328,15 @@ export default function BillingPage() {
                     </div>
 
                     {/* Price */}
-                    <div className="flex items-baseline gap-1">
+                    <div className="flex items-baseline gap-1.5">
                       {plan.price === 0 ? (
                         <span className="text-3xl font-extrabold text-white font-orbitron">₹0</span>
                       ) : (
                         <>
-                          <span className="text-3xl font-extrabold text-white font-orbitron">₹{plan.price}</span>
+                          <span className="text-sm font-bold text-purple-300/50 font-orbitron self-start mt-1">₹</span>
+                          <span className="text-3xl font-extrabold text-white font-orbitron leading-none">
+                            {plan.price}
+                          </span>
                           <span className="text-xs text-purple-300/40 font-semibold">{plan.periodLabel}</span>
                         </>
                       )}
@@ -277,9 +353,9 @@ export default function BillingPage() {
                     </div>
                   </div>
 
-                  {/* Feature list — stagger only when card is visible */}
+                  {/* Feature list */}
                   <motion.ul
-                    variants={container}
+                    variants={featureContainer}
                     initial="hidden"
                     animate="show"
                     className="space-y-2 flex-1 mb-6"
@@ -287,11 +363,11 @@ export default function BillingPage() {
                     {plan.features.slice(0, 7).map((f, i) => (
                       <motion.li key={i} variants={featureItem} className="flex items-start gap-2 text-xs">
                         <Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-emerald-400/80" />
-                        <span className="text-purple-200/55">{f}</span>
+                        <span className="text-purple-200/60">{f}</span>
                       </motion.li>
                     ))}
                     {plan.features.length > 7 && (
-                      <li className="text-[10px] text-purple-300/30 pl-5">
+                      <li className="text-[10px] text-purple-300/30 pl-5.5">
                         +{plan.features.length - 7} more features
                       </li>
                     )}
@@ -299,23 +375,37 @@ export default function BillingPage() {
 
                   {/* CTA */}
                   {isActive ? (
-                    <div className="flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs font-bold text-emerald-400">
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1,
+                        transition: { type: 'spring' as const, stiffness: 150, damping: 16 } }}
+                      className="flex items-center justify-center gap-2 py-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/25 text-xs font-bold text-emerald-400"
+                    >
                       <ShieldCheck className="w-4 h-4" /> Current Plan ✓
-                    </div>
+                    </motion.div>
                   ) : planId === 'free' ? (
                     <div className="py-3.5 rounded-xl text-center text-xs font-semibold text-purple-300/30 border border-white/[0.04]">
                       Free Forever
                     </div>
                   ) : (
-                    <Button
-                      onClick={() => handleCheckout(planId)}
-                      loading={loading === planId}
-                      variant={plan.popular ? 'neon' : 'primary'}
-                      className="w-full group/btn"
-                      rightIcon={<ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />}
+                    <motion.div
+                      whileHover={{ scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
+                      whileTap={{ scale: 0.96 }}
                     >
-                      Upgrade · ₹{plan.price}{plan.periodLabel}
-                    </Button>
+                      <Button
+                        onClick={() => handleCheckout(planId)}
+                        loading={loading === planId}
+                        variant={plan.popular ? 'neon' : 'primary'}
+                        className="w-full group/btn"
+                        rightIcon={
+                          loading === planId
+                            ? <Zap className="w-4 h-4 animate-pulse" />
+                            : <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" />
+                        }
+                      >
+                        Upgrade · ₹{plan.price}{plan.periodLabel}
+                      </Button>
+                    </motion.div>
                   )}
                 </div>
               </div>
@@ -324,8 +414,12 @@ export default function BillingPage() {
         })}
       </motion.div>
 
-      {/* ── Footer ───────────────────────────────────────────────────────── */}
-      <div className="text-center space-y-3 pt-2">
+      {/* ── Trust footer ─────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1, transition: { delay: 0.6, duration: 0.5 } }}
+        className="text-center space-y-3 pt-2"
+      >
         <p className="text-xs text-purple-300/25 max-w-md mx-auto">
           Payments secured by Razorpay. Cancel anytime from your profile settings.
         </p>
@@ -334,18 +428,14 @@ export default function BillingPage() {
           <span>·</span><span>Cancel Anytime</span>
           <span>·</span><span>INR Pricing</span>
         </div>
-      </div>
+      </motion.div>
 
-      {/* Confetti keyframes */}
+      {/* ── Confetti keyframe ─────────────────────────────────────────────── */}
       <style>{`
-        @keyframes confetti-burst {
-          0%   { transform: translate(0,0) scale(0); opacity: 1; }
-          100% { transform: translate(var(--cx,0px), var(--cy,-180px)) scale(1); opacity: 0; }
-        }
-        .animate-confetti-burst {
-          animation: confetti-burst 1s ease-out forwards;
-          --cx: calc((var(--i, 0) - 9) * 30px);
-          --cy: calc(-80px - var(--i, 0) * 12px);
+        @keyframes velmorth-confetti {
+          0%   { transform: translate(0, 0) scale(0) rotate(0deg);   opacity: 1; }
+          60%  { opacity: 1; }
+          100% { transform: translate(var(--tx, 0px), -220px) scale(1.2) rotate(var(--rot, 180deg)); opacity: 0; }
         }
       `}</style>
     </div>
