@@ -3,315 +3,232 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
-  Map, Sparkles, BookOpen, Lock, Unlock, Play, CheckCircle2, 
-  ChevronRight, Award, Trophy, Star
+  BookOpen, Sparkles, Award, Lock, CheckCircle2, ChevronRight,
+  Headphones, Dumbbell, HelpCircle, Book, Layers, GraduationCap, Volume2, FileText
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Card } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
 
-interface Lesson {
+type JLPTLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1';
+type ModuleTab = 'lessons' | 'grammar' | 'vocabulary' | 'kanji' | 'quiz' | 'audio' | 'exercises';
+
+interface ModuleItem {
   id: string;
   title: string;
-  type: 'vocab' | 'grammar' | 'quiz';
-  xp: number;
-}
-
-interface Unit {
-  id: string;
-  title: string;
-  icon: string;
-  lessonsCount: number;
-  isPremium: boolean;
-  status: 'completed' | 'active' | 'locked';
-  progress: number;
-  lessons: Lesson[];
+  subtitle: string;
+  count: string;
+  href: string;
+  badge?: string;
+  isLocked?: boolean;
 }
 
 export default function JLPTPage() {
-  const [selectedLevel, setSelectedLevel] = useState<'N5' | 'N4' | 'N3' | 'N2' | 'N1'>('N5');
+  const [selectedLevel, setSelectedLevel] = useState<JLPTLevel>('N5');
+  const [selectedTab, setSelectedTab] = useState<ModuleTab>('lessons');
 
-  const unitsData: Record<'N5' | 'N4' | 'N3' | 'N2' | 'N1', Unit[]> = {
-    N5: [
-      {
-        id: 'ja_u01_greetings',
-        title: 'Greetings',
-        icon: '🙇',
-        lessonsCount: 3,
-        isPremium: false,
-        status: 'completed',
-        progress: 100,
-        lessons: [
-          { id: 'ja_u01_l01_hello_basic', title: 'Basic Hello & Goodbye', type: 'vocab', xp: 10 },
-          { id: 'ja_u01_l02_polite', title: 'Polite Expressions', type: 'grammar', xp: 15 },
-          { id: 'ja_u01_l03_quiz', title: 'Unit Greetings Assessment', type: 'quiz', xp: 25 },
-        ]
-      },
-      {
-        id: 'ja_u02_numbers',
-        title: 'Numbers',
-        icon: '🔢',
-        lessonsCount: 3,
-        isPremium: false,
-        status: 'active',
-        progress: 33,
-        lessons: [
-          { id: 'ja_u02_l01_1_10', title: 'Numbers 1 to 10', type: 'vocab', xp: 10 },
-          { id: 'ja_u02_l02_counter', title: 'Basic Counting Items', type: 'grammar', xp: 15 },
-          { id: 'ja_u02_l03_quiz', title: 'Numbers Review Quiz', type: 'quiz', xp: 25 },
-        ]
-      },
-      {
-        id: 'ja_u03_self_intro',
-        title: 'Self Introduction',
-        icon: '👤',
-        lessonsCount: 3,
-        isPremium: false,
-        status: 'locked',
-        progress: 0,
-        lessons: [
-          { id: 'ja_u03_l01_intro_vocab', title: 'Introduction Vocab', type: 'vocab', xp: 10 },
-          { id: 'ja_u03_l02_intro_grammar', title: 'Introducing Nationality', type: 'grammar', xp: 15 },
-          { id: 'ja_u03_l03_quiz', title: 'Self Intro Quiz', type: 'quiz', xp: 25 },
-        ]
-      },
-      {
-        id: 'ja_u04_objects',
-        title: 'Common Objects',
-        icon: '📦',
-        lessonsCount: 3,
-        isPremium: true,
-        status: 'locked',
-        progress: 0,
-        lessons: [
-          { id: 'ja_u04_l01_objects_vocab', title: 'Things Around You', type: 'vocab', xp: 10 },
-          { id: 'ja_u04_l02_objects_grammar', title: 'This, That, and Over There', type: 'grammar', xp: 15 },
-          { id: 'ja_u04_l03_quiz', title: 'Objects Quiz', type: 'quiz', xp: 25 },
-        ]
-      },
-      {
-        id: 'ja_u05_time',
-        title: 'Days & Time',
-        icon: '🕐',
-        lessonsCount: 3,
-        isPremium: true,
-        status: 'locked',
-        progress: 0,
-        lessons: [
-          { id: 'ja_u05_l01_time_vocab', title: 'Telling Time', type: 'vocab', xp: 10 },
-          { id: 'ja_u05_l02_time_grammar', title: 'Days of the Week', type: 'grammar', xp: 15 },
-          { id: 'ja_u05_l03_quiz', title: 'Time Review Quiz', type: 'quiz', xp: 25 },
-        ]
-      }
-    ],
-    N4: [],
-    N3: [],
-    N2: [],
-    N1: []
+  const levels: { id: JLPTLevel; name: string; desc: string; color: string }[] = [
+    { id: 'N5', name: 'N5', desc: 'Beginner • Basic Japanese', color: 'from-emerald-500 to-teal-600' },
+    { id: 'N4', name: 'N4', desc: 'Elementary • Daily Conversation', color: 'from-sky-500 to-blue-600' },
+    { id: 'N3', name: 'N3', desc: 'Intermediate • Everyday Situations', color: 'from-purple-500 to-indigo-600' },
+    { id: 'N2', name: 'N2', desc: 'Pre-Advanced • Business & Media', color: 'from-pink-500 to-rose-600' },
+    { id: 'N1', name: 'N1', desc: 'Advanced • Native Fluency', color: 'from-amber-500 to-orange-600' },
+  ];
+
+  const tabs: { id: ModuleTab; label: string; icon: any; count: string }[] = [
+    { id: 'lessons', label: 'Lessons', icon: BookOpen, count: '12 Units' },
+    { id: 'grammar', label: 'Grammar', icon: FileText, count: '45 Points' },
+    { id: 'vocabulary', label: 'Vocabulary', icon: Book, count: '800 Words' },
+    { id: 'kanji', label: 'Kanji', icon: Layers, count: '103 Characters' },
+    { id: 'quiz', label: 'Quiz', icon: HelpCircle, count: '15 Tests' },
+    { id: 'audio', label: 'Audio', icon: Headphones, count: '30 Tracks' },
+    { id: 'exercises', label: 'Exercises', icon: Dumbbell, count: '50 Drills' },
+  ];
+
+  const getModuleContent = (level: JLPTLevel, tab: ModuleTab): ModuleItem[] => {
+    const isFree = level === 'N5' || level === 'N4';
+    
+    switch (tab) {
+      case 'lessons':
+        return [
+          { id: `${level}-l1`, title: `${level} Core Unit 1: Greetings & Foundations`, subtitle: 'Master basic greetings, hiragana, and introduces yourself', count: '5 Lessons', href: '/path', badge: 'Active' },
+          { id: `${level}-l2`, title: `${level} Core Unit 2: Numbers & Counting`, subtitle: 'Counters, telling time, and shopping conversations', count: '4 Lessons', href: '/path' },
+          { id: `${level}-l3`, title: `${level} Core Unit 3: Daily Routines & Verbs`, subtitle: 'Present tense, verb forms, and daily schedules', count: '6 Lessons', href: '/path', isLocked: !isFree },
+        ];
+      case 'grammar':
+        return [
+          { id: `${level}-g1`, title: `${level} Particle は (wa) vs が (ga)`, subtitle: 'Topic marker vs Subject emphasis', count: 'Grammar Rule', href: '/grammar' },
+          { id: `${level}-g2`, title: `${level} Verb て-form (Te-form)`, subtitle: 'Connecting sentences and making requests', count: 'Verb Conjugation', href: '/grammar' },
+          { id: `${level}-g3`, title: `${level} Desu / Masu Polite Form`, subtitle: 'Formal speech patterns for daily usage', count: 'Polite Form', href: '/grammar', isLocked: !isFree },
+        ];
+      case 'vocabulary':
+        return [
+          { id: `${level}-v1`, title: `${level} Essential Daily Nouns`, subtitle: 'Food, objects, family, and locations', count: '250 Words', href: '/vocabulary' },
+          { id: `${level}-v2`, title: `${level} Action Verbs Pack`, subtitle: 'Common daily activity verbs and conjugations', count: '180 Verbs', href: '/vocabulary' },
+          { id: `${level}-v3`, title: `${level} Adjectives & Descriptors`, subtitle: 'I-adjectives & Na-adjectives mastery', count: '120 Words', href: '/vocabulary', isLocked: !isFree },
+        ];
+      case 'kanji':
+        return [
+          { id: `${level}-k1`, title: `${level} Numbers & Calendar Kanji`, subtitle: '一, 二, 三, 日, 月, 火, 水, 木, 金, 土', count: '10 Kanji', href: '/script' },
+          { id: `${level}-k2`, title: `${level} People & Nature Kanji`, subtitle: '人, 男, 女, 子, 山, 川, 天, 気', count: '15 Kanji', href: '/script' },
+          { id: `${level}-k3`, title: `${level} Directions & Movement Kanji`, subtitle: '上, 下, 中, 外, 前, 後, 行, 来', count: '20 Kanji', href: '/script', isLocked: !isFree },
+        ];
+      case 'quiz':
+        return [
+          { id: `${level}-q1`, title: `${level} Diagnostic Baseline Quiz`, subtitle: 'Test your overall proficiency across all skills', count: '20 Questions', href: '/quiz' },
+          { id: `${level}-q2`, title: `${level} Grammar & Sentence Order Test`, subtitle: 'Particle placement and clause ordering', count: '15 Questions', href: '/quiz' },
+          { id: `${level}-q3`, title: `${level} Full Mock Examination`, subtitle: 'Timed simulated JLPT exam under test conditions', count: '50 Questions', href: '/quiz', isLocked: !isFree },
+        ];
+      case 'audio':
+        return [
+          { id: `${level}-a1`, title: `${level} Short Dialogue Listening`, subtitle: 'Native speaker conversations at standard speed', count: '10 Tracks', href: '/listening' },
+          { id: `${level}-a2`, title: `${level} Pronunciation & Pitch Accent Drill`, subtitle: 'Minimal pairs and pitch accent practice audio', count: '15 Tracks', href: '/listening' },
+        ];
+      case 'exercises':
+        return [
+          { id: `${level}-e1`, title: `${level} Interactive Speaking Practice`, subtitle: 'AI Voice tutor pronunciation evaluation', count: '10 Exercises', href: '/speak' },
+          { id: `${level}-e2`, title: `${level} Kanji & Sentence Writing Canvas`, subtitle: 'Stroke order recognition & handwriting check', count: '15 Writing Drills', href: '/writing' },
+        ];
+    }
   };
 
-  const currentUnits = unitsData[selectedLevel] || [];
+  const currentContent = getModuleContent(selectedLevel, selectedTab);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: 'spring', stiffness: 120, damping: 14 }}
-      className="space-y-8"
-    >
-      {/* Level selector tabs */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/[0.06] pb-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
-            Course Roadmap
-          </h1>
-          <p className="text-xs md:text-sm text-purple-300/45 font-semibold tracking-wide uppercase">
-            Select JLPT level to track modules progression
-          </p>
+    <div className="space-y-8 max-w-6xl mx-auto pb-12">
+      {/* Header */}
+      <div className="space-y-3">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-xs font-bold text-brand-light">
+          <GraduationCap className="w-4 h-4 text-neon-pink" />
+          <span>JLPT Mastery Roadmap</span>
         </div>
-
-        <div className="flex items-center gap-1.5 p-1 bg-white/[0.04] border border-white/[0.08] rounded-2xl">
-          {(['N5', 'N4', 'N3', 'N2', 'N1'] as const).map((lvl) => {
-            const isActive = selectedLevel === lvl;
-            const isLocked = lvl !== 'N5';
-            return (
-              <motion.button
-                key={lvl}
-                disabled={isLocked}
-                onClick={() => setSelectedLevel(lvl)}
-                whileTap={!isLocked ? { scale: 0.95 } : {}}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all relative ${
-                  isLocked ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
-                } ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-[0_4px_16px_rgba(109,60,255,0.3)]' 
-                    : 'text-purple-300/50 hover:text-white hover:bg-white/[0.04]'
-                }`}
-              >
-                <span className="font-orbitron">{lvl}</span>
-                {isLocked && <Lock className="w-2.5 h-2.5 absolute top-1 right-1 text-purple-300/30" />}
-              </motion.button>
-            );
-          })}
-        </div>
+        <h1 className="text-3xl md:text-5xl font-extrabold text-white font-orbitron tracking-tight">
+          JLPT Standard Curriculum
+        </h1>
+        <p className="text-sm md:text-base text-purple-300/50 max-w-2xl">
+          Comprehensive curriculum from JLPT N5 to N1. Explore lessons, grammar rules, vocabulary packs, kanji stroke orders, quizzes, native audio, and speaking exercises.
+        </p>
       </div>
 
-      {/* Main Roadmap Timelines layout */}
-      <AnimatePresence mode="wait">
-      {currentUnits.length === 0 ? (
-        <motion.div
-          key={`locked-${selectedLevel}`}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.25 }}
-          className="glass-card p-12 rounded-[28px] text-center border border-white/[0.06]"
-        >
-          <Lock className="w-12 h-12 text-purple-300/15 mx-auto mb-4" />
-          <h3 className="text-lg font-bold text-white font-orbitron">Level {selectedLevel} is Locked</h3>
-          <p className="text-sm text-purple-300/35 mt-1 max-w-sm mx-auto">
-            Complete the previous JLPT course milestones to unlock intermediate structures.
-          </p>
-        </motion.div>
-      ) : (
-        <motion.div
-          key={`units-${selectedLevel}`}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.25 }}
-          className="max-w-4xl mx-auto space-y-8 relative before:absolute before:left-[29px] before:top-6 before:bottom-6 before:w-[2px] before:bg-gradient-to-b before:from-neon-purple/20 before:via-white/[0.06] before:to-transparent"
-        >
-          {currentUnits.map((unit, index) => {
-            const isCompleted = unit.status === 'completed';
-            const isActive = unit.status === 'active';
-            const isLocked = unit.status === 'locked';
+      {/* 1. Level Selector Tabs (N5 -> N1) */}
+      <div className="grid grid-cols-5 gap-2 md:gap-4 p-1.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+        {levels.map((lvl) => {
+          const isSelected = selectedLevel === lvl.id;
+          return (
+            <button
+              key={lvl.id}
+              onClick={() => setSelectedLevel(lvl.id)}
+              className={`relative py-3.5 px-2 rounded-xl text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-1 ${
+                isSelected
+                  ? 'bg-gradient-to-r ' + lvl.color + ' text-white shadow-glow-purple scale-[1.02]'
+                  : 'text-purple-300/50 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              <span className="text-base md:text-xl font-extrabold font-orbitron">{lvl.name}</span>
+              <span className="text-[10px] hidden md:block opacity-80 font-medium">{lvl.desc.split('•')[0]}</span>
+            </button>
+          );
+        })}
+      </div>
 
-            return (
-              <motion.div 
-                key={unit.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.08, type: 'spring', stiffness: 120, damping: 14 }}
-                className="relative pl-16 sm:pl-20 group"
+      {/* 2. Sub-Module Navigation Tabs */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = selectedTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setSelectedTab(tab.id)}
+              className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+                isActive
+                  ? 'bg-neon-purple/20 border-neon-purple text-brand-light shadow-[0_0_15px_rgba(109,60,255,0.3)]'
+                  : 'bg-white/[0.02] border-white/[0.06] text-purple-300/60 hover:text-white hover:bg-white/[0.05]'
+              }`}
+            >
+              <Icon className={`w-4 h-4 ${isActive ? 'text-neon-pink' : 'text-purple-300/40'}`} />
+              <span>{tab.label}</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-neon-purple/40 text-white' : 'bg-white/[0.05] text-purple-300/30'}`}>
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Dynamic Module Grid Content */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+            <span>{selectedLevel} {tabs.find(t => t.id === selectedTab)?.label} Modules</span>
+          </h2>
+          <span className="text-xs text-purple-300/40">{currentContent.length} modules available</span>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${selectedLevel}-${selectedTab}`}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          >
+            {currentContent.map((item) => (
+              <Card
+                key={item.id}
+                variant="glass"
+                padding="md"
+                className={`relative group rounded-2xl border transition-all duration-300 ${
+                  item.isLocked
+                    ? 'opacity-60 border-white/[0.04]'
+                    : 'hover:border-neon-purple/40 hover:shadow-glow-purple cursor-pointer'
+                }`}
               >
-                {/* Timeline node icon */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: index * 0.08 + 0.15, type: 'spring', stiffness: 300, damping: 20 }}
-                  className={`absolute left-[10px] sm:left-4 top-0 w-10 h-10 rounded-full border flex items-center justify-center text-lg z-10 transition-all ${
-                  isCompleted 
-                    ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-                    : isActive
-                    ? 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light scale-110 shadow-[0_0_20px_rgba(124,58,237,0.3)]'
-                    : 'bg-[#12101D] border-white/[0.06] text-purple-300/20'
-                }`}>
-                  {isCompleted ? (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: index * 0.08 + 0.3, type: 'spring', stiffness: 500, damping: 25 }}>
-                      <CheckCircle2 className="w-5 h-5" />
-                    </motion.div>
-                  ) : <span>{unit.icon}</span>}
-                </motion.div>
-
-                {/* Module detail panel */}
-                <div className={`glass-card p-5 sm:p-6 md:p-8 rounded-[24px] border ${
-                  isActive 
-                    ? 'border-brand-purple/30 bg-brand-purple/5' 
-                    : isLocked
-                    ? 'border-white/[0.04] opacity-75'
-                    : 'border-white/[0.06] hover:border-white/[0.1]'
-                } transition-all duration-300`}>
-                  
-                  {/* Top info row */}
-                  <div className="flex flex-wrap justify-between items-start gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
-                          MODULE {index + 1}
-                        </span>
-                        {unit.isPremium && (
-                          <span className="text-[9px] font-extrabold tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
-                            PREMIUM
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="text-xl font-extrabold text-white font-orbitron">{unit.title}</h3>
+                <div className="flex flex-col h-full justify-between space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Badge variant={item.isLocked ? 'default' : 'purple'} size="sm">
+                        {item.count}
+                      </Badge>
+                      {item.isLocked && (
+                        <div className="flex items-center gap-1 text-amber-400 text-xs font-bold">
+                          <Lock className="w-3.5 h-3.5" />
+                          <span>Locked</span>
+                        </div>
+                      )}
                     </div>
-
-                    {/* Progress indicator */}
-                    <div className="flex items-center gap-3">
-                      <div className="text-right">
-                        <p className="text-[10px] font-extrabold text-purple-300/40 uppercase">PROGRESS</p>
-                        <p className="text-xs font-extrabold text-white">{unit.progress}%</p>
-                      </div>
-                      <div className="w-12 h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-brand-purple to-sakura-dark rounded-full" 
-                          style={{ width: `${unit.progress}%` }}
-                        />
-                      </div>
-                    </div>
+                    <h3 className="text-base font-bold text-white group-hover:text-brand-light transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-purple-300/50 leading-relaxed">
+                      {item.subtitle}
+                    </p>
                   </div>
 
-                  {/* Sub-lessons list panel */}
-                  <div className="mt-5 border-t border-white/[0.05] pt-5 space-y-3">
-                    {unit.lessons.map((lesson, li) => {
-                      const lessonPlayable = !isLocked;
-                      return (
-                        <motion.div 
-                          key={lesson.id}
-                          initial={{ opacity: 0, x: -8 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.08 + li * 0.04 + 0.2 }}
-                          className={`flex items-center justify-between p-3.5 rounded-2xl border transition-all ${
-                            lessonPlayable
-                              ? 'bg-white/[0.01] border-white/[0.05] hover:border-white/[0.1] hover:bg-white/[0.03]'
-                              : 'bg-white/[0.01] border-transparent opacity-40'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded-xl ${
-                              isCompleted 
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                                : isActive 
-                                ? 'bg-brand-purple/10 text-brand-purple-light border border-brand-purple/20' 
-                                : 'bg-[#12101D] border-white/[0.05] text-purple-300/20'
-                            }`}>
-                              {isCompleted ? <CheckCircle2 className="w-4 h-4" /> : <BookOpen className="w-4 h-4" />}
-                            </div>
-                            <div>
-                              <h4 className="text-sm font-bold text-white leading-none">{lesson.title}</h4>
-                              <p className="text-[10px] font-bold text-purple-300/35 uppercase mt-1 tracking-wider">
-                                {lesson.type} • {lesson.xp} XP
-                              </p>
-                            </div>
-                          </div>
+                  <div className="pt-2 flex items-center justify-between border-t border-white/[0.04]">
+                    <span className="text-[11px] font-bold text-purple-300/40 uppercase tracking-wider">
+                      JLPT {selectedLevel}
+                    </span>
 
-                          {lessonPlayable ? (
-                            <Link href={`/path/${lesson.id}`}>
-                              <motion.span
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-neon-purple/15 hover:border-neon-purple/25 text-white transition-all cursor-pointer"
-                              >
-                                <Play className="w-4 h-4 fill-white" />
-                              </motion.span>
-                            </Link>
-                          ) : (
-                            <div className="w-10 h-10 flex items-center justify-center text-purple-300/15">
-                              <Lock className="w-4 h-4" />
-                            </div>
-                          )}
-                        </motion.div>
-                      );
-                    })}
+                    {item.isLocked ? (
+                      <span className="text-xs font-semibold text-purple-300/30">Requires Level Upgrade</span>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-neon-pink group-hover:translate-x-1 transition-transform"
+                      >
+                        <span>Start Module</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    )}
                   </div>
                 </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
-      )}
-      </AnimatePresence>
-    </motion.div>
+              </Card>
+            ))}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }
