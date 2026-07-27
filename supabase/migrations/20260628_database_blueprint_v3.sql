@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.user_preferences (
 );
 
 ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own preferences" ON public.user_preferences;
 CREATE POLICY "Users can manage own preferences" ON public.user_preferences
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -28,7 +29,9 @@ CREATE TABLE IF NOT EXISTS public.user_roles (
 );
 
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view user roles" ON public.user_roles;
 CREATE POLICY "Anyone can view user roles" ON public.user_roles FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Admins can manage user roles" ON public.user_roles;
 CREATE POLICY "Admins can manage user roles" ON public.user_roles
   FOR ALL USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -48,6 +51,7 @@ CREATE TABLE IF NOT EXISTS public.subscriptions (
 );
 
 ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own subscription" ON public.subscriptions;
 CREATE POLICY "Users can view own subscription" ON public.subscriptions
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -61,6 +65,7 @@ CREATE TABLE IF NOT EXISTS public.devices (
 );
 
 ALTER TABLE public.devices ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own devices" ON public.devices;
 CREATE POLICY "Users can manage own devices" ON public.devices
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -74,6 +79,7 @@ CREATE TABLE IF NOT EXISTS public.sessions (
 );
 
 ALTER TABLE public.sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own sessions" ON public.sessions;
 CREATE POLICY "Users can manage own sessions" ON public.sessions
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -90,6 +96,7 @@ CREATE TABLE IF NOT EXISTS public.lesson_sections (
 );
 
 ALTER TABLE public.lesson_sections ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read lesson sections" ON public.lesson_sections;
 CREATE POLICY "Anyone can read lesson sections" ON public.lesson_sections FOR SELECT USING (true);
 
 -- grammar_topics (equivalent to grammar)
@@ -104,6 +111,7 @@ CREATE TABLE IF NOT EXISTS public.grammar_topics (
 );
 
 ALTER TABLE public.grammar_topics ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read grammar topics" ON public.grammar_topics;
 CREATE POLICY "Anyone can read grammar topics" ON public.grammar_topics FOR SELECT USING (true);
 
 -- dialogues
@@ -120,6 +128,7 @@ CREATE TABLE IF NOT EXISTS public.dialogues (
 );
 
 ALTER TABLE public.dialogues ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read dialogues" ON public.dialogues;
 CREATE POLICY "Anyone can read dialogues" ON public.dialogues FOR SELECT USING (true);
 
 -- reading_lessons
@@ -134,6 +143,7 @@ CREATE TABLE IF NOT EXISTS public.reading_lessons (
 );
 
 ALTER TABLE public.reading_lessons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read reading lessons" ON public.reading_lessons;
 CREATE POLICY "Anyone can read reading lessons" ON public.reading_lessons FOR SELECT USING (true);
 
 -- listening_lessons
@@ -148,6 +158,7 @@ CREATE TABLE IF NOT EXISTS public.listening_lessons (
 );
 
 ALTER TABLE public.listening_lessons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read listening lessons" ON public.listening_lessons;
 CREATE POLICY "Anyone can read listening lessons" ON public.listening_lessons FOR SELECT USING (true);
 
 -- speaking_lessons
@@ -162,6 +173,7 @@ CREATE TABLE IF NOT EXISTS public.speaking_lessons (
 );
 
 ALTER TABLE public.speaking_lessons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read speaking lessons" ON public.speaking_lessons;
 CREATE POLICY "Anyone can read speaking lessons" ON public.speaking_lessons FOR SELECT USING (true);
 
 -- writing_lessons
@@ -175,6 +187,7 @@ CREATE TABLE IF NOT EXISTS public.writing_lessons (
 );
 
 ALTER TABLE public.writing_lessons ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read writing lessons" ON public.writing_lessons;
 CREATE POLICY "Anyone can read writing lessons" ON public.writing_lessons FOR SELECT USING (true);
 
 -- ── 3. PRACTICE DOMAIN ──────────────────────────────────────────
@@ -189,12 +202,13 @@ CREATE TABLE IF NOT EXISTS public.quizzes (
 );
 
 ALTER TABLE public.quizzes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read quizzes" ON public.quizzes;
 CREATE POLICY "Anyone can read quizzes" ON public.quizzes FOR SELECT USING (true);
 
 -- quiz_questions
 CREATE TABLE IF NOT EXISTS public.quiz_questions (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  quiz_id               UUID REFERENCES public.quizzes(id) ON DELETE CASCADE,
+  quiz_id               TEXT REFERENCES public.quizzes(id) ON DELETE CASCADE,
   question_text         TEXT NOT NULL,
   options               TEXT[] NOT NULL,
   correct_option_idx    INT NOT NULL,
@@ -202,19 +216,21 @@ CREATE TABLE IF NOT EXISTS public.quiz_questions (
 );
 
 ALTER TABLE public.quiz_questions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can read quiz questions" ON public.quiz_questions;
 CREATE POLICY "Anyone can read quiz questions" ON public.quiz_questions FOR SELECT USING (true);
 
 -- quiz_attempts
 CREATE TABLE IF NOT EXISTS public.quiz_attempts (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id               UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  quiz_id               UUID NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
+  quiz_id               TEXT NOT NULL REFERENCES public.quizzes(id) ON DELETE CASCADE,
   score                 INT NOT NULL,
   passed                BOOLEAN NOT NULL,
   created_at            TIMESTAMPTZ DEFAULT NOW()
 );
 
 ALTER TABLE public.quiz_attempts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own quiz attempts" ON public.quiz_attempts;
 CREATE POLICY "Users can manage own quiz attempts" ON public.quiz_attempts
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -227,6 +243,7 @@ CREATE TABLE IF NOT EXISTS public.writing_sessions (
 );
 
 ALTER TABLE public.writing_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own writing sessions" ON public.writing_sessions;
 CREATE POLICY "Users can manage own writing sessions" ON public.writing_sessions
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -239,6 +256,7 @@ CREATE TABLE IF NOT EXISTS public.speaking_sessions (
 );
 
 ALTER TABLE public.speaking_sessions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own speaking sessions" ON public.speaking_sessions;
 CREATE POLICY "Users can manage own speaking sessions" ON public.speaking_sessions
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -254,6 +272,7 @@ CREATE TABLE IF NOT EXISTS public.course_progress (
 );
 
 ALTER TABLE public.course_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own course progress" ON public.course_progress;
 CREATE POLICY "Users can manage own course progress" ON public.course_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -267,6 +286,7 @@ CREATE TABLE IF NOT EXISTS public.module_progress (
 );
 
 ALTER TABLE public.module_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own module progress" ON public.module_progress;
 CREATE POLICY "Users can manage own module progress" ON public.module_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -279,6 +299,7 @@ CREATE TABLE IF NOT EXISTS public.writing_progress (
 );
 
 ALTER TABLE public.writing_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own writing progress" ON public.writing_progress;
 CREATE POLICY "Users can manage own writing progress" ON public.writing_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -291,6 +312,7 @@ CREATE TABLE IF NOT EXISTS public.speaking_progress (
 );
 
 ALTER TABLE public.speaking_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own speaking progress" ON public.speaking_progress;
 CREATE POLICY "Users can manage own speaking progress" ON public.speaking_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -302,6 +324,7 @@ CREATE TABLE IF NOT EXISTS public.reading_progress (
 );
 
 ALTER TABLE public.reading_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own reading progress" ON public.reading_progress;
 CREATE POLICY "Users can manage own reading progress" ON public.reading_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -313,6 +336,7 @@ CREATE TABLE IF NOT EXISTS public.listening_progress (
 );
 
 ALTER TABLE public.listening_progress ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own listening progress" ON public.listening_progress;
 CREATE POLICY "Users can manage own listening progress" ON public.listening_progress
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -326,6 +350,7 @@ CREATE TABLE IF NOT EXISTS public.bookmarks (
 );
 
 ALTER TABLE public.bookmarks ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own bookmarks" ON public.bookmarks;
 CREATE POLICY "Users can manage own bookmarks" ON public.bookmarks
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -340,6 +365,7 @@ CREATE TABLE IF NOT EXISTS public.ai_conversations (
 );
 
 ALTER TABLE public.ai_conversations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own conversations" ON public.ai_conversations;
 CREATE POLICY "Users can manage own conversations" ON public.ai_conversations
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -352,6 +378,7 @@ CREATE TABLE IF NOT EXISTS public.ai_recommendations (
 );
 
 ALTER TABLE public.ai_recommendations ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own recommendations" ON public.ai_recommendations;
 CREATE POLICY "Users can view own recommendations" ON public.ai_recommendations
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -365,6 +392,7 @@ CREATE TABLE IF NOT EXISTS public.ai_usage_logs (
 );
 
 ALTER TABLE public.ai_usage_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own ai usage logs" ON public.ai_usage_logs;
 CREATE POLICY "Users can view own ai usage logs" ON public.ai_usage_logs
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -379,7 +407,9 @@ CREATE TABLE IF NOT EXISTS public.posts (
 );
 
 ALTER TABLE public.posts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view posts" ON public.posts;
 CREATE POLICY "Anyone can view posts" ON public.posts FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can manage own posts" ON public.posts;
 CREATE POLICY "Users can manage own posts" ON public.posts
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -393,7 +423,9 @@ CREATE TABLE IF NOT EXISTS public.comments (
 );
 
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view comments" ON public.comments;
 CREATE POLICY "Anyone can view comments" ON public.comments FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can manage own comments" ON public.comments;
 CREATE POLICY "Users can manage own comments" ON public.comments
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -407,7 +439,9 @@ CREATE TABLE IF NOT EXISTS public.reactions (
 );
 
 ALTER TABLE public.reactions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view reactions" ON public.reactions;
 CREATE POLICY "Anyone can view reactions" ON public.reactions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can manage own reactions" ON public.reactions;
 CREATE POLICY "Users can manage own reactions" ON public.reactions
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -422,8 +456,10 @@ CREATE TABLE IF NOT EXISTS public.friendships (
 );
 
 ALTER TABLE public.friendships ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own friendships" ON public.friendships;
 CREATE POLICY "Users can view own friendships" ON public.friendships
   FOR SELECT USING (auth.uid() = user_id OR auth.uid() = friend_id);
+DROP POLICY IF EXISTS "Users can manage own friendships" ON public.friendships;
 CREATE POLICY "Users can manage own friendships" ON public.friendships
   FOR ALL USING (auth.uid() = user_id OR auth.uid() = friend_id) WITH CHECK (auth.uid() = user_id OR auth.uid() = friend_id);
 
@@ -436,6 +472,7 @@ CREATE TABLE IF NOT EXISTS public.leaderboard_snapshots (
 );
 
 ALTER TABLE public.leaderboard_snapshots ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view leaderboard snapshots" ON public.leaderboard_snapshots;
 CREATE POLICY "Anyone can view leaderboard snapshots" ON public.leaderboard_snapshots FOR SELECT USING (true);
 
 -- ── 7. PREMIUM DOMAIN ────────────────────────────────────────────
@@ -450,6 +487,7 @@ CREATE TABLE IF NOT EXISTS public.subscription_plans (
 );
 
 ALTER TABLE public.subscription_plans ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view subscription plans" ON public.subscription_plans;
 CREATE POLICY "Anyone can view subscription plans" ON public.subscription_plans FOR SELECT USING (true);
 
 -- orders
@@ -463,6 +501,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
 );
 
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own orders" ON public.orders;
 CREATE POLICY "Users can view own orders" ON public.orders
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -476,6 +515,7 @@ CREATE TABLE IF NOT EXISTS public.invoices (
 );
 
 ALTER TABLE public.invoices ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own invoices" ON public.invoices;
 CREATE POLICY "Users can view own invoices" ON public.invoices
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -489,6 +529,7 @@ CREATE TABLE IF NOT EXISTS public.feature_entitlements (
 );
 
 ALTER TABLE public.feature_entitlements ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Anyone can view feature entitlements" ON public.feature_entitlements;
 CREATE POLICY "Anyone can view feature entitlements" ON public.feature_entitlements FOR SELECT USING (true);
 
 -- ── 8. NOTIFICATIONS DOMAIN ──────────────────────────────────────
@@ -504,6 +545,7 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 );
 
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own notifications" ON public.notifications;
 CREATE POLICY "Users can manage own notifications" ON public.notifications
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -516,6 +558,7 @@ CREATE TABLE IF NOT EXISTS public.notification_preferences (
 );
 
 ALTER TABLE public.notification_preferences ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage own notification preferences" ON public.notification_preferences;
 CREATE POLICY "Users can manage own notification preferences" ON public.notification_preferences
   FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
@@ -529,6 +572,7 @@ CREATE TABLE IF NOT EXISTS public.notification_history (
 );
 
 ALTER TABLE public.notification_history ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own notification history" ON public.notification_history;
 CREATE POLICY "Users can view own notification history" ON public.notification_history
   FOR SELECT USING (auth.uid() = user_id);
 
@@ -544,6 +588,7 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
 );
 
 ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view analytics events" ON public.analytics_events;
 CREATE POLICY "Admins can view analytics events" ON public.analytics_events
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -560,6 +605,7 @@ CREATE TABLE IF NOT EXISTS public.lesson_logs (
 );
 
 ALTER TABLE public.lesson_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view lesson logs" ON public.lesson_logs;
 CREATE POLICY "Admins can view lesson logs" ON public.lesson_logs
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -575,6 +621,7 @@ CREATE TABLE IF NOT EXISTS public.ai_logs (
 );
 
 ALTER TABLE public.ai_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view ai logs" ON public.ai_logs;
 CREATE POLICY "Admins can view ai logs" ON public.ai_logs
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -591,6 +638,7 @@ CREATE TABLE IF NOT EXISTS public.payment_logs (
 );
 
 ALTER TABLE public.payment_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view payment logs" ON public.payment_logs;
 CREATE POLICY "Admins can view payment logs" ON public.payment_logs
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -607,6 +655,7 @@ CREATE TABLE IF NOT EXISTS public.crash_reports (
 );
 
 ALTER TABLE public.crash_reports ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view crash reports" ON public.crash_reports;
 CREATE POLICY "Admins can view crash reports" ON public.crash_reports
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -622,6 +671,7 @@ CREATE TABLE IF NOT EXISTS public.admin_users (
 );
 
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can view admin users" ON public.admin_users;
 CREATE POLICY "Admins can view admin users" ON public.admin_users
   FOR SELECT USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())
@@ -639,6 +689,7 @@ CREATE TABLE IF NOT EXISTS public.content_reviews (
 );
 
 ALTER TABLE public.content_reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage content reviews" ON public.content_reviews;
 CREATE POLICY "Admins can manage content reviews" ON public.content_reviews
   FOR ALL USING (
     EXISTS (SELECT 1 FROM public.admin_roles ar WHERE ar.user_id = auth.uid())

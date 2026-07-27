@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS public.payment_history (
 CREATE INDEX IF NOT EXISTS idx_payment_history_user ON public.payment_history(user_id, created_at DESC);
 
 ALTER TABLE public.payment_history ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view own payment history" ON public.payment_history;
 CREATE POLICY "Users can view own payment history"
   ON public.payment_history FOR SELECT
   USING (auth.uid() = user_id);
@@ -64,6 +65,7 @@ END;
 $$;
 
 -- ── 5. RLS for service-role inserts into payment_history ─────────────────────
+DROP POLICY IF EXISTS "Service role can insert payment history" ON public.payment_history;
 CREATE POLICY "Service role can insert payment history"
   ON public.payment_history FOR INSERT
   WITH CHECK (true);
