@@ -9,6 +9,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { evaluateHandwritingCanvas } from '@/lib/handwritingEvaluator';
 
 interface CharacterItem {
   char: string;
@@ -203,30 +204,27 @@ export default function WritingPage() {
     }, 2500);
   };
 
-  // AI Handwriting Accuracy Analysis
+  // AI Handwriting Accuracy Analysis using strict Canvas pixel evaluator
   const handleAnalyzeHandwriting = () => {
-    const strokeAcc = 85 + Math.floor(Math.random() * 12);
-    const shapeAcc = 82 + Math.floor(Math.random() * 15);
-    const sizeAcc = 88 + Math.floor(Math.random() * 10);
-    const posAcc = 84 + Math.floor(Math.random() * 14);
-    const overall = Math.round((strokeAcc + shapeAcc + sizeAcc + posAcc) / 4);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    const feedbacks = [
-      'Excellent balance and stroke sequence! Very natural flow.',
-      'Great curvature! Keep the final stroke slightly longer for perfect balance.',
-      'Nice character proportions. Focus on keeping the center aligned.',
-    ];
+    const evaluation = evaluateHandwritingCanvas(
+      canvas,
+      currentChar.char,
+      currentChar.strokeCount
+    );
 
     setScoreResult({
-      overall,
-      strokeAcc,
-      shapeAcc,
-      sizeAcc,
-      posAcc,
-      feedback: feedbacks[Math.floor(Math.random() * feedbacks.length)],
+      overall: evaluation.overall,
+      strokeAcc: evaluation.strokeAcc,
+      shapeAcc: evaluation.shapeAcc,
+      sizeAcc: evaluation.sizeAcc,
+      posAcc: evaluation.posAcc,
+      feedback: `${evaluation.tier}: ${evaluation.feedback}`,
     });
 
-    if (overall >= 75) {
+    if (evaluation.overall >= 75) {
       if (repCount < maxReps) {
         setRepCount((prev) => prev + 1);
       }
