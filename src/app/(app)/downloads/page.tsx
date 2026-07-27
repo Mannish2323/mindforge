@@ -2,96 +2,118 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Download, HardDrive, Trash2, Check, Cloud, WifiOff } from 'lucide-react';
+import { Download, Cloud, Wifi, Lock, Sparkles, RefreshCw, Smartphone } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-
-const DOWNLOADABLE = [
-  { id: 1, name: 'N5 Vocabulary Pack', size: '2.4 MB', items: 800, downloaded: true },
-  { id: 2, name: 'N5 Grammar Guide', size: '1.8 MB', items: 120, downloaded: true },
-  { id: 3, name: 'N5 Kanji Set', size: '3.1 MB', items: 100, downloaded: false },
-  { id: 4, name: 'N4 Vocabulary Pack', size: '4.2 MB', items: 1500, downloaded: false },
-  { id: 5, name: 'N4 Grammar Guide', size: '2.5 MB', items: 200, downloaded: false },
-  { id: 6, name: 'Listening Audio Pack', size: '15.8 MB', items: 50, downloaded: false },
-];
 
 export default function DownloadsPage() {
-  const downloadedItems = DOWNLOADABLE.filter(d => d.downloaded);
-  const totalSize = downloadedItems.reduce((acc, d) => acc + parseFloat(d.size), 0).toFixed(1);
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+    },
+  };
 
-  const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.05 } } };
-  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+  const item = {
+    hidden: { opacity: 0, y: 16 },
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 15 } },
+  };
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-      <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
-          <Download className="w-7 h-7 text-brand-light" /> Downloads
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-8 max-w-4xl mx-auto">
+      {/* Header */}
+      <motion.div variants={item} className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Badge variant="purple" className="flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-neon-pink" />
+            <span>Future Roadmap</span>
+          </Badge>
+          <Badge variant="pink" className="flex items-center gap-1">
+            <Lock className="w-3 h-3 text-sakura-dark" />
+            <span>Coming Soon</span>
+          </Badge>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-white flex items-center gap-3 font-orbitron">
+          <Download className="w-8 h-8 text-neon-purple-light" /> Offline Learning
         </h1>
-        <p className="text-sm text-purple-300/45">Manage offline content</p>
+        <p className="text-sm md:text-base text-purple-300/50 max-w-xl">
+          Study anywhere without an internet connection. Download full lesson units, flashcards, and audio guides.
+        </p>
       </motion.div>
 
-      {/* Storage Usage */}
+      {/* Main Glass Card Feature Highlight */}
       <motion.div variants={item}>
-        <Card variant="glass" padding="md" className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <HardDrive className="w-4 h-4 text-brand-light" />
-              <span className="text-sm font-semibold text-white">Storage Used</span>
-            </div>
-            <span className="text-sm font-bold text-brand-light">{totalSize} MB</span>
-          </div>
-          <ProgressBar value={parseFloat(totalSize) / 50 * 100} label="50 MB available" showLabel color="gradient" />
-        </Card>
-      </motion.div>
+        <div className="relative group">
+          {/* Animated Glow Backdrop */}
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple via-neon-pink to-sakura-dark rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition duration-500 pointer-events-none" />
 
-      {/* Downloaded */}
-      {downloadedItems.length > 0 && (
-        <motion.div variants={item} className="space-y-3">
-          <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em] flex items-center gap-2">
-            <WifiOff className="w-3 h-3" /> Available Offline
-          </h3>
-          {downloadedItems.map(dl => (
-            <Card key={dl.id} variant="glass" padding="md" className="flex items-center justify-between">
+          <Card variant="glass" padding="lg" className="relative rounded-3xl border border-white/10 space-y-6 overflow-hidden bg-[#12101D]/90 backdrop-blur-2xl">
+            {/* Top Bar Badges */}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.06] pb-5">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-emerald-500/10">
-                  <Check className="w-4 h-4 text-emerald-400" />
+                <div className="p-3 rounded-2xl bg-neon-purple/10 border border-neon-purple/20 text-neon-purple-light">
+                  <Wifi className="w-6 h-6 animate-pulse" />
                 </div>
                 <div>
-                  <span className="text-sm font-semibold text-white block">{dl.name}</span>
-                  <span className="text-[10px] text-purple-300/40">{dl.size} • {dl.items} items</span>
+                  <h2 className="text-lg font-extrabold text-white">Full Offline Mode</h2>
+                  <p className="text-xs text-purple-300/40">Zero latency • Study without Wi-Fi or Data</p>
                 </div>
               </div>
-              <button className="p-2 rounded-lg text-purple-300/30 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer">
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </Card>
-          ))}
-        </motion.div>
-      )}
-
-      {/* Available to Download */}
-      <motion.div variants={item} className="space-y-3">
-        <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em] flex items-center gap-2">
-          <Cloud className="w-3 h-3" /> Available to Download
-        </h3>
-        {DOWNLOADABLE.filter(d => !d.downloaded).map(dl => (
-          <Card key={dl.id} variant="glass" padding="md" className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-brand/10">
-                <Download className="w-4 h-4 text-brand-light" />
-              </div>
-              <div>
-                <span className="text-sm font-semibold text-white block">{dl.name}</span>
-                <span className="text-[10px] text-purple-300/40">{dl.size} • {dl.items} items</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-xs font-bold text-amber-300">
+                <Lock className="w-3.5 h-3.5" />
+                <span>Play Store Exclusive</span>
               </div>
             </div>
-            <button className="px-3 py-1.5 rounded-lg bg-neon-purple/15 text-xs font-bold text-brand-light hover:bg-neon-purple/25 transition-all cursor-pointer">
-              Download
-            </button>
+
+            {/* Feature Description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-4">
+                <p className="text-sm text-purple-200/70 leading-relaxed">
+                  Download complete Japanese learning packages directly to your device storage. Practice vocabulary, listen to native audio, and attempt quizzes seamlessly off-grid.
+                </p>
+
+                <div className="space-y-2.5">
+                  <div className="flex items-center gap-2.5 text-xs text-purple-300/60">
+                    <RefreshCw className="w-4 h-4 text-emerald-400 animate-spin-slow" />
+                    <span>Auto-sync progress to cloud when reconnected</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs text-purple-300/60">
+                    <Cloud className="w-4 h-4 text-neon-pink" />
+                    <span>Instant background sync with Supabase database</span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-xs text-purple-300/60">
+                    <Smartphone className="w-4 h-4 text-brand-light" />
+                    <span>Optimized for Android APK & iOS Capacitor wrappers</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Illustration / Coming Soon Action Block */}
+              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-neon-purple/20 to-neon-pink/20 border border-white/10 flex items-center justify-center shadow-glow-purple">
+                  <Download className="w-8 h-8 text-sakura-medium" />
+                </div>
+                <div className="space-y-1">
+                  <span className="text-sm font-bold text-white block">Download Package</span>
+                  <span className="text-[11px] text-purple-300/40 block">Status: Coming Soon</span>
+                </div>
+
+                <button
+                  disabled
+                  className="w-full h-12 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-purple-300/40 flex items-center justify-center gap-2 cursor-not-allowed opacity-60"
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Download Disabled (Coming Soon)</span>
+                </button>
+
+                <p className="text-[10px] text-purple-300/30 italic">
+                  Note: Available immediately following the official Android Play Store release.
+                </p>
+              </div>
+            </div>
           </Card>
-        ))}
+        </div>
       </motion.div>
     </motion.div>
   );
