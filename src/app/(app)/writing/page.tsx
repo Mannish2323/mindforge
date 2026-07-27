@@ -3,13 +3,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  PenTool, Undo2, Redo2, RotateCcw, Lightbulb, Play, Check, Flame,
-  Sparkles, Volume2, Eye, RefreshCw, ZoomIn, ZoomOut, Maximize2, Sliders, Layers
+  PenTool, Undo2, Redo2, RotateCcw, Play, Check, Flame,
+  Sparkles, Volume2, ZoomIn, ZoomOut, Maximize2, Sliders, Layers,
+  TrendingUp, AlertTriangle, Target, Info
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { evaluateHandwritingCanvas } from '@/lib/handwritingEvaluator';
+import { evaluateHandwritingCanvas, type GeometryBreakdown, type StrokeVector } from '@/lib/handwritingEvaluator';
 
 interface CharacterItem {
   char: string;
@@ -33,6 +34,43 @@ const WRITING_PACK: CharacterItem[] = [
   { char: 'お', romaji: 'o', type: 'Hiragana', meaning: 'Letter O', strokeCount: 3, difficulty: 'N5' },
 ];
 
+// Score component metadata
+const SCORE_COMPONENTS = [
+  { key: 'boundingBoxScore',     label: 'Bounding Box',    weight: '20%', icon: '▣', desc: 'Size & aspect ratio vs reference' },
+  { key: 'pixelOverlapScore',    label: 'Pixel Overlap',   weight: '30%', icon: '◈', desc: 'Ink overlapping the reference character' },
+  { key: 'strokeCountScore',     label: 'Stroke Count',    weight: '10%', icon: '✦', desc: 'Number of strokes drawn' },
+  { key: 'strokePositionScore',  label: 'Centering',       weight: '20%', icon: '⊙', desc: 'Character centred in guide zone' },
+  { key: 'strokeDirectionScore', label: 'Direction',       weight: '10%', icon: '↗', desc: 'Consistent stroke direction' },
+  { key: 'canvasOverflowScore',  label: 'Within Guide',    weight: '10%', icon: '⬜', desc: 'Ink inside the guide boundaries' },
+] as const;
+
+function ScoreBar({ score, color }: { score: number; color: string }) {
+  return (
+    <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+      <motion.div
+        className={`h-full rounded-full ${color}`}
+        initial={{ width: 0 }}
+        animate={{ width: `${score}%` }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      />
+    </div>
+  );
+}
+
+function scoreColor(score: number) {
+  if (score >= 85) return 'bg-emerald-500';
+  if (score >= 65) return 'bg-amber-500';
+  if (score >= 45) return 'bg-orange-500';
+  return 'bg-rose-500';
+}
+
+function scoreBadgeColor(score: number) {
+  if (score >= 85) return 'text-emerald-400';
+  if (score >= 65) return 'text-amber-400';
+  if (score >= 45) return 'text-orange-400';
+  return 'text-rose-400';
+}
+
 export default function WritingPage() {
   // Modes & Controls State
   const [selectedMode, setSelectedMode] = useState<'trace' | 'freewrite' | 'ghost'>('trace');
@@ -43,9 +81,8 @@ export default function WritingPage() {
 
   // Professional Toolbar Settings
   const [brushSize, setBrushSize] = useState<number>(6);
-  const [brushStyle, setBrushStyle] = useState<'pen' | 'pencil' | 'brush_pen'>('pen');
-  const [guideOpacity, setGuideOpacity] = useState<number>(30); // 10% - 100%
-  const [zoomLevel, setZoomLevel] = useState<number>(1); // 0.8x - 2.0x
+  const [guideOpacity, setGuideOpacity] = useState<number>(30);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
 
   // Canvas drawing state
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -53,47 +90,39 @@ export default function WritingPage() {
   const [strokeHistory, setStrokeHistory] = useState<ImageData[]>([]);
   const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
 
+  // Stroke vector tracking — each completed stroke is stored here
+  const currentStrokePoints = useRef<{ x: number; y: number }[]>([]);
+  const [recordedStrokes, setRecordedStrokes] = useState<StrokeVector[]>([]);
+
   // Scoring state
-  const [scoreResult, setScoreResult] = useState<{
-    overall: number;
-    strokeAcc: number;
-    shapeAcc: number;
-    sizeAcc: number;
-    posAcc: number;
-    feedback: string;
-  } | null>(null);
+  const [scoreResult, setScoreResult] = useState<GeometryBreakdown | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+
+  // Show/hide breakdown detail
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const currentChar = WRITING_PACK[currentIndex];
 
-  // Initialize & Configure Canvas
+  // ── Canvas setup ────────────────────────────────────────────────────────────
   const setupCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const width = canvas.offsetWidth;
+    const dpr    = window.devicePixelRatio || 1;
+    const width  = canvas.offsetWidth;
     const height = canvas.offsetHeight;
 
-    canvas.width = width * dpr;
+    canvas.width  = width  * dpr;
     canvas.height = height * dpr;
     ctx.scale(dpr, dpr);
 
-    ctx.lineCap = 'round';
+    ctx.lineCap  = 'round';
     ctx.lineJoin = 'round';
-
-    if (brushStyle === 'pencil') {
-      ctx.strokeStyle = 'rgba(193, 91, 255, 0.75)';
-      ctx.lineWidth = Math.max(2, brushSize - 1);
-    } else if (brushStyle === 'brush_pen') {
-      ctx.strokeStyle = '#D946EF';
-      ctx.lineWidth = brushSize + 3;
-    } else {
-      ctx.strokeStyle = '#C15BFF';
-      ctx.lineWidth = brushSize;
-    }
-  }, [brushSize, brushStyle]);
+    ctx.strokeStyle = '#C15BFF';
+    ctx.lineWidth   = brushSize;
+  }, [brushSize]);
 
   useEffect(() => {
     setupCanvas();
@@ -101,26 +130,23 @@ export default function WritingPage() {
     return () => window.removeEventListener('resize', setupCanvas);
   }, [setupCanvas, currentIndex]);
 
-  // Save Canvas State for Undo
+  // ── Canvas helpers ──────────────────────────────────────────────────────────
   const saveState = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    setStrokeHistory((prev) => [...prev, imageData]);
+    setStrokeHistory(prev => [...prev, imageData]);
     setRedoHistory([]);
   };
 
-  // Drawing Event Handlers (with stylus pressure sensitivity & touch prevention)
   const getCanvasPos = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0, pressure: 0.5 };
     const rect = canvas.getBoundingClientRect();
 
-    let clientX = 0;
-    let clientY = 0;
-    let pressure = 0.5;
+    let clientX = 0, clientY = 0, pressure = 0.5;
 
     if ('touches' in e && e.touches.length > 0) {
       clientX = e.touches[0].clientX;
@@ -135,29 +161,31 @@ export default function WritingPage() {
 
     return {
       x: (clientX - rect.left) / zoomLevel,
-      y: (clientY - rect.top) / zoomLevel,
+      y: (clientY - rect.top)  / zoomLevel,
       pressure,
     };
   };
 
+  // ── Drawing handlers ────────────────────────────────────────────────────────
   const handleStartDraw = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
     if (isGhostPlaying) return;
     saveState();
     setIsDrawing(true);
+
+    const pos = getCanvasPos(e);
     const ctx = canvasRef.current?.getContext('2d');
     if (!ctx) return;
 
-    const pos = getCanvasPos(e);
-
-    // Apply pressure sensitivity if stylus detected
-    if (pos.pressure && pos.pressure > 0 && pos.pressure !== 0.5) {
-      ctx.lineWidth = Math.max(2, brushSize * (pos.pressure * 1.6));
-    } else {
-      ctx.lineWidth = brushSize;
-    }
+    // Apply pressure-sensitive width
+    ctx.lineWidth = (pos.pressure && pos.pressure !== 0.5)
+      ? Math.max(2, brushSize * (pos.pressure * 1.6))
+      : brushSize;
 
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
+
+    // Start recording stroke vector
+    currentStrokePoints.current = [{ x: pos.x, y: pos.y }];
   };
 
   const handleDraw = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
@@ -168,13 +196,26 @@ export default function WritingPage() {
     const pos = getCanvasPos(e);
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
+
+    // Record point into current stroke
+    currentStrokePoints.current.push({ x: pos.x, y: pos.y });
   };
 
   const handleStopDraw = () => {
+    if (!isDrawing) return;
     setIsDrawing(false);
+
+    // Finalise the stroke vector
+    if (currentStrokePoints.current.length >= 2) {
+      setRecordedStrokes(prev => [
+        ...prev,
+        { points: [...currentStrokePoints.current] },
+      ]);
+    }
+    currentStrokePoints.current = [];
   };
 
-  // Canvas Controls
+  // ── Canvas controls ─────────────────────────────────────────────────────────
   const handleClear = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -183,6 +224,7 @@ export default function WritingPage() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setStrokeHistory([]);
     setRedoHistory([]);
+    setRecordedStrokes([]);
     setScoreResult(null);
   };
 
@@ -193,18 +235,22 @@ export default function WritingPage() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const currentImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    setRedoHistory((prev) => [...prev, currentImg]);
+    const current = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    setRedoHistory(prev => [...prev, current]);
 
-    const prevHistory = [...strokeHistory];
-    const lastState = prevHistory.pop();
-    setStrokeHistory(prevHistory);
+    const prev = [...strokeHistory];
+    const last = prev.pop();
+    setStrokeHistory(prev);
 
-    if (lastState) {
-      ctx.putImageData(lastState, 0, 0);
+    if (last) {
+      ctx.putImageData(last, 0, 0);
     } else {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+
+    // Remove last stroke vector too
+    setRecordedStrokes(prev => prev.slice(0, -1));
+    setScoreResult(null);
   };
 
   const handleRedo = () => {
@@ -215,46 +261,45 @@ export default function WritingPage() {
     if (!ctx) return;
 
     const prevRedo = [...redoHistory];
-    const nextState = prevRedo.pop();
+    const next = prevRedo.pop();
     setRedoHistory(prevRedo);
 
-    if (nextState) {
+    if (next) {
       saveState();
-      ctx.putImageData(nextState, 0, 0);
+      ctx.putImageData(next, 0, 0);
     }
   };
 
-  // Ghost Stroke Playback Trigger
   const handlePlayGhostAnimation = () => {
     setIsGhostPlaying(true);
-    setTimeout(() => {
-      setIsGhostPlaying(false);
-    }, 2500);
+    setTimeout(() => setIsGhostPlaying(false), 2500);
   };
 
-  // Strict Evaluation Engine Trigger
+  // ── Evaluation ──────────────────────────────────────────────────────────────
   const handleAnalyzeHandwriting = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const evaluation = evaluateHandwritingCanvas(
-      canvas,
-      currentChar.char,
-      currentChar.strokeCount
-    );
+    setIsEvaluating(true);
 
-    setScoreResult({
-      overall: evaluation.overall,
-      strokeAcc: evaluation.strokeAcc,
-      shapeAcc: evaluation.shapeAcc,
-      sizeAcc: evaluation.sizeAcc,
-      posAcc: evaluation.posAcc,
-      feedback: `${evaluation.tier}: ${evaluation.feedback}`,
-    });
+    // Small timeout so the button state updates before the synchronous pixel scan
+    setTimeout(() => {
+      const result = evaluateHandwritingCanvas(
+        canvas,
+        currentChar.char,
+        currentChar.strokeCount,
+        recordedStrokes
+      );
 
-    if (evaluation.overall >= 75 && repCount < maxReps) {
-      setRepCount((prev) => prev + 1);
-    }
+      setScoreResult(result);
+      setShowBreakdown(true);
+      setIsEvaluating(false);
+
+      // Advance rep counter on success
+      if (result.overall >= 75 && repCount < maxReps) {
+        setRepCount(prev => prev + 1);
+      }
+    }, 50);
   };
 
   const speakCharacter = () => {
@@ -265,9 +310,27 @@ export default function WritingPage() {
     }
   };
 
+  // ── UI helpers ──────────────────────────────────────────────────────────────
+  const tierColors: Record<GeometryBreakdown['tier'], string> = {
+    'Nearly Perfect':  'border-emerald-500/50 bg-emerald-500/5',
+    'Minor Mistakes':  'border-sky-500/50     bg-sky-500/5',
+    'Good':            'border-amber-500/50   bg-amber-500/5',
+    'Needs Improvement': 'border-orange-500/50 bg-orange-500/5',
+    'Major Mismatch':  'border-rose-500/50    bg-rose-500/5',
+  };
+
+  const tierEmoji: Record<GeometryBreakdown['tier'], string> = {
+    'Nearly Perfect':  '🌸',
+    'Minor Mistakes':  '✨',
+    'Good':            '📝',
+    'Needs Improvement': '⚠️',
+    'Major Mismatch':  '❌',
+  };
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
-      {/* Top Header */}
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
@@ -283,9 +346,13 @@ export default function WritingPage() {
           <h1 className="text-3xl md:text-4xl font-extrabold text-white font-orbitron mt-1">
             Japanese Writing Practice
           </h1>
+          <p className="text-xs text-purple-300/40 mt-1 flex items-center gap-1">
+            <Info className="w-3 h-3" />
+            Geometry-based scoring — instant, deterministic, AI-free
+          </p>
         </div>
 
-        {/* 50 Repetitions Counter */}
+        {/* 50-Rep counter */}
         <div className="w-full md:w-64 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-purple-200">Practice Goal</span>
@@ -302,14 +369,17 @@ export default function WritingPage() {
         </div>
       </div>
 
-      {/* Main Workspace Layout */}
+      {/* ── Main Workspace ─────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Character Details & Settings */}
+
+        {/* ── Left: Character + Toolbar + Score ────────────────────────────── */}
         <div className="lg:col-span-5 space-y-6">
+
+          {/* Character Card */}
           <Card variant="glass" padding="lg" className="text-center space-y-4 relative overflow-hidden bg-[#12101D]/90 backdrop-blur-2xl">
             <div className="flex items-center justify-between text-xs text-purple-300/40">
-              <span>{currentChar.type} • {currentChar.difficulty}</span>
-              <span>{currentChar.strokeCount} Strokes</span>
+              <span>{currentChar.type} · {currentChar.difficulty}</span>
+              <span>{currentChar.strokeCount} Strokes Expected</span>
             </div>
 
             <div className="relative flex items-center justify-center py-2">
@@ -357,15 +427,22 @@ export default function WritingPage() {
                 <span>Ghost</span>
               </button>
             </div>
+
+            {/* Stroke counter live */}
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-purple-300/50">
+              <span>Strokes drawn:</span>
+              <span className="font-extrabold text-neon-pink">{recordedStrokes.length}</span>
+              <span className="text-purple-300/30">/ {currentChar.strokeCount} expected</span>
+            </div>
           </Card>
 
-          {/* Professional Toolbar Controls Card */}
+          {/* Toolbar Card */}
           <Card variant="glass" padding="md" className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
               <span className="text-xs font-extrabold text-white flex items-center gap-1.5 uppercase tracking-wider">
-                <Sliders className="w-3.5 h-3.5 text-neon-pink" /> Brush & Canvas Controls
+                <Sliders className="w-3.5 h-3.5 text-neon-pink" /> Brush &amp; Canvas Controls
               </span>
-              {/* Brush Preview Circle */}
+              {/* Live brush preview */}
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-purple-300/40 font-semibold">Preview:</span>
                 <div
@@ -380,11 +457,11 @@ export default function WritingPage() {
               <label className="text-[11px] font-bold text-purple-300/50 block">Brush Size: {brushSize}px</label>
               <div className="flex items-center gap-1.5">
                 {[
-                  { label: 'Fine', size: 4 },
-                  { label: 'Medium', size: 6 },
-                  { label: 'Thick', size: 8 },
-                  { label: 'Calligraphy', size: 12 },
-                ].map((b) => (
+                  { label: 'Fine',       size: 4  },
+                  { label: 'Medium',     size: 6  },
+                  { label: 'Thick',      size: 8  },
+                  { label: 'Calligraphy',size: 12 },
+                ].map(b => (
                   <button
                     key={b.size}
                     onClick={() => setBrushSize(b.size)}
@@ -400,7 +477,7 @@ export default function WritingPage() {
               </div>
             </div>
 
-            {/* Reference Guide Opacity Slider */}
+            {/* Guide Opacity Slider (Trace mode only) */}
             {selectedMode === 'trace' && (
               <div className="space-y-2 pt-1 border-t border-white/[0.04]">
                 <div className="flex items-center justify-between text-[11px] font-bold">
@@ -414,60 +491,140 @@ export default function WritingPage() {
                   min="10"
                   max="100"
                   value={guideOpacity}
-                  onChange={(e) => setGuideOpacity(Number(e.target.value))}
+                  onChange={e => setGuideOpacity(Number(e.target.value))}
                   className="w-full h-1.5 rounded-lg bg-white/10 accent-neon-purple cursor-pointer"
                 />
               </div>
             )}
           </Card>
 
-          {/* AI Score Feedback Panel */}
-          {scoreResult && (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-              <Card
-                variant="glass"
-                padding="md"
-                className={`space-y-3 border ${
-                  scoreResult.overall >= 75 ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-rose-500/40 bg-rose-500/5'
-                }`}
+          {/* ── Score Result Panel ─────────────────────────────────────────── */}
+          <AnimatePresence>
+            {scoreResult && (
+              <motion.div
+                key="score"
+                initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white uppercase tracking-wider">AI Evaluation Result</span>
-                  <Badge variant={scoreResult.overall >= 75 ? 'emerald' : 'rose'} size="sm">
-                    {scoreResult.overall}% Score
-                  </Badge>
-                </div>
+                <Card
+                  variant="glass"
+                  padding="md"
+                  className={`space-y-4 border ${tierColors[scoreResult.tier]}`}
+                >
+                  {/* Header row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{tierEmoji[scoreResult.tier]}</span>
+                      <div>
+                        <p className="text-[10px] text-purple-300/50 uppercase tracking-widest">AI Score</p>
+                        <p className="text-xs font-extrabold text-white">{scoreResult.tier}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className={`text-3xl font-black ${scoreBadgeColor(scoreResult.overall)}`}>
+                        {scoreResult.overall}
+                      </span>
+                      <span className="text-xs text-purple-300/40">/100</span>
+                    </div>
+                  </div>
 
-                <div className="grid grid-cols-4 gap-2 text-center text-[10px]">
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
-                    <span className="text-purple-300/40 block">Strokes</span>
-                    <span className="font-extrabold text-white text-xs">{scoreResult.strokeAcc}%</span>
+                  {/* Big overall bar */}
+                  <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                    <motion.div
+                      className={`h-full rounded-full ${scoreColor(scoreResult.overall)}`}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${scoreResult.overall}%` }}
+                      transition={{ duration: 0.8, ease: 'easeOut' }}
+                    />
                   </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
-                    <span className="text-purple-300/40 block">Shape</span>
-                    <span className="font-extrabold text-white text-xs">{scoreResult.shapeAcc}%</span>
-                  </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
-                    <span className="text-purple-300/40 block">Size</span>
-                    <span className="font-extrabold text-white text-xs">{scoreResult.sizeAcc}%</span>
-                  </div>
-                  <div className="p-2 rounded-lg bg-white/[0.03]">
-                    <span className="text-purple-300/40 block">Position</span>
-                    <span className="font-extrabold text-white text-xs">{scoreResult.posAcc}%</span>
-                  </div>
-                </div>
 
-                <p className="text-xs text-purple-200/80 italic leading-relaxed pt-1">
-                  💡 {scoreResult.feedback}
-                </p>
-              </Card>
-            </motion.div>
-          )}
+                  {/* 6-Component Breakdown Grid */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Score Breakdown</span>
+                      <button
+                        onClick={() => setShowBreakdown(v => !v)}
+                        className="text-[10px] text-neon-purple/70 hover:text-neon-purple cursor-pointer flex items-center gap-0.5"
+                      >
+                        <TrendingUp className="w-3 h-3" />
+                        {showBreakdown ? 'Hide detail' : 'Show detail'}
+                      </button>
+                    </div>
+
+                    {/* Compact bars always visible */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {SCORE_COMPONENTS.map(comp => {
+                        const val = scoreResult[comp.key] as number;
+                        return (
+                          <div key={comp.key} className="space-y-1 p-2 rounded-xl bg-white/[0.03] border border-white/[0.04]">
+                            <div className="flex items-center justify-between text-[10px]">
+                              <span className="text-purple-300/60 font-semibold flex items-center gap-1">
+                                <span>{comp.icon}</span>
+                                <span>{comp.label}</span>
+                              </span>
+                              <span className={`font-extrabold ${scoreBadgeColor(val)}`}>{val}%</span>
+                            </div>
+                            <ScoreBar score={val} color={scoreColor(val)} />
+                            <p className="text-[9px] text-purple-300/30">{comp.weight} weight</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Expanded insight bullets */}
+                    <AnimatePresence>
+                      {showBreakdown && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="space-y-1.5 overflow-hidden"
+                        >
+                          <div className="pt-2 border-t border-white/[0.06] space-y-1.5">
+                            {SCORE_COMPONENTS.map((comp, i) => {
+                              const insight = scoreResult.insights[i] ?? '';
+                              const val = scoreResult[comp.key] as number;
+                              if (!insight) return null;
+                              return (
+                                <div key={comp.key} className="flex gap-2 text-[11px]">
+                                  <span className={`mt-0.5 flex-shrink-0 ${scoreBadgeColor(val)}`}>{comp.icon}</span>
+                                  <p className="text-purple-200/70 leading-relaxed">
+                                    <span className="font-bold text-white">{comp.label}:</span> {insight}
+                                  </p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Scribble warning */}
+                    {scoreResult.isScribble && (
+                      <div className="flex items-center gap-2 p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300">
+                        <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                        <span>Random scribble detected. Please trace the character strokes carefully.</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Algorithm badge */}
+                  <div className="flex items-center gap-1.5 text-[9px] text-purple-300/25 border-t border-white/[0.04] pt-2">
+                    <Target className="w-3 h-3" />
+                    <span>Deterministic geometry engine · BB 20% · Pixel 30% · Count 10% · Position 20% · Direction 10% · Overflow 10%</span>
+                  </div>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* Right Column: HTML5 Writing Canvas + Zoom & Canvas Controls */}
+        {/* ── Right: Canvas ─────────────────────────────────────────────────── */}
         <div className="lg:col-span-7 space-y-4">
           <Card variant="glass" padding="md" className="space-y-4 relative bg-[#0D0B18]/90 border border-white/10 rounded-3xl">
+
             {/* Canvas Control Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3">
               <div className="flex items-center gap-1.5">
@@ -499,7 +656,7 @@ export default function WritingPage() {
               {/* Zoom Controls */}
               <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
                 <button
-                  onClick={() => setZoomLevel((z) => Math.max(0.8, z - 0.25))}
+                  onClick={() => setZoomLevel(z => Math.max(0.8, z - 0.25))}
                   className="p-1 text-purple-300/60 hover:text-white cursor-pointer"
                   title="Zoom Out"
                 >
@@ -507,7 +664,7 @@ export default function WritingPage() {
                 </button>
                 <span className="text-[11px] font-bold text-white px-1.5">{Math.round(zoomLevel * 100)}%</span>
                 <button
-                  onClick={() => setZoomLevel((z) => Math.min(2.0, z + 0.25))}
+                  onClick={() => setZoomLevel(z => Math.min(2.0, z + 0.25))}
                   className="p-1 text-purple-300/60 hover:text-white cursor-pointer"
                   title="Zoom In"
                 >
@@ -526,26 +683,35 @@ export default function WritingPage() {
                 <Button variant="outline" size="sm" onClick={handlePlayGhostAnimation} disabled={isGhostPlaying}>
                   <Play className="w-3.5 h-3.5 mr-1" /> Replay Guide
                 </Button>
-                <Button variant="neon" size="sm" onClick={handleAnalyzeHandwriting}>
-                  <Check className="w-4 h-4 mr-1" /> Evaluate Score
+                <Button
+                  variant="neon"
+                  size="sm"
+                  onClick={handleAnalyzeHandwriting}
+                  disabled={isEvaluating || strokeHistory.length === 0}
+                >
+                  {isEvaluating ? (
+                    <><Sparkles className="w-4 h-4 mr-1 animate-spin" /> Scoring…</>
+                  ) : (
+                    <><Check className="w-4 h-4 mr-1" /> Evaluate Score</>
+                  )}
                 </Button>
               </div>
             </div>
 
-            {/* Interactive Drawing Canvas Container */}
+            {/* Drawing Canvas Container */}
             <div
               className="relative w-full h-[360px] md:h-[420px] rounded-2xl bg-[#09070F] border border-white/[0.08] overflow-hidden flex items-center justify-center touch-none transition-transform duration-200"
               style={{ transform: `scale(${zoomLevel})` }}
             >
-              {/* Grid Background Guide */}
-              <div className="absolute inset-0 border border-white/[0.04] pointer-events-none grid grid-cols-2 grid-rows-2">
+              {/* Grid Guide */}
+              <div className="absolute inset-0 pointer-events-none grid grid-cols-2 grid-rows-2 border border-white/[0.04]">
                 <div className="border-r border-b border-dashed border-white/[0.06]" />
                 <div className="border-b border-dashed border-white/[0.06]" />
                 <div className="border-r border-dashed border-white/[0.06]" />
                 <div />
               </div>
 
-              {/* Faint Reference Guide (Trace Mode with Opacity Slider) */}
+              {/* Faint Reference (Trace Mode) */}
               {selectedMode === 'trace' && (
                 <span
                   className="absolute text-[220px] md:text-[260px] font-black text-white select-none font-jp pointer-events-none transition-opacity"
@@ -555,7 +721,7 @@ export default function WritingPage() {
                 </span>
               )}
 
-              {/* Ghost Stroke Animation Overlay */}
+              {/* Ghost Stroke Overlay */}
               {isGhostPlaying && (
                 <motion.span
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -568,7 +734,7 @@ export default function WritingPage() {
                 </motion.span>
               )}
 
-              {/* HTML5 Canvas Element */}
+              {/* HTML5 Canvas */}
               <canvas
                 ref={canvasRef}
                 onMouseDown={handleStartDraw}
@@ -581,7 +747,40 @@ export default function WritingPage() {
                 className="w-full h-full cursor-crosshair relative z-10 touch-none"
               />
             </div>
+
+            {/* Canvas status bar */}
+            <div className="flex items-center justify-between text-[10px] text-purple-300/30 px-1">
+              <span>
+                {recordedStrokes.length === 0
+                  ? 'Draw the character above ↑'
+                  : `${recordedStrokes.length} stroke${recordedStrokes.length !== 1 ? 's' : ''} recorded · tap Evaluate Score when done`}
+              </span>
+              <span className="flex items-center gap-1">
+                <Target className="w-3 h-3" />
+                Geometry engine
+              </span>
+            </div>
           </Card>
+
+          {/* Algorithm Explainer (collapsed by default) */}
+          <details className="group">
+            <summary className="text-[11px] text-purple-300/30 hover:text-purple-300/60 cursor-pointer select-none flex items-center gap-1.5 transition-colors">
+              <Info className="w-3 h-3" />
+              How is the score calculated?
+            </summary>
+            <div className="mt-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-purple-300/50 space-y-1 leading-relaxed">
+              <p className="font-bold text-purple-200/70">Score = Σ (Component × Weight)</p>
+              {SCORE_COMPONENTS.map(c => (
+                <p key={c.key}>
+                  <span className="font-semibold text-white/50">{c.icon} {c.label} ({c.weight})</span> — {c.desc}
+                </p>
+              ))}
+              <p className="text-purple-300/30 pt-1 italic">
+                Zero random numbers. Zero AI calls. All scoring is pure pixel geometry.
+                AI will be added later for natural-language feedback only.
+              </p>
+            </div>
+          </details>
         </div>
       </div>
     </div>
