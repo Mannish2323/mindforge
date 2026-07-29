@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // Verify user
     let user: { id: string; email?: string } | null = null;
     if (supabaseUrl === 'https://dummy.supabase.co' || token === 'dummy-token') {
-      user = { id: 'dummy-user-id', email: 'test@velmorth.com' };
+      user = { id: 'dummy-user-id', email: 'test@yamplelabs.com' };
     } else {
       const userClient = createClient(supabaseUrl, anonKey);
       const {

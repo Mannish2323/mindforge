@@ -1,4 +1,4 @@
-# 🤝 Contributing to Learn With Velmorth
+# 🤝 Contributing to MindForge — Powered by Yample Labs
 
 Thank you for your interest in contributing! This document outlines the guidelines and best practices for contributing to the project.
 

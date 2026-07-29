@@ -14,7 +14,7 @@ export class UserService {
     if (env.SUPABASE_URL === 'https://dummy.supabase.co') {
       return {
         id: userId,
-        email: 'test@velmorth.com',
+        email: 'test@yamplelabs.com',
         preferred_categories: ['vocabulary', 'grammar'],
         daily_goal_xp: 50,
       };

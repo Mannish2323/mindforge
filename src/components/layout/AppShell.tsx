@@ -135,7 +135,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Logo size="md" glow={true} className="flex-shrink-0" />
           <div className="flex flex-col">
             <span className="font-bold text-base tracking-tight text-white group-hover:text-glow-pink transition-all font-orbitron">
-              Velmorth
+              MindForge
             </span>
             <span className="text-[9px] text-purple-300/40 font-bold tracking-widest uppercase">
               Master Japanese
@@ -295,7 +295,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {/* Mobile logo */}
             <Link href="/home" className="lg:hidden flex items-center gap-2">
               <Logo size="sm" glow={true} />
-              <span className="font-bold text-sm text-white font-orbitron">Velmorth</span>
+              <span className="font-bold text-sm text-white font-orbitron">MindForge</span>
             </Link>
           </div>
 

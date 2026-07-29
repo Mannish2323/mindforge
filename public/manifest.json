@@ -1,7 +1,7 @@
 {
-  "name": "Learn with Velmorth",
-  "short_name": "Velmorth",
-  "description": "Japanese learning app with gamified progression, AI tutor, and spaced repetition.",
+  "name": "MindForge",
+  "short_name": "MindForge",
+  "description": "Japanese learning platform by Yample Labs with gamified progression, AI tutor, and spaced repetition.",
   "start_url": "/home",
   "display": "standalone",
   "orientation": "portrait",

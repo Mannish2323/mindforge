@@ -1,5 +1,5 @@
 /**
- * Learn with Velmorth — Geometry-Based Handwriting Scoring Engine v2
+ * MindForge — Geometry-Based Handwriting Scoring Engine v2
  * =====================================================================
  * Pure deterministic scoring. Zero AI calls. Zero random numbers.
  * AI may be added later for natural language FEEDBACK only — never for scoring.

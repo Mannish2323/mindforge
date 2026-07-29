@@ -1,6 +1,6 @@
 /**
  * Sakura AI System Architecture — TypeScript Definitions
- * Learn with Velmorth
+ * MindForge
  */
 
 export type SupportedLanguage = 'en' | 'hi' | 'ja';

@@ -8,7 +8,7 @@ import { SRSCard, Quest, Badge, Friend, Duel, StudyCircle, Story, StreakShield, 
 import { createClient } from '@/lib/supabase';
 import { useAuth } from '../app/context/AuthContext';
 
-const STORAGE_KEY = 'velmorth_state_v3';
+const STORAGE_KEY = 'mindforge_state_v3';
 
 const getLocalDateString = (date: Date = new Date()) => {
   const year = date.getFullYear();
@@ -87,7 +87,7 @@ const MOCK_STORIES: Story[] = [
       {
         scene_id: 'sc2', background: '🚇 Train Platform',
         dialogue: [
-          { speaker: 'Velmorth AI', avatar: '🤖', japanese: 'よくできました！電車に乗りましょう。', romaji: 'Yoku dekimashita! Densha ni norimashou.', english: 'Well done! Let\'s board the train.', hindi: 'शाबाश! चलो ट्रेन में सवार होते हैं।' },
+          { speaker: 'MindForge AI', avatar: '🤖', japanese: 'よくできました！電車に乗りましょう。', romaji: 'Yoku dekimashita! Densha ni norimashou.', english: 'Well done! Let\'s board the train.', hindi: 'शाबाश! चलो ट्रेन में सवार होते हैं।' },
         ],
         is_end: true,
       },

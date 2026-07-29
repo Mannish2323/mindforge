@@ -1,5 +1,5 @@
 // ================================================================
-// Learn with Velmorth — Japanese Writing Practice System Evaluator
+// MindForge — Japanese Writing Practice System Evaluator
 // ================================================================
 
 export interface Point {

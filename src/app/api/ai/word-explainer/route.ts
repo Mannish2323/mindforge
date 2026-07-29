@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     const prompt = `
-You are Velmorth Sensei, an expert Japanese teacher.
+You are MindForge Sensei, an expert Japanese teacher.
 Generate a complete, comprehensive, and advanced Japanese learning structure for the word: "${word}".
 
 You MUST return a JSON object with the exact keys below. Do NOT add markdown code fences (like \`\`\`json) outside the JSON. Return only the raw JSON string.
@@ -92,7 +92,7 @@ Keys required in JSON:
 32. "visualAssociation": Description of a visual image to associate with the word.
 33. "difficulty": "Easy", "Medium", or "Hard"
 34. "reviewPriority": Recommended review priority (High, Medium, Low)
-35. "aiTutorExplanation": A warm, encouraging paragraph from Velmorth Sensei explaining how to use it.
+35. "aiTutorExplanation": A warm, encouraging paragraph from MindForge Sensei explaining how to use it.
 `.trim();
 
     const data = await callGemini(

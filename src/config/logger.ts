@@ -1,5 +1,5 @@
 /**
- * Learn with Velmorth — Production Logger
+ * MindForge — Production Logger
  */
 
 export const logger = {

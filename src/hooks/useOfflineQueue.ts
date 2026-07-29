@@ -15,7 +15,7 @@ export interface QueuedAction {
   retries: number;
 }
 
-const DB_NAME = 'velmorth_offline_queue';
+const DB_NAME = 'mindforge_offline_queue';
 const DB_VERSION = 1;
 const STORE_NAME = 'actions';
 

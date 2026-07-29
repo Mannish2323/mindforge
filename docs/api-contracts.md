@@ -1,4 +1,4 @@
-# Learn with Velmorth v2 — API Contracts
+# MindForge — API Contracts by Yample Labs
 
 This document specifies the Next.js Route Handlers (REST API endpoints) and server-side logic details for the platform.
 

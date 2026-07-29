@@ -1,5 +1,5 @@
 /**
- * Velmorth Global Animation System
+ * MindForge Global Animation System
  * ══════════════════════════════════
  * Single source of truth for ALL motion in the app.
  * Import these instead of writing ad-hoc Framer Motion variants.

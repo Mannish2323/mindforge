@@ -10,7 +10,7 @@ export default function TermsPage() {
   const sections = [
     {
       title: '1. Acceptance of Terms',
-      content: 'By accessing or utilizing the Velmorth learning application, you verify that you have read, understood, and agreed to adhere to these Terms of Service. If you do not accept these parameters, you are not authorized to use the platform.'
+      content: 'By accessing or utilizing the MindForge learning application by Yample Labs, you verify that you have read, understood, and agreed to adhere to these Terms of Service. If you do not accept these parameters, you are not authorized to use the platform.'
     },
     {
       title: '2. Account Credentials & Security',
@@ -26,7 +26,7 @@ export default function TermsPage() {
     },
     {
       title: '5. Limitation of Liability',
-      content: 'Velmorth and its developers do not guarantee absolute learning proficiency outcomes. The platform services are provided "as-is" without warranty. We are not liable for session downtime, data loss, or indirect damages caused by external API constraints.'
+      content: 'MindForge, Yample Labs, and its developers do not guarantee absolute learning proficiency outcomes. The platform services are provided "as-is" without warranty. We are not liable for session downtime, data loss, or indirect damages caused by external API constraints.'
     }
   ];
 
@@ -85,7 +85,7 @@ export default function TermsPage() {
 
         {/* Introduction */}
         <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-sm text-purple-200/80 leading-relaxed font-medium">
-          Please review the following rules and parameters before engaging with the Velmorth interactive dashboard and AI training units.
+          Please review the following rules and parameters before engaging with the MindForge interactive dashboard and AI training units.
         </div>
 
         {/* Content sections */}
@@ -121,7 +121,7 @@ export default function TermsPage() {
 
       {/* Footer */}
       <footer className="w-full border-t border-white/[0.06] py-6 text-center text-[10px] text-purple-300/15 font-bold uppercase tracking-widest px-6 z-20">
-        &copy; {new Date().getFullYear()} Velmorth Labs. All rights reserved.
+        &copy; 2026 Yample Labs. All Rights Reserved.
       </footer>
     </motion.div>
   );

@@ -1,225 +1,538 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Sparkles, Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck,
+  Flame, Award, Zap, CheckCircle2, UserCheck, HelpCircle
+} from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 import { Logo } from '@/components/ui/Logo';
 import { SakuraParticles } from '@/components/animations/SakuraParticles';
-import { motion } from 'framer-motion';
-import { Sparkles, BookOpen, Mic, Brain, Trophy, Shield } from 'lucide-react';
-import Link from 'next/link';
 
 export default function AuthPage() {
-  const { signInWithGoogle } = useAuth();
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { signInWithGoogle, loginWithEmail, resetPassword } = useAuth();
 
-  const handleGoogleLogin = async () => {
+  // Mode: 'login' | 'forgot'
+  const [mode, setMode] = useState<'login' | 'forgot'>('login');
+
+  // Form states
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
+
+  // Status & Feedback
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
+
+  // Handlers
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      setError('Please enter both your email address and password.');
+      return;
+    }
     setError('');
+    setMessage('');
     setLoading(true);
     try {
-      await signInWithGoogle();
+      await loginWithEmail(email, password);
+      router.push('/home');
     } catch (err: any) {
-      setError(err?.message || 'Sign-in failed. Please try again.');
+      setError(err?.message || 'Invalid login credentials. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
 
-  const features = [
-    { icon: Sparkles, title: 'AI Tutor', desc: 'Sakura AI assistant' },
-    { icon: BookOpen, title: 'JLPT N5→N1', desc: 'Complete roadmap' },
-    { icon: Mic, title: 'Speaking', desc: 'Pronunciation AI' },
-    { icon: Brain, title: 'Smart SRS', desc: 'Spaced repetition' },
-    { icon: Trophy, title: 'Gamification', desc: 'XP & achievements' },
-    { icon: Shield, title: 'Cross Platform', desc: 'Web + Android' },
-  ];
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.3 } },
+  const handleGoogleLogin = async () => {
+    setError('');
+    setMessage('');
+    setGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+    } catch (err: any) {
+      setError(err?.message || 'Google authentication failed.');
+      setGoogleLoading(false);
+    }
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 24 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 100, damping: 16 } },
+  const handleGuestLogin = () => {
+    setGuestLoading(true);
+    // Instant smooth navigation to main app for guest preview
+    setTimeout(() => {
+      router.push('/home');
+    }, 400);
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      setError('Please enter your email address to receive reset instructions.');
+      return;
+    }
+    setError('');
+    setMessage('');
+    setLoading(true);
+    try {
+      await resetPassword(email);
+      setMessage('Password reset instructions have been sent to your email.');
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send reset email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="min-h-screen min-h-[100dvh] bg-[#09070F] text-white flex flex-col relative overflow-hidden"
+      className="min-h-screen min-h-[100dvh] bg-[#07050D] text-white flex flex-col justify-between relative overflow-hidden font-sans selection:bg-neon-pink selection:text-white"
     >
-      {/* Sakura Petals */}
+      {/* 🌸 Floating Sakura Petals Engine */}
       <SakuraParticles />
 
-      {/* Background glows — larger, more atmospheric */}
-      <div className="absolute w-[60vw] h-[60vw] rounded-full bg-neon-purple/6 blur-[160px] pointer-events-none top-[5%] left-[5%] animate-pulse-glow" />
-      <div className="absolute w-[50vw] h-[50vw] rounded-full bg-neon-pink/4 blur-[140px] pointer-events-none bottom-[5%] right-[5%]" />
-      <div className="absolute w-[30vw] h-[30vw] rounded-full bg-sakura-dark/5 blur-[100px] pointer-events-none top-[40%] right-[30%]" />
+      {/* 🔮 Multi-layered Ambient Glow System */}
+      <div className="absolute w-[600px] h-[600px] rounded-full bg-gradient-to-br from-neon-purple/20 to-neon-pink/10 blur-[150px] pointer-events-none top-[-10%] left-[-10%] animate-pulse-glow" />
+      <div className="absolute w-[550px] h-[550px] rounded-full bg-gradient-to-tr from-accent-magenta/15 to-indigo-600/10 blur-[160px] pointer-events-none bottom-[-10%] right-[-10%]" />
+      <div className="absolute w-[350px] h-[350px] rounded-full bg-pink-500/10 blur-[130px] pointer-events-none top-[35%] left-[30%]" />
 
-      {/* Top Bar */}
-      <header className="w-full flex items-center justify-between px-6 py-4 z-20 max-w-7xl mx-auto">
+      {/* 🗻 Subtle Mount Fuji & Torii Silhouette Backdrop */}
+      <div className="absolute inset-x-0 bottom-0 h-64 pointer-events-none opacity-20 z-0 flex items-end justify-between px-8 md:px-20 overflow-hidden">
+        {/* Torii Gate SVG Minimal Accent */}
+        <div className="hidden sm:block text-neon-purple/30 mb-4">
+          <svg width="120" height="120" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M10 20 H90 V26 H10 Z M15 15 H85 V20 H15 Z M30 26 V85 H38 V26 Z M62 26 V85 H70 V26 Z M20 40 H80 V45 H20 Z" />
+          </svg>
+        </div>
+        {/* Mount Fuji Vector */}
+        <div className="w-[500px] h-[180px] bg-gradient-to-t from-neon-purple/20 via-purple-900/10 to-transparent clip-fuji mx-auto rounded-t-full blur-[2px]" />
+      </div>
+
+      {/* ── Top Header Navigation Bar ──────────────────────────────────────── */}
+      <header className="w-full flex items-center justify-between px-6 md:px-12 py-6 z-20 max-w-7xl mx-auto">
+        <Link href="/home" className="flex items-center gap-3 group focus:outline-none focus:ring-2 focus:ring-neon-purple rounded-2xl p-1">
+          <Logo size="md" glow={true} className="transition-transform group-hover:scale-105" />
+          <div className="flex flex-col">
+            <span className="font-orbitron font-extrabold text-lg tracking-wider text-white group-hover:text-glow-pink transition-colors">
+              MindForge
+            </span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.25em] text-purple-300/40">
+              Yample Labs
+            </span>
+          </div>
+        </Link>
+
+        {/* Top Right Quick Badges */}
         <div className="flex items-center gap-3">
-          <Logo size="sm" glow={true} />
-          <span className="font-bold text-base text-white font-orbitron tracking-tight">
-            Velmorth
-          </span>
+          <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md text-xs font-bold text-amber-400 shadow-sm">
+            <Flame className="w-3.5 h-3.5 fill-amber-400 animate-bounce" />
+            <span>Streak Mode Ready</span>
+          </div>
+          <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] backdrop-blur-md text-xs font-bold text-neon-pink shadow-sm">
+            <Zap className="w-3.5 h-3.5 fill-neon-pink" />
+            <span>JLPT N5-N1</span>
+          </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <motion.main
-        variants={containerVariants}
-        initial="hidden"
-        animate="show"
-        className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 px-6 py-8 z-10 max-w-7xl mx-auto w-full"
-      >
-        {/* Left: Hero Section */}
-        <motion.div variants={itemVariants} className="flex-1 max-w-xl space-y-8 text-center lg:text-left">
-          <div className="space-y-5">
-            {/* Large Logo for mobile / desktop hero */}
-            <motion.div variants={itemVariants} className="flex justify-center lg:justify-start">
-              <Logo size={96} glow={true} className="rounded-3xl" />
+      {/* ── Main Interactive Section ───────────────────────────────────────── */}
+      <main className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 px-6 py-6 z-10 max-w-7xl mx-auto w-full">
+
+        {/* ── Left Column: Hero & Brand Tagline ────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="flex-1 max-w-xl space-y-8 text-center lg:text-left"
+        >
+          <div className="space-y-4">
+            {/* Animated Japanese Greeting */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, type: 'spring' }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-neon-purple/15 to-neon-pink/15 border border-neon-purple/25 backdrop-blur-xl text-xs font-bold text-brand-light shadow-[0_0_20px_rgba(109,60,255,0.2)]"
+            >
+              <Sparkles className="w-4 h-4 text-neon-pink animate-spin-slow" />
+              <span className="font-japanese text-sm font-extrabold text-white">こんにちは</span>
+              <span className="animate-wave inline-block">👋</span>
+              <span className="text-purple-300/60 font-medium">| Welcome Back</span>
             </motion.div>
 
-            <motion.div variants={itemVariants}>
-              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-[11px] font-bold text-brand-light tracking-wide">
-                <Sparkles className="w-3.5 h-3.5" />
-                AI-Powered Japanese Learning
+            {/* Main Headline & Tagline */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.08] text-white font-orbitron">
+              Master Japanese.{' '}
+              <span className="bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta bg-clip-text text-transparent drop-shadow-[0_10px_25px_rgba(109,60,255,0.3)] block mt-1">
+                Shape Your Future.
               </span>
-            </motion.div>
+            </h1>
 
-            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl xl:text-6xl font-extrabold tracking-tight leading-[1.08]">
-              Learn Japanese{' '}
-              <br className="hidden sm:block" />
-              <span className="bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta bg-clip-text text-transparent">
-                The Smart Way
-              </span>
-            </motion.h1>
-
-            <motion.p variants={itemVariants} className="text-purple-200/45 text-base md:text-lg leading-relaxed max-w-md mx-auto lg:mx-0">
-              AI-powered lessons, practice, and real-time feedback.
-              Master JLPT N5 to N1 with Sakura AI, your personal tutor.
-            </motion.p>
+            <p className="text-purple-200/50 text-sm md:text-base leading-relaxed max-w-md mx-auto lg:mx-0 font-medium">
+              Join thousands of learners mastering Japanese effortlessly with real-time AI conversation, spaced repetition flashcards, and native audio practice.
+            </p>
           </div>
 
-          {/* Feature Grid */}
+          {/* 🏅 Interactive Floating Live Status Preview */}
           <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="p-4 rounded-3xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-2xl grid grid-cols-3 gap-3 shadow-2xl relative overflow-hidden group"
           >
-            {features.map((f) => (
-              <motion.div
-                key={f.title}
-                variants={itemVariants}
-                whileHover={{ y: -3, borderColor: 'rgba(109, 60, 255, 0.25)' }}
-                className="flex flex-col items-center lg:items-start gap-2.5 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] transition-all"
-              >
-                <div className="p-2.5 rounded-xl bg-neon-purple/10 border border-neon-purple/15">
-                  <f.icon className="w-4 h-4 text-brand-light" />
-                </div>
-                <div className="text-center lg:text-left">
-                  <span className="text-xs font-bold text-white block">{f.title}</span>
-                  <span className="text-[10px] text-purple-300/35 font-medium">{f.desc}</span>
-                </div>
-              </motion.div>
-            ))}
+            <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+            {/* Streak Preview */}
+            <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-1.5 text-amber-400 mb-1">
+                <Flame className="w-4 h-4 fill-amber-400" />
+                <span className="text-xs font-extrabold font-orbitron">7 Days</span>
+              </div>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">Active Streak</span>
+            </div>
+
+            {/* Level Badge */}
+            <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-1.5 text-neon-pink mb-1">
+                <Award className="w-4 h-4" />
+                <span className="text-xs font-extrabold font-orbitron">Level 12</span>
+              </div>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">JLPT N4 Rank</span>
+            </div>
+
+            {/* XP Progress */}
+            <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
+              <div className="flex items-center gap-1.5 text-emerald-400 mb-1">
+                <Zap className="w-4 h-4 fill-emerald-400" />
+                <span className="text-xs font-extrabold font-orbitron">2,450 XP</span>
+              </div>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">Mastery XP</span>
+            </div>
           </motion.div>
+
+          {/* Social Proof / Awwwards Badge */}
+          <div className="flex items-center justify-center lg:justify-start gap-4 text-xs text-purple-300/40 font-medium pt-1">
+            <div className="flex -space-x-2 overflow-hidden">
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-purple-600/60 flex items-center justify-center text-[10px] font-bold text-white">🌸</div>
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-pink-600/60 flex items-center justify-center text-[10px] font-bold text-white">⚡</div>
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-indigo-600/60 flex items-center justify-center text-[10px] font-bold text-white">⛩️</div>
+            </div>
+            <span>Trusted by 50,000+ Japanese language students worldwide</span>
+          </div>
         </motion.div>
 
-        {/* Right: Login Card */}
+        {/* ── Right Column: Award-Winning Floating Glassmorphism Auth Card ──── */}
         <motion.div
-          variants={itemVariants}
-          className="w-full max-w-[420px] relative"
+          initial={{ opacity: 0, y: 30, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-[440px] relative z-20"
         >
-          {/* Neon border glow */}
-          <div className="absolute -inset-[1px] bg-gradient-to-r from-neon-purple via-neon-pink to-neon-purple rounded-[28px] opacity-20 blur-sm pointer-events-none" />
+          {/* Animated Gradient Edge Aura */}
+          <div className="absolute -inset-[1px] bg-gradient-to-br from-neon-purple via-neon-pink to-accent-magenta rounded-[32px] opacity-30 blur-md pointer-events-none animate-pulse-glow" />
 
-          <div className="relative rounded-[28px] p-8 md:p-10 border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.5)] z-10 space-y-8 bg-[#12101D] backdrop-blur-2xl">
-            {/* Header */}
+          {/* Card Body */}
+          <div className="relative rounded-[32px] p-8 sm:p-10 border border-white/[0.12] bg-[#0E0B1A]/85 backdrop-blur-2xl shadow-[0_32px_80px_rgba(0,0,0,0.7)] space-y-7">
+
+            {/* Card Mode Toggle / Title Header */}
             <div className="space-y-2 text-center">
-              <motion.h2
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="text-2xl font-extrabold text-white"
-              >
-                Welcome Back
-              </motion.h2>
-              <p className="text-sm text-purple-300/45">
-                Continue your Japanese learning journey
+              <h2 className="text-2xl font-extrabold text-white tracking-tight font-orbitron">
+                {mode === 'login' ? 'Welcome Back' : 'Reset Password'}
+              </h2>
+              <p className="text-xs text-purple-300/50 font-medium">
+                {mode === 'login'
+                  ? 'Sign in to sync your Japanese lessons & streak'
+                  : 'Enter your email to receive recovery instructions'}
               </p>
             </div>
 
-            {/* Error */}
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 font-semibold text-center"
-              >
-                {error}
-              </motion.div>
-            )}
-
-            {/* Google Login Button */}
-            <motion.button
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              whileHover={{ scale: 1.02, boxShadow: '0 8px 32px rgba(255,255,255,0.1)' }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full flex items-center justify-center gap-3 h-14 rounded-2xl bg-white text-gray-800 font-semibold text-sm hover:bg-gray-50 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.2)] disabled:opacity-50 cursor-pointer relative overflow-hidden group"
-            >
-              {/* Hover glow ring */}
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-r from-neon-purple/10 via-transparent to-neon-pink/10" />
-              
-              {loading ? (
+            {/* Error Message Box */}
+            <AnimatePresence>
+              {error && (
                 <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  className="w-5 h-5 border-2 border-neon-purple border-t-transparent rounded-full"
-                />
-              ) : (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                </svg>
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-xs text-rose-300 font-semibold flex items-center gap-2.5"
+                  role="alert"
+                >
+                  <div className="p-1 rounded-lg bg-rose-500/20 text-rose-400">
+                    <HelpCircle className="w-4 h-4" />
+                  </div>
+                  <span className="flex-1">{error}</span>
+                </motion.div>
               )}
-              <span className="relative z-10">Continue with Google</span>
-            </motion.button>
+            </AnimatePresence>
+
+            {/* Success Message Box */}
+            <AnimatePresence>
+              {message && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -10 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 text-xs text-emerald-300 font-semibold flex items-center gap-2.5"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                  <span className="flex-1">{message}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Form Section */}
+            {mode === 'login' ? (
+              <form onSubmit={handleEmailLogin} className="space-y-4" noValidate>
+                {/* Email Field */}
+                <div className="space-y-1.5">
+                  <label htmlFor="email-input" className="block text-[11px] font-bold uppercase tracking-wider text-purple-300/60 pl-1">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-purple-300/40 group-focus-within:text-neon-pink transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="email-input"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@domain.com"
+                      className="w-full pl-11 pr-4 h-13 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-sm text-white placeholder-purple-300/25 focus:bg-white/[0.06] focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 outline-none transition-all font-medium"
+                      aria-label="Email Address"
+                    />
+                  </div>
+                </div>
+
+                {/* Password Field */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between pl-1">
+                    <label htmlFor="password-input" className="block text-[11px] font-bold uppercase tracking-wider text-purple-300/60">
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => { setError(''); setMode('forgot'); }}
+                      className="text-xs font-semibold text-brand-light hover:text-neon-pink transition-colors focus:outline-none"
+                    >
+                      Forgot?
+                    </button>
+                  </div>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-purple-300/40 group-focus-within:text-neon-pink transition-colors">
+                      <Lock className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="password-input"
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full pl-11 pr-12 h-13 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-sm text-white placeholder-purple-300/25 focus:bg-white/[0.06] focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 outline-none transition-all font-medium"
+                      aria-label="Password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-purple-300/40 hover:text-white transition-colors focus:outline-none"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Remember Me Checkbox */}
+                <div className="flex items-center justify-between pt-1">
+                  <label className="flex items-center gap-2.5 cursor-pointer text-xs font-medium text-purple-300/70 hover:text-white transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 rounded-md border-white/20 bg-white/5 text-neon-purple focus:ring-neon-purple/30 focus:ring-offset-0 cursor-pointer accent-purple-600"
+                    />
+                    <span>Remember me on this device</span>
+                  </label>
+                </div>
+
+                {/* Primary Email Login Button */}
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: 1.015, boxShadow: '0 10px 30px rgba(109,60,255,0.4)' }}
+                  whileTap={{ scale: 0.985 }}
+                  className="w-full h-13 rounded-2xl bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta text-white font-extrabold text-sm tracking-wide shadow-[0_6px_25px_rgba(109,60,255,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 relative overflow-hidden"
+                >
+                  {loading ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                    />
+                  ) : (
+                    <>
+                      <span>Sign In with Email</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </motion.button>
+              </form>
+            ) : (
+              /* Forgot Password Form */
+              <form onSubmit={handleResetPassword} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label htmlFor="reset-email" className="block text-[11px] font-bold uppercase tracking-wider text-purple-300/60 pl-1">
+                    Your Registered Email
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-purple-300/40 group-focus-within:text-neon-pink transition-colors">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <input
+                      id="reset-email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="name@domain.com"
+                      className="w-full pl-11 pr-4 h-13 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-sm text-white placeholder-purple-300/25 focus:bg-white/[0.06] focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 outline-none transition-all font-medium"
+                    />
+                  </div>
+                </div>
+
+                <motion.button
+                  type="submit"
+                  disabled={loading}
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  className="w-full h-13 rounded-2xl bg-neon-purple text-white font-extrabold text-sm tracking-wide shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span>Send Reset Email</span>
+                  )}
+                </motion.button>
+
+                <button
+                  type="button"
+                  onClick={() => { setError(''); setMessage(''); setMode('login'); }}
+                  className="w-full text-center text-xs font-semibold text-purple-300/60 hover:text-white transition-colors pt-2"
+                >
+                  ← Back to Login
+                </button>
+              </form>
+            )}
 
             {/* Divider */}
             <div className="relative flex items-center">
-              <div className="flex-grow border-t border-white/[0.06]" />
-              <span className="px-4 text-[10px] font-bold text-purple-300/20 uppercase tracking-widest">
-                secure login
+              <div className="flex-grow border-t border-white/[0.08]" />
+              <span className="px-3 text-[10px] font-bold text-purple-300/30 uppercase tracking-widest">
+                or continue with
               </span>
-              <div className="flex-grow border-t border-white/[0.06]" />
+              <div className="flex-grow border-t border-white/[0.08]" />
             </div>
 
-            {/* Info text */}
-            <p className="text-center text-[11px] text-purple-300/25 leading-relaxed">
-              By continuing, you agree to our{' '}
-              <Link href="/terms" className="text-brand-light hover:text-neon-pink hover:underline transition-colors">Terms of Service</Link>
-              {' '}and{' '}
-              <Link href="/privacy" className="text-brand-light hover:text-neon-pink hover:underline transition-colors">Privacy Policy</Link>
-            </p>
+            {/* OAuth Social Buttons (Google + Apple) */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Google Login */}
+              <motion.button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.06)' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center gap-2.5 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
+                aria-label="Sign in with Google"
+              >
+                {googleLoading ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                  </svg>
+                )}
+                <span>Google</span>
+              </motion.button>
 
-            {/* Security badge */}
-            <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold text-purple-300/15 uppercase tracking-wider">
-              <Shield className="w-3 h-3" />
-              <span>End-to-end encrypted</span>
+              {/* Apple Login */}
+              <motion.button
+                type="button"
+                onClick={handleGoogleLogin}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.06)' }}
+                whileTap={{ scale: 0.98 }}
+                className="flex items-center justify-center gap-2.5 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-semibold text-xs transition-all cursor-pointer"
+                aria-label="Sign in with Apple"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 170 170">
+                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.71.13-9.56-1.92-14.56-6.13-3.26-2.74-7.14-7.39-11.64-13.94-6.3-9.15-11.37-19.82-15.22-32.01-3.85-12.19-5.78-23.95-5.78-35.29 0-14.56 3.6-26.68 10.79-36.35 7.19-9.67 16.32-14.6 27.39-14.79 5.09 0 10.42 1.25 15.99 3.76 5.57 2.51 9.4 3.76 11.5 3.76 1.83 0 5.86-1.32 12.08-3.96 6.23-2.65 11.68-3.84 16.36-3.58 12.22.95 21.96 5.64 29.21 14.07-10.88 6.58-16.19 15.77-15.93 27.56.26 9.3 3.92 17.06 10.98 23.27 7.06 6.21 15.62 9.77 25.68 10.68-2.61 7.74-6.15 15.48-10.62 23.22zM119.22 31.05c0-7.23 2.65-14.3 7.95-21.21 5.3-6.91 11.96-10.84 19.98-11.79.26.96.39 1.93.39 2.9 0 7.1-2.73 14.16-8.19 21.18-5.46 7.02-12.1 11.02-19.93 12.01-.13-1.03-.2-2.06-.2-3.09z"/>
+                </svg>
+                <span>Apple</span>
+              </motion.button>
             </div>
+
+            {/* Guest Entry Accent Button */}
+            <motion.button
+              type="button"
+              onClick={handleGuestLogin}
+              disabled={guestLoading}
+              whileHover={{ scale: 1.015 }}
+              whileTap={{ scale: 0.985 }}
+              className="w-full h-11 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] text-purple-300/70 hover:text-white font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {guestLoading ? (
+                <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <UserCheck className="w-4 h-4 text-neon-pink" />
+                  <span>Continue as Guest</span>
+                </>
+              )}
+            </motion.button>
+
+            {/* Bottom Terms & Security Compliance */}
+            <div className="pt-2 border-t border-white/[0.04] text-center space-y-2">
+              <p className="text-[11px] text-purple-300/30 leading-relaxed font-medium">
+                By continuing, you agree to our{' '}
+                <Link href="/terms" className="text-brand-light hover:text-neon-pink transition-colors underline">
+                  Terms of Service
+                </Link>{' '}
+                and{' '}
+                <Link href="/privacy" className="text-brand-light hover:text-neon-pink transition-colors underline">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
+              <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold text-purple-300/20 uppercase tracking-widest">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>SSL Encrypted Session</span>
+              </div>
+            </div>
+
           </div>
         </motion.div>
-      </motion.main>
+      </main>
 
-      {/* Footer */}
-      <footer className="w-full text-center py-4 z-20 text-[10px] text-purple-300/12 font-bold uppercase tracking-widest px-6">
-        &copy; {new Date().getFullYear()} Velmorth Labs. All rights reserved.
+      {/* ── Footer ──────────────────────────────────────────────────────────── */}
+      <footer className="w-full text-center py-5 z-20 text-[10px] text-purple-300/20 font-bold uppercase tracking-widest px-6 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-white/[0.04]">
+        <span>&copy; 2026 Yample Labs. All Rights Reserved.</span>
+        <div className="flex items-center gap-4 text-purple-300/30">
+          <Link href="/about" className="hover:text-white transition-colors">About</Link>
+          <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
+          <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+        </div>
       </footer>
     </motion.div>
   );

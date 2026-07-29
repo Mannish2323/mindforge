@@ -115,7 +115,7 @@ export default function BillingPage() {
 
       const options = {
         key: orderData.key, amount: orderData.amount,
-        currency: orderData.currency || 'INR', name: 'Velmorth',
+        currency: orderData.currency || 'INR', name: 'MindForge',
         description: `${orderData.planName} — ${orderData.periodLabel}`,
         order_id: orderData.orderId, image: '/velmorth_logo.png',
         prefill: { email: profile?.email || '' },
@@ -185,7 +185,7 @@ export default function BillingPage() {
             icon={<Crown className="w-3.5 h-3.5 text-amber-400" />}
             glow
           >
-            VELMORTH PREMIUM
+            MINDFORGE PREMIUM
           </Badge>
         </motion.div>
 

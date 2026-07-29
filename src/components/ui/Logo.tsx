@@ -22,8 +22,8 @@ export function Logo({ size = 'md', glow = true, className, ...props }: LogoProp
       )}
       
       <Image
-        src="/velmorth_logo.png"
-        alt="Velmorth Logo"
+        src="/mindforge_logo.png"
+        alt="MindForge Logo"
         width={dimensions}
         height={dimensions}
         className="relative z-10 object-contain rounded-2xl transition-transform hover:scale-105 hover:rotate-[3deg] duration-300 ease-out"

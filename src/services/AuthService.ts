@@ -74,7 +74,7 @@ export class AuthService {
         username,
         display_name: displayName,
         avatar_url: avatarUrl,
-        bio: 'Learning Japanese with Velmorth!',
+        bio: 'Learning Japanese with MindForge!',
       })
       .select()
       .single();

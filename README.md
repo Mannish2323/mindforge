@@ -1,11 +1,11 @@
-//# 🌸 Learn with Velmorth
+# 🌸 MindForge — Powered by Yample Labs
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2.35-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.3.1-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-v2.108.2-3ecf8e?style=flat-square&logo=supabase)](https://supabase.com/)
 [![License](https://img.shields.io/badge/license-MIT-pink?style=flat-square)](#license)
 
-**Learn with Velmorth** is a premium, high-fidelity AI-powered Japanese learning application. Featuring a curated Sakura-Pink + Purple gradient design system with modern glassmorphism UI structures, this codebase delivers a unified responsive experience designed for both desktop web browsers and mobile wrapper viewports.
+**MindForge** is a premium, high-fidelity AI-powered Japanese learning application developed by **Yample Labs** (Founded by **Manish**). Featuring a curated Sakura-Pink + Purple gradient design system with modern glassmorphism UI structures, this codebase delivers a unified responsive experience designed for both desktop web browsers and mobile wrapper viewports.
 
 ---
 
@@ -124,5 +124,7 @@ Learn more about the platform's architecture in the **docs/architecture.md** fil
 
 ---
 
-## 🔒 License
-This codebase is private and licensed under the terms defined within [CONTRIBUTING.md](file:///c:/Users/ADMIN/Documents/learn-with-velmorth/CONTRIBUTING.md) and associated workspace guides.
+## 🔒 Copyright & License
+© 2026 Yample Labs. All Rights Reserved.
+
+This codebase is proprietary software developed by Yample Labs (Founded by Manish). All rights reserved.

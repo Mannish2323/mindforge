@@ -1,5 +1,5 @@
-# 📄 Learning Velmorth v3
-## Document 2 — Complete Application Architecture & System Blueprint
+# 📄 MindForge Architecture — Powered by Yample Labs
+## Complete Application Architecture & System Blueprint
 
 ---
 

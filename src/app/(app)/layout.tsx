@@ -24,7 +24,7 @@ function LoadingScreen() {
         className="flex flex-col items-center gap-3"
       >
         <span className="font-orbitron text-lg font-bold text-white tracking-wider">
-          Velmorth
+          MindForge
         </span>
         {/* Animated loading bar */}
         <div className="w-32 h-1 rounded-full overflow-hidden bg-white/[0.06]">

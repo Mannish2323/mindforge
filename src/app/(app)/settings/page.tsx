@@ -245,7 +245,7 @@ export default function SettingsPage() {
             </div>
             <div className="flex items-center gap-2 text-xs text-purple-300/40">
               <Mail className="w-3.5 h-3.5" />
-              <span>support@velmorth.com</span>
+              <span>support@yamplelabs.com</span>
             </div>
           </Card>
         </motion.div>

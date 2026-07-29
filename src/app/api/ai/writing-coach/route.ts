@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     }
 
     const prompt = `
-You are Velmorth Sensei, an expert Japanese calligraphy (Shodo) coach.
+You are MindForge Sensei, an expert Japanese calligraphy (Shodo) coach.
 The student is practicing writing the Japanese character: "${character}".
 Review their hand-drawn stroke representation in the attached image.
 Provide feedback on:
@@ -43,12 +43,12 @@ Be encouraging and friendly. Highlight what they did well first, then give 1 con
     const feedback = extractGeminiText(data);
 
     return NextResponse.json({
-      feedback: feedback || '💡 Velmorth Sensei Tip: Pay close attention to curves and line weight. Take your time drawing and trace carefully!',
+      feedback: feedback || '💡 MindForge Sensei Tip: Pay close attention to curves and line weight. Take your time drawing and trace carefully!',
     });
   } catch (error: any) {
     console.error('[Gemini AI Coach] Writing coach api error:', error.message);
     return NextResponse.json({
-      feedback: '💡 Velmorth Sensei Tip: Focus on drawing slowly and following the guided animations. Good brush control comes with practice!',
+      feedback: '💡 MindForge Sensei Tip: Focus on drawing slowly and following the guided animations. Good brush control comes with practice!',
     });
   }
 }

@@ -1,6 +1,6 @@
 {
-  "appId": "com.velmorth.learn",
-  "appName": "Learn with Velmorth",
+  "appId": "com.yamplelabs.mindforge",
+  "appName": "MindForge",
   "webDir": "out",
   "bundledWebRuntime": false,
   "server": {

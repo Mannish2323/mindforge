@@ -5,29 +5,29 @@ import { StoreProvider } from './context/StoreContext';
 import { UpgradeDialogProvider } from '@/components/shared/UpgradeDialog';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://learn-with-velmorth.vercel.app'),
-  title: 'Learn with Velmorth — Japanese Made Effortless',
+  metadataBase: new URL('https://mindforge.yamplelabs.com'),
+  title: 'MindForge — Japanese Made Effortless by Yample Labs',
   description: 'Interactive gamified platform to learn Japanese (JLPT N5 to N1) with AI tutoring, spaced-repetition flashcards, and live speaking practice.',
   manifest: '/manifest.json',
-  keywords: ['Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji', 'Velmorth'],
-  authors: [{ name: 'Velmorth Labs', url: 'https://learn-with-velmorth.vercel.app' }],
+  keywords: ['MindForge', 'Yample Labs', 'Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji'],
+  authors: [{ name: 'Yample Labs', url: 'https://yamplelabs.com' }],
   icons: {
     icon: '/velmorth_logo.png',
     shortcut: '/velmorth_logo.png',
     apple: '/velmorth_logo.png',
   },
   openGraph: {
-    title: 'Learn with Velmorth',
+    title: 'MindForge — Powered by Yample Labs',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
-    url: 'https://learn-with-velmorth.vercel.app',
-    siteName: 'Velmorth',
-    images: [{ url: '/velmorth_logo.png', width: 512, height: 512, alt: 'Velmorth Logo' }],
+    url: 'https://mindforge.yamplelabs.com',
+    siteName: 'MindForge',
+    images: [{ url: '/velmorth_logo.png', width: 512, height: 512, alt: 'MindForge Logo' }],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary',
-    title: 'Learn with Velmorth',
+    title: 'MindForge — Powered by Yample Labs',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
     images: ['/velmorth_logo.png'],
   },

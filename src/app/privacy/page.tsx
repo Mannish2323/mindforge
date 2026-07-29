@@ -59,7 +59,7 @@ export default function PrivacyPage() {
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Login</span>
           </Link>
-          
+
           <div className="flex items-center gap-2 text-xs font-bold text-purple-300/40 uppercase tracking-widest">
             <Shield className="w-3.5 h-3.5 text-sakura-dark" />
             <span>Privacy Policy</span>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
 
         {/* Introduction */}
         <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-sm text-purple-200/80 leading-relaxed font-medium">
-          At Velmorth, protecting the integrity of your personal records and academic analytics is a key priority. This policy outlines how we compile, utilize, and protect your profile specifications.
+          At MindForge by Yample Labs, protecting the integrity of your personal records and academic analytics is a key priority. This policy outlines how we compile, utilize, and protect your profile specifications.
         </div>
 
         {/* Content sections */}
@@ -121,7 +121,7 @@ export default function PrivacyPage() {
 
       {/* Footer */}
       <footer className="w-full border-t border-white/[0.06] py-6 text-center text-[10px] text-purple-300/15 font-bold uppercase tracking-widest px-6 z-20">
-        &copy; {new Date().getFullYear()} Velmorth Labs. All rights reserved.
+        &copy; 2026 Yample Labs. All Rights Reserved.
       </footer>
     </motion.div>
   );

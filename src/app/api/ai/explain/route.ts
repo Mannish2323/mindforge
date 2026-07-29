@@ -9,7 +9,7 @@ export async function POST(request: Request) {
     const userLang = lang === 'hi' ? 'Hindi' : 'English';
 
     const prompt = `
-You are Velmorth Sensei. A student just got a Japanese grammar question wrong.
+You are MindForge Sensei. A student just got a Japanese grammar question wrong.
 
 Grammar point: "${title}"
 Structure: ${structure || 'N/A'}

@@ -61,7 +61,7 @@ export async function middleware(request: NextRequest) {
   // Refresh session (keeps it alive)
   let user = null;
   if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
-    user = { id: 'dummy-user-id', email: 'test@velmorth.com' } as any;
+    user = { id: 'dummy-user-id', email: 'test@yamplelabs.com' } as any;
   } else {
     try {
       const { data } = await supabase.auth.getUser();

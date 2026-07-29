@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const progress = await ProgressService.getUserProgress(user!.id);
 
     return NextResponse.json({
-      greeting: 'Konnichiwa! Welcome back to Learn with Velmorth.',
+      greeting: 'Konnichiwa! Welcome back to MindForge by Yample Labs.',
       progress,
       recommendations: [
         { id: 'lesson-1', title: 'Hiragana Basics & Greetings', type: 'lesson' },

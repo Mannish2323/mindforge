@@ -28,7 +28,7 @@ export async function authenticateRequest(request: Request): Promise<{ user: Aut
 
   // Dummy fallback mode
   if (env.SUPABASE_URL === 'https://dummy.supabase.co' || token === 'dummy-token') {
-    return { user: { id: 'dummy-user-id', email: 'test@velmorth.com' } };
+    return { user: { id: 'dummy-user-id', email: 'test@yamplelabs.com' } };
   }
 
   try {

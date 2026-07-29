@@ -128,7 +128,7 @@ export default function OnboardingPage() {
                 <Logo size={80} glow={true} className="mx-auto" />
               </motion.div>
               <div className="space-y-3">
-                <h1 className="text-3xl font-extrabold">Welcome to <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">Velmorth</span></h1>
+                <h1 className="text-3xl font-extrabold">Welcome to <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">MindForge</span></h1>
                 <p className="text-purple-200/50 text-sm leading-relaxed max-w-sm mx-auto">
                   Let&apos;s personalize your Japanese learning experience. This takes about 30 seconds.
                 </p>

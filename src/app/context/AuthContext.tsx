@@ -285,7 +285,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
       const dummyUser = {
         id: 'dummy-user-id',
-        email: 'test@velmorth.com',
+        email: 'test@yamplelabs.com',
         user_metadata: {
           full_name: 'Test Learner',
           username: 'test_learner'
@@ -303,7 +303,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         uid: "dummy-user-id",
         username: "test_learner",
         name: "Test Learner",
-        email: "test@velmorth.com",
+        email: "test@yamplelabs.com",
         xp: 120,
         level: 2,
         streak: 5,

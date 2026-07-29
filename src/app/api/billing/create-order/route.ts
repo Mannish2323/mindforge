@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         amount:   plan.pricePaise,
         currency: 'INR',
-        receipt:  `velmorth_${planId}_${Date.now()}`,
+        receipt:  `mindforge_${planId}_${Date.now()}`,
         notes: {
           planId,
           planName:      plan.name,
