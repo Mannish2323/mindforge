@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useAuthModal } from '@/components/shared/AuthModal';
 import { usePathname } from 'next/navigation';
 import { Sparkles, Send, X, Mic, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +19,7 @@ interface Message {
 
 export function SakuraMascotWidget() {
   const { session, profile } = useAuth();
+  const { requireAuth } = useAuthModal();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -150,7 +152,7 @@ export function SakuraMascotWidget() {
           scale: { type: 'spring', stiffness: 260, damping: 20 },
           y: { repeat: Infinity, duration: 4, ease: 'easeInOut' }
         }}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => requireAuth(() => setIsOpen(!isOpen), 'Sakura AI Tutor')}
         whileHover={{ scale: 1.08 }}
         whileTap={{ scale: 0.95 }}
       >

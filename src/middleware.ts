@@ -1,17 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-// Routes that require authentication
+// Routes that require strict server-side authentication
 const PROTECTED_ROUTES = [
-  '/home',
-  '/path',
-  '/script',
-  '/speak',
-  '/jlpt',
-  '/review',
-  '/profile',
   '/admin',
-  '/billing',
   '/onboarding',
 ];
 
@@ -69,7 +61,7 @@ export async function middleware(request: NextRequest) {
     } catch (e) {}
   }
 
-  // ── Guard: Protected routes → redirect to /auth/login if not authenticated ──
+  // ── Guard: Protected routes → redirect to /auth if not authenticated ──
   const isProtected = PROTECTED_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
   if (isProtected && !user) {
     const loginUrl = new URL('/auth', request.url);
@@ -85,13 +77,9 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── Guard: Root / redirect ──
+  // ── Guard: Root / → redirect to /home for both guest browsing and logged-in users ──
   if (pathname === '/') {
-    if (user) {
-      return NextResponse.redirect(new URL('/home', request.url));
-    } else {
-      return NextResponse.redirect(new URL('/auth', request.url));
-    }
+    return NextResponse.redirect(new URL('/home', request.url));
   }
 
   // ── Guard: Admin routes → require admin role ──

@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 import { StoreProvider } from './context/StoreContext';
 import { UpgradeDialogProvider } from '@/components/shared/UpgradeDialog';
+import { AuthModalProvider } from '@/components/shared/AuthModal';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://mindforge.yamplelabs.com'),
@@ -57,7 +58,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <StoreProvider>
             <UpgradeDialogProvider>
-              {children}
+              <AuthModalProvider>
+                {children}
+              </AuthModalProvider>
             </UpgradeDialogProvider>
           </StoreProvider>
         </AuthProvider>

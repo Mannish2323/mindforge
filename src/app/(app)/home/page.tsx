@@ -8,8 +8,10 @@ import {
   Target, TrendingUp, Calendar
 } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
+import { useAuthModal } from '@/components/shared/AuthModal';
 import { motion } from 'framer-motion';
 import { useDashboard } from '@/hooks/useDashboard';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressRing } from '@/components/ui/ProgressRing';
@@ -19,7 +21,9 @@ import { WeeklyChart } from '@/components/charts/WeeklyChart';
 import { BadgeIcon } from '@/components/ui/BadgeIcons';
 
 export default function HomePage() {
-  const { profile } = useAuth();
+  const router = useRouter();
+  const { user, profile } = useAuth();
+  const { requireAuth } = useAuthModal();
   const { data: dbData, isLoading } = useDashboard();
   const [greeting, setGreeting] = useState('Welcome back');
 
@@ -30,7 +34,7 @@ export default function HomePage() {
     else setGreeting('Good Evening');
   }, []);
 
-  const userName = profile?.name || 'Learner';
+  const userName = user ? (profile?.name || 'Learner') : 'Guest Learner';
   const xpToday = profile?.xp_today ?? 0;
   const dailyGoalXp = profile?.daily_goal_xp ?? 25;
   const dailyProgress = Math.min(100, Math.round((xpToday / dailyGoalXp) * 100));
@@ -146,11 +150,12 @@ export default function HomePage() {
                   <p className="text-sm text-purple-200/50 mt-1">Pick up where you left off</p>
                 </div>
                 <ProgressBar value={Math.min(100, lessonsDone * 10)} label="Course Progress" showLabel />
-                <Link href="/jlpt">
-                  <button className="btn btn-primary btn-sm mt-2 cursor-pointer">
-                    Continue <ChevronRight className="w-4 h-4" />
-                  </button>
-                </Link>
+                <button
+                  onClick={() => requireAuth(() => router.push('/jlpt'), 'Continue Learning')}
+                  className="btn btn-primary btn-sm mt-2 cursor-pointer"
+                >
+                  Continue <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </Card>
           </motion.div>
@@ -159,16 +164,28 @@ export default function HomePage() {
           <motion.div variants={item} className="space-y-3">
             <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Quick Actions</h3>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-              {quickActions.map((action) => (
-                <Link key={action.name} href={action.href}>
-                  <Card variant="glass" padding="sm" className="flex flex-col items-center gap-2 py-4 cursor-pointer hover:scale-[1.03] transition-transform">
-                    <div className={`p-2.5 rounded-xl ${action.color}`}>
-                      <action.icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[11px] font-bold text-white">{action.name}</span>
-                  </Card>
-                </Link>
-              ))}
+              {quickActions.map((action) => {
+                const isBrowsingAllowed = action.href === '/vocabulary' || action.href === '/grammar';
+                return (
+                  <div
+                    key={action.name}
+                    onClick={() => {
+                      if (isBrowsingAllowed) {
+                        router.push(action.href);
+                      } else {
+                        requireAuth(() => router.push(action.href), action.name);
+                      }
+                    }}
+                  >
+                    <Card variant="glass" padding="sm" className="flex flex-col items-center gap-2 py-4 cursor-pointer hover:scale-[1.03] transition-transform">
+                      <div className={`p-2.5 rounded-xl ${action.color}`}>
+                        <action.icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[11px] font-bold text-white">{action.name}</span>
+                    </Card>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
 
@@ -207,7 +224,7 @@ export default function HomePage() {
 
           {/* AI Tutor Card */}
           <motion.div variants={item}>
-            <Link href="/ai-tutor">
+            <div onClick={() => requireAuth(() => router.push('/ai-tutor'), 'Sakura AI Tutor')}>
               <Card variant="neon" padding="md" className="space-y-3 cursor-pointer group">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-neon-pink/15 group-hover:bg-neon-pink/25 transition-colors">
@@ -226,12 +243,12 @@ export default function HomePage() {
                   <ChevronRight className="w-3 h-3" />
                 </div>
               </Card>
-            </Link>
+            </div>
           </motion.div>
 
           {/* Achievements Preview */}
           <motion.div variants={item}>
-            <Link href="/achievements">
+            <div onClick={() => requireAuth(() => router.push('/achievements'), 'Achievements')}>
               <Card variant="glass" padding="md" className="space-y-3 cursor-pointer">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Achievements</h3>
@@ -243,7 +260,7 @@ export default function HomePage() {
                   ))}
                 </div>
               </Card>
-            </Link>
+            </div>
           </motion.div>
 
           {/* Premium Banner */}

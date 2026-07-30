@@ -305,7 +305,7 @@ export default function AuthPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@domain.com"
+                      placeholder=""
                       className="w-full pl-11 pr-4 h-13 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-sm text-white placeholder-purple-300/25 focus:bg-white/[0.06] focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 outline-none transition-all font-medium"
                       aria-label="Email Address"
                     />
@@ -321,7 +321,7 @@ export default function AuthPage() {
                     <button
                       type="button"
                       onClick={() => { setError(''); setMode('forgot'); }}
-                      className="text-xs font-semibold text-brand-light hover:text-neon-pink transition-colors focus:outline-none"
+                      className="text-xs font-semibold text-brand-light hover:text-neon-pink transition-colors focus:outline-none focus:underline"
                     >
                       Forgot?
                     </button>
@@ -370,7 +370,7 @@ export default function AuthPage() {
                   disabled={loading}
                   whileHover={{ scale: 1.015, boxShadow: '0 10px 30px rgba(109,60,255,0.4)' }}
                   whileTap={{ scale: 0.985 }}
-                  className="w-full h-13 rounded-2xl bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta text-white font-extrabold text-sm tracking-wide shadow-[0_6px_25px_rgba(109,60,255,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 relative overflow-hidden"
+                  className="w-full h-13 rounded-2xl bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta text-white font-extrabold text-sm tracking-wide shadow-[0_6px_25px_rgba(109,60,255,0.3)] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-neon-purple/80"
                 >
                   {loading ? (
                     <motion.div
@@ -403,7 +403,7 @@ export default function AuthPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="name@domain.com"
+                      placeholder=""
                       className="w-full pl-11 pr-4 h-13 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-sm text-white placeholder-purple-300/25 focus:bg-white/[0.06] focus:border-neon-purple focus:ring-2 focus:ring-neon-purple/30 outline-none transition-all font-medium"
                     />
                   </div>
@@ -414,7 +414,7 @@ export default function AuthPage() {
                   disabled={loading}
                   whileHover={{ scale: 1.015 }}
                   whileTap={{ scale: 0.985 }}
-                  className="w-full h-13 rounded-2xl bg-neon-purple text-white font-extrabold text-sm tracking-wide shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                  className="w-full h-13 rounded-2xl bg-neon-purple text-white font-extrabold text-sm tracking-wide shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-neon-purple/80"
                 >
                   {loading ? (
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -426,7 +426,7 @@ export default function AuthPage() {
                 <button
                   type="button"
                   onClick={() => { setError(''); setMessage(''); setMode('login'); }}
-                  className="w-full text-center text-xs font-semibold text-purple-300/60 hover:text-white transition-colors pt-2"
+                  className="w-full text-center text-xs font-semibold text-purple-300/60 hover:text-white transition-colors pt-2 focus:outline-none focus:underline"
                 >
                   ← Back to Login
                 </button>
@@ -442,16 +442,16 @@ export default function AuthPage() {
               <div className="flex-grow border-t border-white/[0.08]" />
             </div>
 
-            {/* OAuth Social Buttons (Google + Apple) */}
-            <div className="grid grid-cols-2 gap-3">
+            {/* OAuth Provider Button (Google Only) */}
+            <div className="w-full">
               {/* Google Login */}
               <motion.button
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={googleLoading}
-                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.06)' }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2.5 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-semibold text-xs transition-all cursor-pointer disabled:opacity-50"
+                whileHover={{ scale: 1.015, backgroundColor: 'rgba(255,255,255,0.06)' }}
+                whileTap={{ scale: 0.985 }}
+                className="w-full flex items-center justify-center gap-3 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.1] text-white font-bold text-xs transition-all cursor-pointer disabled:opacity-50 hover:border-white/20 focus:outline-none focus:ring-2 focus:ring-neon-purple/60"
                 aria-label="Sign in with Google"
               >
                 {googleLoading ? (
@@ -464,22 +464,7 @@ export default function AuthPage() {
                     <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
                   </svg>
                 )}
-                <span>Google</span>
-              </motion.button>
-
-              {/* Apple Login */}
-              <motion.button
-                type="button"
-                onClick={handleGoogleLogin}
-                whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.06)' }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center justify-center gap-2.5 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] text-white font-semibold text-xs transition-all cursor-pointer"
-                aria-label="Sign in with Apple"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 170 170">
-                  <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.71.13-9.56-1.92-14.56-6.13-3.26-2.74-7.14-7.39-11.64-13.94-6.3-9.15-11.37-19.82-15.22-32.01-3.85-12.19-5.78-23.95-5.78-35.29 0-14.56 3.6-26.68 10.79-36.35 7.19-9.67 16.32-14.6 27.39-14.79 5.09 0 10.42 1.25 15.99 3.76 5.57 2.51 9.4 3.76 11.5 3.76 1.83 0 5.86-1.32 12.08-3.96 6.23-2.65 11.68-3.84 16.36-3.58 12.22.95 21.96 5.64 29.21 14.07-10.88 6.58-16.19 15.77-15.93 27.56.26 9.3 3.92 17.06 10.98 23.27 7.06 6.21 15.62 9.77 25.68 10.68-2.61 7.74-6.15 15.48-10.62 23.22zM119.22 31.05c0-7.23 2.65-14.3 7.95-21.21 5.3-6.91 11.96-10.84 19.98-11.79.26.96.39 1.93.39 2.9 0 7.1-2.73 14.16-8.19 21.18-5.46 7.02-12.1 11.02-19.93 12.01-.13-1.03-.2-2.06-.2-3.09z"/>
-                </svg>
-                <span>Apple</span>
+                <span>Continue with Google</span>
               </motion.button>
             </div>
 

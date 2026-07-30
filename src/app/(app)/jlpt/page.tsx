@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuthModal } from '@/components/shared/AuthModal';
 import { 
   BookOpen, Sparkles, Award, Lock, CheckCircle2, ChevronRight,
   Headphones, Dumbbell, HelpCircle, Book, Layers, GraduationCap, Volume2, FileText
@@ -24,6 +26,8 @@ interface ModuleItem {
 }
 
 export default function JLPTPage() {
+  const router = useRouter();
+  const { requireAuth } = useAuthModal();
   const [selectedLevel, setSelectedLevel] = useState<JLPTLevel>('N5');
   const [selectedTab, setSelectedTab] = useState<ModuleTab>('lessons');
 
@@ -214,13 +218,19 @@ export default function JLPTPage() {
                     {item.isLocked ? (
                       <span className="text-xs font-semibold text-purple-300/30">Requires Level Upgrade</span>
                     ) : (
-                      <Link
-                        href={item.href}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-neon-pink group-hover:translate-x-1 transition-transform"
+                      <button
+                        onClick={() => {
+                          if (selectedTab === 'grammar' || selectedTab === 'vocabulary') {
+                            router.push(item.href);
+                          } else {
+                            requireAuth(() => router.push(item.href), item.title);
+                          }
+                        }}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-neon-pink group-hover:translate-x-1 transition-transform cursor-pointer"
                       >
                         <span>Start Module</span>
                         <ChevronRight className="w-4 h-4" />
-                      </Link>
+                      </button>
                     )}
                   </div>
                 </div>

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
 import { useAuth } from '@/app/context/AuthContext';
+import { useAuthModal } from '@/components/shared/AuthModal';
 import { SakuraParticles } from '@/components/animations/SakuraParticles';
 import { SakuraMascotWidget } from '@/components/shared/SakuraMascotWidget';
 import { NotificationBell } from '@/components/layout/NotificationBell';
@@ -35,6 +36,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() || '';
   const router = useRouter();
   const { user, profile, logout } = useAuth();
+  const { openAuthModal } = useAuthModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Close mobile sidebar on navigation
@@ -104,7 +106,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   // Real profile data
-  const userName = profile?.name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner';
+  const userName = user ? (profile?.name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Learner') : 'Guest Learner';
   const userXp = profile?.xp ?? 0;
   const userLevel = profile?.level ?? 1;
   const userStreak = profile?.streak ?? 0;
@@ -222,13 +224,23 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           />
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-rose-400/70 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Logout</span>
-        </button>
+        {user ? (
+          <button
+            onClick={handleLogout}
+            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-rose-400/70 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Logout</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => openAuthModal({ title: 'Sign in to continue' })}
+            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-neon-purple to-neon-pink shadow-md hover:shadow-glow-purple transition-all cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Sign In / Register</span>
+          </button>
+        )}
       </div>
     </div>
   );
