@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { AppShell } from '@/components/layout/AppShell';
 import { motion } from 'framer-motion';
@@ -41,20 +40,11 @@ function LoadingScreen() {
 }
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/auth');
-    }
-  }, [user, loading, router]);
+  const { loading } = useAuth();
 
   if (loading) {
     return <LoadingScreen />;
   }
-
-  if (!user) return null;
 
   return <AppShell>{children}</AppShell>;
 }
