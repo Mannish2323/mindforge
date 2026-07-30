@@ -1,4 +1,4 @@
-# Learn with Velmorth — Complete Developer Function Flow (Production)
+# Mindforge — Complete Developer Function Flow (Production)
 
 ---
 
@@ -821,7 +821,7 @@ Continuous Improvement
 
 ---
 
-# Learning Velmorth Production Principles
+# Mindforge Production Principles
 
 * One Responsive Codebase (Web + PWA + Android APK)
 * One Supabase Project

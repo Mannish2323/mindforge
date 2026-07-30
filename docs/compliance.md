@@ -1,4 +1,4 @@
-# Learn with Velmorth — Android Permissions, Security & Legal Compliance (Production)
+# Mindforge — Android Permissions, Security & Legal Compliance (Production)
 
 ---
 
@@ -261,7 +261,7 @@ Before release verify:
 * Community Guidelines
 * AI Usage Policy
 * Contact Us
-* About Learning Velmorth
+* About Mindforge
 * Help Center
 * FAQ
 

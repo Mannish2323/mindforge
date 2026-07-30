@@ -70,7 +70,7 @@ function Confetti() {
             background: COLORS[i % COLORS.length],
             left: `${10 + (i / 22) * 80}%`,
             top: '48%',
-            animation: `velmorth-confetti ${0.8 + (i % 3) * 0.25}s cubic-bezier(0,.9,.57,1) ${i * 0.035}s forwards`,
+            animation: `mindforge-confetti ${0.8 + (i % 3) * 0.25}s cubic-bezier(0,.9,.57,1) ${i * 0.035}s forwards`,
             willChange: 'transform, opacity',
           }}
         />
@@ -117,7 +117,7 @@ export default function BillingPage() {
         key: orderData.key, amount: orderData.amount,
         currency: orderData.currency || 'INR', name: 'MindForge',
         description: `${orderData.planName} — ${orderData.periodLabel}`,
-        order_id: orderData.orderId, image: '/velmorth_logo.png',
+        order_id: orderData.orderId, image: '/mindforge_logo.png',
         prefill: { email: profile?.email || '' },
         theme: { color: '#6D3CFF' },
         handler: async (response: any) => {
@@ -432,7 +432,7 @@ export default function BillingPage() {
 
       {/* ── Confetti keyframe ─────────────────────────────────────────────── */}
       <style>{`
-        @keyframes velmorth-confetti {
+        @keyframes mindforge-confetti {
           0%   { transform: translate(0, 0) scale(0) rotate(0deg);   opacity: 1; }
           60%  { opacity: 1; }
           100% { transform: translate(var(--tx, 0px), -220px) scale(1.2) rotate(var(--rot, 180deg)); opacity: 0; }

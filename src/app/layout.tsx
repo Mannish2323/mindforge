@@ -12,16 +12,16 @@ export const metadata: Metadata = {
   keywords: ['MindForge', 'Yample Labs', 'Japanese learning', 'JLPT', 'hiragana', 'katakana', 'kanji'],
   authors: [{ name: 'Yample Labs', url: 'https://yamplelabs.com' }],
   icons: {
-    icon: '/velmorth_logo.png',
-    shortcut: '/velmorth_logo.png',
-    apple: '/velmorth_logo.png',
+    icon: '/mindforge_logo.png',
+    shortcut: '/mindforge_logo.png',
+    apple: '/mindforge_logo.png',
   },
   openGraph: {
     title: 'MindForge — Powered by Yample Labs',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
     url: 'https://mindforge.yamplelabs.com',
     siteName: 'MindForge',
-    images: [{ url: '/velmorth_logo.png', width: 512, height: 512, alt: 'MindForge Logo' }],
+    images: [{ url: '/mindforge_logo.png', width: 512, height: 512, alt: 'Mindforge Logo' }],
     locale: 'en_US',
     type: 'website',
   },
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: 'summary',
     title: 'MindForge — Powered by Yample Labs',
     description: 'Learn Japanese the smart way — AI + SRS + Speaking',
-    images: ['/velmorth_logo.png'],
+    images: ['/mindforge_logo.png'],
   },
 };
 
@@ -45,8 +45,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@400;500;700;900&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/velmorth_logo.png" />
-        <link rel="apple-touch-icon" href="/velmorth_logo.png" />
+        <link rel="icon" href="/mindforge_logo.png" />
+        <link rel="apple-touch-icon" href="/mindforge_logo.png" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8150181705727957"

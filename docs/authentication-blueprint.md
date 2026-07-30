@@ -1,4 +1,4 @@
-# 📄 Learning Velmorth v3
+# 📄 Mindforge v3
 
 # Document 6 — Complete Authentication, Authorization & User Management Blueprint
 
@@ -6,7 +6,7 @@
 
 # 1. Authentication Overview
 
-Learning Velmorth uses a secure authentication system powered by Supabase Authentication.
+Mindforge uses a secure authentication system powered by Supabase Authentication.
 
 Authentication Goals
 

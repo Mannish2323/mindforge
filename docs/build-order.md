@@ -1,6 +1,6 @@
-# Learn with Velmorth v2 — Build Order
+# Mindforge v2 — Build Order
 
-This document details the phased implementation roadmap to successfully develop and deploy Learn with Velmorth v2.
+This document details the phased implementation roadmap to successfully develop and deploy Mindforge v2.
 
 ---
 

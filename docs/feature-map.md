@@ -1,10 +1,10 @@
-# Learn with Velmorth v2 — Complete Production Function Map
+# Mindforge v2 — Complete Production Function Map
 
-This document outlines the master architecture and functional specifications of the Velmorth learning ecosystem, covering all 15 production pillars.
+This document outlines the master architecture and functional specifications of the Mindforge learning ecosystem, covering all 15 production pillars.
 
 > [!IMPORTANT]
 > **Strict Operational Requirement:**
-> Velmorth runs strictly as an **online-only application**. To prevent data inconsistency, progression desynchronization, and plan bypasses, the app requires an active internet connection at all times. Offline access is fully blocked.
+> Mindforge runs strictly as an **online-only application**. To prevent data inconsistency, progression desynchronization, and plan bypasses, the app requires an active internet connection at all times. Offline access is fully blocked.
 
 ---
 

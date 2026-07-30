@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callGemini, extractGeminiText, VELMORTH_SENSEI_PROMPT } from '@/lib/gemini';
+import { callGemini, extractGeminiText, SAKURA_SENSEI_PROMPT } from '@/lib/gemini';
 
 // Fallback dictionary for common words
 const FALLBACK_WORDS: Record<string, any> = {
@@ -97,7 +97,7 @@ Keys required in JSON:
 
     const data = await callGemini(
       [{ role: 'user', parts: [{ text: prompt }] }],
-      VELMORTH_SENSEI_PROMPT
+      SAKURA_SENSEI_PROMPT
     );
 
     const rawText = extractGeminiText(data);

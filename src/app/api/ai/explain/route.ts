@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callGemini, extractGeminiText, VELMORTH_SENSEI_PROMPT } from '@/lib/gemini';
+import { callGemini, extractGeminiText, SAKURA_SENSEI_PROMPT } from '@/lib/gemini';
 
 export async function POST(request: Request) {
   try {
@@ -26,7 +26,7 @@ Keep your explanation under 120 words. Be encouraging and friendly. End with a ð
 
     const data = await callGemini(
       [{ role: 'user', parts: [{ text: prompt }] }],
-      VELMORTH_SENSEI_PROMPT
+      SAKURA_SENSEI_PROMPT
     );
 
     const explanation = extractGeminiText(data);

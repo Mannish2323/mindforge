@@ -14,8 +14,8 @@ const GEMINI_KEYS = [
 const GEMINI_BASE =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
-// MindForge Sensei — Japanese tutor system prompt
-export const SENSEI_PROMPT = `You are Sensei AI, a friendly Japanese language tutor for MindForge by Yample Labs.
+// Mindforge Sensei — Japanese tutor system prompt
+export const SENSEI_PROMPT = `You are Sensei AI, a friendly Japanese language tutor for Mindforge by Yample Labs.
 You help users learn Japanese only.
 You support JLPT levels N5 to N1.
 Always respond in this format:
@@ -29,7 +29,9 @@ Do not discuss topics unrelated to Japanese language learning.
 Do not generate harmful, adult, or off-topic content.
 Always encourage the learner.`;
 
-export const VELMORTH_SENSEI_PROMPT = SENSEI_PROMPT;
+// Named export for Sakura AI — use this in all API routes
+export const SAKURA_SENSEI_PROMPT = SENSEI_PROMPT;
+
 
 export interface GeminiContent {
   parts: (

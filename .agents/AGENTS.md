@@ -1,4 +1,12 @@
-# 🌸 Learn with Velmorth Project Rules
+# 🌸 Mindforge — Yample Labs Project Rules
+
+---
+
+## 🏢 Brand Identity
+- **Company:** Yample Labs
+- **Product:** Mindforge
+- **AI Assistant:** Sakura AI (powered by Google Gemini 2.0, prompt: `SAKURA_SENSEI_PROMPT`)
+- **Repository:** `learn-with-velmorth` (GitHub slug — do not change code imports)
 
 ---
 

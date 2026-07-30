@@ -1,4 +1,4 @@
-# 📄 Learning Velmorth v3
+# 📄 Mindforge v3
 
 # Document 3 — Complete Database Architecture & Security Blueprint
 
@@ -8,7 +8,7 @@
 
 **Database Provider:** Supabase PostgreSQL
 
-Learning Velmorth uses a single centralized PostgreSQL database managed by Supabase. All application data—including authentication, learning progress, AI conversations, premium subscriptions, notifications, and analytics—is stored in a structured relational schema protected by Row Level Security (RLS).
+Mindforge uses a single centralized PostgreSQL database managed by Supabase. All application data—including authentication, learning progress, AI conversations, premium subscriptions, notifications, and analytics—is stored in a structured relational schema protected by Row Level Security (RLS).
 
 ## Core Principles
 

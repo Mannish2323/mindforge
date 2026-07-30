@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callGemini, extractGeminiText, VELMORTH_SENSEI_PROMPT } from '@/lib/gemini';
+import { callGemini, extractGeminiText, SAKURA_SENSEI_PROMPT } from '@/lib/gemini';
 
 export async function POST(request: Request) {
   try {
@@ -37,7 +37,7 @@ Be encouraging and friendly. Highlight what they did well first, then give 1 con
           ],
         },
       ],
-      VELMORTH_SENSEI_PROMPT
+      SAKURA_SENSEI_PROMPT
     );
 
     const feedback = extractGeminiText(data);

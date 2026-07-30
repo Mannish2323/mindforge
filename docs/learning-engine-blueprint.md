@@ -1,4 +1,4 @@
-# 📄 Learning Velmorth v3
+# 📄 Mindforge v3
 
 # Document 8 — Complete Learning Engine, Course Management & JLPT Curriculum Blueprint
 
@@ -6,7 +6,7 @@
 
 # 1. Learning Engine Overview
 
-The Learning Engine is the heart of Learning Velmorth.
+The Learning Engine is the heart of Mindforge.
 
 It manages:
 

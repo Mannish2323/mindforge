@@ -214,6 +214,6 @@ How to test locally
 
 ## 🎉 Thank You!
 
-Your contributions help make Learn With Velmorth better. We appreciate your effort!
+Your contributions help make Mindforge better. We appreciate your effort!
 
 **Happy coding!** 🌿

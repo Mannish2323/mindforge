@@ -1,4 +1,4 @@
-# 📄 Learning Velmorth v3
+# 📄 Mindforge v3
 
 # Document 7 — Complete Sakura AI Architecture & Intelligence Blueprint
 
@@ -6,7 +6,7 @@
 
 # 1. Overview
 
-Sakura AI is the intelligent learning companion of Learning Velmorth.
+Sakura AI is the intelligent learning companion of Mindforge.
 
 It is not just a chatbot.
 
