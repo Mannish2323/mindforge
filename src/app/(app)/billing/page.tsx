@@ -208,7 +208,7 @@ export default function BillingPage() {
         </motion.p>
 
         <motion.div variants={heroItem} className="flex flex-wrap items-center justify-center gap-3">
-          {['🌸 50,000+ learners', '⭐ 4.9 avg rating', '🔒 Cancel anytime'].map(t => (
+          {['🌸 Gamified Japanese', '⚡ Sakura AI Powered', '🔒 Secured by Razorpay'].map(t => (
             <span
               key={t}
               className="px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.07] text-[11px] text-purple-200/50 font-semibold"

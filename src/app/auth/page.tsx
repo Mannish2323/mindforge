@@ -14,7 +14,13 @@ import { SakuraParticles } from '@/components/animations/SakuraParticles';
 
 export default function AuthPage() {
   const router = useRouter();
-  const { signInWithGoogle, loginWithEmail, resetPassword } = useAuth();
+  const { user, profile, signInWithGoogle, loginWithEmail, resetPassword } = useAuth();
+
+  // Dynamic preview or real statistics
+  const displayStreak = user && profile ? `${profile.streak} Days` : 'Start your streak';
+  const displayLevel = user && profile ? `Level ${profile.level}` : 'Begins after 1st lesson';
+  const displayXp = user && profile ? `${profile.xp.toLocaleString()} XP` : '0 XP';
+  const displayRank = user && profile ? `JLPT ${profile.jlpt_target}` : 'Not Started';
 
   // Mode: 'login' | 'forgot'
   const [mode, setMode] = useState<'login' | 'forgot'>('login');
@@ -181,7 +187,7 @@ export default function AuthPage() {
             </p>
           </div>
 
-          {/* 🏅 Interactive Floating Live Status Preview */}
+          {/* 🏅 Interactive Floating Live Status Preview / Preview Mode State */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -190,42 +196,48 @@ export default function AuthPage() {
           >
             <div className="absolute inset-0 bg-gradient-to-r from-neon-purple/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-            {/* Streak Preview */}
+            {/* Streak Preview / Real Streak */}
             <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
               <div className="flex items-center gap-1.5 text-amber-400 mb-1">
                 <Flame className="w-4 h-4 fill-amber-400" />
-                <span className="text-xs font-extrabold font-orbitron">7 Days</span>
+                <span className="text-xs font-extrabold font-orbitron">{displayStreak}</span>
               </div>
-              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">Active Streak</span>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">
+                {user ? 'Active Streak' : 'Streak Mode'}
+              </span>
             </div>
 
-            {/* Level Badge */}
+            {/* Level Badge / Preview Level */}
             <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
               <div className="flex items-center gap-1.5 text-neon-pink mb-1">
                 <Award className="w-4 h-4" />
-                <span className="text-xs font-extrabold font-orbitron">Level 12</span>
+                <span className="text-xs font-extrabold font-orbitron">{displayLevel}</span>
               </div>
-              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">JLPT N4 Rank</span>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">
+                {user ? displayRank : 'JLPT Rank'}
+              </span>
             </div>
 
-            {/* XP Progress */}
+            {/* XP Progress / Preview XP */}
             <div className="flex flex-col items-center lg:items-start p-3 rounded-2xl bg-white/[0.02] border border-white/[0.04]">
               <div className="flex items-center gap-1.5 text-emerald-400 mb-1">
                 <Zap className="w-4 h-4 fill-emerald-400" />
-                <span className="text-xs font-extrabold font-orbitron">2,450 XP</span>
+                <span className="text-xs font-extrabold font-orbitron">{displayXp}</span>
               </div>
-              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">Mastery XP</span>
+              <span className="text-[10px] text-purple-300/40 font-bold uppercase tracking-wider">
+                {user ? 'Mastery XP' : 'Earn Progress'}
+              </span>
             </div>
           </motion.div>
 
-          {/* Social Proof / Awwwards Badge */}
+          {/* Social Proof */}
           <div className="flex items-center justify-center lg:justify-start gap-4 text-xs text-purple-300/40 font-medium pt-1">
             <div className="flex -space-x-2 overflow-hidden">
               <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-purple-600/60 flex items-center justify-center text-[10px] font-bold text-white">🌸</div>
               <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-pink-600/60 flex items-center justify-center text-[10px] font-bold text-white">⚡</div>
               <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-indigo-600/60 flex items-center justify-center text-[10px] font-bold text-white">⛩️</div>
             </div>
-            <span>Trusted by 50,000+ Japanese language students worldwide</span>
+            <span>Master Japanese with AI conversation, SRS flashcards & JLPT curriculum</span>
           </div>
         </motion.div>
 

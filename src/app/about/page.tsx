@@ -9,10 +9,10 @@ import { Logo } from '@/components/ui/Logo';
 
 export default function AboutPage() {
   const stats = [
-    { label: 'Active Learners', value: '50,000+' },
+    { label: 'JLPT Curriculum', value: 'N5 to N1' },
     { label: 'Vocabulary & Kanji', value: '10,000+' },
-    { label: 'AI Practice Sessions', value: '1,000,000+' },
-    { label: 'JLPT Pass Rate', value: '94.2%' },
+    { label: 'AI Conversation Engine', value: 'Gemini 2.0' },
+    { label: 'Spaced Repetition', value: 'SM-2 Engine' },
   ];
 
   const values = [
