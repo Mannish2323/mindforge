@@ -14,7 +14,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Lock, Crown, Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { Lock, Crown, Sparkles, ArrowRight, Zap, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/app/context/AuthContext';
 import { PLANS, PLAN_ORDER, type PlanId } from '@/lib/plans';
@@ -34,11 +34,11 @@ interface PremiumGateProps {
   className?: string;
 }
 
-const PLAN_DISPLAY: Record<string, { label: string; color: string; emoji: string }> = {
-  starter: { label: 'Starter', color: 'text-blue-400',   emoji: '⚡' },
-  plus:    { label: 'Plus',    color: 'text-purple-400',  emoji: '⭐' },
-  pro:     { label: 'Pro',     color: 'text-amber-400',   emoji: '👑' },
-  ai_max:  { label: 'AI Max',  color: 'text-pink-400',    emoji: '🤖' },
+const PLAN_DISPLAY: Record<string, { label: string; color: string; icon: React.ComponentType<{ className?: string }> }> = {
+  starter: { label: 'Starter', color: 'text-blue-400',   icon: Zap },
+  plus:    { label: 'Plus',    color: 'text-purple-400',  icon: Sparkles },
+  pro:     { label: 'Pro',     color: 'text-amber-400',   icon: Crown },
+  ai_max:  { label: 'AI Max',  color: 'text-pink-400',    icon: Cpu },
 };
 
 export function PremiumGate({
@@ -95,8 +95,8 @@ export function PremiumGate({
 
           {/* Plan badge */}
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neon-purple/10 border border-neon-purple/25 text-xs font-bold text-brand-light">
-            <Crown className="w-3 h-3" />
-            {planInfo.emoji} {planInfo.label} Feature
+            <planInfo.icon className="w-3.5 h-3.5" />
+            {planInfo.label} Feature
           </span>
 
           {/* Feature name */}

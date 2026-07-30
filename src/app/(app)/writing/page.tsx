@@ -319,12 +319,12 @@ export default function WritingPage() {
     'Major Mismatch':  'border-rose-500/50    bg-rose-500/5',
   };
 
-  const tierEmoji: Record<GeometryBreakdown['tier'], string> = {
-    'Nearly Perfect':  '🌸',
-    'Minor Mistakes':  '✨',
-    'Good':            '📝',
-    'Needs Improvement': '⚠️',
-    'Major Mismatch':  '❌',
+  const tierBadge: Record<GeometryBreakdown['tier'], string> = {
+    'Nearly Perfect':  'S Tier',
+    'Minor Mistakes':  'A Tier',
+    'Good':            'B Tier',
+    'Needs Improvement': 'C Tier',
+    'Major Mismatch':  'D Tier',
   };
 
   return (
@@ -516,7 +516,9 @@ export default function WritingPage() {
                   {/* Header row */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">{tierEmoji[scoreResult.tier]}</span>
+                      <span className="px-2 py-0.5 rounded-md bg-white/10 text-xs font-bold text-neon-pink">
+                        {tierBadge[scoreResult.tier]}
+                      </span>
                       <div>
                         <p className="text-[10px] text-purple-300/50 uppercase tracking-widest">AI Score</p>
                         <p className="text-xs font-extrabold text-white">{scoreResult.tier}</p>

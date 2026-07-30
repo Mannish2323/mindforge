@@ -39,15 +39,15 @@ export function generateHeatmapData(activityLog: Record<string, number>, weeks: 
 // Mock Leaderboard
 export function generateLeaderboardMock(): Array<{ name: string; avatar: string; xp: number; rank: number; isYou: boolean }> {
   const names = [
-    { name: "Sakura_99", avatar: "🌸" },
-    { name: "TokyoDrift", avatar: "🏎️" },
-    { name: "NihongoKing", avatar: "👑" },
-    { name: "ArigatouGuy", avatar: "🎌" },
-    { name: "KanjiMaster", avatar: "⛩️" },
-    { name: "Yuki_learns", avatar: "❄️" },
-    { name: "Sensei_Pro", avatar: "🎓" },
-    { name: "MangaFan2k", avatar: "📚" },
-    { name: "OsakaVibes", avatar: "🦌" },
+    { name: "Sakura_99", avatar: "SK" },
+    { name: "TokyoDrift", avatar: "TD" },
+    { name: "NihongoKing", avatar: "NK" },
+    { name: "ArigatouGuy", avatar: "AG" },
+    { name: "KanjiMaster", avatar: "KM" },
+    { name: "Yuki_learns", avatar: "YL" },
+    { name: "Sensei_Pro", avatar: "SP" },
+    { name: "MangaFan2k", avatar: "MF" },
+    { name: "OsakaVibes", avatar: "OV" },
   ];
   return names.map((n, i) => ({
     ...n,

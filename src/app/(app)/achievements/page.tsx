@@ -10,18 +10,18 @@ import { BadgeIcon, resolveBadgeType, getBadgeLabel } from '@/components/ui/Badg
 import { useAuth } from '@/app/context/AuthContext';
 
 const ACHIEVEMENTS = [
-  { id: 1, emoji: '🔥', name: 'Fire Starter', desc: 'Complete your first lesson', category: 'Learning', unlocked: true, progress: 100 },
-  { id: 2, emoji: '📚', name: 'Bookworm', desc: 'Learn 50 vocabulary words', category: 'Learning', unlocked: true, progress: 100 },
-  { id: 3, emoji: '🗾', name: 'Explorer', desc: 'Complete N5 unit 1', category: 'Learning', unlocked: false, progress: 65 },
-  { id: 4, emoji: '⭐', name: 'Rising Star', desc: 'Reach Level 5', category: 'Learning', unlocked: false, progress: 40 },
-  { id: 5, emoji: '🔥', name: 'On Fire', desc: '7 day streak', category: 'Streak', unlocked: true, progress: 100 },
-  { id: 6, emoji: '💎', name: 'Diamond Streak', desc: '30 day streak', category: 'Streak', unlocked: false, progress: 23 },
-  { id: 7, emoji: '🏆', name: 'Champion', desc: '100 day streak', category: 'Streak', unlocked: false, progress: 7 },
-  { id: 8, emoji: '🎯', name: 'Sharpshooter', desc: '100% quiz accuracy', category: 'Learning', unlocked: false, progress: 80 },
-  { id: 9, emoji: '🤝', name: 'Social Butterfly', desc: 'Add 5 friends', category: 'Social', unlocked: false, progress: 20 },
-  { id: 10, emoji: '⚔️', name: 'Duelist', desc: 'Win 3 duels', category: 'Social', unlocked: false, progress: 33 },
-  { id: 11, emoji: '🧠', name: 'Memory Master', desc: 'Review 200 cards', category: 'Learning', unlocked: false, progress: 15 },
-  { id: 12, emoji: '🎙️', name: 'Voice Actor', desc: 'Complete 10 speaking exercises', category: 'Learning', unlocked: false, progress: 50 },
+  { id: 1, badgeType: 'first-lesson', name: 'First Step', desc: 'Complete your first lesson', category: 'Learning', unlocked: true, progress: 100 },
+  { id: 2, badgeType: 'bookworm', name: 'Bookworm', desc: 'Learn 50 vocabulary words', category: 'Learning', unlocked: true, progress: 100 },
+  { id: 3, badgeType: 'explorer', name: 'Explorer', desc: 'Complete N5 unit 1', category: 'Learning', unlocked: false, progress: 65 },
+  { id: 4, badgeType: 'rising-star', name: 'Rising Star', desc: 'Reach Level 5', category: 'Learning', unlocked: false, progress: 40 },
+  { id: 5, badgeType: 'fire-starter', name: 'On Fire', desc: '7 day streak', category: 'Streak', unlocked: true, progress: 100 },
+  { id: 6, badgeType: 'diamond-streak', name: 'Diamond Streak', desc: '30 day streak', category: 'Streak', unlocked: false, progress: 23 },
+  { id: 7, badgeType: 'champion', name: 'Champion', desc: '100 day streak', category: 'Streak', unlocked: false, progress: 7 },
+  { id: 8, badgeType: 'sharpshooter', name: 'Sharpshooter', desc: '100% quiz accuracy', category: 'Learning', unlocked: false, progress: 80 },
+  { id: 9, badgeType: 'vocab-master', name: 'Social Butterfly', desc: 'Add 5 friends', category: 'Social', unlocked: false, progress: 20 },
+  { id: 10, badgeType: 'grammar-expert', name: 'Duelist', desc: 'Win 3 duels', category: 'Social', unlocked: false, progress: 33 },
+  { id: 11, badgeType: 'jlpt-n5', name: 'Memory Master', desc: 'Review 200 cards', category: 'Learning', unlocked: false, progress: 15 },
+  { id: 12, badgeType: 'speaking-champion', name: 'Voice Actor', desc: 'Complete 10 speaking exercises', category: 'Learning', unlocked: false, progress: 50 },
 ];
 
 export default function AchievementsPage() {
@@ -72,7 +72,7 @@ export default function AchievementsPage() {
                 <div className="flex items-center gap-3">
                   {/* Premium SVG Badge Icon */}
                   <BadgeIcon
-                    type={achievement.emoji}
+                    type={achievement.badgeType}
                     unlocked={achievement.unlocked}
                     size="md"
                   />

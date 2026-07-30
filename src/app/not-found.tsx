@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Home, ArrowLeft } from 'lucide-react';
+import { EmptyStateIllustration } from '@/components/illustrations/NanoIllustrations';
 
 export default function NotFound() {
   return (
@@ -10,12 +11,12 @@ export default function NotFound() {
 
       <div className="text-center space-y-6 z-10 max-w-md">
         {/* 404 number */}
-        <div className="relative">
-          <span className="text-[120px] md:text-[160px] font-extrabold font-orbitron bg-gradient-to-b from-neon-purple/30 to-transparent bg-clip-text text-transparent leading-none select-none">
+        <div className="relative flex flex-col items-center">
+          <span className="text-[120px] md:text-[140px] font-extrabold font-orbitron bg-gradient-to-b from-neon-purple/30 to-transparent bg-clip-text text-transparent leading-none select-none">
             404
           </span>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-6xl">🌸</span>
+          <div className="absolute inset-0 flex items-center justify-center pt-4">
+            <EmptyStateIllustration size={88} />
           </div>
         </div>
 

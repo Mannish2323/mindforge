@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck,
-  Flame, Award, Zap, CheckCircle2, UserCheck, HelpCircle
+  Flame, Award, Zap, CheckCircle2, UserCheck, HelpCircle, BookOpen
 } from 'lucide-react';
 import { useAuth } from '@/app/context/AuthContext';
 import { Logo } from '@/components/ui/Logo';
@@ -233,9 +233,9 @@ export default function AuthPage() {
           {/* Social Proof */}
           <div className="flex items-center justify-center lg:justify-start gap-4 text-xs text-purple-300/40 font-medium pt-1">
             <div className="flex -space-x-2 overflow-hidden">
-              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-purple-600/60 flex items-center justify-center text-[10px] font-bold text-white">🌸</div>
-              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-pink-600/60 flex items-center justify-center text-[10px] font-bold text-white">⚡</div>
-              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-indigo-600/60 flex items-center justify-center text-[10px] font-bold text-white">⛩️</div>
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-purple-600/60 flex items-center justify-center text-white"><Sparkles className="w-3.5 h-3.5 text-purple-200" /></div>
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-pink-600/60 flex items-center justify-center text-white"><Zap className="w-3.5 h-3.5 text-pink-200" /></div>
+              <div className="inline-block h-7 w-7 rounded-full ring-2 ring-[#07050D] bg-indigo-600/60 flex items-center justify-center text-white"><BookOpen className="w-3.5 h-3.5 text-indigo-200" /></div>
             </div>
             <span>Master Japanese with AI conversation, SRS flashcards & JLPT curriculum</span>
           </div>

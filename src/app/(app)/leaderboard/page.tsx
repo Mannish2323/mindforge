@@ -9,16 +9,16 @@ import { Avatar } from '@/components/ui/Avatar';
 import { useAuth } from '@/app/context/AuthContext';
 
 const LEADERBOARD_DATA = [
-  { rank: 1, name: 'Tanaka Yuki', xp: 12450, level: 28, streak: 145, avatar: '🇯🇵' },
-  { rank: 2, name: 'Alex Chen', xp: 11200, level: 25, streak: 98, avatar: '🐉' },
-  { rank: 3, name: 'Priya Sharma', xp: 10800, level: 24, streak: 67, avatar: '🌸' },
-  { rank: 4, name: 'Kim Soo-jin', xp: 9500, level: 22, streak: 52, avatar: '⭐' },
-  { rank: 5, name: 'Marco Rossi', xp: 8700, level: 20, streak: 44, avatar: '🏆' },
-  { rank: 6, name: 'Emily Wilson', xp: 7200, level: 18, streak: 31, avatar: '🌙' },
-  { rank: 7, name: 'Raj Patel', xp: 6800, level: 17, streak: 28, avatar: '🔥' },
-  { rank: 8, name: 'Sakura Mori', xp: 5500, level: 15, streak: 21, avatar: '🎌' },
-  { rank: 9, name: 'Lars Jensen', xp: 4200, level: 12, streak: 14, avatar: '❄️' },
-  { rank: 10, name: 'Ana García', xp: 3800, level: 11, streak: 9, avatar: '🌺' },
+  { rank: 1, name: 'Tanaka Yuki', xp: 12450, level: 28, streak: 145, avatar: 'TY' },
+  { rank: 2, name: 'Alex Chen', xp: 11200, level: 25, streak: 98, avatar: 'AC' },
+  { rank: 3, name: 'Priya Sharma', xp: 10800, level: 24, streak: 67, avatar: 'PS' },
+  { rank: 4, name: 'Kim Soo-jin', xp: 9500, level: 22, streak: 52, avatar: 'KS' },
+  { rank: 5, name: 'Marco Rossi', xp: 8700, level: 20, streak: 44, avatar: 'MR' },
+  { rank: 6, name: 'Emily Wilson', xp: 7200, level: 18, streak: 31, avatar: 'EW' },
+  { rank: 7, name: 'Raj Patel', xp: 6800, level: 17, streak: 28, avatar: 'RP' },
+  { rank: 8, name: 'Sakura Mori', xp: 5500, level: 15, streak: 21, avatar: 'SM' },
+  { rank: 9, name: 'Lars Jensen', xp: 4200, level: 12, streak: 14, avatar: 'LJ' },
+  { rank: 10, name: 'Ana García', xp: 3800, level: 11, streak: 9, avatar: 'AG' },
 ];
 
 export default function LeaderboardPage() {

@@ -36,15 +36,15 @@ const parseLocalDate = (dateStr: string) => {
 
 // --- Mock social data ---
 const MOCK_FRIENDS: Friend[] = [
-  { friend_id: 'f1', username: 'Sakura_99', avatar: '🌸', xp: 1240, streak: 12, status: 'accepted', lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), nudged_today: false },
-  { friend_id: 'f2', username: 'TokyoDrift', avatar: '🏎️', xp: 890, streak: 5, status: 'accepted', lastActive: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), nudged_today: false },
-  { friend_id: 'f3', username: 'NihongoKing', avatar: '👑', xp: 2100, streak: 30, status: 'pending', lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), nudged_today: false },
+  { friend_id: 'f1', username: 'Sakura_99', avatar: 'SK', xp: 1240, streak: 12, status: 'accepted', lastActive: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(), nudged_today: false },
+  { friend_id: 'f2', username: 'TokyoDrift', avatar: 'TD', xp: 890, streak: 5, status: 'accepted', lastActive: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), nudged_today: false },
+  { friend_id: 'f3', username: 'NihongoKing', avatar: 'NK', xp: 2100, streak: 30, status: 'pending', lastActive: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), nudged_today: false },
 ];
 
 const MOCK_DUELS: Duel[] = [
   {
-    duel_id: 'd1', challenger_id: 'me', challenger_name: 'You', challenger_avatar: '😊',
-    opponent_id: 'f1', opponent_name: 'Sakura_99', opponent_avatar: '🌸',
+    duel_id: 'd1', challenger_id: 'me', challenger_name: 'You', challenger_avatar: 'YO',
+    opponent_id: 'f1', opponent_name: 'Sakura_99', opponent_avatar: 'SK',
     lesson_id: 'ja_u01_l01_hello_basic', challenger_score: 85, opponent_score: null,
     status: 'active', winner_id: null, xp_stake: 20,
     createdAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),

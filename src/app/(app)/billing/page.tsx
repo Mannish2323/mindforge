@@ -137,7 +137,7 @@ export default function BillingPage() {
             body: JSON.stringify({ ...response, planId, endsAt: orderData.endsAt }),
           });
           if (verifyRes.ok) {
-            setSuccess(`🎉 ${PLANS[planId].name} activated! Your plan is now live.`);
+            setSuccess(`${PLANS[planId].name} activated! Your plan is now live.`);
             setConfetti(true);
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(() => setConfetti(false), 2200);

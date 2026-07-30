@@ -30,14 +30,14 @@ export default function ProfilePage() {
   const kanjiLearned = profile?.kanji_learned ?? 0;
   const lessonsDone = profile?.lessons_done ?? 0;
   const reviewsDone = profile?.reviews_done ?? 0;
-  const bio = profile?.bio || 'Learning Japanese one step at a time 🌸';
+  const bio = profile?.bio || 'Learning Japanese one step at a time.';
   const joinedDate = profile?.createdAt || user?.created_at;
 
   const earnedBadges = [
-    { id: '1', emoji: '🌱', name: 'First Step', desc: 'Complete first lesson' },
-    { id: '2', emoji: '🔥', name: 'On a Roll', desc: '3-day streak' },
-    { id: '3', emoji: '⚡', name: 'Week Warrior', desc: '7-day streak' },
-    { id: '4', emoji: '🈶', name: 'Vocab Builder', desc: 'Learn 50 words' },
+    { id: 'first-lesson', name: 'First Step', desc: 'Complete first lesson' },
+    { id: 'fire-starter', name: 'On a Roll', desc: '3-day streak' },
+    { id: 'streak-7', name: 'Week Warrior', desc: '7-day streak' },
+    { id: 'vocab-master', name: 'Vocab Builder', desc: 'Learn 50 words' },
   ];
 
   // Level progress calc
@@ -161,7 +161,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {earnedBadges.map(badge => (
                   <div key={badge.id} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-neon-purple/20 transition-all">
-                    <BadgeIcon type={badge.emoji} unlocked size="md" />
+                    <BadgeIcon type={badge.id} unlocked size="md" />
                     <span className="text-[11px] font-bold text-white text-center">{badge.name}</span>
                     <span className="text-[9px] text-purple-300/30 text-center">{badge.desc}</span>
                   </div>

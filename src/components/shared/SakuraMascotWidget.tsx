@@ -31,7 +31,7 @@ export function SakuraMascotWidget() {
       content_ja: 'こんにちは！私はサクラ、あなたのAIチューターです。日本語について何でも聞いてくださいね！',
       content_romaji: 'Konnichiwa! Watashi wa Sakura, anata no AI chuutaa desu. Nihongo ni tsuite nandemo kiite kudasai ne!',
       content_en: 'Hello! I am Sakura, your virtual AI tutor. Feel free to ask me anything about Japanese!',
-      grammar_note: '💡 Ask me to translate, explain grammar, or suggest conversational replies!'
+      grammar_note: 'Ask me to translate, explain grammar, or suggest conversational replies!'
     }
   ]);
 
@@ -115,7 +115,7 @@ export function SakuraMascotWidget() {
       setMessages(prev => [...prev, {
         role: 'model',
         content: `Error: ${err.message || 'Check connection settings.'}`,
-        grammar_note: '💡 Daily free limit may be reached, or server is offline.'
+        grammar_note: 'Daily free limit may be reached, or server is offline.'
       }]);
     } finally {
       setLoading(false);

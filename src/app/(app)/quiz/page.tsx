@@ -329,7 +329,7 @@ export default function QuizPage() {
               </div>
 
               <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl text-xs font-bold">
-                🎉 Earned +25 XP and +5 gems reward.
+                Earned +25 XP and +5 gems reward.
               </div>
 
               <div className="flex gap-4 pt-4 border-t border-white/[0.08]">

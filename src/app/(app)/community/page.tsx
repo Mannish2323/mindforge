@@ -38,10 +38,10 @@ export default function CommunityPage() {
     {
       id: 'p1',
       author: 'Sakura_99',
-      avatar: '🌸',
+      avatar: 'SK',
       level: 'N4',
       time: '2 hours ago',
-      content: 'Just finished Unit 12 Vocabulary on Food & Drinks! The ramen matching quiz was super fun. 🍜 What unit are you guys currently working on?',
+      content: 'Just finished Unit 12 Vocabulary on Food & Drinks! The matching quiz was super fun. What unit are you guys currently working on?',
       likes: 12,
       commentsCount: 2,
       liked: false,
@@ -332,10 +332,10 @@ export default function CommunityPage() {
 
             <div className="space-y-3">
               {[
-                { name: 'Sakura_99', rank: 1, xp: 980, icon: '🌸' },
-                { name: 'TokyoDrift', rank: 2, xp: 870, icon: '🏎️' },
-                { name: 'NihongoKing', rank: 3, xp: 740, icon: '👑' },
-                { name: 'You (Learner)', rank: 4, xp: 120, icon: '🎓' }
+                { name: 'Sakura_99', rank: 1, xp: 980, icon: 'SK' },
+                { name: 'TokyoDrift', rank: 2, xp: 870, icon: 'TD' },
+                { name: 'NihongoKing', rank: 3, xp: 740, icon: 'NK' },
+                { name: 'You (Learner)', rank: 4, xp: 120, icon: 'YO' }
               ].map((user) => (
                 <div 
                   key={user.rank}
