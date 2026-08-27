@@ -7,224 +7,188 @@ interface IllustrationProps extends React.SVGProps<SVGSVGElement> {
   className?: string;
 }
 
-// 🌸 Sakura AI Sensei Mascot Vector Illustration
-export function SakuraAiIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+// 🧠 Official MindForge Mascot — "Kumo" (くもくん) Whiteboard Vector
+export function MindForgeMascotIllustration({ size = 80, className = '', ...props }: IllustrationProps) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 120 120"
+      viewBox="0 0 160 160"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       {...props}
     >
       <defs>
-        <linearGradient id="sakuraGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#EC4899" />
-          <stop offset="0.5" stopColor="#8B5CF6" />
-          <stop offset="1" stopColor="#6D3CFF" />
-        </linearGradient>
-        <linearGradient id="haloGrad" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F472B6" stopOpacity="0.4" />
-          <stop offset="1" stopColor="#8B5CF6" stopOpacity="0.1" />
-        </linearGradient>
-        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="6" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
+        {/* Soft Warm Glow */}
+        <radialGradient id="mascotGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FFD1DC" stopOpacity="0.8" />
+          <stop offset="100%" stopColor="#FFE4EC" stopOpacity="0" />
+        </radialGradient>
       </defs>
-      
-      {/* Outer Glowing Halo */}
-      <circle cx="60" cy="60" r="50" fill="url(#haloGrad)" filter="url(#glow)" />
-      
-      {/* Sakura Petals Halo BG */}
-      <path
-        d="M60 12C63 24 72 33 84 36C72 39 63 48 60 60C57 48 48 39 36 36C48 33 57 24 60 12Z"
-        fill="url(#sakuraGrad)"
-        opacity="0.35"
-      />
-      
-      {/* Core AI Sensei Orb */}
-      <circle cx="60" cy="60" r="32" fill="url(#sakuraGrad)" />
-      
-      {/* Face Visor / Expression Lines */}
-      <rect x="42" y="48" width="36" height="20" rx="10" fill="#0B0717" opacity="0.9" />
-      <circle cx="51" cy="58" r="3" fill="#38BDF8" />
-      <circle cx="69" cy="58" r="3" fill="#38BDF8" />
-      
-      {/* Sparkle Accent */}
-      <path d="M82 28L84.5 34.5L91 37L84.5 39.5L82 46L79.5 39.5L73 37L79.5 34.5L82 28Z" fill="#F472B6" />
-      <path d="M30 76L31.5 80L35.5 81.5L31.5 83L30 87L28.5 83L24.5 81.5L28.5 80L30 76Z" fill="#C15BFF" />
+
+      {/* Background Soft Glow */}
+      <circle cx="80" cy="80" r="70" fill="url(#mascotGlow)" />
+
+      {/* Sparkles */}
+      <path d="M30 40L33 46L39 49L33 52L30 58L27 52L21 49L27 46L30 40Z" fill="#FCC419" />
+      <path d="M135 48L137 52L141 54L137 56L135 60L133 56L129 54L133 52L135 48Z" fill="#FCC419" />
+      <path d="M24 88C22 84 25 80 29 82C33 84 31 92 27 92C25 92 24 90 24 88Z" fill="#FF8EA3" />
+      <path d="M136 84C134 80 137 76 141 78C145 80 143 88 139 88C137 88 136 86 136 84Z" fill="#FF8EA3" />
+
+      {/* Mascot Brain Cloud Body */}
+      <g filter="drop-shadow(0px 4px 10px rgba(255, 107, 139, 0.2))">
+        {/* Cloud bumps */}
+        <circle cx="55" cy="70" r="26" fill="#FFAEC0" />
+        <circle cx="105" cy="70" r="26" fill="#FFAEC0" />
+        <circle cx="80" cy="54" r="28" fill="#FFAEC0" />
+        <circle cx="52" cy="94" r="24" fill="#FFAEC0" />
+        <circle cx="108" cy="94" r="24" fill="#FFAEC0" />
+        <circle cx="80" cy="98" r="28" fill="#FFAEC0" />
+        {/* Core highlight surface */}
+        <circle cx="56" cy="68" r="23" fill="#FFC2D1" />
+        <circle cx="104" cy="68" r="23" fill="#FFC2D1" />
+        <circle cx="80" cy="52" r="25" fill="#FFD1DC" />
+        <circle cx="53" cy="92" r="21" fill="#FFBCCB" />
+        <circle cx="107" cy="92" r="21" fill="#FFBCCB" />
+        <circle cx="80" cy="96" r="25" fill="#FFC2D1" />
+      </g>
+
+      {/* Headband Ties (Back) */}
+      <path d="M118 62L132 54C134 52 138 56 136 60L126 68L138 72C140 76 136 80 132 78L118 70Z" fill="#FFFFFF" stroke="#2D2426" strokeWidth="2.5" strokeLinejoin="round" />
+
+      {/* Headband Body (Hachimaki) */}
+      <path d="M42 66C42 66 60 56 80 56C100 56 118 66 118 66L116 78C116 78 98 68 80 68C62 68 44 78 44 78L42 66Z" fill="#FFFFFF" stroke="#2D2426" strokeWidth="3" strokeLinejoin="round" />
+
+      {/* Kanji Text on Headband: 日本語 */}
+      <text x="80" y="73" textAnchor="middle" fill="#2D2426" fontSize="8" fontWeight="900" fontFamily="sans-serif" letterSpacing="1">
+        日本語
+      </text>
+
+      {/* Cute Eyes */}
+      {/* Left Eye: Open sparkly */}
+      <ellipse cx="68" cy="85" rx="4.5" ry="6" fill="#2D2426" />
+      <circle cx="66.5" cy="82.5" r="2" fill="#FFFFFF" />
+      {/* Right Eye: Cute Wink ^ or > */}
+      <path d="M89 83L95 86L89 89" stroke="#2D2426" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Rosy Blush Cheeks */}
+      <ellipse cx="58" cy="92" rx="6" ry="4" fill="#FF6B8B" opacity="0.6" />
+      <ellipse cx="102" cy="92" rx="6" ry="4" fill="#FF6B8B" opacity="0.6" />
+
+      {/* Happy Smile */}
+      <path d="M76 90C76 93.5 84 93.5 84 90" stroke="#2D2426" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M78 91C78 93 82 93 82 91Z" fill="#FF4D6D" />
+
+      {/* Open Japanese Textbook */}
+      <g filter="drop-shadow(0px 3px 6px rgba(0,0,0,0.12))">
+        {/* Book Cover */}
+        <path d="M52 108L78 116V142L52 134Z" fill="#FF4D6D" stroke="#2D2426" strokeWidth="2.5" strokeLinejoin="round" />
+        <path d="M108 108L82 116V142L108 134Z" fill="#FF4D6D" stroke="#2D2426" strokeWidth="2.5" strokeLinejoin="round" />
+        {/* Book Pages */}
+        <path d="M54 106L78 113V138L54 131Z" fill="#FFF8F0" stroke="#2D2426" strokeWidth="1.5" />
+        <path d="M106 106L82 113V138L106 131Z" fill="#FFF8F0" stroke="#2D2426" strokeWidth="1.5" />
+        {/* Hiragana Character "あ" on right page */}
+        <text x="94" y="128" textAnchor="middle" fill="#2D2426" fontSize="13" fontWeight="900" fontFamily="sans-serif">
+          あ
+        </text>
+        {/* Bookmark lines on left page */}
+        <path d="M60 114H72M60 120H70M60 126H68" stroke="#FF8EA3" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+
+      {/* Cute Mascot Hands Holding Book */}
+      <circle cx="50" cy="118" r="6" fill="#FFAEC0" stroke="#2D2426" strokeWidth="2.5" />
+      <circle cx="110" cy="118" r="6" fill="#FFAEC0" stroke="#2D2426" strokeWidth="2.5" />
     </svg>
   );
 }
 
-// 🔥 Active Streak & Flame Vector Illustration
-export function StreakIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+// 🌸 Hiragana Icon Illustration (Coral Pink Card with 'あ')
+export function HiraganaIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="flameOuter" x1="20" y1="10" x2="100" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#EF4444" />
-          <stop offset="0.5" stopColor="#F59E0B" />
-          <stop offset="1" stopColor="#F97316" />
-        </linearGradient>
-        <linearGradient id="flameInner" x1="40" y1="30" x2="80" y2="90" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#FBBF24" />
-          <stop offset="1" stopColor="#EF4444" />
-        </linearGradient>
-      </defs>
-      
-      {/* Outer Flame Shadow */}
-      <circle cx="60" cy="65" r="42" fill="#F59E0B" opacity="0.15" />
-      
-      {/* Flame Main Body */}
-      <path
-        d="M60 14C60 14 78 38 78 62C78 80.0964 69.9442 94 60 94C50.0558 94 42 80.0964 42 62C42 46 52 28 60 14Z"
-        fill="url(#flameOuter)"
-      />
-      <path
-        d="M60 38C60 38 70 54 70 68C70 78.4934 65.5228 86 60 86C54.4772 86 50 78.4934 50 68C50 58 56 46 60 38Z"
-        fill="url(#flameInner)"
-      />
-      
-      {/* Particle Sparks */}
-      <circle cx="34" cy="40" r="3" fill="#F59E0B" />
-      <circle cx="86" cy="48" r="2.5" fill="#EF4444" />
-      <circle cx="76" cy="24" r="2" fill="#FBBF24" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFF0F3" stroke="#FFB3C1" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      <text x="50" y="62" textAnchor="middle" fill="#FF4D6D" fontSize="42" fontWeight="900" fontFamily="sans-serif">
+        あ
+      </text>
+      <circle cx="78" cy="24" r="3" fill="#FF6B8B" />
+      <circle cx="22" cy="76" r="2.5" fill="#FCC419" />
     </svg>
   );
 }
 
-// 🈁 Kanji Vector Illustration
+// 🔷 Katakana Icon Illustration (Sky Blue Card with 'ア')
+export function KatakanaIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#E7F5FF" stroke="#A5D8FF" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      <text x="50" y="62" textAnchor="middle" fill="#228BE6" fontSize="42" fontWeight="900" fontFamily="sans-serif">
+        ア
+      </text>
+      <circle cx="78" cy="24" r="3" fill="#339AF0" />
+      <circle cx="22" cy="76" r="2.5" fill="#51CF66" />
+    </svg>
+  );
+}
+
+// 🏯 Kanji Icon Illustration (Royal Lavender Card with '日' on easel)
 export function KanjiIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="kanjiBg" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#8B5CF6" />
-          <stop offset="1" stopColor="#6D3CFF" />
-        </linearGradient>
-      </defs>
-
-      <rect x="16" y="16" width="88" height="88" rx="24" fill="url(#kanjiBg)" opacity="0.2" />
-      <rect x="20" y="20" width="80" height="80" rx="20" fill="#0B0717" stroke="#8B5CF6" strokeWidth="2" />
-
-      {/* Kanji Character Lines */}
-      <path d="M40 38H80" stroke="#EC4899" strokeWidth="5" strokeLinecap="round" />
-      <path d="M60 38V54" stroke="#F472B6" strokeWidth="4" strokeLinecap="round" />
-      <path d="M44 54H76" stroke="#C15BFF" strokeWidth="4" strokeLinecap="round" />
-      <path d="M48 68C56 70 64 70 72 68" stroke="#8B5CF6" strokeWidth="4" strokeLinecap="round" />
-      <path d="M60 68V86" stroke="#6D3CFF" strokeWidth="5" strokeLinecap="round" />
-      <path d="M42 86H78" stroke="#F472B6" strokeWidth="5" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#F3F0FF" stroke="#D0BFFF" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      <text x="50" y="62" textAnchor="middle" fill="#7950F2" fontSize="40" fontWeight="900" fontFamily="sans-serif">
+        日
+      </text>
+      <path d="M68 68L78 78M74 68L80 74" stroke="#FCC419" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }
 
-// 📚 Grammar Node Illustration
-export function GrammarIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="gramGrad" x1="15" y1="15" x2="105" y2="105" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#06B6D4" />
-          <stop offset="1" stopColor="#6D3CFF" />
-        </linearGradient>
-      </defs>
-      
-      <circle cx="60" cy="60" r="44" fill="url(#gramGrad)" opacity="0.15" />
-      
-      {/* Node connectors */}
-      <path d="M36 60H84M60 36V84" stroke="#06B6D4" strokeWidth="3" strokeDasharray="4 4" />
-      
-      <circle cx="60" cy="36" r="10" fill="#06B6D4" />
-      <circle cx="36" cy="60" r="10" fill="#6D3CFF" />
-      <circle cx="84" cy="60" r="10" fill="#EC4899" />
-      <circle cx="60" cy="84" r="10" fill="#38BDF8" />
-      <circle cx="60" cy="60" r="14" fill="#0B0717" stroke="#F472B6" strokeWidth="3" />
-    </svg>
-  );
-}
-
-// 🎴 Flashcard / Vocab Illustration
+// 📒 Vocabulary Icon Illustration (Butter Yellow Card with Flashcard binder)
 export function VocabIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="cardGrad" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#EC4899" />
-          <stop offset="1" stopColor="#8B5CF6" />
-        </linearGradient>
-      </defs>
-
-      {/* Back Card */}
-      <rect x="36" y="20" width="56" height="74" rx="14" fill="#6D3CFF" opacity="0.4" transform="rotate(8 64 57)" />
-      {/* Front Card */}
-      <rect x="30" y="24" width="58" height="76" rx="14" fill="#0B0717" stroke="url(#cardGrad)" strokeWidth="3" />
-
-      {/* Card Content Lines */}
-      <rect x="42" y="42" width="34" height="6" rx="3" fill="#EC4899" />
-      <rect x="42" y="56" width="24" height="4" rx="2" fill="#8B5CF6" />
-      <rect x="42" y="66" width="28" height="4" rx="2" fill="#38BDF8" opacity="0.7" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFF9DB" stroke="#FFE066" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      {/* Mini Flashcard */}
+      <rect x="26" y="24" width="48" height="52" rx="10" fill="#FFF9DB" stroke="#2D2426" strokeWidth="2.5" />
+      <circle cx="34" cy="34" r="2.5" fill="#2D2426" />
+      <circle cx="34" cy="50" r="2.5" fill="#2D2426" />
+      <circle cx="34" cy="66" r="2.5" fill="#2D2426" />
+      <text x="54" y="56" textAnchor="middle" fill="#F59F00" fontSize="22" fontWeight="900" fontFamily="sans-serif">
+        あ
+      </text>
     </svg>
   );
 }
 
-// ✍️ Writing Stylus Illustration
-export function WritingIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+// 💬 Grammar Node Illustration (Fresh Mint Card with speech bubble)
+export function GrammarIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="writeGrad" x1="10" y1="10" x2="110" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F59E0B" />
-          <stop offset="1" stopColor="#EC4899" />
-        </linearGradient>
-      </defs>
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#E6FCF5" stroke="#96F2D7" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      <path d="M26 36C26 28 34 22 50 22C66 22 74 28 74 36C74 44 66 50 50 50C44 50 40 52 32 58C34 52 26 48 26 36Z" fill="#E6FCF5" stroke="#2D2426" strokeWidth="2.5" strokeLinejoin="round" />
+      <circle cx="40" cy="36" r="3" fill="#20C997" />
+      <circle cx="50" cy="36" r="3" fill="#20C997" />
+      <circle cx="60" cy="36" r="3" fill="#20C997" />
+    </svg>
+  );
+}
 
-      <path d="M25 95C45 95 60 85 95 40" stroke="url(#writeGrad)" strokeWidth="5" strokeLinecap="round" />
-      <path d="M95 25L100 20L105 25L100 30L95 25Z" fill="#F59E0B" />
-      <rect x="30" y="70" width="60" height="2" fill="#F472B6" opacity="0.4" />
+// 🔥 Streak Illustration (Campfire in warm orange)
+export function StreakIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFE8CC" stroke="#FFD8A8" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      {/* Outer Flame */}
+      <path d="M50 20C50 20 66 38 66 56C66 66 58 74 50 74C42 74 34 66 34 56C34 44 44 32 50 20Z" fill="#FF922B" stroke="#2D2426" strokeWidth="2.5" strokeLinejoin="round" />
+      {/* Inner Flame */}
+      <path d="M50 40C50 40 58 48 58 58C58 64 54 68 50 68C46 68 42 64 42 58C42 50 48 44 50 40Z" fill="#FCC419" />
     </svg>
   );
 }
@@ -232,119 +196,79 @@ export function WritingIllustration({ size = 64, className = '', ...props }: Ill
 // 🎧 Listening Soundwave Illustration
 export function ListeningIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="soundGrad" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#3B82F6" />
-          <stop offset="1" stopColor="#C15BFF" />
-        </linearGradient>
-      </defs>
-
-      {/* Headphone Arc */}
-      <path d="M30 65V50C30 33.4315 43.4315 20 60 20C76.5685 20 90 33.4315 90 50V65" stroke="url(#soundGrad)" strokeWidth="6" strokeLinecap="round" />
-      {/* Ear Cups */}
-      <rect x="22" y="60" width="16" height="30" rx="8" fill="#3B82F6" />
-      <rect x="82" y="60" width="16" height="30" rx="8" fill="#C15BFF" />
-      
-      {/* Soundwaves */}
-      <path d="M50 60V70M60 52V78M70 58V72" stroke="#EC4899" strokeWidth="4" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFF0F6" stroke="#FCC2D7" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      {/* Headphone Band */}
+      <path d="M30 52V46C30 34 38 26 50 26C62 26 70 34 70 46V52" stroke="#2D2426" strokeWidth="3" strokeLinecap="round" />
+      {/* Ear cups */}
+      <rect x="24" y="48" width="12" height="22" rx="6" fill="#F06595" stroke="#2D2426" strokeWidth="2.5" />
+      <rect x="64" y="48" width="12" height="22" rx="6" fill="#F06595" stroke="#2D2426" strokeWidth="2.5" />
+      {/* Musical note */}
+      <path d="M46 62V48L54 52V64" stroke="#FF6B8B" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="44" cy="62" r="3" fill="#FF6B8B" />
+      <circle cx="52" cy="64" r="3" fill="#FF6B8B" />
     </svg>
   );
 }
 
-// 🎤 Speaking Microphone Illustration
+// 🎤 Speaking Illustration
 export function SpeakingIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="micGrad" x1="30" y1="10" x2="90" y2="110" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F472B6" />
-          <stop offset="1" stopColor="#8B5CF6" />
-        </linearGradient>
-      </defs>
-
-      <rect x="46" y="24" width="28" height="46" rx="14" fill="url(#micGrad)" />
-      <path d="M36 54V60C36 73.2548 46.7452 84 60 84C73.2548 84 84 73.2548 84 60V54" stroke="#F472B6" strokeWidth="5" strokeLinecap="round" />
-      <path d="M60 84V98M46 98H74" stroke="#8B5CF6" strokeWidth="5" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFF4E6" stroke="#FFE8CC" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      <rect x="42" y="26" width="16" height="30" rx="8" fill="#FF922B" stroke="#2D2426" strokeWidth="2.5" />
+      <path d="M34 46V50C34 58 41 64 50 64C59 64 66 58 66 50V46" stroke="#2D2426" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M50 64V74M40 74H60" stroke="#2D2426" strokeWidth="2.5" strokeLinecap="round" />
     </svg>
   );
 }
 
-// 📦 Empty State / 404 Illustration
-export function EmptyStateIllustration({ size = 80, className = '', ...props }: IllustrationProps) {
+// 🏆 Leaderboard / Trophy Illustration
+export function TrophyIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="emptyGrad" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#8B5CF6" stopOpacity="0.8" />
-          <stop offset="1" stopColor="#6D3CFF" stopOpacity="0.2" />
-        </linearGradient>
-      </defs>
-
-      <circle cx="60" cy="60" r="46" fill="url(#emptyGrad)" />
-      <path d="M42 48C42 48 50 42 60 42C70 42 78 48 78 48" stroke="#F472B6" strokeWidth="4" strokeLinecap="round" opacity="0.6" />
-      <circle cx="48" cy="56" r="4" fill="#F472B6" />
-      <circle cx="72" cy="56" r="4" fill="#F472B6" />
-      <path d="M48 76C54 72 66 72 72 76" stroke="#9CA3AF" strokeWidth="3" strokeLinecap="round" />
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#FFF3BF" stroke="#FFE066" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      {/* Trophy cup */}
+      <path d="M34 30H66V46C66 56 58 62 50 62C42 62 34 56 34 46V30Z" fill="#FCC419" stroke="#2D2426" strokeWidth="2.5" />
+      <path d="M34 36H24C24 46 32 48 34 48" stroke="#2D2426" strokeWidth="2" strokeLinecap="round" />
+      <path d="M66 36H76C76 46 68 48 66 48" stroke="#2D2426" strokeWidth="2" strokeLinecap="round" />
+      <path d="M50 62V72M38 72H62" stroke="#2D2426" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M50 38L52 42L56 43L53 46L54 50L50 48L46 50L47 46L44 43L48 42L50 38Z" fill="#FFFFFF" />
     </svg>
   );
+}
+
+// ✍️ Writing Practice Illustration
+export function WritingIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className} {...props}>
+      <rect x="8" y="8" width="84" height="84" rx="22" fill="#F8F9FA" stroke="#E9ECEF" strokeWidth="2" />
+      <rect x="12" y="12" width="76" height="76" rx="18" fill="#FFFFFF" />
+      {/* Wooden pencil */}
+      <g transform="rotate(-35 50 50)">
+        <rect x="42" y="24" width="16" height="46" fill="#FCC419" stroke="#2D2426" strokeWidth="2" />
+        <rect x="42" y="24" width="16" height="8" fill="#FF8787" stroke="#2D2426" strokeWidth="2" />
+        <path d="M42 70L50 84L58 70Z" fill="#FFE8CC" stroke="#2D2426" strokeWidth="2" />
+        <path d="M48 80L50 84L52 80Z" fill="#2D2426" />
+      </g>
+    </svg>
+  );
+}
+
+// 📦 Empty State / Placeholder Illustration
+export function EmptyStateIllustration({ size = 80, className = '', ...props }: IllustrationProps) {
+  return <MindForgeMascotIllustration size={size} className={className} {...props} />;
 }
 
 // 👑 Premium Crown Illustration
 export function PremiumCrownIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 120 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      {...props}
-    >
-      <defs>
-        <linearGradient id="crownGrad" x1="20" y1="20" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F59E0B" />
-          <stop offset="0.5" stopColor="#FBBF24" />
-          <stop offset="1" stopColor="#D97706" />
-        </linearGradient>
-      </defs>
+  return <TrophyIllustration size={size} className={className} {...props} />;
+}
 
-      <path
-        d="M24 82L18 36L42 54L60 26L78 54L102 36L96 82H24Z"
-        fill="url(#crownGrad)"
-        stroke="#FBBF24"
-        strokeWidth="3"
-        strokeLinejoin="round"
-      />
-      <circle cx="60" cy="24" r="5" fill="#FFF" />
-      <circle cx="18" cy="34" r="4" fill="#FFF" />
-      <circle cx="102" cy="34" r="4" fill="#FFF" />
-      <rect x="24" y="86" width="72" height="8" rx="4" fill="#D97706" />
-    </svg>
-  );
+// 🌸 Sakura AI Sensei Legacy alias
+export function SakuraAiIllustration({ size = 64, className = '', ...props }: IllustrationProps) {
+  return <MindForgeMascotIllustration size={size} className={className} {...props} />;
 }
