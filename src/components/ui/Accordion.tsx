@@ -41,8 +41,8 @@ export function Accordion({ items, className, allowMultiple = false }: Accordion
             className={cn(
               'rounded-xl border transition-all duration-300 overflow-hidden',
               isOpen
-                ? 'bg-white/[0.03] border-neon-purple/20'
-                : 'bg-white/[0.01] border-white/[0.06] hover:border-white/10'
+                ? 'bg-white border-brand/20 shadow-sm'
+                : 'bg-white border-edge hover:border-edge-hover'
             )}
           >
             <button
@@ -51,17 +51,17 @@ export function Accordion({ items, className, allowMultiple = false }: Accordion
             >
               <div className="flex items-center gap-3 min-w-0">
                 {item.icon && (
-                  <span className={cn('flex-shrink-0', isOpen ? 'text-neon-purple' : 'text-purple-300/50')}>
+                  <span className={cn('flex-shrink-0', isOpen ? 'text-brand' : 'text-ink-muted')}>
                     {item.icon}
                   </span>
                 )}
-                <span className={cn('text-sm font-semibold', isOpen ? 'text-white' : 'text-purple-200/80')}>
+                <span className={cn('text-sm font-semibold', isOpen ? 'text-ink' : 'text-ink-secondary')}>
                   {item.title}
                 </span>
               </div>
               <svg
                 className={cn(
-                  'w-4 h-4 flex-shrink-0 transition-transform duration-300 text-purple-300/40',
+                  'w-4 h-4 flex-shrink-0 transition-transform duration-300 text-ink-light',
                   isOpen && 'rotate-180'
                 )}
                 fill="none"
@@ -78,7 +78,7 @@ export function Accordion({ items, className, allowMultiple = false }: Accordion
                 isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
               )}
             >
-              <div className="px-5 pb-4 text-sm text-purple-200/60 leading-relaxed">
+              <div className="px-5 pb-4 text-sm text-ink-muted leading-relaxed">
                 {item.content}
               </div>
             </div>

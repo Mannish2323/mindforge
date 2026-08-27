@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/utils';
 
-type BadgeVariant = 'default' | 'purple' | 'pink' | 'amber' | 'emerald' | 'sky' | 'rose' | 'neon';
+type BadgeVariant = 'default' | 'purple' | 'pink' | 'amber' | 'emerald' | 'sky' | 'rose' | 'neon' | 'green' | 'blue' | 'orange' | 'teal';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: BadgeVariant;
@@ -22,14 +22,18 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variants: Record<BadgeVariant, string> = {
-    default: 'bg-white/[0.06] border-white/[0.08] text-white/80',
-    purple: 'bg-neon-purple/15 border-neon-purple/25 text-brand-light',
-    pink: 'bg-pink-500/15 border-pink-500/25 text-pink-400',
-    amber: 'bg-amber-500/15 border-amber-500/25 text-amber-400',
-    emerald: 'bg-emerald-500/15 border-emerald-500/25 text-emerald-400',
-    sky: 'bg-sky-500/15 border-sky-500/25 text-sky-400',
-    rose: 'bg-rose-500/15 border-rose-500/25 text-rose-400',
-    neon: 'bg-gradient-to-r from-neon-purple/20 to-neon-pink/20 border-neon-purple/30 text-white',
+    default: 'bg-warm-soft border-edge text-ink-secondary',
+    purple: 'bg-cat-purple-light border-cat-purple/20 text-cat-purple',
+    pink: 'bg-cat-pink-light border-cat-pink/20 text-cat-pink',
+    amber: 'bg-cat-orange-light border-cat-orange/20 text-cat-orange',
+    emerald: 'bg-cat-green-light border-cat-green/20 text-cat-green',
+    sky: 'bg-cat-blue-light border-cat-blue/20 text-cat-blue',
+    rose: 'bg-cat-pink-light border-cat-pink/20 text-cat-pink',
+    neon: 'bg-gradient-to-r from-brand/10 to-accent/10 border-brand/20 text-brand',
+    green: 'bg-cat-green-light border-cat-green/20 text-cat-green',
+    blue: 'bg-cat-blue-light border-cat-blue/20 text-cat-blue',
+    orange: 'bg-cat-orange-light border-cat-orange/20 text-cat-orange',
+    teal: 'bg-cat-teal-light border-cat-teal/20 text-cat-teal',
   };
 
   const sizes: Record<string, string> = {

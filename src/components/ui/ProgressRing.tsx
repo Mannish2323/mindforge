@@ -21,7 +21,7 @@ export function ProgressRing({
   size = 120,
   strokeWidth = 8,
   color = 'url(#progressGradient)',
-  trackColor = 'rgba(255,255,255,0.06)',
+  trackColor = '#F0ECE3',
   className,
   showLabel = true,
   label,
@@ -48,8 +48,8 @@ export function ProgressRing({
         <defs>
           <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#6D3CFF" />
-            <stop offset="50%" stopColor="#C15BFF" />
-            <stop offset="100%" stopColor="#FF6BD6" />
+            <stop offset="50%" stopColor="#AF52DE" />
+            <stop offset="100%" stopColor="#FF6B9D" />
           </linearGradient>
         </defs>
         {/* Track */}
@@ -81,12 +81,12 @@ export function ProgressRing({
         {children || (
           <>
             {showLabel && (
-              <span className="text-lg font-bold text-white font-orbitron">
+              <span className="text-lg font-bold text-ink font-heading">
                 {Math.round(displayValue)}%
               </span>
             )}
             {label && (
-              <span className="text-[10px] font-semibold text-purple-300/50 uppercase tracking-wider mt-0.5">
+              <span className="text-[10px] font-semibold text-ink-muted uppercase tracking-wider mt-0.5">
                 {label}
               </span>
             )}

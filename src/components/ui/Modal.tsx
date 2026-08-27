@@ -29,17 +29,17 @@ export function Modal({ open, onClose, title, children, size = 'md', className }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
-      style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div
         ref={ref}
-        className={cn('card animate-scale-in w-full overflow-hidden', sizes[size], className)}
+        className={cn('bg-white border border-edge rounded-card-lg shadow-[0_12px_40px_rgba(0,0,0,0.12)] animate-scale-in w-full overflow-hidden', sizes[size], className)}
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {title && (
-          <div className="flex items-center justify-between p-5 border-b border-[rgba(139,92,246,0.15)]">
-            <h2 className="text-base font-black text-white">{title}</h2>
-            <button onClick={onClose} className="btn btn-ghost btn-icon">
+          <div className="flex items-center justify-between p-5 border-b border-edge">
+            <h2 className="text-base font-bold text-ink font-heading">{title}</h2>
+            <button onClick={onClose} className="p-2 rounded-xl hover:bg-warm-soft text-ink-muted hover:text-ink transition-colors cursor-pointer">
               <X className="w-4 h-4" />
             </button>
           </div>

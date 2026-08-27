@@ -66,12 +66,11 @@ export default function ProfilePage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-8">
       {/* Profile Header */}
       <motion.div variants={item}>
-        <Card variant="gradient" padding="lg" className="relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-neon-pink/10 rounded-full blur-[60px] pointer-events-none" />
+        <Card variant="gradient" padding="lg" className="relative overflow-hidden bg-gradient-to-br from-brand/5 to-accent/5">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10">
-            {/* Avatar with edit indicator */}
+            {/* Avatar */}
             <div className="relative group">
-              <div className="group-hover:shadow-[0_0_24px_rgba(109,60,255,0.25)] rounded-full transition-all duration-300">
+              <div className="group-hover:shadow-lg rounded-full transition-all duration-300">
                 <Avatar
                   name={userName}
                   emoji={profile?.avatarUrl}
@@ -80,41 +79,28 @@ export default function ProfilePage() {
                   showLevel
                 />
               </div>
-              <Link href="/settings" className="absolute -bottom-0.5 -right-0.5 p-1.5 rounded-full bg-[#12101D] border border-white/[0.1] hover:border-neon-purple/30 hover:bg-neon-purple/15 transition-all cursor-pointer z-10 opacity-0 group-hover:opacity-100">
-                <PenTool className="w-3 h-3 text-purple-300/60" />
-              </Link>
             </div>
 
-            <div className="flex-1 text-center md:text-left space-y-3">
-              <div>
-                <h1 className="text-2xl font-extrabold text-white font-orbitron">{userName}</h1>
-                <p className="text-sm text-purple-300/40 mt-0.5">{userEmail}</p>
+            {/* Info */}
+            <div className="flex-1 text-center md:text-left space-y-2">
+              <h1 className="text-2xl font-extrabold text-ink font-heading">{userName}</h1>
+              <p className="text-sm text-ink-muted">{bio}</p>
+              <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
+                <Badge variant="purple" size="sm">JLPT {jlptTarget}</Badge>
+                <Badge variant="amber" size="sm" icon={<Flame className="w-3 h-3 fill-cat-orange text-cat-orange" />}>{streak} day streak</Badge>
+                <Badge variant="emerald" size="sm" icon={<Zap className="w-3 h-3" />}>{xpTotal} XP</Badge>
               </div>
-              <p className="text-sm text-purple-200/50 italic">{bio}</p>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                <Badge variant="neon" size="sm" icon={<Zap className="w-3 h-3" />}>
-                  {xpTotal.toLocaleString()} XP
-                </Badge>
-                <Badge variant="amber" size="sm" icon={<Flame className="w-3 h-3 fill-amber-500" />}>
-                  {streak} day streak
-                </Badge>
-                <Badge variant="purple" size="sm">
-                  {jlptTarget}
-                </Badge>
-                {joinedDate && (
-                  <Badge variant="default" size="sm" icon={<Calendar className="w-3 h-3" />}>
-                    Joined {new Date(joinedDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
-                  </Badge>
-                )}
-              </div>
-              {/* Level Progress */}
-              <ProgressBar value={calcLevelProgress()} label={`Level ${level}`} showLabel size="md" />
             </div>
 
-            {/* Settings link */}
-            <Link href="/settings" className="hidden md:flex p-3 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.08] transition-all">
-              <Settings className="w-5 h-5 text-purple-300/50" />
-            </Link>
+            {/* Level Ring */}
+            <div className="flex-shrink-0">
+              <ProgressRing value={calcLevelProgress()} size={80} strokeWidth={6}>
+                <div className="flex flex-col items-center">
+                  <span className="text-base font-bold text-ink font-heading">Lv.{level}</span>
+                  <span className="text-[8px] text-ink-muted font-bold">{calcLevelProgress()}%</span>
+                </div>
+              </ProgressRing>
+            </div>
           </div>
         </Card>
       </motion.div>
@@ -122,91 +108,74 @@ export default function ProfilePage() {
       {/* Stats Grid */}
       <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { label: 'Lessons', value: lessonsDone, icon: BookOpen, color: 'text-brand-light' },
-          { label: 'Words', value: wordsLearned, icon: BookOpen, color: 'text-neon-pink' },
-          { label: 'Kanji', value: kanjiLearned, icon: PenTool, color: 'text-amber-400' },
-          { label: 'Reviews', value: reviewsDone, icon: Brain, color: 'text-emerald-400' },
-        ].map(stat => (
+          { label: 'Lessons Done', value: lessonsDone, icon: BookOpen, color: 'text-cat-purple', bg: 'bg-cat-purple-light' },
+          { label: 'Words Learned', value: wordsLearned, icon: BookOpen, color: 'text-cat-blue', bg: 'bg-cat-blue-light' },
+          { label: 'Kanji Learned', value: kanjiLearned, icon: PenTool, color: 'text-cat-orange', bg: 'bg-cat-orange-light' },
+          { label: 'Reviews Done', value: reviewsDone, icon: Brain, color: 'text-cat-green', bg: 'bg-cat-green-light' },
+        ].map((stat) => (
           <Card key={stat.label} variant="glass" padding="md" className="flex flex-col items-center gap-2">
-            <stat.icon className={`w-5 h-5 ${stat.color}`} />
-            <span className="text-xl font-bold text-white font-orbitron">{stat.value}</span>
-            <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">{stat.label}</span>
+            <div className={`p-2 rounded-xl ${stat.bg}`}>
+              <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            </div>
+            <span className="text-xl font-bold text-ink font-heading">{stat.value}</span>
+            <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider text-center">{stat.label}</span>
           </Card>
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-8 space-y-6">
-          {/* Activity Calendar */}
-          <motion.div variants={item}>
-            <Card variant="glass" padding="md" className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Study Calendar</h3>
-                <Badge variant="default" size="sm" icon={<Calendar className="w-3 h-3" />}>12 weeks</Badge>
+      {/* Achievements */}
+      <motion.div variants={item}>
+        <Card variant="glass" padding="md" className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider">Achievements</h3>
+            <Link href="/achievements" className="text-xs font-bold text-brand hover:text-accent transition-colors">
+              View All <ChevronRight className="w-3 h-3 inline" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-4 gap-3">
+            {earnedBadges.map((badge) => (
+              <div key={badge.id} className="flex flex-col items-center gap-1.5 p-3">
+                <BadgeIcon type={badge.id} unlocked size="md" />
+                <span className="text-[10px] font-bold text-ink text-center">{badge.name}</span>
+                <span className="text-[9px] text-ink-muted text-center">{badge.desc}</span>
               </div>
-              <HeatmapCalendar data={heatmapData} weeks={12} />
-            </Card>
-          </motion.div>
+            ))}
+          </div>
+        </Card>
+      </motion.div>
 
-          {/* Badges */}
-          <motion.div variants={item}>
-            <Card variant="glass" padding="md" className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Badges Earned</h3>
-                <Link href="/achievements" className="text-xs text-brand-light hover:text-neon-pink flex items-center gap-1">
-                  View All <ChevronRight className="w-3 h-3" />
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {earnedBadges.map(badge => (
-                  <div key={badge.id} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] hover:border-neon-purple/20 transition-all">
-                    <BadgeIcon type={badge.id} unlocked size="md" />
-                    <span className="text-[11px] font-bold text-white text-center">{badge.name}</span>
-                    <span className="text-[9px] text-purple-300/30 text-center">{badge.desc}</span>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          </motion.div>
-        </div>
+      {/* Activity Heatmap */}
+      <motion.div variants={item}>
+        <Card variant="glass" padding="md" className="space-y-3">
+          <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider">Activity</h3>
+          <HeatmapCalendar data={heatmapData} />
+        </Card>
+      </motion.div>
 
-        {/* Right column */}
-        <div className="lg:col-span-4 space-y-6">
-          {/* Quick Links */}
-          <motion.div variants={item}>
-            <Card variant="glass" padding="none" className="divide-y divide-white/[0.03]">
-              {[
-                { name: 'Settings', href: '/settings', icon: Settings },
-                { name: 'Subscription', href: '/billing', icon: CreditCard },
-                { name: 'Progress', href: '/progress', icon: BarChart3 },
-                { name: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
-              ].map(link => (
-                <Link key={link.name} href={link.href}
-                  className="flex items-center justify-between px-5 py-4 hover:bg-white/[0.02] transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <link.icon className="w-4 h-4 text-purple-300/40" />
-                    <span className="text-sm font-medium text-white">{link.name}</span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-purple-300/20" />
-                </Link>
-              ))}
-            </Card>
-          </motion.div>
-
-          {/* JLPT Goal Card */}
-          <motion.div variants={item}>
-            <Card variant="glass" padding="md" className="flex flex-col items-center gap-3">
-              <ProgressRing value={35} size={100} strokeWidth={8} label={jlptTarget} />
-              <div className="text-center">
-                <p className="text-xs font-semibold text-white">JLPT Readiness</p>
-                <p className="text-[10px] text-purple-300/40">Keep studying to improve!</p>
+      {/* Settings & Links */}
+      <motion.div variants={item}>
+        <Card variant="glass" padding="none">
+          {[
+            { label: 'My Goals', icon: TrendingUp, href: '/progress', color: 'text-cat-purple' },
+            { label: 'Bookmarks', icon: Bookmark, href: '/bookmarks', color: 'text-cat-blue' },
+            { label: 'Notifications', icon: Calendar, href: '/settings', color: 'text-cat-orange' },
+            { label: 'Account Settings', icon: Settings, href: '/settings', color: 'text-ink-muted' },
+            { label: 'Subscription', icon: CreditCard, href: '/billing', color: 'text-cat-green' },
+          ].map((item, i) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className={`flex items-center justify-between px-6 py-4 hover:bg-warm-cream transition-colors ${i < 4 ? 'border-b border-edge' : ''}`}
+            >
+              <div className="flex items-center gap-3">
+                <item.icon className={`w-4 h-4 ${item.color}`} />
+                <span className="text-sm font-medium text-ink">{item.label}</span>
               </div>
-            </Card>
-          </motion.div>
-        </div>
-      </div>
+              <ChevronRight className="w-4 h-4 text-ink-light" />
+            </Link>
+          ))}
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }

@@ -6,7 +6,7 @@ import { cn } from '@/utils';
 interface ProgressBarProps {
   value: number;  // 0-100
   size?: 'sm' | 'md' | 'lg';
-  color?: 'purple' | 'pink' | 'amber' | 'emerald' | 'gradient';
+  color?: 'purple' | 'pink' | 'amber' | 'emerald' | 'gradient' | 'green' | 'blue' | 'orange' | 'teal';
   showLabel?: boolean;
   label?: string;
   className?: string;
@@ -31,11 +31,15 @@ export function ProgressBar({
   };
 
   const colors: Record<string, string> = {
-    purple: 'bg-neon-purple',
-    pink: 'bg-neon-pink',
+    purple: 'bg-brand',
+    pink: 'bg-sakura-dark',
     amber: 'bg-amber-500',
     emerald: 'bg-emerald-500',
-    gradient: 'bg-gradient-to-r from-neon-purple via-neon-pink to-accent-magenta',
+    gradient: 'bg-gradient-to-r from-brand via-cat-purple to-accent',
+    green: 'bg-cat-green',
+    blue: 'bg-cat-blue',
+    orange: 'bg-cat-orange',
+    teal: 'bg-cat-teal',
   };
 
   return (
@@ -43,18 +47,18 @@ export function ProgressBar({
       {(showLabel || label) && (
         <div className="flex justify-between items-center">
           {label && (
-            <span className="text-[10px] font-bold text-purple-300/50 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-ink-muted">
               {label}
             </span>
           )}
           {showLabel && (
-            <span className="text-[10px] font-bold text-sakura-dark">
+            <span className="text-xs font-bold text-brand">
               {Math.round(clampedValue)}%
             </span>
           )}
         </div>
       )}
-      <div className={cn('w-full rounded-full overflow-hidden bg-white/[0.06]', heights[size])}>
+      <div className={cn('w-full rounded-full overflow-hidden bg-warm-soft', heights[size])}>
         <div
           className={cn(
             'h-full rounded-full',

@@ -97,7 +97,7 @@ function UpgradeDialogModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[200]"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[200]"
           />
 
           {/* Dialog */}
@@ -109,13 +109,13 @@ function UpgradeDialogModal({
             transition={{ type: 'spring', stiffness: 280, damping: 24 }}
             className="fixed inset-0 flex items-center justify-center z-[201] p-4"
           >
-            <div className="w-full max-w-sm bg-[#120B24] border border-neon-purple/20 rounded-3xl shadow-[0_0_60px_rgba(109,60,255,0.15)] overflow-hidden">
+            <div className="w-full max-w-sm bg-white border border-edge rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden">
 
               {/* Header */}
               <div className="relative px-6 pt-6 pb-4">
                 <button
                   onClick={onClose}
-                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/[0.04] hover:bg-white/[0.08] flex items-center justify-center text-purple-300/50 hover:text-white transition-all"
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-warm-soft hover:bg-warm-cream border border-edge flex items-center justify-center text-ink-muted hover:text-ink transition-all cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -123,17 +123,16 @@ function UpgradeDialogModal({
                 <div className="flex flex-col items-center gap-3 text-center">
                   {/* Lock aura */}
                   <div className="relative">
-                    <div className="absolute inset-0 bg-neon-purple/25 rounded-full blur-[16px]" />
-                    <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-neon-purple to-neon-pink flex items-center justify-center shadow-[0_0_24px_rgba(109,60,255,0.35)]">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand to-accent flex items-center justify-center shadow-[0_4px_16px_rgba(109,60,255,0.2)]">
                       <Lock className="w-6 h-6 text-white" />
                     </div>
                   </div>
 
                   <div>
-                    <h2 className="text-lg font-extrabold text-white leading-tight">
+                    <h2 className="text-lg font-extrabold text-ink font-heading leading-tight">
                       Daily Limit Reached
                     </h2>
-                    <p className="text-xs text-purple-300/50 mt-1">
+                    <p className="text-xs text-ink-muted mt-1">
                       {state.feature}
                     </p>
                   </div>
@@ -143,11 +142,11 @@ function UpgradeDialogModal({
               {/* Usage bar */}
               {state.used !== undefined && state.limit !== undefined && (
                 <div className="px-6 pb-4 space-y-1.5">
-                  <div className="flex justify-between text-[10px] font-bold text-purple-300/50">
+                  <div className="flex justify-between text-[10px] font-bold text-ink-muted">
                     <span>Used today</span>
-                    <span className="text-rose-400">{state.used} / {state.limit}</span>
+                    <span className="text-red-500">{state.used} / {state.limit}</span>
                   </div>
-                  <div className="h-2 rounded-full bg-white/[0.05] overflow-hidden">
+                  <div className="h-2 rounded-full bg-warm-soft overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
@@ -160,31 +159,31 @@ function UpgradeDialogModal({
 
               {/* Description */}
               {state.description && (
-                <p className="px-6 pb-4 text-xs text-purple-300/45 text-center leading-relaxed">
+                <p className="px-6 pb-4 text-xs text-ink-muted text-center leading-relaxed">
                   {state.description}
                 </p>
               )}
 
               {/* Suggested plan */}
               <div className="px-6 pb-4">
-                <div className="rounded-2xl bg-white/[0.03] border border-neon-purple/15 p-4 space-y-3">
+                <div className="rounded-2xl bg-warm-soft border border-edge p-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">{suggestedPlan.emoji}</span>
                     <div>
-                      <p className="text-sm font-bold text-white">{suggestedPlan.name} Plan</p>
-                      <p className="text-[10px] text-purple-300/40">{suggestedPlan.subtitle}</p>
+                      <p className="text-sm font-bold text-ink">{suggestedPlan.name} Plan</p>
+                      <p className="text-[10px] text-ink-muted">{suggestedPlan.subtitle}</p>
                     </div>
-                    <span className="ml-auto text-sm font-extrabold text-white font-orbitron">
+                    <span className="ml-auto text-sm font-extrabold text-ink font-heading">
                       ₹{suggestedPlan.price}
-                      <span className="text-[10px] font-normal text-purple-300/40">{suggestedPlan.periodLabel}</span>
+                      <span className="text-[10px] font-normal text-ink-muted">{suggestedPlan.periodLabel}</span>
                     </span>
                   </div>
 
                   {/* Key benefits */}
                   <ul className="space-y-1">
                     {suggestedPlan.features.slice(0, 4).map((f, i) => (
-                      <li key={i} className="flex items-center gap-2 text-[11px] text-purple-200/55">
-                        <Sparkles className="w-3 h-3 text-neon-pink flex-shrink-0" />
+                      <li key={i} className="flex items-center gap-2 text-[11px] text-ink-secondary">
+                        <Sparkles className="w-3 h-3 text-brand flex-shrink-0" />
                         {f}
                       </li>
                     ))}
@@ -197,7 +196,7 @@ function UpgradeDialogModal({
                 <Link
                   href="/billing"
                   onClick={onClose}
-                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-neon-purple to-neon-pink text-white text-sm font-bold shadow-[0_0_20px_rgba(109,60,255,0.3)] hover:shadow-[0_0_30px_rgba(109,60,255,0.45)] hover:scale-[1.02] transition-all duration-200"
+                  className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-gradient-to-r from-brand to-accent text-white text-sm font-bold shadow-[0_4px_16px_rgba(109,60,255,0.2)] hover:shadow-[0_6px_20px_rgba(109,60,255,0.3)] hover:scale-[1.02] transition-all duration-200"
                 >
                   <Crown className="w-4 h-4" />
                   Upgrade Now · ₹{suggestedPlan.price}{suggestedPlan.periodLabel}
@@ -206,7 +205,7 @@ function UpgradeDialogModal({
 
                 <button
                   onClick={onClose}
-                  className="w-full py-2.5 rounded-xl text-xs font-semibold text-purple-300/40 hover:text-purple-300/60 transition-colors"
+                  className="w-full py-2.5 rounded-xl text-xs font-semibold text-ink-muted hover:text-ink hover:bg-warm-soft transition-colors cursor-pointer"
                 >
                   Continue with Free Plan
                 </button>

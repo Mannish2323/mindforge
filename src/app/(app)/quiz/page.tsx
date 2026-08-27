@@ -100,7 +100,7 @@ export default function QuizPage() {
     if (activeQuizType === 'match' && matchedPairs.length === matchingPairs.length) {
       setQuizFinished(true);
     }
-  }, [matchedPairs, activeQuizType]);
+  }, [matchedPairs, activeQuizType, matchingPairs.length]);
 
   const resetQuiz = () => {
     setQuizIndex(0);

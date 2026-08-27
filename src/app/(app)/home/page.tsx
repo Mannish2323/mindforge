@@ -56,12 +56,12 @@ export default function HomePage() {
   };
 
   const quickActions = [
-    { name: 'Vocabulary', href: '/vocabulary', icon: BookOpen, color: 'bg-neon-purple/10 text-brand-light' },
-    { name: 'Grammar', href: '/grammar', icon: FileText, color: 'bg-pink-500/10 text-pink-400' },
-    { name: 'Kanji', href: '/kanji', icon: PenTool, color: 'bg-amber-500/10 text-amber-400' },
-    { name: 'Listening', href: '/listening', icon: Volume2, color: 'bg-sky-500/10 text-sky-400' },
-    { name: 'Speaking', href: '/speaking', icon: Mic, color: 'bg-emerald-500/10 text-emerald-400' },
-    { name: 'Review', href: '/review', icon: Brain, color: 'bg-rose-500/10 text-rose-400' },
+    { name: 'Vocabulary', href: '/vocabulary', icon: BookOpen, color: 'bg-cat-purple-light text-cat-purple', emoji: '📚' },
+    { name: 'Grammar', href: '/grammar', icon: FileText, color: 'bg-cat-teal-light text-cat-teal', emoji: '📝' },
+    { name: 'Kanji', href: '/kanji', icon: PenTool, color: 'bg-cat-orange-light text-cat-orange', emoji: '✍️' },
+    { name: 'Listening', href: '/listening', icon: Volume2, color: 'bg-cat-blue-light text-cat-blue', emoji: '🎧' },
+    { name: 'Speaking', href: '/speaking', icon: Mic, color: 'bg-cat-green-light text-cat-green', emoji: '🗣️' },
+    { name: 'Review', href: '/review', icon: Brain, color: 'bg-cat-pink-light text-cat-pink', emoji: '🧠' },
   ];
 
   const weeklyData = [
@@ -72,6 +72,22 @@ export default function HomePage() {
     { day: 'Fri', value: dbData?.heatmap?.[4]?.xp ?? 20 },
     { day: 'Sat', value: dbData?.heatmap?.[5]?.xp ?? 0 },
     { day: 'Sun', value: xpToday },
+  ];
+
+  // Learning categories
+  const learningCategories = [
+    { name: 'Hiragana', jp: 'あ い う え お', lessons: '5 lessons', color: 'border-cat-green bg-cat-green-light', textColor: 'text-cat-green', href: '/script' },
+    { name: 'Katakana', jp: 'カ キ ク ケ コ', lessons: '5 lessons', color: 'border-cat-blue bg-cat-blue-light', textColor: 'text-cat-blue', href: '/script' },
+    { name: 'Kanji', jp: '日 本 語 学', lessons: 'Coming soon', color: 'border-cat-purple bg-cat-purple-light', textColor: 'text-cat-purple', href: '/kanji' },
+    { name: 'Vocabulary', jp: 'こんにちは', lessons: 'Everyday words', color: 'border-cat-orange bg-cat-orange-light', textColor: 'text-cat-orange', href: '/vocabulary' },
+  ];
+
+  // Words in context
+  const contextCards = [
+    { title: 'Greetings', emoji: '👋', jp: 'こんにちは', progress: '1 / 5 lessons', color: 'bg-cat-green-light border-cat-green/20' },
+    { title: 'Everyday Expressions', emoji: '✨', jp: 'ありがとう', progress: '2 / 5 lessons', color: 'bg-cat-blue-light border-cat-blue/20' },
+    { title: 'Personal Pronouns', emoji: '👤', jp: 'わたし', progress: '3 / 5 lessons', color: 'bg-cat-purple-light border-cat-purple/20' },
+    { title: 'Question Words', emoji: '❓', jp: 'なに？', progress: '1 / 5 lessons', color: 'bg-cat-orange-light border-cat-orange/20' },
   ];
 
   if (isLoading) {
@@ -90,11 +106,11 @@ export default function HomePage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 md:space-y-8">
       {/* Greeting */}
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">
-          {greeting}, <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">{userName}</span>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
+          {greeting}, <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">{userName}</span> 👋
         </h1>
-        <p className="text-purple-300/45 text-sm font-medium">
-          Keep pushing forward — consistency is the key to mastery.
+        <p className="text-ink-muted text-sm font-medium">
+          Ready for today&apos;s Japanese? Keep pushing forward!
         </p>
       </motion.div>
 
@@ -104,32 +120,38 @@ export default function HomePage() {
         <Card variant="glass" padding="md" className="flex flex-col items-center gap-2 col-span-2 md:col-span-1">
           <ProgressRing value={dailyProgress} size={90} strokeWidth={7}>
             <div className="flex flex-col items-center">
-              <span className="text-lg font-bold text-white font-orbitron">{xpToday}</span>
-              <span className="text-[8px] text-purple-300/40 font-bold">/ {dailyGoalXp} XP</span>
+              <span className="text-lg font-bold text-ink font-heading">{xpToday}</span>
+              <span className="text-[8px] text-ink-muted font-bold">/ {dailyGoalXp} XP</span>
             </div>
           </ProgressRing>
-          <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">Daily Goal</span>
+          <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Daily Goal</span>
         </Card>
 
         {/* Streak */}
         <Card variant="glass" padding="md" className="flex flex-col items-center justify-center gap-1">
-          <Flame className="w-6 h-6 text-amber-400 fill-amber-500" />
-          <span className="text-2xl font-bold text-white font-orbitron">{streak}</span>
-          <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">Day Streak</span>
+          <div className="w-10 h-10 rounded-xl bg-cat-orange-light flex items-center justify-center">
+            <Flame className="w-5 h-5 text-cat-orange fill-cat-orange" />
+          </div>
+          <span className="text-2xl font-bold text-ink font-heading">{streak}</span>
+          <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Day Streak</span>
         </Card>
 
         {/* Level */}
         <Card variant="glass" padding="md" className="flex flex-col items-center justify-center gap-1">
-          <TrendingUp className="w-6 h-6 text-brand-light" />
-          <span className="text-2xl font-bold text-white font-orbitron">Lv.{level}</span>
-          <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">{xpTotal} Total XP</span>
+          <div className="w-10 h-10 rounded-xl bg-cat-purple-light flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-cat-purple" />
+          </div>
+          <span className="text-2xl font-bold text-ink font-heading">Lv.{level}</span>
+          <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">{xpTotal} Total XP</span>
         </Card>
 
         {/* JLPT Target */}
         <Card variant="glass" padding="md" className="flex flex-col items-center justify-center gap-1">
-          <Target className="w-6 h-6 text-neon-pink" />
-          <span className="text-2xl font-bold text-white font-orbitron">{jlptTarget}</span>
-          <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">JLPT Goal</span>
+          <div className="w-10 h-10 rounded-xl bg-cat-pink-light flex items-center justify-center">
+            <Target className="w-5 h-5 text-cat-pink" />
+          </div>
+          <span className="text-2xl font-bold text-ink font-heading">{jlptTarget}</span>
+          <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">JLPT Goal</span>
         </Card>
       </motion.div>
 
@@ -137,32 +159,64 @@ export default function HomePage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column */}
         <div className="lg:col-span-8 space-y-6">
-          {/* Continue Learning */}
+          {/* Daily Progress Card */}
           <motion.div variants={item}>
-            <Card variant="gradient" padding="lg" className="relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-neon-pink/10 rounded-full blur-3xl pointer-events-none" />
+            <Card variant="gradient" padding="lg" className="relative overflow-hidden group bg-gradient-to-br from-brand/5 to-accent/5">
               <div className="space-y-4 relative z-10">
-                <Badge variant="pink" size="sm" icon={<Play className="w-3 h-3" />}>Continue Learning</Badge>
-                <div>
-                  <h3 className="text-lg font-bold text-white">
-                    {jlptTarget} — Lesson {lessonsDone + 1}
-                  </h3>
-                  <p className="text-sm text-purple-200/50 mt-1">Pick up where you left off</p>
+                <div className="flex items-center justify-between">
+                  <Badge variant="purple" size="sm" icon={<Target className="w-3 h-3" />}>Today&apos;s Goal 🎯</Badge>
+                  <span className="text-sm font-bold text-brand">{xpToday} / {dailyGoalXp} XP</span>
                 </div>
-                <ProgressBar value={Math.min(100, lessonsDone * 10)} label="Course Progress" showLabel />
-                <button
-                  onClick={() => requireAuth(() => router.push('/jlpt'), 'Continue Learning')}
-                  className="btn btn-primary btn-sm mt-2 cursor-pointer"
-                >
-                  Continue <ChevronRight className="w-4 h-4" />
-                </button>
+                <ProgressBar value={dailyProgress} size="lg" color="gradient" />
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-ink-muted">{dailyGoalXp - xpToday > 0 ? `${dailyGoalXp - xpToday} XP to go` : '🎉 Goal reached!'}</p>
+                  <button
+                    onClick={() => requireAuth(() => router.push('/jlpt'), 'Continue Learning')}
+                    className="btn btn-primary btn-sm cursor-pointer"
+                  >
+                    Continue Learning <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </Card>
           </motion.div>
 
+          {/* Learning Categories — Colourful Cards */}
+          <motion.div variants={item} className="space-y-3">
+            <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider">Learn Japanese</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {learningCategories.map((cat) => (
+                <Link key={cat.name} href={cat.href}>
+                  <Card variant="category" padding="md" color={cat.color} className={`cursor-pointer hover:shadow-lg transition-all hover:scale-[1.02] border-2 ${cat.color}`}>
+                    <p className={`text-xs font-bold ${cat.textColor} mb-1`}>{cat.name}</p>
+                    <p className="text-xl font-bold text-ink font-jp leading-tight">{cat.jp}</p>
+                    <p className="text-[11px] text-ink-muted mt-2">{cat.lessons}</p>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Words in Context */}
+          <motion.div variants={item} className="space-y-3">
+            <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider">Learn words in context</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {contextCards.map((card) => (
+                <Card key={card.title} variant="glass" padding="md" className={`cursor-pointer hover:shadow-lg transition-all ${card.color} border`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xl">{card.emoji}</span>
+                    <span className="text-xs font-bold text-ink">{card.title}</span>
+                  </div>
+                  <p className="text-lg font-bold text-ink font-jp">{card.jp}</p>
+                  <p className="text-[11px] text-ink-muted mt-1">{card.progress}</p>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
+
           {/* Quick Actions */}
           <motion.div variants={item} className="space-y-3">
-            <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Quick Actions</h3>
+            <h3 className="text-sm font-extrabold text-ink uppercase tracking-wider">Quick Actions</h3>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {quickActions.map((action) => {
                 const isBrowsingAllowed = action.href === '/vocabulary' || action.href === '/grammar';
@@ -181,7 +235,7 @@ export default function HomePage() {
                       <div className={`p-2.5 rounded-xl ${action.color}`}>
                         <action.icon className="w-5 h-5" />
                       </div>
-                      <span className="text-[11px] font-bold text-white">{action.name}</span>
+                      <span className="text-[11px] font-bold text-ink">{action.name}</span>
                     </Card>
                   </div>
                 );
@@ -199,23 +253,38 @@ export default function HomePage() {
 
         {/* Right Column */}
         <div className="lg:col-span-4 space-y-6">
+          {/* Streak Card */}
+          <motion.div variants={item}>
+            <Card variant="glass" padding="md" className="bg-gradient-to-br from-cat-orange-light to-cat-yellow-light border-cat-orange/20">
+              <div className="flex items-center gap-4">
+                <div className="text-4xl">🔥</div>
+                <div>
+                  <p className="text-2xl font-bold text-ink font-heading">{streak} Day Streak</p>
+                  <p className="text-xs text-ink-muted font-medium">Keep it going!</p>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
+
           {/* Learning Stats */}
           <motion.div variants={item}>
             <Card variant="glass" padding="md" className="space-y-4">
-              <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Statistics</h3>
+              <h3 className="text-xs font-extrabold text-ink-muted uppercase tracking-wider">Statistics</h3>
               <div className="space-y-3">
                 {[
-                  { label: 'Lessons Done', value: lessonsDone, icon: BookOpen, color: 'text-brand-light' },
-                  { label: 'Words Learned', value: wordsLearned, icon: BookOpen, color: 'text-pink-400' },
-                  { label: 'Kanji Learned', value: kanjiLearned, icon: PenTool, color: 'text-amber-400' },
-                  { label: 'Reviews Done', value: profile?.reviews_done ?? 0, icon: Brain, color: 'text-emerald-400' },
+                  { label: 'Lessons Done', value: lessonsDone, icon: BookOpen, color: 'text-cat-purple', bg: 'bg-cat-purple-light' },
+                  { label: 'Words Learned', value: wordsLearned, icon: BookOpen, color: 'text-cat-pink', bg: 'bg-cat-pink-light' },
+                  { label: 'Kanji Learned', value: kanjiLearned, icon: PenTool, color: 'text-cat-orange', bg: 'bg-cat-orange-light' },
+                  { label: 'Reviews Done', value: profile?.reviews_done ?? 0, icon: Brain, color: 'text-cat-green', bg: 'bg-cat-green-light' },
                 ].map((stat) => (
-                  <div key={stat.label} className="flex items-center justify-between py-2 border-b border-white/[0.03] last:border-0">
+                  <div key={stat.label} className="flex items-center justify-between py-2 border-b border-edge last:border-0">
                     <div className="flex items-center gap-2.5">
-                      <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                      <span className="text-xs text-purple-200/60 font-medium">{stat.label}</span>
+                      <div className={`p-1.5 rounded-lg ${stat.bg}`}>
+                        <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
+                      </div>
+                      <span className="text-xs text-ink-secondary font-medium">{stat.label}</span>
                     </div>
-                    <span className="text-sm font-bold text-white font-orbitron">{stat.value}</span>
+                    <span className="text-sm font-bold text-ink font-heading">{stat.value}</span>
                   </div>
                 ))}
               </div>
@@ -225,20 +294,20 @@ export default function HomePage() {
           {/* AI Tutor Card */}
           <motion.div variants={item}>
             <div onClick={() => requireAuth(() => router.push('/ai-tutor'), 'Sakura AI Tutor')}>
-              <Card variant="neon" padding="md" className="space-y-3 cursor-pointer group">
+              <Card variant="neon" padding="md" className="space-y-3 cursor-pointer group bg-gradient-to-br from-brand/5 to-accent/5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-xl bg-neon-pink/15 group-hover:bg-neon-pink/25 transition-colors">
-                    <Sparkles className="w-5 h-5 text-neon-pink" />
+                  <div className="p-2.5 rounded-xl bg-sakura-light group-hover:bg-sakura/30 transition-colors">
+                    <Sparkles className="w-5 h-5 text-sakura-dark" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-white">Sakura AI Tutor</h4>
-                    <p className="text-[10px] text-purple-300/40">Ask anything about Japanese</p>
+                    <h4 className="text-sm font-bold text-ink">Sakura AI Tutor</h4>
+                    <p className="text-[10px] text-ink-muted">Ask anything about Japanese</p>
                   </div>
                 </div>
-                <p className="text-xs text-purple-200/40 leading-relaxed">
+                <p className="text-xs text-ink-muted leading-relaxed">
                   Get instant help with grammar, vocabulary, pronunciation, and conversation practice.
                 </p>
-                <div className="flex items-center gap-1 text-xs font-semibold text-neon-pink">
+                <div className="flex items-center gap-1 text-xs font-semibold text-brand">
                   <span>Start chatting</span>
                   <ChevronRight className="w-3 h-3" />
                 </div>
@@ -251,8 +320,8 @@ export default function HomePage() {
             <div onClick={() => requireAuth(() => router.push('/achievements'), 'Achievements')}>
               <Card variant="glass" padding="md" className="space-y-3 cursor-pointer">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[10px] font-extrabold text-purple-300/30 uppercase tracking-[0.2em]">Achievements</h3>
-                  <ChevronRight className="w-3.5 h-3.5 text-purple-300/30" />
+                  <h3 className="text-xs font-extrabold text-ink-muted uppercase tracking-wider">Achievements</h3>
+                  <ChevronRight className="w-3.5 h-3.5 text-ink-light" />
                 </div>
                 <div className="flex gap-2">
                   {['fire-starter', 'rising-star', 'streak-7', 'bookworm', 'sharpshooter'].map((badgeType) => (
@@ -267,12 +336,12 @@ export default function HomePage() {
           {!profile?.isPremium && (
             <motion.div variants={item}>
               <Link href="/billing">
-                <Card variant="glass" padding="md" className="cursor-pointer bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 border-neon-purple/20 space-y-2">
+                <Card variant="glass" padding="md" className="cursor-pointer bg-gradient-to-br from-brand/5 to-accent/5 border-brand/15 space-y-2">
                   <div className="flex items-center gap-2">
-                    <Award className="w-5 h-5 text-amber-400" />
-                    <span className="text-sm font-bold text-white">Upgrade to Pro</span>
+                    <Award className="w-5 h-5 text-cat-orange" />
+                    <span className="text-sm font-bold text-ink">Upgrade to Pro</span>
                   </div>
-                  <p className="text-xs text-purple-300/40">Unlock unlimited lessons, AI chats, and more</p>
+                  <p className="text-xs text-ink-muted">Unlock unlimited lessons, AI chats, and more</p>
                 </Card>
               </Link>
             </motion.div>

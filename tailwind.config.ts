@@ -13,40 +13,79 @@ const config: Config = {
         brand: {
           DEFAULT: '#6D3CFF',
           dark: '#5A2AE6',
-          light: '#8B5CFF',
-          muted: '#A87BFF',
+          light: '#A87BFF',
+          muted: '#C4A0FF',
         },
         sakura: {
-          DEFAULT: '#ffb7c5',
-          dark: '#f472b6',
-          light: '#ffe4e1',
+          DEFAULT: '#FFB7C5',
+          dark: '#F472B6',
+          light: '#FFE4E1',
         },
         accent: {
-          DEFAULT: '#C15BFF',
-          light: '#FF6BD6',
+          DEFAULT: '#FF6B9D',
+          light: '#FF9CBB',
           magenta: '#FF6BD6',
         },
+        // Light theme backgrounds
+        warm: {
+          DEFAULT: '#FAF8F3',
+          cream: '#F5F1EA',
+          soft: '#F0ECE3',
+          white: '#FFFFFF',
+        },
+        // Text
+        ink: {
+          DEFAULT: '#1A1A2E',
+          secondary: '#4A4A68',
+          muted: '#8E8EA0',
+          light: '#B5B5C3',
+        },
+        // Borders
+        edge: {
+          DEFAULT: '#E8E4DD',
+          hover: '#D8D4CC',
+          focus: '#C4A0FF',
+        },
+        // Learning categories
+        cat: {
+          green: '#34C759',
+          'green-light': '#E8FAE8',
+          blue: '#007AFF',
+          'blue-light': '#E3F0FF',
+          teal: '#00C7BE',
+          'teal-light': '#E0FAF8',
+          orange: '#FF9500',
+          'orange-light': '#FFF3E0',
+          purple: '#AF52DE',
+          'purple-light': '#F3E8FF',
+          pink: '#FF2D55',
+          'pink-light': '#FFE4EA',
+          yellow: '#FFCC00',
+          'yellow-light': '#FFF8DC',
+        },
+        // Legacy compat — map neon-* tokens to new palette
         neon: {
           purple: '#6D3CFF',
-          pink: '#C15BFF',
-          magenta: '#FF6BD6',
+          pink: '#AF52DE',
+          magenta: '#FF6B9D',
         },
         bg: {
-          DEFAULT: '#09070F',
-          surface: '#12101D',
-          elevated: '#1A1033',
-          card: 'rgba(18, 16, 29, 0.85)',
+          DEFAULT: '#FAF8F3',
+          surface: '#FFFFFF',
+          elevated: '#F5F1EA',
+          card: '#FFFFFF',
         },
         surface: {
-          DEFAULT: '#12101D',
-          light: '#1A1033',
-          lighter: '#221640',
+          DEFAULT: '#FFFFFF',
+          light: '#F5F1EA',
+          lighter: '#F0ECE3',
         },
       },
       fontFamily: {
         sans: ['var(--font-sans)', 'Inter', 'system-ui', 'sans-serif'],
         jp: ['var(--font-jp)', 'Noto Sans JP', 'sans-serif'],
-        orbitron: ['var(--font-orbitron)', 'Orbitron', 'monospace'],
+        heading: ['var(--font-heading)', 'Outfit', 'Inter', 'system-ui', 'sans-serif'],
+        orbitron: ['var(--font-heading)', 'Outfit', 'Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         'card': '20px',
@@ -63,7 +102,7 @@ const config: Config = {
         'shimmer': 'shimmer 1.8s ease-in-out infinite',
         'petal-fall': 'petal-fall 12s linear infinite',
         'float': 'float 6s ease-in-out infinite',
-        'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+        'pulse-glow': 'glow-pulse 3s ease-in-out infinite',
         'scale-in': 'scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
         'slide-up': 'slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         'slide-down': 'slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -72,6 +111,9 @@ const config: Config = {
         'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
         'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
         'spin-slow': 'spin 3s linear infinite',
+        'card-pop': 'card-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'check-bounce': 'check-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        'pulse-soft': 'pulse-soft 3s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
@@ -80,17 +122,13 @@ const config: Config = {
         },
         'petal-fall': {
           '0%': { transform: 'translateY(-5vh) translateX(0px) rotate(0deg)', opacity: '0' },
-          '10%': { opacity: '0.7' },
-          '90%': { opacity: '0.7' },
+          '10%': { opacity: '0.5' },
+          '90%': { opacity: '0.5' },
           '100%': { transform: 'translateY(105vh) translateX(100px) rotate(360deg)', opacity: '0' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-10px)' },
-        },
-        'pulse-glow': {
-          '0%, 100%': { opacity: '0.25', filter: 'blur(16px)' },
-          '50%': { opacity: '0.5', filter: 'blur(24px)' },
         },
         'scale-in': {
           '0%': { transform: 'scale(0.9)', opacity: '0' },
@@ -115,12 +153,26 @@ const config: Config = {
           '40%, 60%': { transform: 'translateX(4px)' },
         },
         'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 5px rgba(109, 60, 255, 0.2)' },
-          '50%': { boxShadow: '0 0 20px rgba(109, 60, 255, 0.5), 0 0 40px rgba(193, 91, 255, 0.2)' },
+          '0%, 100%': { boxShadow: '0 0 5px rgba(109, 60, 255, 0.1)' },
+          '50%': { boxShadow: '0 0 15px rgba(109, 60, 255, 0.2)' },
         },
         'bounce-subtle': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' },
+        },
+        'card-pop': {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '70%': { transform: 'scale(1.02)' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'check-bounce': {
+          '0%': { transform: 'scale(0)' },
+          '50%': { transform: 'scale(1.2)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        'pulse-soft': {
+          '0%, 100%': { opacity: '0.6' },
+          '50%': { opacity: '1' },
         },
       },
     },

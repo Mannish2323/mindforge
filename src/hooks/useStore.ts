@@ -336,6 +336,9 @@ export function useStore() {
     };
 
     hydrateFromSupabase();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // `save` and `state` are intentionally omitted: including them would cause an
+  // infinite re-hydration loop (save → setState → state changes → effect re-runs).
   }, [user]);
 
   const save = (newState: typeof state) => {

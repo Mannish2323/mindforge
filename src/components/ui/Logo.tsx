@@ -16,9 +16,9 @@ export function Logo({ size = 'md', glow = true, className, ...props }: LogoProp
       style={{ width: dimensions, height: dimensions }}
       {...props}
     >
-      {/* Background radial aura glow */}
+      {/* Subtle warm shadow */}
       {glow && (
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-full blur-[14px] pointer-events-none animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand/15 to-sakura/20 rounded-full blur-[12px] pointer-events-none animate-pulse-soft" />
       )}
       
       <Image

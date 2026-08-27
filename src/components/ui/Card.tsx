@@ -4,7 +4,7 @@ import React from 'react';
 import { cn } from '@/utils';
 import { motion } from 'framer-motion';
 
-type CardVariant = 'glass' | 'solid' | 'gradient' | 'stat' | 'neon';
+type CardVariant = 'glass' | 'solid' | 'gradient' | 'stat' | 'neon' | 'category';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: CardVariant;
@@ -12,6 +12,7 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   active?: boolean;
   padding?: 'sm' | 'md' | 'lg' | 'none';
   animate?: boolean;
+  color?: string;
 }
 
 export function Card({
@@ -20,6 +21,7 @@ export function Card({
   active = false,
   padding = 'md',
   animate = false,
+  color,
   className,
   children,
   ...props
@@ -32,18 +34,19 @@ export function Card({
   };
 
   const variants: Record<CardVariant, string> = {
-    glass: 'glass-card',
-    solid: 'bg-surface border border-white/[0.06]',
-    gradient: 'bg-gradient-to-br from-neon-purple/10 to-neon-pink/10 border border-neon-purple/20',
-    stat: 'glass-card border-neon-purple/15',
-    neon: 'glass-card neon-border',
+    glass: 'bg-white border border-edge shadow-[0_2px_12px_rgba(0,0,0,0.06)]',
+    solid: 'bg-warm-cream border border-edge',
+    gradient: 'bg-gradient-to-br from-brand/5 to-cat-purple/5 border border-brand/15',
+    stat: 'bg-white border border-edge shadow-[0_2px_12px_rgba(0,0,0,0.06)]',
+    neon: 'bg-white border-2 border-brand/20 shadow-[0_4px_16px_rgba(109,60,255,0.1)]',
+    category: cn('bg-white border-2 shadow-[0_2px_12px_rgba(0,0,0,0.06)]', color || 'border-edge'),
   };
 
   const baseClasses = cn(
     'rounded-card-lg relative overflow-hidden',
     variants[variant],
-    hover && 'glass-card-hover',
-    active && 'glass-card-active',
+    hover && 'card-hover',
+    active && 'card-active',
     paddings[padding],
     className
   );

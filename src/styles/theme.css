@@ -1,44 +1,60 @@
 /* src/styles/theme.css */
 :root {
-  /* Color palette */
-  --color-brand: #7c3aed;
-  --color-brand-dark: #6d28d9;
-  --color-brand-light: #a78bfa;
+  /* Color palette — Warm Educational Light Theme */
+  --color-brand: #6D3CFF;
+  --color-brand-dark: #5A2AE6;
+  --color-brand-light: #A87BFF;
 
-  --color-sakura: #ffb7c5;
-  --color-sakura-dark: #f472b6;
-  --color-sakura-light: #ffe4e1;
+  --color-sakura: #FFB7C5;
+  --color-sakura-dark: #F472B6;
+  --color-sakura-light: #FFE4E1;
 
-  --color-accent: #db2777;
-  --color-accent-light: #f472b6;
+  --color-accent: #FF6B9D;
+  --color-accent-light: #FF9CBB;
 
-  --color-bg: #09070F; /* main dark background */
-  --color-bg-alt: #12101D;
-  --color-bg-deep: #130930;
-  --color-bg-card: rgba(18, 16, 29, 0.85); /* glass card backdrop */
+  /* Backgrounds */
+  --color-bg: #FAF8F3;
+  --color-bg-alt: #F5F1EA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-deep: #F0ECE3;
+
+  /* Text */
+  --color-text: #1A1A2E;
+  --color-text-secondary: #4A4A68;
+  --color-text-muted: #8E8EA0;
 
   /* Spacing */
-  --spacing-xs: 4px;   /* p-4 */
-  --spacing-sm: 6px;   /* p-6 */
-  --spacing-md: 8px;   /* p-8 */
+  --spacing-xs: 4px;
+  --spacing-sm: 6px;
+  --spacing-md: 8px;
 
   /* Border radius */
-  --radius-sm: 16px;
-  --radius-md: 20px;
-  --radius-lg: 24px;
-  --radius-xl: 28px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
 
   /* Shadows */
-  --shadow-soft: 0 4px 30px rgba(0,0,0,0.12);
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-strong: 0 12px 32px rgba(0, 0, 0, 0.08);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, var(--color-sakura), var(--color-accent));
-}
+  --gradient-primary: linear-gradient(135deg, #6D3CFF, #AF52DE);
+  --gradient-sakura: linear-gradient(135deg, #FFB7C5, #FF6B9D);
+  --gradient-warm: linear-gradient(135deg, #FF9500, #FF6B9D);
 
-/* Dark mode overrides */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* keep same palette for dark mode */
-  }
-}
+  /* Learning category colours */
+  --color-hiragana: #34C759;
+  --color-katakana: #007AFF;
+  --color-kanji: #AF52DE;
+  --color-vocabulary: #FF9500;
+  --color-grammar: #00C7BE;
+  --color-listening: #5856D6;
+  --color-speaking: #FF2D55;
+  --color-reading: #FF9500;
 
+  /* Borders */
+  --color-border: #E8E4DD;
+  --color-border-hover: #D8D4CC;
+}

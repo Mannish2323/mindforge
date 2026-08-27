@@ -10,21 +10,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, BookOpen, Briefcase, Plane, Heart,
   ArrowRight, ArrowLeft, Check, Bell, BellOff,
-  Clock, Zap, Target, Flame
+  Clock, Zap, Target, Flame, Gamepad2, Music,
+  Utensils, MessageCircle, Landmark, Globe
 } from 'lucide-react';
 
-type Step = 'welcome' | 'goal' | 'jlpt' | 'time' | 'daily' | 'notify' | 'complete';
-const STEPS: Step[] = ['welcome', 'goal', 'jlpt', 'time', 'daily', 'notify', 'complete'];
+type Step = 'welcome' | 'slides' | 'goal' | 'level' | 'time' | 'interests' | 'complete';
+const STEPS: Step[] = ['welcome', 'slides', 'goal', 'level', 'time', 'interests', 'complete'];
 
 export default function OnboardingPage() {
   const { profile, updateSettings, signUpStep3 } = useAuth();
   const router = useRouter();
   const [step, setStep] = useState<Step>('welcome');
-  const [goal, setGoal] = useState('');
-  const [jlpt, setJlpt] = useState('N5');
-  const [studyTime, setStudyTime] = useState(15);
-  const [dailyGoal, setDailyGoal] = useState<'casual' | 'regular' | 'intense' | 'insane'>('regular');
-  const [notifyEnabled, setNotifyEnabled] = useState(true);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [goals, setGoals] = useState<string[]>([]);
+  const [level, setLevel] = useState('beginner');
+  const [studyTime, setStudyTime] = useState(10);
+  const [interests, setInterests] = useState<string[]>([]);
 
   const currentIndex = STEPS.indexOf(step);
   const progress = ((currentIndex) / (STEPS.length - 1)) * 100;
@@ -40,11 +41,10 @@ export default function OnboardingPage() {
 
   const handleFinish = async () => {
     try {
-      const goalXp = dailyGoal === 'casual' ? 10 : dailyGoal === 'regular' ? 25 : dailyGoal === 'intense' ? 50 : 100;
       await updateSettings({
-        jlpt_target: jlpt,
+        jlpt_target: level === 'beginner' ? 'N5' : level === 'elementary' ? 'N4' : level === 'intermediate' ? 'N3' : 'N2',
         goal_minutes: studyTime,
-        notifications: notifyEnabled,
+        notifications: true,
       });
       await signUpStep3(studyTime);
     } catch (e) {
@@ -67,52 +67,154 @@ export default function OnboardingPage() {
     exit: { x: -60, opacity: 0 },
   };
 
-  const goals = [
-    { id: 'jlpt', icon: BookOpen, label: 'Pass JLPT Exam', desc: 'N5 to N1 preparation' },
-    { id: 'travel', icon: Plane, label: 'Travel to Japan', desc: 'Conversational Japanese' },
-    { id: 'career', icon: Briefcase, label: 'Career Growth', desc: 'Business Japanese' },
-    { id: 'hobby', icon: Heart, label: 'Personal Interest', desc: 'Learn at my pace' },
+  const toggleGoal = (id: string) => {
+    setGoals(prev => prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]);
+  };
+
+  const toggleInterest = (id: string) => {
+    setInterests(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  };
+
+  const goalOptions = [
+    { id: 'travel', emoji: '🇯🇵', label: 'Travel', desc: 'Navigate Japan with confidence' },
+    { id: 'career', emoji: '💼', label: 'Career', desc: 'Business Japanese skills' },
+    { id: 'anime', emoji: '🎌', label: 'Anime & Manga', desc: 'Understand without subtitles' },
+    { id: 'conversation', emoji: '🗣️', label: 'Conversation', desc: 'Talk with native speakers' },
+    { id: 'study', emoji: '📚', label: 'Study', desc: 'Academic Japanese' },
+    { id: 'personal', emoji: '❤️', label: 'Personal Interest', desc: 'Learn at my own pace' },
   ];
 
-  const jlptLevels = [
-    { id: 'N5', label: 'N5', desc: 'Beginner — Hiragana, basic vocabulary' },
-    { id: 'N4', label: 'N4', desc: 'Elementary — Basic grammar, 300+ kanji' },
-    { id: 'N3', label: 'N3', desc: 'Intermediate — Everyday conversations' },
-    { id: 'N2', label: 'N2', desc: 'Advanced — Complex texts, business' },
-    { id: 'N1', label: 'N1', desc: 'Expert — Near-native fluency' },
+  const levelOptions = [
+    { id: 'beginner', label: 'Complete Beginner', desc: "I'm starting from zero", jp: '初心者', jplabel: 'Shoshinsha' },
+    { id: 'elementary', label: 'Beginner', desc: 'I know a few words', jp: '初級', jplabel: 'Shokyū' },
+    { id: 'intermediate', label: 'Intermediate', desc: 'I can understand basic Japanese', jp: '中級', jplabel: 'Chūkyū' },
+    { id: 'advanced', label: 'Advanced', desc: 'I want to sharpen my skills', jp: '上級', jplabel: 'Jōkyū' },
   ];
 
-  const times = [
-    { min: 5, label: '5 min', desc: 'Quick review' },
-    { min: 10, label: '10 min', desc: 'Light study' },
-    { min: 15, label: '15 min', desc: 'Balanced' },
-    { min: 20, label: '20 min', desc: 'Focused' },
-    { min: 30, label: '30 min', desc: 'Intensive' },
+  const timeOptions = [
+    { min: 5, label: '5 min', desc: 'Quick & easy', emoji: '⚡' },
+    { min: 10, label: '10 min', desc: 'Recommended', emoji: '🎯', recommended: true },
+    { min: 15, label: '15 min', desc: 'Steady progress', emoji: '📈' },
+    { min: 30, label: '30 min', desc: 'Serious learner', emoji: '🔥' },
   ];
 
-  const dailyGoals = [
-    { id: 'casual' as const, icon: Sparkles, label: 'Casual', xp: '10 XP/day', desc: 'A few minutes daily' },
-    { id: 'regular' as const, icon: Target, label: 'Regular', xp: '25 XP/day', desc: 'Steady progress' },
-    { id: 'intense' as const, icon: Flame, label: 'Intense', xp: '50 XP/day', desc: 'Fast learner' },
-    { id: 'insane' as const, icon: Zap, label: 'Insane', xp: '100 XP/day', desc: 'Serious dedication' },
+  const interestOptions = [
+    { id: 'food', emoji: '🍜', label: 'Food' },
+    { id: 'anime', emoji: '🎬', label: 'Anime' },
+    { id: 'music', emoji: '🎵', label: 'Music' },
+    { id: 'travel', emoji: '✈️', label: 'Travel' },
+    { id: 'culture', emoji: '🏯', label: 'Culture' },
+    { id: 'games', emoji: '🎮', label: 'Games' },
+    { id: 'business', emoji: '💼', label: 'Business' },
+    { id: 'conversation', emoji: '💬', label: 'Conversation' },
+  ];
+
+  const slides = [
+    {
+      title: 'Learn Japanese naturally',
+      desc: 'Learn Hiragana, Katakana, Kanji and vocabulary through short interactive lessons.',
+      visual: (
+        <div className="flex gap-3 justify-center flex-wrap">
+          {['あ', 'カ', '日', '語'].map((char, i) => (
+            <motion.div
+              key={char}
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ delay: i * 0.15, type: 'spring' }}
+              className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-lg ${
+                ['bg-cat-green', 'bg-cat-blue', 'bg-cat-purple', 'bg-cat-orange'][i]
+              }`}
+            >
+              <span className="font-jp">{char}</span>
+            </motion.div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: 'Learn words in context',
+      desc: 'Master greetings, everyday expressions, and essential vocabulary with colourful flashcards.',
+      visual: (
+        <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+          {[
+            { label: 'Greetings', jp: 'こんにちは', color: 'bg-cat-green-light border-cat-green/20', text: 'text-cat-green' },
+            { label: 'Expressions', jp: 'ありがとう', color: 'bg-cat-blue-light border-cat-blue/20', text: 'text-cat-blue' },
+            { label: 'Pronouns', jp: 'わたし', color: 'bg-cat-purple-light border-cat-purple/20', text: 'text-cat-purple' },
+            { label: 'Questions', jp: 'なに？', color: 'bg-cat-orange-light border-cat-orange/20', text: 'text-cat-orange' },
+          ].map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`p-4 rounded-2xl border ${card.color}`}
+            >
+              <p className={`text-xs font-bold ${card.text}`}>{card.label}</p>
+              <p className="text-lg font-bold text-ink mt-1 font-jp">{card.jp}</p>
+            </motion.div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: 'Build a daily habit',
+      desc: 'Track your streaks, set goals, and watch your progress grow every day.',
+      visual: (
+        <div className="space-y-4 max-w-xs mx-auto">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex items-center gap-3 p-4 bg-cat-orange-light rounded-2xl border border-cat-orange/20"
+          >
+            <span className="text-3xl">🔥</span>
+            <div>
+              <p className="text-lg font-bold text-ink">7 Day Streak</p>
+              <p className="text-xs text-ink-muted">Keep it going!</p>
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="p-4 bg-white rounded-2xl border border-edge"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-bold text-ink">Today&apos;s Goal 🎯</p>
+              <p className="text-sm font-bold text-brand">7 / 10 min</p>
+            </div>
+            <div className="w-full h-3 bg-warm-soft rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: '70%' }}
+                transition={{ delay: 0.3, duration: 0.8 }}
+                className="h-full rounded-full bg-gradient-to-r from-brand to-accent"
+              />
+            </div>
+          </motion.div>
+        </div>
+      ),
+    },
   ];
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-[#0B0717] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-warm text-ink flex flex-col items-center justify-center p-6 relative overflow-hidden">
       <SakuraParticles />
-      <div className="absolute w-[40vw] h-[40vw] rounded-full bg-neon-purple/8 blur-[100px] pointer-events-none top-1/4 left-1/4 animate-pulse-glow" />
+
+      {/* Subtle decorative circles */}
+      <div className="absolute w-[40vw] h-[40vw] rounded-full bg-sakura-light/30 blur-[100px] pointer-events-none top-[-10%] right-[-10%]" />
+      <div className="absolute w-[30vw] h-[30vw] rounded-full bg-cat-purple-light/40 blur-[80px] pointer-events-none bottom-[-5%] left-[-5%]" />
 
       <div className="w-full max-w-lg z-10 space-y-8">
         {/* Progress bar */}
-        {step !== 'complete' && (
+        {step !== 'complete' && step !== 'welcome' && (
           <div className="space-y-3">
-            <div className="flex items-center justify-between text-xs font-semibold text-purple-300/40">
-              <span>Step {currentIndex + 1} of {STEPS.length - 1}</span>
+            <div className="flex items-center justify-between text-xs font-semibold text-ink-muted">
+              <span>Step {currentIndex} of {STEPS.length - 2}</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <div className="w-full h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+            <div className="w-full h-2 rounded-full bg-warm-soft overflow-hidden">
               <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-neon-purple to-neon-pink"
+                className="h-full rounded-full bg-gradient-to-r from-brand to-accent"
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.4 }}
               />
@@ -128,136 +230,233 @@ export default function OnboardingPage() {
                 <Logo size={80} glow={true} className="mx-auto" />
               </motion.div>
               <div className="space-y-3">
-                <h1 className="text-3xl font-extrabold">Welcome to <span className="bg-gradient-to-r from-neon-purple to-neon-pink bg-clip-text text-transparent">MindForge</span></h1>
-                <p className="text-purple-200/50 text-sm leading-relaxed max-w-sm mx-auto">
-                  Let&apos;s personalize your Japanese learning experience. This takes about 30 seconds.
+                <h1 className="text-3xl font-extrabold font-heading text-ink">
+                  Learn Japanese without the boring memorization.
+                </h1>
+                <p className="text-ink-muted text-sm leading-relaxed max-w-sm mx-auto">
+                  Build a daily habit, learn words in context, and actually use what you learn.
                 </p>
               </div>
-              <Button onClick={next} className="w-full btn btn-neon" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                Let&apos;s Get Started
-              </Button>
+              <div className="space-y-3">
+                <Button onClick={next} className="w-full" rightIcon={<ArrowRight className="w-4 h-4" />}>
+                  Start Learning
+                </Button>
+                <button
+                  onClick={() => router.push('/auth')}
+                  className="text-sm font-semibold text-ink-muted hover:text-brand transition-colors cursor-pointer"
+                >
+                  I already have an account
+                </button>
+              </div>
             </motion.div>
           )}
 
-          {/* Step: Goal */}
+          {/* Step: Onboarding Slides */}
+          {step === 'slides' && (
+            <motion.div key="slides" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={slideIndex}
+                  initial={{ opacity: 0, x: 30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -30 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="text-center space-y-2">
+                    <h2 className="text-2xl font-bold font-heading text-ink">{slides[slideIndex].title}</h2>
+                    <p className="text-sm text-ink-muted max-w-sm mx-auto">{slides[slideIndex].desc}</p>
+                  </div>
+                  {slides[slideIndex].visual}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2">
+                {slides.map((_, i) => (
+                  <div key={i} className={`w-2.5 h-2.5 rounded-full transition-all ${i === slideIndex ? 'bg-brand w-6' : 'bg-warm-soft'}`} />
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <button onClick={slideIndex > 0 ? () => setSlideIndex(slideIndex - 1) : prev} className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors cursor-pointer">
+                  <ArrowLeft className="w-4 h-4" />Back
+                </button>
+                <Button
+                  onClick={slideIndex < slides.length - 1 ? () => setSlideIndex(slideIndex + 1) : next}
+                  className="flex-1"
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  {slideIndex < slides.length - 1 ? 'Next' : "Let's Begin"}
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step: Learning Goals (multi-select) */}
           {step === 'goal' && (
             <motion.div key="goal" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">What&apos;s your goal?</h2>
-                <p className="text-sm text-purple-300/40">Choose what motivates you most</p>
+                <h2 className="text-2xl font-bold font-heading text-ink">What do you want to learn Japanese for?</h2>
+                <p className="text-sm text-ink-muted">Select all that apply</p>
               </div>
-              <div className="grid grid-cols-1 gap-3">
-                {goals.map((g) => (
-                  <button key={g.id} onClick={() => { setGoal(g.id); next(); }}
-                    className={`flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer text-left ${goal === g.id ? 'bg-neon-purple/15 border-neon-purple/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10 hover:bg-white/[0.04]'}`}
-                  >
-                    <div className="p-2.5 rounded-xl bg-neon-purple/10"><g.icon className="w-5 h-5 text-brand-light" /></div>
-                    <div><span className="text-sm font-semibold text-white block">{g.label}</span><span className="text-xs text-purple-300/40">{g.desc}</span></div>
-                  </button>
-                ))}
-              </div>
-              <button onClick={prev} className="flex items-center gap-1 text-xs text-purple-300/40 hover:text-white transition-colors mx-auto cursor-pointer"><ArrowLeft className="w-3 h-3" />Back</button>
-            </motion.div>
-          )}
-
-          {/* Step: JLPT Level */}
-          {step === 'jlpt' && (
-            <motion.div key="jlpt" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">Your JLPT Level</h2>
-                <p className="text-sm text-purple-300/40">Where should we start?</p>
-              </div>
-              <div className="space-y-2">
-                {jlptLevels.map((l) => (
-                  <button key={l.id} onClick={() => { setJlpt(l.id); next(); }}
-                    className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer ${jlpt === l.id ? 'bg-neon-purple/15 border-neon-purple/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10'}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="font-orbitron font-bold text-sm text-brand-light bg-neon-purple/15 px-2.5 py-1 rounded-lg">{l.label}</span>
-                      <span className="text-xs text-purple-200/60">{l.desc}</span>
-                    </div>
-                    {jlpt === l.id && <Check className="w-4 h-4 text-neon-pink" />}
-                  </button>
-                ))}
-              </div>
-              <button onClick={prev} className="flex items-center gap-1 text-xs text-purple-300/40 hover:text-white transition-colors mx-auto cursor-pointer"><ArrowLeft className="w-3 h-3" />Back</button>
-            </motion.div>
-          )}
-
-          {/* Step: Study Time */}
-          {step === 'time' && (
-            <motion.div key="time" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">Daily Study Time</h2>
-                <p className="text-sm text-purple-300/40">How much time can you dedicate?</p>
-              </div>
-              <div className="grid grid-cols-5 gap-2">
-                {times.map((t) => (
-                  <button key={t.min} onClick={() => setStudyTime(t.min)}
-                    className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all cursor-pointer ${studyTime === t.min ? 'bg-neon-purple/15 border-neon-purple/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10'}`}
-                  >
-                    <Clock className={`w-4 h-4 ${studyTime === t.min ? 'text-neon-pink' : 'text-purple-300/40'}`} />
-                    <span className="text-sm font-bold text-white">{t.label}</span>
-                    <span className="text-[9px] text-purple-300/30">{t.desc}</span>
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-3">
+                {goalOptions.map((g) => {
+                  const selected = goals.includes(g.id);
+                  return (
+                    <motion.button
+                      key={g.id}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => toggleGoal(g.id)}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition-all cursor-pointer text-center ${
+                        selected
+                          ? 'bg-brand/5 border-brand shadow-[0_0_0_3px_rgba(109,60,255,0.1)]'
+                          : 'bg-white border-edge hover:border-edge-hover hover:shadow-md'
+                      }`}
+                    >
+                      <span className="text-2xl">{g.emoji}</span>
+                      <div>
+                        <span className="text-sm font-bold text-ink block">{g.label}</span>
+                        <span className="text-[11px] text-ink-muted">{g.desc}</span>
+                      </div>
+                      {selected && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-brand flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  );
+                })}
               </div>
               <div className="flex gap-3">
-                <button onClick={prev} className="flex items-center gap-1 text-xs text-purple-300/40 hover:text-white transition-colors cursor-pointer"><ArrowLeft className="w-3 h-3" />Back</button>
-                <Button onClick={next} className="flex-1 btn btn-primary" rightIcon={<ArrowRight className="w-4 h-4" />}>Continue</Button>
+                <button onClick={prev} className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors cursor-pointer"><ArrowLeft className="w-4 h-4" />Back</button>
+                <Button onClick={next} className="flex-1" rightIcon={<ArrowRight className="w-4 h-4" />} disabled={goals.length === 0}>
+                  Continue
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step: Japanese Level */}
+          {step === 'level' && (
+            <motion.div key="level" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-bold font-heading text-ink">What&apos;s your Japanese level?</h2>
+                <p className="text-sm text-ink-muted">We&apos;ll customize your learning path</p>
+              </div>
+              <div className="space-y-3">
+                {levelOptions.map((l) => {
+                  const selected = level === l.id;
+                  return (
+                    <motion.button
+                      key={l.id}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => { setLevel(l.id); }}
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left ${
+                        selected
+                          ? 'bg-brand/5 border-brand shadow-[0_0_0_3px_rgba(109,60,255,0.1)]'
+                          : 'bg-white border-edge hover:border-edge-hover hover:shadow-md'
+                      }`}
+                    >
+                      <div className={`px-3 py-2 rounded-xl font-jp font-bold text-lg ${selected ? 'bg-brand/10 text-brand' : 'bg-warm-soft text-ink-muted'}`}>
+                        {l.jp}
+                      </div>
+                      <div className="flex-1">
+                        <span className="text-sm font-bold text-ink block">{l.label}</span>
+                        <span className="text-xs text-ink-muted">{l.desc}</span>
+                      </div>
+                      {selected && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-brand flex items-center justify-center flex-shrink-0">
+                          <Check className="w-3 h-3 text-white" />
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+              <div className="flex gap-3">
+                <button onClick={prev} className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors cursor-pointer"><ArrowLeft className="w-4 h-4" />Back</button>
+                <Button onClick={next} className="flex-1" rightIcon={<ArrowRight className="w-4 h-4" />}>Continue</Button>
               </div>
             </motion.div>
           )}
 
           {/* Step: Daily Goal */}
-          {step === 'daily' && (
-            <motion.div key="daily" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
+          {step === 'time' && (
+            <motion.div key="time" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
               <div className="text-center space-y-2">
-                <h2 className="text-2xl font-bold">Daily XP Goal</h2>
-                <p className="text-sm text-purple-300/40">How fast do you want to learn?</p>
+                <h2 className="text-2xl font-bold font-heading text-ink">How much time can you learn each day?</h2>
+                <p className="text-sm text-ink-muted">🎯 Your daily target</p>
               </div>
-              <div className="space-y-2">
-                {dailyGoals.map((d) => (
-                  <button key={d.id} onClick={() => setDailyGoal(d.id)}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer ${dailyGoal === d.id ? 'bg-neon-purple/15 border-neon-purple/30' : 'bg-white/[0.02] border-white/[0.06] hover:border-white/10'}`}
-                  >
-                    <div className="p-2.5 rounded-xl bg-neon-purple/10"><d.icon className={`w-5 h-5 ${dailyGoal === d.id ? 'text-neon-pink' : 'text-brand-light'}`} /></div>
-                    <div className="flex-1 text-left">
-                      <span className="text-sm font-semibold text-white block">{d.label}</span>
-                      <span className="text-xs text-purple-300/40">{d.desc}</span>
-                    </div>
-                    <span className="text-xs font-bold text-brand-light bg-neon-purple/10 px-2 py-1 rounded-lg">{d.xp}</span>
-                  </button>
-                ))}
+              <div className="grid grid-cols-2 gap-3">
+                {timeOptions.map((t) => {
+                  const selected = studyTime === t.min;
+                  return (
+                    <motion.button
+                      key={t.min}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => setStudyTime(t.min)}
+                      className={`flex flex-col items-center gap-2 p-5 rounded-2xl border-2 transition-all cursor-pointer ${
+                        selected
+                          ? 'bg-brand/5 border-brand shadow-[0_0_0_3px_rgba(109,60,255,0.1)]'
+                          : 'bg-white border-edge hover:border-edge-hover hover:shadow-md'
+                      }`}
+                    >
+                      <span className="text-2xl">{t.emoji}</span>
+                      <span className="text-lg font-bold text-ink">{t.label}</span>
+                      <span className="text-xs text-ink-muted">{t.desc}</span>
+                      {t.recommended && !selected && (
+                        <span className="text-[10px] font-bold text-brand bg-brand/10 px-2 py-0.5 rounded-full">Recommended</span>
+                      )}
+                      {selected && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-5 h-5 rounded-full bg-brand flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </motion.div>
+                      )}
+                    </motion.button>
+                  );
+                })}
               </div>
               <div className="flex gap-3">
-                <button onClick={prev} className="flex items-center gap-1 text-xs text-purple-300/40 hover:text-white transition-colors cursor-pointer"><ArrowLeft className="w-3 h-3" />Back</button>
-                <Button onClick={next} className="flex-1 btn btn-primary" rightIcon={<ArrowRight className="w-4 h-4" />}>Continue</Button>
+                <button onClick={prev} className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors cursor-pointer"><ArrowLeft className="w-4 h-4" />Back</button>
+                <Button onClick={next} className="flex-1" rightIcon={<ArrowRight className="w-4 h-4" />}>Continue</Button>
               </div>
             </motion.div>
           )}
 
-          {/* Step: Notifications */}
-          {step === 'notify' && (
-            <motion.div key="notify" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-8 text-center">
-              <div className="space-y-3">
-                <div className="mx-auto w-16 h-16 rounded-2xl bg-neon-purple/10 flex items-center justify-center">
-                  {notifyEnabled ? <Bell className="w-8 h-8 text-neon-pink" /> : <BellOff className="w-8 h-8 text-purple-300/40" />}
-                </div>
-                <h2 className="text-2xl font-bold">Stay on Track</h2>
-                <p className="text-sm text-purple-300/40 max-w-xs mx-auto">
-                  Get daily reminders to maintain your streak and hit your learning goals.
-                </p>
+          {/* Step: Interests */}
+          {step === 'interests' && (
+            <motion.div key="interests" variants={slideVariants} initial="enter" animate="center" exit="exit" transition={{ type: 'spring', stiffness: 200, damping: 25 }} className="space-y-6">
+              <div className="text-center space-y-2">
+                <h2 className="text-2xl font-bold font-heading text-ink">What are you interested in?</h2>
+                <p className="text-sm text-ink-muted">We&apos;ll personalize your content</p>
+              </div>
+              <div className="grid grid-cols-4 gap-3">
+                {interestOptions.map((item) => {
+                  const selected = interests.includes(item.id);
+                  return (
+                    <motion.button
+                      key={item.id}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => toggleInterest(item.id)}
+                      className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                        selected
+                          ? 'bg-brand/5 border-brand'
+                          : 'bg-white border-edge hover:border-edge-hover'
+                      }`}
+                    >
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-[11px] font-bold text-ink">{item.label}</span>
+                    </motion.button>
+                  );
+                })}
               </div>
               <div className="flex gap-3">
-                <Button onClick={() => { setNotifyEnabled(false); setStep('complete'); }} variant="ghost" className="flex-1 btn btn-ghost">
-                  Skip
-                </Button>
-                <Button onClick={() => { setNotifyEnabled(true); setStep('complete'); }} className="flex-1 btn btn-neon" leftIcon={<Bell className="w-4 h-4" />}>
-                  Enable
+                <button onClick={prev} className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors cursor-pointer"><ArrowLeft className="w-4 h-4" />Back</button>
+                <Button onClick={() => setStep('complete')} className="flex-1" rightIcon={<ArrowRight className="w-4 h-4" />}>
+                  Finish Setup
                 </Button>
               </div>
-              <button onClick={prev} className="flex items-center gap-1 text-xs text-purple-300/40 hover:text-white transition-colors mx-auto cursor-pointer"><ArrowLeft className="w-3 h-3" />Back</button>
             </motion.div>
           )}
 
@@ -268,16 +467,18 @@ export default function OnboardingPage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="mx-auto w-20 h-20 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink flex items-center justify-center"
+                className="mx-auto w-20 h-20 rounded-full bg-gradient-to-r from-brand to-accent flex items-center justify-center shadow-lg"
               >
                 <Check className="w-10 h-10 text-white" />
               </motion.div>
-              <h2 className="text-2xl font-bold">You&apos;re All Set!</h2>
-              <p className="text-sm text-purple-300/40">
-                Your personalized learning journey is ready. Let&apos;s begin!
-              </p>
-              <div className="w-32 h-1 rounded-full overflow-hidden bg-white/[0.06] mx-auto">
-                <motion.div className="h-full rounded-full bg-gradient-to-r from-neon-purple to-neon-pink" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 2 }} />
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold font-heading text-ink">You&apos;re All Set! 🎉</h2>
+                <p className="text-sm text-ink-muted">
+                  Your personalized Japanese journey is ready. Let&apos;s begin!
+                </p>
+              </div>
+              <div className="w-32 h-1.5 rounded-full overflow-hidden bg-warm-soft mx-auto">
+                <motion.div className="h-full rounded-full bg-gradient-to-r from-brand to-accent" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 2 }} />
               </div>
             </motion.div>
           )}

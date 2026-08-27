@@ -36,12 +36,12 @@ export function Toggle({
       {(label || description) && (
         <div className="flex-1 min-w-0">
           {label && (
-            <span className="text-sm font-semibold text-white block">
+            <span className="text-sm font-semibold text-ink block">
               {label}
             </span>
           )}
           {description && (
-            <span className="text-xs text-purple-300/50 mt-0.5 block">
+            <span className="text-xs text-ink-muted mt-0.5 block">
               {description}
             </span>
           )}
@@ -60,8 +60,8 @@ export function Toggle({
           className={cn(
             'w-12 h-7 rounded-full transition-all duration-300 border',
             checked
-              ? 'bg-gradient-to-r from-neon-purple to-neon-pink border-neon-purple/40 shadow-[0_0_12px_rgba(109,60,255,0.3)]'
-              : 'bg-white/[0.06] border-white/[0.08] group-hover:border-white/15'
+              ? 'bg-gradient-to-r from-brand to-accent border-brand/30 shadow-[0_0_8px_rgba(109,60,255,0.15)]'
+              : 'bg-warm-soft border-edge group-hover:border-edge-hover'
           )}
         />
         <div

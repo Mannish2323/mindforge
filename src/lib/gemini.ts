@@ -9,7 +9,18 @@ const GEMINI_KEYS = [
   process.env.GEMINI_API_KEY_2,
   process.env.GEMINI_API_KEY_3,
   process.env.GEMINI_API_KEY_4,
+  // Single-key fallback for simpler setups
+  process.env.GEMINI_API_KEY,
 ].filter(Boolean) as string[];
+
+// Warn early at module load if no keys are configured
+if (GEMINI_KEYS.length === 0) {
+  console.error(
+    '[Gemini] ⚠️  CRITICAL: No Gemini API keys found! ' +
+    'Set GEMINI_API_KEY_1 through GEMINI_API_KEY_4 (or GEMINI_API_KEY) in your environment variables. ' +
+    'Sakura AI will not function until keys are configured.'
+  );
+}
 
 const GEMINI_BASE =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';

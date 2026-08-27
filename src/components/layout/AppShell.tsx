@@ -134,12 +134,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Branding */}
       <div className="p-5 pb-3">
         <Link href="/home" className="flex items-center gap-3 group">
-          <Logo size="md" glow={true} className="flex-shrink-0" />
+          <Logo size="md" glow={false} className="flex-shrink-0" />
           <div className="flex flex-col">
-            <span className="font-bold text-base tracking-tight text-white group-hover:text-glow-pink transition-all font-orbitron">
+            <span className="font-bold text-base tracking-tight text-ink group-hover:text-brand transition-all font-heading">
               MindForge
             </span>
-            <span className="text-[9px] text-purple-300/40 font-bold tracking-widest uppercase">
+            <span className="text-[9px] text-ink-muted font-bold tracking-widest uppercase">
               Master Japanese
             </span>
           </div>
@@ -154,8 +154,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             href="/home"
             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-sm ${
               pathname === '/home'
-                ? 'bg-gradient-to-r from-neon-purple/25 to-neon-pink/10 border border-neon-purple/25 text-white shadow-[0_0_15px_rgba(109,60,255,0.15)]'
-                : 'text-purple-300/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
+                ? 'bg-brand/8 border border-brand/15 text-brand shadow-sm'
+                : 'text-ink-secondary hover:text-ink hover:bg-warm-soft border border-transparent'
             }`}
           >
             <Home className="w-[18px] h-[18px] flex-shrink-0" />
@@ -165,7 +165,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {navigationGroups.map((group) => (
           <div key={group.title} className="space-y-0.5">
-            <h3 className="px-4 mb-2 text-[9px] font-extrabold tracking-[0.2em] text-purple-300/30 uppercase">
+            <h3 className="px-4 mb-2 text-[9px] font-extrabold tracking-[0.2em] text-ink-light uppercase">
               {group.title}
             </h3>
             {group.items.map((item) => {
@@ -177,15 +177,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   href={item.href}
                   className={`flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-[13px] font-medium ${
                     isActive
-                      ? 'bg-neon-purple/15 border border-neon-purple/20 text-white font-semibold'
-                      : 'text-purple-300/55 hover:text-white hover:bg-white/[0.03] border border-transparent'
+                      ? 'bg-brand/8 border border-brand/15 text-brand font-semibold'
+                      : 'text-ink-muted hover:text-ink hover:bg-warm-soft border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-neon-pink' : 'text-purple-300/40'}`} />
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-brand' : 'text-ink-light'}`} />
                     <span>{item.name}</span>
                   </div>
-                  {isActive && <ChevronRight className="w-3 h-3 text-neon-pink" />}
+                  {isActive && <ChevronRight className="w-3 h-3 text-brand" />}
                 </Link>
               );
             })}
@@ -194,8 +194,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* User profile card */}
-      <div className="p-3 border-t border-white/[0.04]">
-        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] space-y-3">
+      <div className="p-3 border-t border-edge">
+        <div className="p-3 rounded-xl bg-warm-cream border border-edge space-y-3">
           <div className="flex items-center gap-3">
             <Avatar
               name={userName}
@@ -205,12 +205,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               showLevel
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">{userName}</p>
+              <p className="text-sm font-semibold text-ink truncate">{userName}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="text-[9px] font-bold px-1.5 py-0.5 bg-neon-purple/20 text-brand-light rounded-md">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 bg-brand/10 text-brand rounded-md">
                   {jlptLevel}
                 </span>
-                <span className="text-[9px] text-purple-300/40 font-medium">
+                <span className="text-[9px] text-ink-muted font-medium">
                   Lv.{userLevel}
                 </span>
               </div>
@@ -227,7 +227,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {user ? (
           <button
             onClick={handleLogout}
-            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-rose-400/70 hover:text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer"
+            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-semibold text-red-400 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 transition-all cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             <span>Logout</span>
@@ -235,7 +235,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         ) : (
           <button
             onClick={() => openAuthModal({ title: 'Sign in to continue' })}
-            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-neon-purple to-neon-pink shadow-md hover:shadow-glow-purple transition-all cursor-pointer"
+            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand to-accent shadow-md hover:shadow-lg transition-all cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Sign In / Register</span>
@@ -246,16 +246,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-[#09070F] text-white flex relative overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-warm text-ink flex relative overflow-hidden">
       {/* Sakura Petals Background */}
       <SakuraParticles />
 
-      {/* Background Glows */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-neon-purple/8 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-neon-pink/6 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
-
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-[260px] border-r border-white/[0.04] bg-dark-surface/60 backdrop-blur-xl h-screen sticky top-0 flex-shrink-0 overflow-hidden">
+      <aside className="hidden lg:flex flex-col w-[260px] border-r border-edge bg-white h-screen sticky top-0 flex-shrink-0 overflow-hidden">
         {renderSidebarContent()}
       </aside>
 
@@ -268,7 +264,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm"
               onClick={() => setMobileMenuOpen(false)}
             />
             <motion.aside
@@ -276,10 +272,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative flex flex-col w-[280px] border-r border-white/[0.06] bg-dark-surface h-full shadow-2xl"
+              className="relative flex flex-col w-[280px] border-r border-edge bg-white h-full shadow-2xl"
             >
               <button
-                className="absolute top-4 right-4 p-2 text-purple-300/50 hover:text-white transition-colors z-20 cursor-pointer"
+                className="absolute top-4 right-4 p-2 text-ink-muted hover:text-ink transition-colors z-20 cursor-pointer"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <X className="w-5 h-5" />
@@ -293,12 +289,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen h-[100dvh] overflow-y-auto scrollbar-thin">
         {/* Top Bar */}
-        <header className="sticky top-0 z-40 bg-[#09070F]/90 backdrop-blur-xl border-b border-white/[0.06] px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top">
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-edge px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top">
           <div className="flex items-center gap-3">
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-purple-300/60 hover:text-white transition-all cursor-pointer"
+              className="lg:hidden p-2 rounded-xl bg-warm-soft hover:bg-warm-cream text-ink-muted hover:text-ink transition-all cursor-pointer"
               aria-label="Open menu"
             >
               <Menu className="w-5 h-5" />
@@ -306,31 +302,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             {/* Mobile logo */}
             <Link href="/home" className="lg:hidden flex items-center gap-2">
-              <Logo size="sm" glow={true} />
-              <span className="font-bold text-sm text-white font-orbitron">MindForge</span>
+              <Logo size="sm" glow={false} />
+              <span className="font-bold text-sm text-ink font-heading">MindForge</span>
             </Link>
           </div>
 
           {/* Right side badges */}
           <div className="flex items-center gap-2 md:gap-3">
             {/* Daily Progress (desktop) */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/15 rounded-xl text-xs font-bold text-emerald-400">
+            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-cat-green-light border border-cat-green/15 rounded-xl text-xs font-bold text-cat-green">
               <span>{xpToday}/{dailyGoalXp} XP</span>
             </div>
 
             {/* Streak */}
-            <Badge variant="amber" size="sm" icon={<Flame className="w-3.5 h-3.5 fill-amber-500" />}>
+            <Badge variant="amber" size="sm" icon={<Flame className="w-3.5 h-3.5 fill-cat-orange text-cat-orange" />}>
               {userStreak}
             </Badge>
 
             {/* XP */}
-            <Badge variant="purple" size="sm" icon={<Zap className="w-3.5 h-3.5 fill-brand-light" />} className="hidden sm:inline-flex">
+            <Badge variant="purple" size="sm" icon={<Zap className="w-3.5 h-3.5 fill-brand text-brand" />} className="hidden sm:inline-flex">
               {userXp}
             </Badge>
 
             {/* Level */}
             <Badge variant="neon" size="sm" className="hidden md:inline-flex">
-              <span className="font-orbitron">{jlptLevel}</span>
+              <span className="font-heading font-bold">{jlptLevel}</span>
               <span className="text-[9px] opacity-60 ml-0.5">Lv.{userLevel}</span>
             </Badge>
 
@@ -356,12 +352,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SakuraMascotWidget />
 
       {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#12101D]/95 backdrop-blur-xl border-t border-white/[0.06] px-2 py-1.5 safe-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-edge px-2 py-1.5 safe-bottom">
         <div className="flex items-center justify-around max-w-lg mx-auto">
           {[
             { name: 'Home', href: '/home', icon: Home },
-            { name: 'Lessons', href: '/jlpt', icon: Map },
-            { name: 'Sakura AI', href: '/ai-tutor', icon: Sparkles },
+            { name: 'Learn', href: '/jlpt', icon: BookOpen },
+            { name: 'Practice', href: '/ai-tutor', icon: Sparkles },
             { name: 'Progress', href: '/progress', icon: BarChart3 },
             { name: 'Profile', href: '/profile', icon: User },
           ].map((item) => {
@@ -373,26 +369,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className="flex flex-col items-center gap-0.5 py-1.5 px-3 relative"
               >
-                {/* Active indicator bar */}
-                {isActive && (
-                  <motion.div
-                    layoutId="bottomNavIndicator"
-                    className="absolute -top-1.5 w-8 h-1 bg-gradient-to-r from-neon-purple to-neon-pink rounded-full"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
                 <div
-                  className={`p-1.5 rounded-xl transition-all duration-200 ${
+                  className={`p-2 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? 'text-white scale-110'
-                      : 'text-purple-300/35'
+                      ? 'bg-brand/10 text-brand scale-110'
+                      : 'text-ink-light'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                 </div>
                 <span
-                  className={`text-[9px] font-bold tracking-wider uppercase ${
-                    isActive ? 'text-neon-pink' : 'text-purple-300/30'
+                  className={`text-[9px] font-bold tracking-wider ${
+                    isActive ? 'text-brand' : 'text-ink-light'
                   }`}
                 >
                   {item.name}

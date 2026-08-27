@@ -17,14 +17,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-[10px] font-bold text-purple-300/40 uppercase tracking-widest"
+            className="block text-sm font-semibold text-ink-secondary"
           >
             {label}
           </label>
         )}
         <div className="relative flex items-center group">
           {leftIcon && (
-            <div className="absolute left-3.5 text-purple-300/40 group-focus-within:text-purple-400 transition-colors flex items-center justify-center pointer-events-none">
+            <div className="absolute left-3.5 text-ink-muted group-focus-within:text-brand transition-colors flex items-center justify-center pointer-events-none">
               {leftIcon}
             </div>
           )}
@@ -33,22 +33,22 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={cn(
-              "w-full bg-[#0a0815] border border-purple-900/20 hover:border-purple-800/40 text-white placeholder-purple-300/20 text-sm md:text-base rounded-xl h-14 py-0 transition-all outline-none focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20",
+              "w-full bg-white border border-edge hover:border-edge-hover text-ink placeholder-ink-light text-sm md:text-base rounded-xl h-14 py-0 transition-all outline-none focus:border-brand/50 focus:ring-2 focus:ring-brand/10",
               leftIcon ? 'pl-12' : 'px-5',
               rightIcon ? 'pr-12' : 'pr-5',
-              error && 'border-red-500/40 focus:border-red-500/60 focus:ring-red-500/10 hover:border-red-500/30',
+              error && 'border-red-400 focus:border-red-500 focus:ring-red-500/10 hover:border-red-400',
               className
             )}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute right-3.5 text-purple-300/40 group-focus-within:text-purple-400 transition-colors flex items-center justify-center">
+            <div className="absolute right-3.5 text-ink-muted group-focus-within:text-brand transition-colors flex items-center justify-center">
               {rightIcon}
             </div>
           )}
         </div>
         {error && (
-          <p className="text-[11px] text-red-400/90 font-medium tracking-wide leading-none pt-0.5">
+          <p className="text-[11px] text-red-500 font-medium tracking-wide leading-none pt-0.5">
             {error}
           </p>
         )}

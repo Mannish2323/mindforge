@@ -34,14 +34,14 @@ export function Skeleton({
     <div
       key={i}
       className={cn(
-        'relative overflow-hidden bg-white/[0.04]',
+        'relative overflow-hidden bg-warm-soft',
         variantStyles[variant],
         className
       )}
       style={{ width, height }}
     >
       <div
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent animate-shimmer"
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-shimmer"
       />
     </div>
   ));
@@ -54,7 +54,7 @@ export function Skeleton({
  */
 export function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn('glass-card rounded-card-lg p-5 space-y-4', className)}>
+    <div className={cn('bg-white border border-edge rounded-card-lg p-5 space-y-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]', className)}>
       <div className="flex items-center gap-3">
         <Skeleton variant="avatar" />
         <div className="flex-1 space-y-2">

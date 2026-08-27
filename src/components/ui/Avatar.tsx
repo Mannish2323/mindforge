@@ -40,7 +40,7 @@ export function Avatar({
       <div
         className={cn(
           sizeConfig.container,
-          'rounded-xl bg-gradient-to-tr from-neon-purple to-neon-magenta flex items-center justify-center font-bold text-white shadow-lg relative overflow-hidden flex-shrink-0',
+          'rounded-xl bg-gradient-to-tr from-brand to-accent flex items-center justify-center font-bold text-white shadow-md relative overflow-hidden flex-shrink-0',
           sizeConfig.text
         )}
       >
@@ -56,7 +56,7 @@ export function Avatar({
       {showLevel && level && (
         <div
           className={cn(
-            'absolute rounded-full bg-bg-surface border-2 border-neon-purple flex items-center justify-center font-bold text-white font-orbitron',
+            'absolute rounded-full bg-white border-2 border-brand flex items-center justify-center font-bold text-brand font-heading shadow-sm',
             sizeConfig.levelBadge
           )}
         >

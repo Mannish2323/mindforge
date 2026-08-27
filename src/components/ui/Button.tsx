@@ -37,7 +37,7 @@ export function Button({
         ripple.style.width = ripple.style.height = `${size}px`;
         ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
         ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-        ripple.className = 'absolute rounded-full bg-white/20 animate-ripple pointer-events-none';
+        ripple.className = 'absolute rounded-full bg-white/30 animate-ripple pointer-events-none';
         btn.appendChild(ripple);
         setTimeout(() => ripple.remove(), 600);
       }
@@ -46,15 +46,15 @@ export function Button({
     [onClick]
   );
 
-  const base = 'btn relative overflow-hidden transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-neon-pink/80 focus-visible:ring-offset-2 focus-visible:ring-offset-[#07050D] active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:scale-100';
+  const base = 'btn relative overflow-hidden transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-warm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:scale-100';
   const variants: Record<string, string> = {
-    primary: 'btn-primary shadow-lg shadow-neon-purple/25 hover:shadow-neon-purple/40',
-    accent: 'btn-accent shadow-lg shadow-neon-pink/25 hover:shadow-neon-pink/40',
-    ghost: 'btn-ghost hover:bg-white/[0.08]',
-    success: 'btn-success shadow-lg shadow-emerald-500/25',
-    danger: 'btn-danger shadow-lg shadow-rose-500/25',
-    outline: 'btn-ghost border border-white/10 hover:border-white/20',
-    neon: 'btn-neon shadow-lg shadow-neon-purple/30',
+    primary: 'btn-primary shadow-lg shadow-brand/15 hover:shadow-brand/25',
+    accent: 'btn-accent shadow-lg shadow-accent/15 hover:shadow-accent/25',
+    ghost: 'btn-ghost',
+    success: 'btn-success shadow-lg shadow-cat-green/15',
+    danger: 'btn-danger shadow-lg shadow-red-500/15',
+    outline: 'btn-ghost border border-edge hover:border-edge-hover',
+    neon: 'btn-neon shadow-lg shadow-brand/20',
   };
   const sizes: Record<string, string> = {
     sm: 'btn-sm text-xs',

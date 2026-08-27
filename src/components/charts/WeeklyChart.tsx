@@ -15,7 +15,7 @@ interface WeeklyChartProps {
 export function WeeklyChart({
   data,
   maxValue,
-  color = 'from-neon-purple to-neon-pink',
+  color = 'from-brand to-accent',
   className,
   label,
   unit = 'XP',
@@ -25,7 +25,7 @@ export function WeeklyChart({
   return (
     <div className={cn('space-y-3', className)}>
       {label && (
-        <h4 className="text-[10px] font-bold text-purple-300/40 uppercase tracking-wider">
+        <h4 className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">
           {label}
         </h4>
       )}
@@ -35,7 +35,7 @@ export function WeeklyChart({
           const isToday = i === data.length - 1;
           return (
             <div key={item.day} className="flex-1 flex flex-col items-center gap-1.5">
-              <span className="text-[9px] font-bold text-purple-300/40">
+              <span className="text-[9px] font-bold text-ink-muted">
                 {item.value > 0 ? `${item.value}` : ''}
               </span>
               <div className="w-full flex items-end justify-center" style={{ height: '80px' }}>
@@ -43,8 +43,8 @@ export function WeeklyChart({
                   className={cn(
                     'w-full max-w-[28px] rounded-t-lg transition-all duration-700 ease-out',
                     isToday
-                      ? `bg-gradient-to-t ${color} shadow-[0_0_12px_rgba(109,60,255,0.3)]`
-                      : 'bg-white/[0.08]'
+                      ? `bg-gradient-to-t ${color} shadow-md`
+                      : 'bg-warm-soft'
                   )}
                   style={{ height: `${height}%` }}
                 />
@@ -52,7 +52,7 @@ export function WeeklyChart({
               <span
                 className={cn(
                   'text-[10px] font-bold',
-                  isToday ? 'text-neon-purple' : 'text-purple-300/30'
+                  isToday ? 'text-brand' : 'text-ink-light'
                 )}
               >
                 {item.day}
