@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -335,7 +335,7 @@ export default function WritingPage() {
         <div>
           <div className="flex items-center gap-2">
             <Badge variant="purple" className="flex items-center gap-1">
-              <PenTool className="w-3.5 h-3.5 text-neon-pink" />
+              <PenTool className="w-3.5 h-3.5 text-accent" />
               <span>Handwriting Studio</span>
             </Badge>
             <Badge variant="emerald" className="flex items-center gap-1">
@@ -343,10 +343,10 @@ export default function WritingPage() {
               <span>Daily Challenge</span>
             </Badge>
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white font-orbitron mt-1">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-ink font-heading mt-1">
             Japanese Writing Practice
           </h1>
-          <p className="text-xs text-purple-300/40 mt-1 flex items-center gap-1">
+          <p className="text-xs text-ink-muted mt-1 flex items-center gap-1">
             <Info className="w-3 h-3" />
             Geometry-based scoring — instant, deterministic, AI-free
           </p>
@@ -356,7 +356,7 @@ export default function WritingPage() {
         <div className="w-full md:w-64 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-purple-200">Practice Goal</span>
-            <span className="font-extrabold text-neon-pink">{repCount}/{maxReps} Reps</span>
+            <span className="font-extrabold text-accent">{repCount}/{maxReps} Reps</span>
           </div>
           <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
             <motion.div
@@ -377,26 +377,26 @@ export default function WritingPage() {
 
           {/* Character Card */}
           <Card variant="glass" padding="lg" className="text-center space-y-4 relative overflow-hidden bg-[#12101D]/90 backdrop-blur-2xl">
-            <div className="flex items-center justify-between text-xs text-purple-300/40">
+            <div className="flex items-center justify-between text-xs text-ink-muted">
               <span>{currentChar.type} · {currentChar.difficulty}</span>
               <span>{currentChar.strokeCount} Strokes Expected</span>
             </div>
 
             <div className="relative flex items-center justify-center py-2">
-              <span className="text-7xl md:text-8xl font-black text-white select-none font-jp tracking-wider">
+              <span className="text-7xl md:text-8xl font-black text-ink select-none font-jp tracking-wider">
                 {currentChar.char}
               </span>
               <button
                 onClick={speakCharacter}
-                className="absolute right-2 top-2 p-2.5 rounded-xl bg-neon-purple/10 border border-neon-purple/20 text-brand-light hover:bg-neon-purple/20 transition-all cursor-pointer"
+                className="absolute right-2 top-2 p-2.5 rounded-xl bg-brand/10 border border-brand/20 text-brand-light hover:bg-brand/20 transition-all cursor-pointer"
               >
                 <Volume2 className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-xl font-extrabold text-white capitalize">{currentChar.romaji}</h3>
-              <p className="text-xs text-purple-300/50">Meaning: {currentChar.meaning}</p>
+              <h3 className="text-xl font-extrabold text-ink capitalize">{currentChar.romaji}</h3>
+              <p className="text-xs text-ink-muted">Meaning: {currentChar.meaning}</p>
             </div>
 
             {/* Mode Switcher */}
@@ -404,7 +404,7 @@ export default function WritingPage() {
               <button
                 onClick={() => setSelectedMode('trace')}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
-                  selectedMode === 'trace' ? 'bg-neon-purple text-white shadow-glow-purple' : 'text-purple-300/50 hover:text-white'
+                  selectedMode === 'trace' ? 'bg-brand text-ink shadow-glow-purple' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 Trace
@@ -412,7 +412,7 @@ export default function WritingPage() {
               <button
                 onClick={() => setSelectedMode('freewrite')}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
-                  selectedMode === 'freewrite' ? 'bg-neon-purple text-white shadow-glow-purple' : 'text-purple-300/50 hover:text-white'
+                  selectedMode === 'freewrite' ? 'bg-brand text-ink shadow-glow-purple' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 Free Write
@@ -420,7 +420,7 @@ export default function WritingPage() {
               <button
                 onClick={handlePlayGhostAnimation}
                 className={`py-2 rounded-lg transition-all cursor-pointer flex items-center justify-center gap-1 ${
-                  isGhostPlaying ? 'bg-neon-pink text-white animate-pulse' : 'text-purple-300/50 hover:text-white'
+                  isGhostPlaying ? 'bg-accent text-ink animate-pulse' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <Play className="w-3 h-3" />
@@ -429,24 +429,24 @@ export default function WritingPage() {
             </div>
 
             {/* Stroke counter live */}
-            <div className="flex items-center justify-center gap-1.5 text-[11px] text-purple-300/50">
+            <div className="flex items-center justify-center gap-1.5 text-[11px] text-ink-muted">
               <span>Strokes drawn:</span>
-              <span className="font-extrabold text-neon-pink">{recordedStrokes.length}</span>
-              <span className="text-purple-300/30">/ {currentChar.strokeCount} expected</span>
+              <span className="font-extrabold text-accent">{recordedStrokes.length}</span>
+              <span className="text-ink-light">/ {currentChar.strokeCount} expected</span>
             </div>
           </Card>
 
           {/* Toolbar Card */}
           <Card variant="glass" padding="md" className="space-y-4">
             <div className="flex items-center justify-between border-b border-white/[0.06] pb-2">
-              <span className="text-xs font-extrabold text-white flex items-center gap-1.5 uppercase tracking-wider">
-                <Sliders className="w-3.5 h-3.5 text-neon-pink" /> Brush &amp; Canvas Controls
+              <span className="text-xs font-extrabold text-ink flex items-center gap-1.5 uppercase tracking-wider">
+                <Sliders className="w-3.5 h-3.5 text-accent" /> Brush &amp; Canvas Controls
               </span>
               {/* Live brush preview */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-purple-300/40 font-semibold">Preview:</span>
+                <span className="text-[10px] text-ink-muted font-semibold">Preview:</span>
                 <div
-                  className="rounded-full bg-neon-purple border border-white/20 transition-all"
+                  className="rounded-full bg-brand border border-edge-hover transition-all"
                   style={{ width: `${brushSize * 2}px`, height: `${brushSize * 2}px` }}
                 />
               </div>
@@ -454,7 +454,7 @@ export default function WritingPage() {
 
             {/* Brush Size Presets */}
             <div className="space-y-2">
-              <label className="text-[11px] font-bold text-purple-300/50 block">Brush Size: {brushSize}px</label>
+              <label className="text-[11px] font-bold text-ink-muted block">Brush Size: {brushSize}px</label>
               <div className="flex items-center gap-1.5">
                 {[
                   { label: 'Fine',       size: 4  },
@@ -467,8 +467,8 @@ export default function WritingPage() {
                     onClick={() => setBrushSize(b.size)}
                     className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                       brushSize === b.size
-                        ? 'bg-neon-purple/20 border-neon-purple text-brand-light'
-                        : 'bg-white/[0.02] border-white/[0.06] text-purple-300/40 hover:text-white'
+                        ? 'bg-brand/20 border-neon-purple text-brand-light'
+                        : 'bg-white/[0.02] border-white/[0.06] text-ink-muted hover:text-ink'
                     }`}
                   >
                     {b.label}
@@ -481,10 +481,10 @@ export default function WritingPage() {
             {selectedMode === 'trace' && (
               <div className="space-y-2 pt-1 border-t border-white/[0.04]">
                 <div className="flex items-center justify-between text-[11px] font-bold">
-                  <span className="text-purple-300/50 flex items-center gap-1">
-                    <Layers className="w-3 h-3 text-neon-pink" /> Guide Opacity
+                  <span className="text-ink-muted flex items-center gap-1">
+                    <Layers className="w-3 h-3 text-accent" /> Guide Opacity
                   </span>
-                  <span className="text-white">{guideOpacity}%</span>
+                  <span className="text-ink">{guideOpacity}%</span>
                 </div>
                 <input
                   type="range"
@@ -516,11 +516,11 @@ export default function WritingPage() {
                   {/* Header row */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-md bg-white/10 text-xs font-bold text-neon-pink">
+                      <span className="px-2 py-0.5 rounded-md bg-white/10 text-xs font-bold text-accent">
                         {tierBadge[scoreResult.tier]}
                       </span>
                       <div>
-                        <p className="text-[10px] text-purple-300/50 uppercase tracking-widest">AI Score</p>
+                        <p className="text-[10px] text-ink-muted uppercase tracking-widest">AI Score</p>
                         <p className="text-xs font-extrabold text-white">{scoreResult.tier}</p>
                       </div>
                     </div>
@@ -528,7 +528,7 @@ export default function WritingPage() {
                       <span className={`text-3xl font-black ${scoreBadgeColor(scoreResult.overall)}`}>
                         {scoreResult.overall}
                       </span>
-                      <span className="text-xs text-purple-300/40">/100</span>
+                      <span className="text-xs text-ink-muted">/100</span>
                     </div>
                   </div>
 
@@ -545,10 +545,10 @@ export default function WritingPage() {
                   {/* 6-Component Breakdown Grid */}
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold text-white uppercase tracking-widest">Score Breakdown</span>
+                      <span className="text-[10px] font-extrabold text-ink uppercase tracking-widest">Score Breakdown</span>
                       <button
                         onClick={() => setShowBreakdown(v => !v)}
-                        className="text-[10px] text-neon-purple/70 hover:text-neon-purple cursor-pointer flex items-center gap-0.5"
+                        className="text-[10px] text-brand/70 hover:text-brand cursor-pointer flex items-center gap-0.5"
                       >
                         <TrendingUp className="w-3 h-3" />
                         {showBreakdown ? 'Hide detail' : 'Show detail'}
@@ -562,14 +562,14 @@ export default function WritingPage() {
                         return (
                           <div key={comp.key} className="space-y-1 p-2 rounded-xl bg-white/[0.03] border border-white/[0.04]">
                             <div className="flex items-center justify-between text-[10px]">
-                              <span className="text-purple-300/60 font-semibold flex items-center gap-1">
+                              <span className="text-ink-muted font-semibold flex items-center gap-1">
                                 <span>{comp.icon}</span>
                                 <span>{comp.label}</span>
                               </span>
                               <span className={`font-extrabold ${scoreBadgeColor(val)}`}>{val}%</span>
                             </div>
                             <ScoreBar score={val} color={scoreColor(val)} />
-                            <p className="text-[9px] text-purple-300/30">{comp.weight} weight</p>
+                            <p className="text-[9px] text-ink-light">{comp.weight} weight</p>
                           </div>
                         );
                       })}
@@ -613,7 +613,7 @@ export default function WritingPage() {
                   </div>
 
                   {/* Algorithm badge */}
-                  <div className="flex items-center gap-1.5 text-[9px] text-purple-300/25 border-t border-white/[0.04] pt-2">
+                  <div className="flex items-center gap-1.5 text-[9px] text-ink-light border-t border-white/[0.04] pt-2">
                     <Target className="w-3 h-3" />
                     <span>Deterministic geometry engine · BB 20% · Pixel 30% · Count 10% · Position 20% · Direction 10% · Overflow 10%</span>
                   </div>
@@ -625,7 +625,7 @@ export default function WritingPage() {
 
         {/* ── Right: Canvas ─────────────────────────────────────────────────── */}
         <div className="lg:col-span-7 space-y-4">
-          <Card variant="glass" padding="md" className="space-y-4 relative bg-[#0D0B18]/90 border border-white/10 rounded-3xl">
+          <Card variant="glass" padding="md" className="space-y-4 relative bg-[#0D0B18]/90 border border-edge rounded-3xl">
 
             {/* Canvas Control Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3">
@@ -659,22 +659,22 @@ export default function WritingPage() {
               <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
                 <button
                   onClick={() => setZoomLevel(z => Math.max(0.8, z - 0.25))}
-                  className="p-1 text-purple-300/60 hover:text-white cursor-pointer"
+                  className="p-1 text-ink-muted hover:text-ink cursor-pointer"
                   title="Zoom Out"
                 >
                   <ZoomOut className="w-4 h-4" />
                 </button>
-                <span className="text-[11px] font-bold text-white px-1.5">{Math.round(zoomLevel * 100)}%</span>
+                <span className="text-[11px] font-bold text-ink px-1.5">{Math.round(zoomLevel * 100)}%</span>
                 <button
                   onClick={() => setZoomLevel(z => Math.min(2.0, z + 0.25))}
-                  className="p-1 text-purple-300/60 hover:text-white cursor-pointer"
+                  className="p-1 text-ink-muted hover:text-ink cursor-pointer"
                   title="Zoom In"
                 >
                   <ZoomIn className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setZoomLevel(1)}
-                  className="p-1 text-purple-300/60 hover:text-white cursor-pointer border-l border-white/10 ml-1 pl-1.5"
+                  className="p-1 text-ink-muted hover:text-ink cursor-pointer border-l border-edge ml-1 pl-1.5"
                   title="Fit Screen"
                 >
                   <Maximize2 className="w-3.5 h-3.5" />
@@ -716,7 +716,7 @@ export default function WritingPage() {
               {/* Faint Reference (Trace Mode) */}
               {selectedMode === 'trace' && (
                 <span
-                  className="absolute text-[220px] md:text-[260px] font-black text-white select-none font-jp pointer-events-none transition-opacity"
+                  className="absolute text-[220px] md:text-[260px] font-black text-ink select-none font-jp pointer-events-none transition-opacity"
                   style={{ opacity: guideOpacity / 100 }}
                 >
                   {currentChar.char}
@@ -730,7 +730,7 @@ export default function WritingPage() {
                   animate={{ opacity: 0.5, scale: 1.05 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1.5, repeat: 1, repeatType: 'reverse' }}
-                  className="absolute text-[220px] md:text-[260px] font-black text-neon-pink select-none font-jp pointer-events-none blur-[1px]"
+                  className="absolute text-[220px] md:text-[260px] font-black text-accent select-none font-jp pointer-events-none blur-[1px]"
                 >
                   {currentChar.char}
                 </motion.span>
@@ -751,7 +751,7 @@ export default function WritingPage() {
             </div>
 
             {/* Canvas status bar */}
-            <div className="flex items-center justify-between text-[10px] text-purple-300/30 px-1">
+            <div className="flex items-center justify-between text-[10px] text-ink-light px-1">
               <span>
                 {recordedStrokes.length === 0
                   ? 'Draw the character above ↑'
@@ -766,18 +766,18 @@ export default function WritingPage() {
 
           {/* Algorithm Explainer (collapsed by default) */}
           <details className="group">
-            <summary className="text-[11px] text-purple-300/30 hover:text-purple-300/60 cursor-pointer select-none flex items-center gap-1.5 transition-colors">
+            <summary className="text-[11px] text-ink-light hover:text-ink-muted cursor-pointer select-none flex items-center gap-1.5 transition-colors">
               <Info className="w-3 h-3" />
               How is the score calculated?
             </summary>
-            <div className="mt-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-purple-300/50 space-y-1 leading-relaxed">
+            <div className="mt-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-ink-muted space-y-1 leading-relaxed">
               <p className="font-bold text-purple-200/70">Score = Σ (Component × Weight)</p>
               {SCORE_COMPONENTS.map(c => (
                 <p key={c.key}>
                   <span className="font-semibold text-white/50">{c.icon} {c.label} ({c.weight})</span> — {c.desc}
                 </p>
               ))}
-              <p className="text-purple-300/30 pt-1 italic">
+              <p className="text-ink-light pt-1 italic">
                 Zero random numbers. Zero AI calls. All scoring is pure pixel geometry.
                 AI will be added later for natural-language feedback only.
               </p>

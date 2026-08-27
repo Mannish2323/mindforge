@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -102,14 +102,14 @@ export default function JLPTPage() {
     <div className="space-y-8 max-w-6xl mx-auto pb-12">
       {/* Header */}
       <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-xs font-bold text-brand-light">
-          <GraduationCap className="w-4 h-4 text-neon-pink" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand/10 border border-brand/20 text-xs font-bold text-brand-light">
+          <GraduationCap className="w-4 h-4 text-accent" />
           <span>JLPT Mastery Roadmap</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-extrabold text-white font-orbitron tracking-tight">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-ink font-heading tracking-tight">
           JLPT Standard Curriculum
         </h1>
-        <p className="text-sm md:text-base text-purple-300/50 max-w-2xl">
+        <p className="text-sm md:text-base text-ink-muted max-w-2xl">
           Comprehensive curriculum from JLPT N5 to N1. Explore lessons, grammar rules, vocabulary packs, kanji stroke orders, quizzes, native audio, and speaking exercises.
         </p>
       </div>
@@ -124,11 +124,11 @@ export default function JLPTPage() {
               onClick={() => setSelectedLevel(lvl.id)}
               className={`relative py-3.5 px-2 rounded-xl text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-1 ${
                 isSelected
-                  ? 'bg-gradient-to-r ' + lvl.color + ' text-white shadow-glow-purple scale-[1.02]'
-                  : 'text-purple-300/50 hover:text-white hover:bg-white/[0.04]'
+                  ? 'bg-gradient-to-r ' + lvl.color + ' text-ink shadow-glow-purple scale-[1.02]'
+                  : 'text-ink-muted hover:text-ink hover:bg-white/[0.04]'
               }`}
             >
-              <span className="text-base md:text-xl font-extrabold font-orbitron">{lvl.name}</span>
+              <span className="text-base md:text-xl font-extrabold font-heading">{lvl.name}</span>
               <span className="text-[10px] hidden md:block opacity-80 font-medium">{lvl.desc.split('•')[0]}</span>
             </button>
           );
@@ -146,13 +146,13 @@ export default function JLPTPage() {
               onClick={() => setSelectedTab(tab.id)}
               className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
                 isActive
-                  ? 'bg-neon-purple/20 border-neon-purple text-brand-light shadow-[0_0_15px_rgba(109,60,255,0.3)]'
-                  : 'bg-white/[0.02] border-white/[0.06] text-purple-300/60 hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-brand/20 border-neon-purple text-brand-light shadow-[0_0_15px_rgba(109,60,255,0.3)]'
+                  : 'bg-white/[0.02] border-white/[0.06] text-ink-muted hover:text-ink hover:bg-white/[0.05]'
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? 'text-neon-pink' : 'text-purple-300/40'}`} />
+              <Icon className={`w-4 h-4 ${isActive ? 'text-accent' : 'text-ink-muted'}`} />
               <span>{tab.label}</span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-neon-purple/40 text-white' : 'bg-white/[0.05] text-purple-300/30'}`}>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full ${isActive ? 'bg-brand/40 text-white' : 'bg-white/[0.05] text-ink-light'}`}>
                 {tab.count}
               </span>
             </button>
@@ -163,10 +163,10 @@ export default function JLPTPage() {
       {/* 3. Dynamic Module Grid Content */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+          <h2 className="text-lg font-extrabold text-ink flex items-center gap-2">
             <span>{selectedLevel} {tabs.find(t => t.id === selectedTab)?.label} Modules</span>
           </h2>
-          <span className="text-xs text-purple-300/40">{currentContent.length} modules available</span>
+          <span className="text-xs text-ink-muted">{currentContent.length} modules available</span>
         </div>
 
         <AnimatePresence mode="wait">
@@ -202,21 +202,21 @@ export default function JLPTPage() {
                         </div>
                       )}
                     </div>
-                    <h3 className="text-base font-bold text-white group-hover:text-brand-light transition-colors">
+                    <h3 className="text-base font-bold text-ink group-hover:text-brand-light transition-colors">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-purple-300/50 leading-relaxed">
+                    <p className="text-xs text-ink-muted leading-relaxed">
                       {item.subtitle}
                     </p>
                   </div>
 
                   <div className="pt-2 flex items-center justify-between border-t border-white/[0.04]">
-                    <span className="text-[11px] font-bold text-purple-300/40 uppercase tracking-wider">
+                    <span className="text-[11px] font-bold text-ink-muted uppercase tracking-wider">
                       JLPT {selectedLevel}
                     </span>
 
                     {item.isLocked ? (
-                      <span className="text-xs font-semibold text-purple-300/30">Requires Level Upgrade</span>
+                      <span className="text-xs font-semibold text-ink-light">Requires Level Upgrade</span>
                     ) : (
                       <button
                         onClick={() => {
@@ -226,7 +226,7 @@ export default function JLPTPage() {
                             requireAuth(() => router.push(item.href), item.title);
                           }
                         }}
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-neon-pink group-hover:translate-x-1 transition-transform cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-accent group-hover:translate-x-1 transition-transform cursor-pointer"
                       >
                         <span>Start Module</span>
                         <ChevronRight className="w-4 h-4" />

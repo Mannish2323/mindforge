@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -124,10 +124,10 @@ export default function GrammarPage() {
       {/* Header title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
             Grammar Reference
           </h1>
-          <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
             Learn Japanese sentence structures, particles rules and grammar patterns
           </p>
         </div>
@@ -141,8 +141,8 @@ export default function GrammarPage() {
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all capitalize cursor-pointer ${
                   isActive 
-                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-md' 
-                    : 'text-purple-300/60 hover:text-white'
+                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-md' 
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {cat}
@@ -154,22 +154,22 @@ export default function GrammarPage() {
 
       {/* Search Input filter bar */}
       <div className="relative max-w-xl">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300/40" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
         <input
           type="text"
           placeholder="Search by grammar structure, definition or meanings..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+          className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
         />
       </div>
 
       {/* Grammar point grid timeline */}
       {filteredGrammar.length === 0 ? (
         <div className="glass-card p-12 text-center rounded-[28px] border border-white/[0.08]">
-          <Book className="w-12 h-12 text-purple-300/20 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-white font-orbitron">No Grammar Points found</h3>
-          <p className="text-xs text-purple-300/40 mt-1">Try a different search query.</p>
+          <Book className="w-12 h-12 text-ink-secondary/20 mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-ink font-heading">No Grammar Points found</h3>
+          <p className="text-xs text-ink-muted mt-1">Try a different search query.</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -181,7 +181,7 @@ export default function GrammarPage() {
             return (
               <div 
                 key={grammar.id}
-                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 hover:border-white/10 transition-all"
+                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 hover:border-edge transition-all"
               >
                 {/* Header structure row */}
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -189,14 +189,14 @@ export default function GrammarPage() {
                     <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-2 py-0.5 bg-sakura-dark/15 rounded border border-sakura-dark/25">
                       {grammar.category.toUpperCase()}
                     </span>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-white font-jp mt-2">{grammar.structure}</h3>
-                    <p className="text-xs text-purple-300/50 italic font-semibold">{grammar.romaji}</p>
+                    <h3 className="text-xl md:text-2xl font-extrabold text-ink font-jp mt-2">{grammar.structure}</h3>
+                    <p className="text-xs text-ink-muted italic font-semibold">{grammar.romaji}</p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleSave(grammar.id)}
-                      className="p-3 bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.12] rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
+                      className="p-3 bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.12] rounded-xl text-ink-secondary hover:text-ink transition-all cursor-pointer"
                     >
                       {isSaved ? <BookmarkCheck className="w-4 h-4 text-sakura-dark" /> : <Bookmark className="w-4 h-4" />}
                     </button>
@@ -211,14 +211,14 @@ export default function GrammarPage() {
 
                 {/* Explanation text */}
                 <div className="space-y-2 border-t border-white/[0.08] pt-4 leading-relaxed font-semibold">
-                  <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">DEFINITION</p>
+                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">DEFINITION</p>
                   <p className="text-sm text-purple-100/90">{grammar.meaning}</p>
-                  <p className="text-xs text-purple-300/60 font-medium leading-relaxed">{grammar.explanation}</p>
+                  <p className="text-xs text-ink-muted font-medium leading-relaxed">{grammar.explanation}</p>
                 </div>
 
                 {/* Examples */}
                 <div className="space-y-3 pt-2">
-                  <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">FOCUS EXAMPLES</p>
+                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">FOCUS EXAMPLES</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {grammar.examples.map((ex, idx) => (
                       <div 
@@ -226,13 +226,13 @@ export default function GrammarPage() {
                         className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl flex items-center justify-between"
                       >
                         <div>
-                          <p className="text-sm font-bold text-white font-jp">{ex.jp}</p>
-                          <p className="text-[10px] text-purple-300/45 italic font-semibold">{ex.romaji}</p>
-                          <p className="text-xs text-purple-300/80 font-medium mt-1">{ex.en}</p>
+                          <p className="text-sm font-bold text-ink font-jp">{ex.jp}</p>
+                          <p className="text-[10px] text-ink-muted italic font-semibold">{ex.romaji}</p>
+                          <p className="text-xs text-ink-secondary/80 font-medium mt-1">{ex.en}</p>
                         </div>
                         <button
                           onClick={() => speakJapanese(ex.jp)}
-                          className="p-2 text-purple-300/40 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                          className="p-2 text-ink-muted hover:text-ink rounded-lg hover:bg-warm-soft transition-colors cursor-pointer"
                         >
                           <Volume2 className="w-4 h-4" />
                         </button>
@@ -251,10 +251,10 @@ export default function GrammarPage() {
                       className="p-6 bg-brand-purple/10 border border-brand-purple/20 rounded-3xl mt-4 space-y-4 overflow-hidden"
                     >
                       <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-extrabold text-white font-orbitron">Micro Quiz</h4>
+                        <h4 className="text-sm font-extrabold text-ink font-heading">Micro Quiz</h4>
                         <button 
                           onClick={() => setActiveQuizId(null)}
-                          className="text-xs text-purple-300/40 hover:text-white cursor-pointer"
+                          className="text-xs text-ink-muted hover:text-ink cursor-pointer"
                         >
                           Close
                         </button>
@@ -266,7 +266,7 @@ export default function GrammarPage() {
                         {quiz.opts.map((opt, idx) => {
                           const isSelected = quizAnswer === idx;
                           const isCorrect = idx === quiz.correctIdx;
-                          let btnStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                          let btnStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-edge hover:bg-white/[0.04] text-ink-secondary';
                           
                           if (quizAnswer !== null) {
                             if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';

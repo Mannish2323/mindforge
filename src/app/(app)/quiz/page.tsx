@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -125,10 +125,10 @@ export default function QuizPage() {
       
       {/* Header section */}
       <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
           Quiz Arena
         </h1>
-        <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+        <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
           Test your vocabulary and grammar alignment in real-time challenges
         </p>
       </div>
@@ -142,8 +142,8 @@ export default function QuizPage() {
               <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                 <HelpCircle className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white font-orbitron">MCQ challenge</h3>
-              <p className="text-xs text-purple-300/50 font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-ink font-heading">MCQ challenge</h3>
+              <p className="text-xs text-ink-muted font-medium leading-relaxed">
                 Test your knowledge with multiple choice grammar and vocabulary structures. 3 Questions, 60 seconds.
               </p>
             </div>
@@ -162,8 +162,8 @@ export default function QuizPage() {
               <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
                 <Layers className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-bold text-white font-orbitron">Match Pairs</h3>
-              <p className="text-xs text-purple-300/50 font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-ink font-heading">Match Pairs</h3>
+              <p className="text-xs text-ink-muted font-medium leading-relaxed">
                 Match Japanese terms and kanji characters directly with their English definitions in a grid.
               </p>
             </div>
@@ -182,18 +182,18 @@ export default function QuizPage() {
           
           {/* Top toolbar */}
           <div className="flex justify-between items-center border-b border-white/[0.08] pb-4">
-            <div className="flex items-center gap-2 text-xs font-bold text-purple-300/40 uppercase">
+            <div className="flex items-center gap-2 text-xs font-bold text-ink-muted uppercase">
               <span>Challenge: {activeQuizType.toUpperCase()}</span>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-xs font-bold font-orbitron">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-xs font-bold font-heading">
                 <Timer className="w-4 h-4 animate-pulse" />
                 <span>{timer}s</span>
               </div>
               <button 
                 onClick={() => setActiveQuizType(null)}
-                className="text-purple-300/40 hover:text-white"
+                className="text-ink-muted hover:text-ink"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -205,12 +205,12 @@ export default function QuizPage() {
             <div className="space-y-6">
               {activeQuizType === 'mcq' && (
                 <div className="space-y-6">
-                  <div className="flex justify-between text-xs font-bold text-purple-300/40 uppercase">
+                  <div className="flex justify-between text-xs font-bold text-ink-muted uppercase">
                     <span>Question {quizIndex + 1} of {mcqQuestions.length}</span>
                     <span>SCORE: {correctCount}</span>
                   </div>
 
-                  <h3 className="text-lg md:text-xl font-bold text-white leading-relaxed font-jp">
+                  <h3 className="text-lg md:text-xl font-bold text-ink leading-relaxed font-jp">
                     {mcqQuestions[quizIndex].question}
                   </h3>
 
@@ -218,7 +218,7 @@ export default function QuizPage() {
                     {mcqQuestions[quizIndex].options?.map((opt, idx) => {
                       const isSelected = selectedAnswer === idx;
                       const isCorrect = String(idx) === mcqQuestions[quizIndex].correctAnswer;
-                      let btnStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                      let btnStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-edge hover:bg-white/[0.04] text-ink-secondary';
 
                       if (selectedAnswer !== null) {
                         if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
@@ -253,7 +253,7 @@ export default function QuizPage() {
 
               {activeQuizType === 'match' && (
                 <div className="space-y-6">
-                  <div className="flex justify-between text-xs font-bold text-purple-300/40 uppercase border-b border-white/[0.08] pb-3">
+                  <div className="flex justify-between text-xs font-bold text-ink-muted uppercase border-b border-white/[0.08] pb-3">
                     <span>Grid Match</span>
                     <span>MATCHED: {matchedPairs.length} / {matchingPairs.length}</span>
                   </div>
@@ -261,13 +261,13 @@ export default function QuizPage() {
                   <div className="grid grid-cols-2 gap-6 py-4">
                     {/* Left Column Japanese */}
                     <div className="space-y-3">
-                      <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase text-center mb-1">
+                      <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase text-center mb-1">
                         JAPANESE TERMS
                       </p>
                       {matchingPairs.map(p => {
                         const isMatched = matchedPairs.includes(p.left);
                         const isSelected = selectedLeft === p.left;
-                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
+                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-ink hover:bg-white/[0.05]';
                         
                         if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
                         else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
@@ -287,7 +287,7 @@ export default function QuizPage() {
 
                     {/* Right Column Definitions */}
                     <div className="space-y-3">
-                      <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase text-center mb-1">
+                      <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase text-center mb-1">
                         ENGLISH DEFINITIONS
                       </p>
                       {matchingPairs.map(p => {
@@ -296,7 +296,7 @@ export default function QuizPage() {
                           return matching?.right === p.right;
                         });
                         const isSelected = selectedRight === p.right;
-                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-white hover:bg-white/[0.05]';
+                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-ink hover:bg-white/[0.05]';
                         
                         if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
                         else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
@@ -322,8 +322,8 @@ export default function QuizPage() {
             <div className="text-center py-10 space-y-6 max-w-sm mx-auto">
               <div className="space-y-2">
                 <Award className="w-16 h-16 text-yellow-400 mx-auto animate-bounce" />
-                <h3 className="text-2xl font-extrabold text-white font-orbitron">Challenge Cleared!</h3>
-                <p className="text-xs text-purple-300/50 font-semibold leading-relaxed">
+                <h3 className="text-2xl font-extrabold text-ink font-heading">Challenge Cleared!</h3>
+                <p className="text-xs text-ink-muted font-semibold leading-relaxed">
                   Time left: {timer} seconds. Correct matches/answers: {correctCount}.
                 </p>
               </div>

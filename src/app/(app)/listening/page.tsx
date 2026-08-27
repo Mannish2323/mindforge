@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -34,7 +34,7 @@ export default function ListeningPage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <motion.div variants={item} className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-extrabold text-white">Listening Practice</h1>
-        <p className="text-sm text-purple-300/45">Improve your comprehension with audio exercises</p>
+        <p className="text-sm text-ink-muted">Improve your comprehension with audio exercises</p>
       </motion.div>
 
       {/* Level Tabs */}
@@ -45,8 +45,8 @@ export default function ListeningPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === tab
-                ? 'bg-neon-purple/20 text-white border border-neon-purple/30'
-                : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.04] hover:border-white/10'
+                ? 'bg-brand/20 text-ink border border-brand/30'
+                : 'bg-white/[0.03] text-ink-muted border border-white/[0.04] hover:border-edge'
             }`}
           >
             {tab}
@@ -63,7 +63,7 @@ export default function ListeningPage() {
                 <h3 className="text-base font-bold text-white">{LISTENING_EXERCISES.find(e => e.id === currentExercise)?.title}</h3>
                 <Badge variant="purple" size="sm">{activeTab}</Badge>
               </div>
-              <Headphones className="w-6 h-6 text-neon-pink" />
+              <Headphones className="w-6 h-6 text-accent" />
             </div>
 
             {/* Waveform visualization */}
@@ -71,7 +71,7 @@ export default function ListeningPage() {
               {Array.from({ length: 40 }).map((_, i) => (
                 <div
                   key={i}
-                  className="flex-1 rounded-full bg-neon-purple/30 transition-all"
+                  className="flex-1 rounded-full bg-brand/30 transition-all"
                   style={{
                     height: `${20 + Math.sin(i * 0.5 + (playing ? Date.now() * 0.001 : 0)) * 20}px`,
                     opacity: i / 40 <= progress / 100 ? 1 : 0.3,
@@ -85,16 +85,16 @@ export default function ListeningPage() {
 
             {/* Controls */}
             <div className="flex items-center justify-center gap-4">
-              <button className="p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-purple-300/60 hover:text-white transition-all cursor-pointer">
+              <button className="p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-ink-muted hover:text-ink transition-all cursor-pointer">
                 <Clock className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setPlaying(!playing)}
-                className="p-4 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-white shadow-lg hover:shadow-xl transition-all cursor-pointer"
+                className="p-4 rounded-full bg-gradient-to-r from-neon-purple to-neon-pink text-ink shadow-lg hover:shadow-xl transition-all cursor-pointer"
               >
                 {playing ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
               </button>
-              <button className="p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-purple-300/60 hover:text-white transition-all cursor-pointer">
+              <button className="p-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-ink-muted hover:text-ink transition-all cursor-pointer">
                 <SkipForward className="w-5 h-5" />
               </button>
             </div>
@@ -117,19 +117,19 @@ export default function ListeningPage() {
                 <h4 className="text-sm font-semibold text-white">{exercise.title}</h4>
                 <div className="flex items-center gap-2 mt-0.5">
                   <Badge variant="purple" size="sm">{exercise.level}</Badge>
-                  <span className="text-[10px] text-purple-300/40">{exercise.duration}</span>
+                  <span className="text-[10px] text-ink-muted">{exercise.duration}</span>
                 </div>
               </div>
             </div>
             {exercise.status === 'locked' ? (
-              <span className="text-xs text-purple-300/30">🔒 Premium</span>
+              <span className="text-xs text-ink-light">🔒 Premium</span>
             ) : (
-              <ChevronRight className="w-4 h-4 text-purple-300/30" />
+              <ChevronRight className="w-4 h-4 text-ink-light" />
             )}
           </Card>
         )) : (
           <Card variant="glass" padding="lg" className="text-center">
-            <p className="text-sm text-purple-300/40">No exercises available for {activeTab} yet</p>
+            <p className="text-sm text-ink-muted">No exercises available for {activeTab} yet</p>
           </Card>
         )}
       </motion.div>

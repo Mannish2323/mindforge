@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -41,10 +41,10 @@ export default function AchievementsPage() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
           <Award className="w-7 h-7 text-amber-400" /> Achievements
         </h1>
-        <p className="text-sm text-purple-300/45">{unlockedCount}/{ACHIEVEMENTS.length} unlocked</p>
+        <p className="text-sm text-ink-muted">{unlockedCount}/{ACHIEVEMENTS.length} unlocked</p>
       </motion.div>
 
       {/* Summary */}
@@ -56,7 +56,7 @@ export default function AchievementsPage() {
       <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-1">
         {tabs.map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.06] hover:border-white/10'}`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.06] hover:border-edge'}`}
           >{tab}</button>
         ))}
       </motion.div>
@@ -78,7 +78,7 @@ export default function AchievementsPage() {
                   />
                   <div>
                     <h3 className="text-sm font-bold text-white">{achievement.name}</h3>
-                    <p className="text-[11px] text-purple-300/40">{achievement.desc}</p>
+                    <p className="text-[11px] text-ink-muted">{achievement.desc}</p>
                   </div>
                 </div>
                 {achievement.unlocked && (

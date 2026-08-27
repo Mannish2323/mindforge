@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { 
@@ -175,10 +175,10 @@ export default function KanjiPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
             Kanji Writing Coach
           </h1>
-          <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
             Learn stroke order & practice writing with AI evaluation
           </p>
         </div>
@@ -187,17 +187,17 @@ export default function KanjiPage() {
           <button
             onClick={() => setKanjiIndex(prev => Math.max(0, prev - 1))}
             disabled={kanjiIndex === 0}
-            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs font-bold text-white px-2">
+          <span className="text-xs font-bold text-ink px-2">
             Kanji {kanjiIndex + 1} of {kanjis.length}
           </span>
           <button
             onClick={() => setKanjiIndex(prev => Math.min(kanjis.length - 1, prev + 1))}
             disabled={kanjiIndex === kanjis.length - 1}
-            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -211,7 +211,7 @@ export default function KanjiPage() {
         <div className="lg:col-span-7 space-y-6">
           <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-white font-orbitron flex items-center gap-2">
+              <h3 className="text-sm font-extrabold text-ink font-heading flex items-center gap-2">
                 <PenTool className="w-4 h-4 text-sakura-dark" />
                 <span>Practice Canvas</span>
               </h3>
@@ -219,7 +219,7 @@ export default function KanjiPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={clearCanvas}
-                  className="p-2 text-purple-300/40 hover:text-white hover:bg-white/[0.06] rounded-lg transition-colors cursor-pointer"
+                  className="p-2 text-ink-muted hover:text-ink hover:bg-white/[0.06] rounded-lg transition-colors cursor-pointer"
                   title="Reset Canvas"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -230,7 +230,7 @@ export default function KanjiPage() {
             {/* Drawing Canvas Box */}
             <div className="relative aspect-square w-full max-w-[400px] mx-auto bg-black/40 border border-white/[0.08] rounded-3xl overflow-hidden flex items-center justify-center">
               {/* Stroke Order Trace backdrop (semi-transparent) */}
-              <div className="absolute text-[120px] font-extrabold text-purple-300/5 select-none font-jp pointer-events-none">
+              <div className="absolute text-[120px] font-extrabold text-ink-secondary/5 select-none font-jp pointer-events-none">
                 {currentKanji.kanji}
               </div>
 
@@ -297,12 +297,12 @@ export default function KanjiPage() {
           <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-1">
-                <h2 className="text-4xl font-extrabold text-white font-jp">{currentKanji.kanji}</h2>
+                <h2 className="text-4xl font-extrabold text-ink font-jp">{currentKanji.kanji}</h2>
                 <p className="text-lg font-bold text-sakura-dark">{currentKanji.meaning}</p>
               </div>
               <button 
                 onClick={() => speakAudio(currentKanji.kanji)}
-                className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-purple-300 hover:text-white transition-all cursor-pointer"
+                className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink transition-all cursor-pointer"
                 title="Speak Audio"
               >
                 <Volume2 className="w-5 h-5" />
@@ -312,30 +312,30 @@ export default function KanjiPage() {
             {/* Onyomi / Kunyomi */}
             <div className="space-y-3.5 border-t border-white/[0.08] pt-4">
               <div>
-                <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
+                <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
                   Onyomi (Chinese Reading)
                 </p>
-                <p className="text-sm font-bold text-white font-jp mt-1">{currentKanji.onyomi}</p>
+                <p className="text-sm font-bold text-ink font-jp mt-1">{currentKanji.onyomi}</p>
               </div>
               <div>
-                <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
+                <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
                   Kunyomi (Japanese Reading)
                 </p>
-                <p className="text-sm font-bold text-white font-jp mt-1">{currentKanji.kunyomi}</p>
+                <p className="text-sm font-bold text-ink font-jp mt-1">{currentKanji.kunyomi}</p>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-1">
                 <div>
-                  <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
+                  <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
                     Strokes Count
                   </p>
-                  <p className="text-sm font-bold text-white font-orbitron mt-1">{currentKanji.strokes}</p>
+                  <p className="text-sm font-bold text-ink font-heading mt-1">{currentKanji.strokes}</p>
                 </div>
               </div>
             </div>
 
             {/* Stroke Guide Steps list */}
             <div className="space-y-3 border-t border-white/[0.08] pt-4">
-              <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
+              <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
                 Stroke Order Guide
               </p>
               <div className="space-y-2">
@@ -350,24 +350,24 @@ export default function KanjiPage() {
 
           {/* Vocabulary using the Kanji */}
           <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-4">
-            <h3 className="text-xs font-extrabold tracking-widest text-purple-300/40 uppercase">
+            <h3 className="text-xs font-extrabold tracking-widest text-ink-muted uppercase">
               Common Vocabulary
             </h3>
             <div className="space-y-3">
               {currentKanji.vocabulary.map((vocab, idx) => (
                 <div 
                   key={idx}
-                  className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between hover:border-white/10 transition-all"
+                  className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between hover:border-edge transition-all"
                 >
                   <div className="space-y-0.5">
-                    <p className="text-base font-bold text-white font-jp">{vocab.word}</p>
-                    <p className="text-[11px] text-purple-300/50 font-semibold">{vocab.reading}</p>
+                    <p className="text-base font-bold text-ink font-jp">{vocab.word}</p>
+                    <p className="text-[11px] text-ink-muted font-semibold">{vocab.reading}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs font-bold text-sakura-dark">{vocab.meaning}</p>
                     <button 
                       onClick={() => speakAudio(vocab.word)}
-                      className="p-1 text-purple-300/40 hover:text-white rounded transition-colors mt-1 inline-block cursor-pointer"
+                      className="p-1 text-ink-muted hover:text-ink rounded transition-colors mt-1 inline-block cursor-pointer"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                     </button>

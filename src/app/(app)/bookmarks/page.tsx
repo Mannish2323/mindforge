@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -41,17 +41,17 @@ export default function BookmarksPage() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
-          <Bookmark className="w-7 h-7 text-neon-pink" /> Bookmarks
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
+          <Bookmark className="w-7 h-7 text-accent" /> Bookmarks
         </h1>
-        <p className="text-sm text-purple-300/45">{bookmarks.length} saved items</p>
+        <p className="text-sm text-ink-muted">{bookmarks.length} saved items</p>
       </motion.div>
 
       {/* Filters */}
       <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-1">
         {filters.map(f => (
           <button key={f.key} onClick={() => setActiveFilter(f.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeFilter === f.key ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.04] hover:border-white/10'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeFilter === f.key ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.04] hover:border-edge'}`}
           ><f.icon className="w-3.5 h-3.5" />{f.label}</button>
         ))}
       </motion.div>
@@ -70,15 +70,15 @@ export default function BookmarksPage() {
                     <Badge variant="default" size="sm">{bm.level}</Badge>
                   </div>
                   <button onClick={() => removeBookmark(bm.id)}
-                    className="p-1.5 rounded-lg text-purple-300/30 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
+                    className="p-1.5 rounded-lg text-ink-light hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-2xl font-jp font-bold text-white block">{bm.kanji}</span>
+                  <span className="text-2xl font-jp font-bold text-ink block">{bm.kanji}</span>
                   <span className="text-sm text-brand-light font-medium block">{bm.romaji}</span>
-                  <span className="text-xs text-purple-300/50">{bm.meaning}</span>
+                  <span className="text-xs text-ink-muted">{bm.meaning}</span>
                 </div>
               </Card>
             </motion.div>
@@ -86,9 +86,9 @@ export default function BookmarksPage() {
         </motion.div>
       ) : (
         <Card variant="glass" padding="lg" className="text-center space-y-3">
-          <Bookmark className="w-10 h-10 text-purple-300/20 mx-auto" />
-          <p className="text-sm text-purple-300/40">No bookmarks yet</p>
-          <p className="text-xs text-purple-300/25">Save vocabulary, grammar, and kanji while studying</p>
+          <Bookmark className="w-10 h-10 text-ink-secondary/20 mx-auto" />
+          <p className="text-sm text-ink-muted">No bookmarks yet</p>
+          <p className="text-xs text-ink-light">Save vocabulary, grammar, and kanji while studying</p>
         </Card>
       )}
     </motion.div>

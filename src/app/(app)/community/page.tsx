@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -143,16 +143,16 @@ export default function CommunityPage() {
       {/* Header title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-4 gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
             Community Hub
           </h1>
-          <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
             Share progress tips, ask questions, and join study cohorts
           </p>
         </div>
 
         {/* Tab selector */}
-        <div className="flex items-center gap-1.5 p-1 bg-white/5 border border-white/10 rounded-2xl">
+        <div className="flex items-center gap-1.5 p-1 bg-warm-soft border border-edge rounded-2xl">
           {[
             { id: 'feed', label: '💬 Discussion Feed', icon: MessageSquare },
             { id: 'groups', label: '👥 Study Groups', icon: Users }
@@ -164,8 +164,8 @@ export default function CommunityPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                   isActive 
-                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-md' 
-                    : 'text-purple-300/60 hover:text-white'
+                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-md' 
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <tab.icon className="w-3.5 h-3.5" />
@@ -190,7 +190,7 @@ export default function CommunityPage() {
                   value={newPostText}
                   onChange={(e) => setNewPostText(e.target.value)}
                   placeholder="Share your Japanese study target, milestones or questions today..."
-                  className="w-full min-h-[100px] bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl p-4 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all resize-none"
+                  className="w-full min-h-[100px] bg-white/[0.02] border border-white/5 hover:border-edge rounded-xl p-4 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all resize-none"
                 />
                 
                 <div className="flex justify-end pt-2 border-t border-white/5">
@@ -211,17 +211,17 @@ export default function CommunityPage() {
                   <div key={post.id} className="glass-card p-6 rounded-[24px] border border-white/5 space-y-4">
                     {/* User profile metadata */}
                     <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-lg select-none">
+                      <div className="w-10 h-10 rounded-xl bg-warm-soft border border-edge flex items-center justify-center text-lg select-none">
                         {post.avatar}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <h4 className="text-sm font-bold text-white leading-none">{post.author}</h4>
+                          <h4 className="text-sm font-bold text-ink leading-none">{post.author}</h4>
                           <span className="text-[8px] font-bold text-brand-purple-light bg-brand-purple/20 px-1.5 py-0.5 rounded uppercase">
                             {post.level}
                           </span>
                         </div>
-                        <p className="text-[10px] text-purple-300/40 font-semibold mt-1 uppercase tracking-wider">{post.time}</p>
+                        <p className="text-[10px] text-ink-muted font-semibold mt-1 uppercase tracking-wider">{post.time}</p>
                       </div>
                     </div>
 
@@ -231,10 +231,10 @@ export default function CommunityPage() {
                     </p>
 
                     {/* Like & Comment counter triggers */}
-                    <div className="flex items-center gap-6 pt-3 border-t border-white/5 text-xs font-bold text-purple-300/40 select-none">
+                    <div className="flex items-center gap-6 pt-3 border-t border-white/5 text-xs font-bold text-ink-muted select-none">
                       <button
                         onClick={() => handleLike(post.id)}
-                        className={`flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer ${
+                        className={`flex items-center gap-1.5 hover:text-ink transition-colors cursor-pointer ${
                           post.liked ? 'text-sakura-dark hover:text-sakura-dark' : ''
                         }`}
                       >
@@ -252,7 +252,7 @@ export default function CommunityPage() {
                     <div className="space-y-3 pt-3 border-t border-white/5 bg-white/[0.01] rounded-2xl p-3">
                       {post.comments.map((c, idx) => (
                         <div key={idx} className="p-3 bg-white/[0.01] border border-white/5 rounded-xl space-y-1">
-                          <p className="text-xs font-bold text-white font-orbitron">{c.author}</p>
+                          <p className="text-xs font-bold text-ink font-heading">{c.author}</p>
                           <p className="text-xs font-medium text-purple-200">{c.content}</p>
                         </div>
                       ))}
@@ -264,7 +264,7 @@ export default function CommunityPage() {
                           value={commentsInput[post.id] || ''}
                           onChange={(e) => setCommentsInput(prev => ({ ...prev, [post.id]: e.target.value }))}
                           placeholder="Write a comment reply..."
-                          className="flex-1 bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl px-4 h-10 text-xs placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 transition-all"
+                          className="flex-1 bg-white/[0.02] border border-white/5 hover:border-edge rounded-xl px-4 h-10 text-xs placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 transition-all"
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
@@ -284,13 +284,13 @@ export default function CommunityPage() {
           {activeTab === 'groups' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-300">
               {studyGroups.map((group) => (
-                <div key={group.id} className="glass-card p-6 rounded-[24px] border border-white/5 flex flex-col justify-between space-y-6 hover:border-white/10 transition-all">
+                <div key={group.id} className="glass-card p-6 rounded-[24px] border border-white/5 flex flex-col justify-between space-y-6 hover:border-edge transition-all">
                   <div className="space-y-3">
                     <div className="flex justify-between items-start gap-4">
-                      <h4 className="text-base font-bold text-white font-orbitron">{group.name}</h4>
-                      <span className="text-[10px] font-bold text-purple-300/40 uppercase tracking-widest">{group.members} Members</span>
+                      <h4 className="text-base font-bold text-ink font-heading">{group.name}</h4>
+                      <span className="text-[10px] font-bold text-ink-muted uppercase tracking-widest">{group.members} Members</span>
                     </div>
-                    <p className="text-xs text-purple-300/60 font-semibold leading-relaxed">
+                    <p className="text-xs text-ink-muted font-semibold leading-relaxed">
                       {group.description}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ export default function CommunityPage() {
         {/* Right Column: Community Leaderboard Side panel widget */}
         <div className="lg:col-span-4 space-y-6">
           <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/5 space-y-5">
-            <h3 className="text-base font-bold text-white font-orbitron flex items-center gap-2">
+            <h3 className="text-base font-bold text-ink font-heading flex items-center gap-2">
               <Trophy className="w-5 h-5 text-yellow-400" />
               <span>Weekly Leaderboard</span>
             </h3>
@@ -344,11 +344,11 @@ export default function CommunityPage() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-purple-300/40 w-4 font-orbitron">{user.rank}</span>
+                    <span className="text-xs font-bold text-ink-muted w-4 font-heading">{user.rank}</span>
                     <span className="text-sm">{user.icon}</span>
                     <span className="text-xs font-bold text-white">{user.name}</span>
                   </div>
-                  <span className="text-xs font-extrabold text-sakura-dark font-orbitron">{user.xp} XP</span>
+                  <span className="text-xs font-extrabold text-sakura-dark font-heading">{user.xp} XP</span>
                 </div>
               ))}
             </div>

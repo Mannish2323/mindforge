@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -44,14 +44,14 @@ export default function ReadingPage() {
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
       <motion.div variants={item} className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-extrabold text-white">Reading Practice</h1>
-        <p className="text-sm text-purple-300/45">Read Japanese passages and test comprehension</p>
+        <p className="text-sm text-ink-muted">Read Japanese passages and test comprehension</p>
       </motion.div>
 
       {/* Tabs */}
       <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-1">
         {tabs.map(tab => (
           <button key={tab} onClick={() => { setActiveTab(tab); setSelectedPassage(null); }}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.04] hover:border-white/10'}`}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.04] hover:border-edge'}`}
           >{tab}</button>
         ))}
       </motion.div>
@@ -67,13 +67,13 @@ export default function ReadingPage() {
               </div>
               <div className="flex gap-2">
                 <button onClick={() => setShowFurigana(!showFurigana)}
-                  className={`p-2 rounded-lg border transition-all cursor-pointer ${showFurigana ? 'bg-neon-purple/10 border-neon-purple/20 text-brand-light' : 'bg-white/[0.03] border-white/[0.06] text-purple-300/40'}`}
+                  className={`p-2 rounded-lg border transition-all cursor-pointer ${showFurigana ? 'bg-brand/10 border-brand/20 text-brand-light' : 'bg-white/[0.03] border-white/[0.06] text-ink-muted'}`}
                   title="Toggle furigana"
                 >
                   <BookOpen className="w-4 h-4" />
                 </button>
                 <button onClick={() => setShowTranslation(!showTranslation)}
-                  className={`p-2 rounded-lg border transition-all cursor-pointer ${showTranslation ? 'bg-neon-purple/10 border-neon-purple/20 text-brand-light' : 'bg-white/[0.03] border-white/[0.06] text-purple-300/40'}`}
+                  className={`p-2 rounded-lg border transition-all cursor-pointer ${showTranslation ? 'bg-brand/10 border-brand/20 text-brand-light' : 'bg-white/[0.03] border-white/[0.06] text-ink-muted'}`}
                   title="Toggle translation"
                 >
                   {showTranslation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -83,7 +83,7 @@ export default function ReadingPage() {
 
             {/* Japanese text */}
             <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-              <p className="text-lg font-jp text-white leading-loose tracking-wide">
+              <p className="text-lg font-jp text-ink leading-loose tracking-wide">
                 {selectedPassage.japanese}
               </p>
             </div>
@@ -91,9 +91,9 @@ export default function ReadingPage() {
             {/* Translation */}
             {showTranslation && (
               <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-                className="p-4 rounded-xl bg-neon-purple/5 border border-neon-purple/10"
+                className="p-4 rounded-xl bg-brand/5 border border-brand/8"
               >
-                <p className="text-sm text-purple-200/60 italic">{selectedPassage.english}</p>
+                <p className="text-sm text-ink-secondary italic">{selectedPassage.english}</p>
               </motion.div>
             )}
           </Card>
@@ -113,7 +113,7 @@ export default function ReadingPage() {
                           ? selectedAnswers[qi] === q.answer
                             ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
                             : 'bg-rose-500/15 border-rose-500/30 text-rose-400'
-                          : 'bg-white/[0.02] border-white/[0.06] text-purple-200/60 hover:border-white/10'
+                          : 'bg-white/[0.02] border-white/[0.06] text-ink-secondary hover:border-edge'
                       }`}
                     >
                       {opt}
@@ -143,15 +143,15 @@ export default function ReadingPage() {
                   <h4 className="text-sm font-semibold text-white">{passage.title}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <Badge variant="purple" size="sm">{passage.level}</Badge>
-                    <span className="text-[10px] text-purple-300/40">{passage.questions.length} questions</span>
+                    <span className="text-[10px] text-ink-muted">{passage.questions.length} questions</span>
                   </div>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-purple-300/30" />
+              <ChevronRight className="w-4 h-4 text-ink-light" />
             </Card>
           )) : (
             <Card variant="glass" padding="lg" className="text-center">
-              <p className="text-sm text-purple-300/40">No passages available for {activeTab} yet</p>
+              <p className="text-sm text-ink-muted">No passages available for {activeTab} yet</p>
             </Card>
           )}
         </motion.div>

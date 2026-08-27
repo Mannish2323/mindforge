@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useRef } from 'react';
 import { Variants } from 'framer-motion';
@@ -201,7 +201,7 @@ export default function BillingPage() {
 
         <motion.p
           variants={heroItem}
-          className="text-sm text-purple-300/45 max-w-lg mx-auto leading-relaxed"
+          className="text-sm text-ink-muted max-w-lg mx-auto leading-relaxed"
         >
           Unlock unlimited vocabulary, AI-powered conversations, and the complete N5→N1
           learning path. All prices in INR — secured by Razorpay.
@@ -280,7 +280,7 @@ export default function BillingPage() {
                   ${isActive
                     ? 'border-emerald-500/40 bg-emerald-950/30 shadow-[0_0_28px_rgba(16,185,129,0.10)]'
                     : plan.popular
-                    ? 'border-neon-purple/30 bg-[#0f0b1e] shadow-[0_0_24px_rgba(109,60,255,0.10)]'
+                    ? 'border-brand/30 bg-[#0f0b1e] shadow-[0_0_24px_rgba(109,60,255,0.10)]'
                     : 'border-white/[0.08] bg-[#0c0a18]/80 hover:border-white/[0.14] hover:shadow-[0_2px_32px_rgba(109,60,255,0.09)]'
                   }
                 `}
@@ -320,7 +320,7 @@ export default function BillingPage() {
                       <span className="text-2xl select-none">{plan.emoji}</span>
                       <div>
                         <h3 className="text-base font-bold text-white">{plan.name}</h3>
-                        <p className="text-[10px] text-purple-300/40">{plan.subtitle}</p>
+                        <p className="text-[10px] text-ink-muted">{plan.subtitle}</p>
                       </div>
                       {plan.popular && (
                         <Crown className="w-4 h-4 text-amber-400 ml-auto flex-shrink-0" />
@@ -330,24 +330,24 @@ export default function BillingPage() {
                     {/* Price */}
                     <div className="flex items-baseline gap-1.5">
                       {plan.price === 0 ? (
-                        <span className="text-3xl font-extrabold text-white font-orbitron">₹0</span>
+                        <span className="text-3xl font-extrabold text-ink font-heading">₹0</span>
                       ) : (
                         <>
-                          <span className="text-sm font-bold text-purple-300/50 font-orbitron self-start mt-1">₹</span>
-                          <span className="text-3xl font-extrabold text-white font-orbitron leading-none">
+                          <span className="text-sm font-bold text-ink-muted font-heading self-start mt-1">₹</span>
+                          <span className="text-3xl font-extrabold text-ink font-heading leading-none">
                             {plan.price}
                           </span>
-                          <span className="text-xs text-purple-300/40 font-semibold">{plan.periodLabel}</span>
+                          <span className="text-xs text-ink-muted font-semibold">{plan.periodLabel}</span>
                         </>
                       )}
                     </div>
 
                     {/* Limit chips */}
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.07] text-[10px] text-purple-300/50 font-semibold">
+                      <span className="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.07] text-[10px] text-ink-muted font-semibold">
                         {plan.aiChatsPerDay === 500 ? '500 AI chats/day' : `${plan.aiChatsPerDay} AI chats/day`}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.07] text-[10px] text-purple-300/50 font-semibold">
+                      <span className="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.07] text-[10px] text-ink-muted font-semibold">
                         {plan.lessonsPerDay === null ? 'Unlimited lessons' : `${plan.lessonsPerDay} lessons/day`}
                       </span>
                     </div>
@@ -363,11 +363,11 @@ export default function BillingPage() {
                     {plan.features.slice(0, 7).map((f, i) => (
                       <motion.li key={i} variants={featureItem} className="flex items-start gap-2 text-xs">
                         <Check className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-emerald-400/80" />
-                        <span className="text-purple-200/60">{f}</span>
+                        <span className="text-ink-secondary">{f}</span>
                       </motion.li>
                     ))}
                     {plan.features.length > 7 && (
-                      <li className="text-[10px] text-purple-300/30 pl-5.5">
+                      <li className="text-[10px] text-ink-light pl-5.5">
                         +{plan.features.length - 7} more features
                       </li>
                     )}
@@ -384,7 +384,7 @@ export default function BillingPage() {
                       <ShieldCheck className="w-4 h-4" /> Current Plan ✓
                     </motion.div>
                   ) : planId === 'free' ? (
-                    <div className="py-3.5 rounded-xl text-center text-xs font-semibold text-purple-300/30 border border-white/[0.04]">
+                    <div className="py-3.5 rounded-xl text-center text-xs font-semibold text-ink-light border border-white/[0.04]">
                       Free Forever
                     </div>
                   ) : (
@@ -420,10 +420,10 @@ export default function BillingPage() {
         animate={{ opacity: 1, transition: { delay: 0.6, duration: 0.5 } }}
         className="text-center space-y-3 pt-2"
       >
-        <p className="text-xs text-purple-300/25 max-w-md mx-auto">
+        <p className="text-xs text-ink-light max-w-md mx-auto">
           Payments secured by Razorpay. Cancel anytime from your profile settings.
         </p>
-        <div className="flex items-center justify-center gap-4 text-[10px] text-purple-300/20 font-bold uppercase tracking-wider">
+        <div className="flex items-center justify-center gap-4 text-[10px] text-ink-secondary/20 font-bold uppercase tracking-wider">
           <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3" />Secure Payment</span>
           <span>·</span><span>Cancel Anytime</span>
           <span>·</span><span>INR Pricing</span>

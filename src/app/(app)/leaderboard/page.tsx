@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
@@ -34,7 +34,7 @@ export default function LeaderboardPage() {
     if (rank === 1) return <Crown className="w-5 h-5 text-amber-400 fill-amber-500" />;
     if (rank === 2) return <Medal className="w-5 h-5 text-gray-300" />;
     if (rank === 3) return <Medal className="w-5 h-5 text-amber-600" />;
-    return <span className="text-sm font-bold text-purple-300/40 w-5 text-center font-orbitron">{rank}</span>;
+    return <span className="text-sm font-bold text-ink-muted w-5 text-center font-heading">{rank}</span>;
   };
 
   const getRankBg = (rank: number) => {
@@ -50,17 +50,17 @@ export default function LeaderboardPage() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-2xl mx-auto">
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
           <Trophy className="w-7 h-7 text-amber-400" /> Leaderboard
         </h1>
-        <p className="text-sm text-purple-300/45">Compete with learners worldwide</p>
+        <p className="text-sm text-ink-muted">Compete with learners worldwide</p>
       </motion.div>
 
       {/* Tabs */}
       <motion.div variants={item} className="flex gap-2">
         {tabs.map(tab => (
           <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === tab.key ? 'bg-neon-purple/20 text-white border border-neon-purple/30' : 'bg-white/[0.03] text-purple-300/50 border border-white/[0.08]'}`}
+            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === tab.key ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.08]'}`}
           >{tab.label}</button>
         ))}
       </motion.div>
@@ -77,7 +77,7 @@ export default function LeaderboardPage() {
                 <Avatar emoji={u.avatar} name={u.name} size={isFirst ? 'lg' : 'md'} />
                 <div className="absolute -top-2 -right-2">{getRankIcon(u.rank)}</div>
               </div>
-              <span className="text-xs font-bold text-white truncate w-full text-center">{u.name.split(' ')[0]}</span>
+              <span className="text-xs font-bold text-ink truncate w-full text-center">{u.name.split(' ')[0]}</span>
               <Badge variant={u.rank === 1 ? 'amber' : 'purple'} size="sm" icon={<Zap className="w-3 h-3" />}>
                 {u.xp.toLocaleString()}
               </Badge>
@@ -93,20 +93,20 @@ export default function LeaderboardPage() {
           return (
             <motion.div key={user.rank} variants={item}>
               <Card variant="glass" padding="sm"
-                className={`flex items-center gap-3 px-4 py-3 ${isCurrentUser ? 'border-neon-purple/30 bg-neon-purple/10' : ''} ${getRankBg(user.rank)}`}
+                className={`flex items-center gap-3 px-4 py-3 ${isCurrentUser ? 'border-brand/30 bg-brand/10' : ''} ${getRankBg(user.rank)}`}
               >
                 <div className="w-8 flex justify-center">{getRankIcon(user.rank)}</div>
                 <Avatar emoji={user.avatar} name={user.name} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm font-semibold text-white truncate block">{user.name}</span>
+                  <span className="text-sm font-semibold text-ink truncate block">{user.name}</span>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-purple-300/40">Lv.{user.level}</span>
+                    <span className="text-[10px] text-ink-muted">Lv.{user.level}</span>
                     <span className="text-[10px] text-amber-500/60 flex items-center gap-0.5"><Flame className="w-2.5 h-2.5" />{user.streak}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-sm font-bold text-white font-orbitron">{user.xp.toLocaleString()}</span>
-                  <span className="text-[10px] text-purple-300/30 block">XP</span>
+                  <span className="text-sm font-bold text-ink font-heading">{user.xp.toLocaleString()}</span>
+                  <span className="text-[10px] text-ink-light block">XP</span>
                 </div>
               </Card>
             </motion.div>
@@ -117,9 +117,9 @@ export default function LeaderboardPage() {
       {/* Your Position */}
       <motion.div variants={item}>
         <Card variant="gradient" padding="md" className="text-center space-y-2">
-          <p className="text-xs text-purple-300/40">Your Rank</p>
-          <p className="text-2xl font-bold text-white font-orbitron">#42</p>
-          <p className="text-xs text-purple-300/50">Keep learning to climb higher!</p>
+          <p className="text-xs text-ink-muted">Your Rank</p>
+          <p className="text-2xl font-bold text-ink font-heading">#42</p>
+          <p className="text-xs text-ink-muted">Keep learning to climb higher!</p>
         </Card>
       </motion.div>
     </motion.div>

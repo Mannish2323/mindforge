@@ -107,7 +107,7 @@ export default function HomePage() {
       {/* Greeting */}
       <motion.div variants={item} className="space-y-1">
         <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
-          {greeting}, <span className="bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">{userName}</span> 👋
+          {greeting}, <span className="text-brand">{userName}</span> 👋
         </h1>
         <p className="text-ink-muted text-sm font-medium">
           Ready for today&apos;s Japanese? Keep pushing forward!

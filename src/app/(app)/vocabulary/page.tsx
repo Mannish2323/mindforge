@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -69,17 +69,17 @@ export default function VocabularyPage() {
       {/* Page Header toolbar */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
             Vocabulary Bank
           </h1>
-          <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
             Browse, search and manage your spaced repetition vocabulary decks
           </p>
         </div>
 
         {/* Quick status counters */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs font-semibold text-purple-300">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-warm-soft border border-edge rounded-xl text-xs font-semibold text-ink-secondary">
             <Layers className="w-3.5 h-3.5 text-sakura-dark" />
             <span>Deck: {deck.length} words</span>
           </div>
@@ -91,13 +91,13 @@ export default function VocabularyPage() {
         
         {/* Search bar input */}
         <div className="md:col-span-6 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300/40" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
           <input
             type="text"
             placeholder="Search words by Kanji, Kana, Romaji or English..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+            className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
           />
         </div>
 
@@ -106,7 +106,7 @@ export default function VocabularyPage() {
           <select
             value={selectedPos}
             onChange={(e) => setSelectedPos(e.target.value)}
-            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
+            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-ink-secondary/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
           >
             <option value="all">POS: All Categories</option>
             <option value="noun">Noun</option>
@@ -114,7 +114,7 @@ export default function VocabularyPage() {
             <option value="adjective">Adjective</option>
             <option value="expression">Expression</option>
           </select>
-          <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300/40 pointer-events-none" />
+          <Filter className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted pointer-events-none" />
         </div>
 
         {/* SRS Status selector */}
@@ -122,7 +122,7 @@ export default function VocabularyPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-purple-300/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
+            className="w-full bg-[#12101D] border border-white/[0.08] hover:border-white/[0.12] text-xs font-semibold text-ink-secondary/80 rounded-xl px-4 h-12 outline-none focus:border-brand-purple/60 transition-all appearance-none cursor-pointer"
           >
             <option value="all">SRS: All Status</option>
             <option value="new">New</option>
@@ -130,7 +130,7 @@ export default function VocabularyPage() {
             <option value="weak">Weak Cards</option>
             <option value="mastered">Mastered</option>
           </select>
-          <Layers className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-300/40 pointer-events-none" />
+          <Layers className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted pointer-events-none" />
         </div>
 
       </div>
@@ -138,15 +138,15 @@ export default function VocabularyPage() {
       {/* Vocabulary Cards Grid */}
       {filteredWords.length === 0 ? (
         <div className="glass-card p-12 text-center rounded-[28px] border border-white/[0.08]">
-          <BookOpen className="w-12 h-12 text-purple-300/20 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-white font-orbitron">No Matching Words</h3>
-          <p className="text-xs text-purple-300/40 mt-1">Try refining search phrases or selection filters.</p>
+          <BookOpen className="w-12 h-12 text-ink-secondary/20 mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-ink font-heading">No Matching Words</h3>
+          <p className="text-xs text-ink-muted mt-1">Try refining search phrases or selection filters.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredWords.map((vocab) => {
             const inDeck = deck.includes(vocab.id);
-            let statusBadge = 'border-purple-500/20 text-purple-300/60 bg-purple-500/5';
+            let statusBadge = 'border-purple-500/20 text-ink-muted bg-purple-500/5';
             if (vocab.status === 'mastered') statusBadge = 'border-emerald-500/20 text-emerald-400 bg-emerald-500/5';
             else if (vocab.status === 'weak') statusBadge = 'border-rose-500/20 text-rose-400 bg-rose-500/5';
             else if (vocab.status === 'learning') statusBadge = 'border-orange-500/20 text-orange-400 bg-orange-500/5';
@@ -155,11 +155,11 @@ export default function VocabularyPage() {
               <motion.div 
                 key={vocab.id}
                 layout
-                className="glass-card p-6 rounded-[24px] flex flex-col justify-between space-y-4 hover:border-white/10 hover:bg-white/[0.04] transition-all duration-300"
+                className="glass-card p-6 rounded-[24px] flex flex-col justify-between space-y-4 hover:border-edge hover:bg-white/[0.04] transition-all duration-300"
               >
                 {/* Top info and status badge */}
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-bold text-purple-300/40 uppercase tracking-widest">{vocab.pos}</span>
+                  <span className="text-[9px] font-bold text-ink-muted uppercase tracking-widest">{vocab.pos}</span>
                   <span className={`text-[9px] font-extrabold tracking-wider border px-2 py-0.5 rounded-md ${statusBadge}`}>
                     {vocab.status.toUpperCase()}
                   </span>
@@ -167,8 +167,8 @@ export default function VocabularyPage() {
 
                 {/* Vocabulary display */}
                 <div className="space-y-1.5">
-                  <h3 className="text-2xl font-extrabold text-white font-jp truncate">{vocab.kanji}</h3>
-                  <p className="text-xs font-bold text-purple-300/60 font-jp truncate">{vocab.kana}</p>
+                  <h3 className="text-2xl font-extrabold text-ink font-jp truncate">{vocab.kanji}</h3>
+                  <p className="text-xs font-bold text-ink-muted font-jp truncate">{vocab.kana}</p>
                   <p className="text-[10px] font-semibold text-sakura-dark italic">{vocab.romaji}</p>
                 </div>
 
@@ -180,7 +180,7 @@ export default function VocabularyPage() {
                 <div className="flex items-center justify-between pt-3 border-t border-white/[0.08]">
                   <button 
                     onClick={() => speakWord(vocab.kanji)}
-                    className="p-2.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-purple-300 hover:text-white transition-all cursor-pointer"
+                    className="p-2.5 rounded-lg bg-warm-soft border border-edge hover:border-edge-hover text-ink-secondary hover:text-ink transition-all cursor-pointer"
                     title="Speak word"
                   >
                     <Volume2 className="w-4 h-4" />

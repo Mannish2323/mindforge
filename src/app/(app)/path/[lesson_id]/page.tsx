@@ -138,7 +138,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
         <RefreshCw className="w-8 h-8 text-sakura-dark animate-spin" />
-        <p className="text-sm font-bold text-purple-300/60 uppercase tracking-widest animate-pulse">
+        <p className="text-sm font-bold text-ink-secondary/60 uppercase tracking-widest animate-pulse">
           Loading Lesson Content...
         </p>
       </div>
@@ -149,7 +149,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
     return (
       <div className="text-center py-12 space-y-4">
         <h2 className="text-xl font-bold text-rose-400">Error Loading Lesson</h2>
-        <p className="text-sm text-purple-300/60 font-semibold">{error || 'Lesson details not found.'}</p>
+        <p className="text-sm text-ink-secondary/60 font-semibold">{error || 'Lesson details not found.'}</p>
         <Button onClick={() => router.push('/jlpt')} className="btn btn-primary btn-sm">
           Return to Roadmap
         </Button>
@@ -225,20 +225,20 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
       <div className="flex items-center justify-between">
         <button
           onClick={() => router.push('/jlpt')}
-          className="flex items-center gap-2 text-sm text-purple-300 hover:text-white transition-colors cursor-pointer"
+          className="flex items-center gap-2 text-sm text-ink-secondary hover:text-ink transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Roadmap</span>
         </button>
-        <span className="text-xs font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 font-orbitron">
+        <span className="text-xs font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 font-heading">
           LESSON: {params.lesson_id.toUpperCase()}
         </span>
       </div>
 
       {/* Lesson Title banner */}
       <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white font-orbitron">{lesson.title}</h1>
-        <p className="text-xs text-purple-300/40 font-semibold uppercase tracking-wider">{lesson.description}</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink font-heading">{lesson.title}</h1>
+        <p className="text-xs text-ink-muted font-semibold uppercase tracking-wider">{lesson.description}</p>
       </div>
 
       {/* Tab Switcher */}
@@ -256,8 +256,8 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs md:text-sm font-bold transition-all cursor-pointer ${
                 isActive 
-                  ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-md' 
-                  : 'text-purple-300/60 hover:text-white'
+                  ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-md' 
+                  : 'text-ink-secondary/60 hover:text-ink'
               }`}
             >
               <tab.icon className="w-4 h-4 flex-shrink-0" />
@@ -268,11 +268,11 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
       </div>
 
       {/* Tab Panel contents */}
-      <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] min-h-[350px] flex flex-col justify-between">
+      <div className="glass-card p-6 md:p-8 rounded-[28px] border border-edge min-h-[350px] flex flex-col justify-between">
         
         {activeTab === 'vocab' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center text-xs font-bold text-purple-300/40 uppercase">
+            <div className="flex justify-between items-center text-xs font-bold text-ink-muted uppercase">
               <span>Card {vocabIndex + 1} of {vocabulary.length}</span>
               <span>VOCABULARY DECK</span>
             </div>
@@ -286,28 +286,28 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   exit={{ opacity: 0, y: -10 }}
                   className="flex flex-col items-center justify-center text-center space-y-6 py-6"
                 >
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-white font-jp tracking-wide">
+                  <h2 className="text-3xl md:text-4xl font-extrabold text-ink font-jp tracking-wide">
                     {vocabulary[vocabIndex].word_japanese}
                   </h2>
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-purple-300/60">
+                    <p className="text-sm font-bold text-ink-secondary/60">
                       {vocabulary[vocabIndex].hiragana || vocabulary[vocabIndex].katakana || ''}
                     </p>
                     <p className="text-xs font-semibold text-sakura-dark italic">{vocabulary[vocabIndex].romaji}</p>
                   </div>
-                  <p className="text-lg font-bold text-white max-w-md">
+                  <p className="text-lg font-bold text-ink max-w-md">
                     {vocabulary[vocabIndex].english}
                   </p>
-                  <p className="text-xs text-purple-300/40 max-w-md italic font-semibold leading-relaxed border-t border-white/[0.08] pt-4">
+                  <p className="text-xs text-ink-muted max-w-md italic font-semibold leading-relaxed border-t border-edge pt-4">
                     {vocabulary[vocabIndex].meaning || vocabulary[vocabIndex].part_of_speech || ''}
                   </p>
                 </motion.div>
               </AnimatePresence>
             ) : (
-              <p className="text-center text-purple-300/50 py-8">No vocabulary words for this lesson.</p>
+              <p className="text-center text-ink-muted py-8">No vocabulary words for this lesson.</p>
             )}
 
-            <div className="flex items-center justify-between pt-6 border-t border-white/[0.08]">
+            <div className="flex items-center justify-between pt-6 border-t border-edge">
               <button 
                 onClick={() => speakJapanese(vocabulary[vocabIndex]?.word_japanese || '')}
                 disabled={vocabulary.length === 0}
@@ -350,32 +350,32 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                 <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 w-max block">
                   GRAMMAR RULES
                 </span>
-                <h2 className="text-xl md:text-2xl font-extrabold text-white font-orbitron">{currentGrammar.title}</h2>
-                <div className="p-4 bg-white/[0.03] border border-white/[0.08] rounded-2xl font-semibold">
-                  <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider mb-2">STRUCTURE</p>
-                  <p className="text-sm font-bold text-white font-jp">{currentGrammar.pattern}</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-ink font-heading">{currentGrammar.title}</h2>
+                <div className="p-4 bg-warm-soft border border-edge rounded-2xl font-semibold">
+                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider mb-2">STRUCTURE</p>
+                  <p className="text-sm font-bold text-ink font-jp">{currentGrammar.pattern}</p>
                   <p className="text-xs text-sakura-dark italic mt-1">{currentGrammar.formation || ''}</p>
                 </div>
                 <div className="space-y-1.5 leading-relaxed font-semibold">
-                  <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">EXPLANATION</p>
+                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">EXPLANATION</p>
                   <p className="text-sm text-purple-200">{currentGrammar.meaning_english}</p>
                 </div>
 
                 {/* Grammar Examples */}
                 {currentGrammar.example_japanese && (
                   <div className="space-y-2">
-                    <p className="text-xs text-purple-300/40 font-bold uppercase tracking-wider">EXAMPLES</p>
+                    <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">EXAMPLES</p>
                     <div className="space-y-2">
-                      <div className="p-3 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between">
+                      <div className="p-3 bg-white/[0.02] border border-edge rounded-xl flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-bold text-white font-jp">{currentGrammar.example_japanese}</p>
+                          <p className="text-sm font-bold text-ink font-jp">{currentGrammar.example_japanese}</p>
                           {currentGrammar.example_english && (
-                            <p className="text-[10px] text-purple-300/50 italic font-semibold">{currentGrammar.example_english}</p>
+                            <p className="text-[10px] text-ink-muted italic font-semibold">{currentGrammar.example_english}</p>
                           )}
                         </div>
                         <button 
                           onClick={() => speakJapanese(currentGrammar.example_japanese || '')}
-                          className="p-2 text-purple-300/40 hover:text-white rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-ink-muted hover:text-ink rounded-lg transition-colors cursor-pointer"
                         >
                           <Volume2 className="w-3.5 h-3.5" />
                         </button>
@@ -385,10 +385,10 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                 )}
               </div>
             ) : (
-              <p className="text-center text-purple-300/50 py-8">No grammar topic for this lesson.</p>
+              <p className="text-center text-ink-muted py-8">No grammar topic for this lesson.</p>
             )}
 
-            <div className="flex justify-end pt-6 border-t border-white/[0.08]">
+            <div className="flex justify-end pt-6 border-t border-edge">
               <Button 
                 onClick={() => setActiveTab('speaking')}
                 className="btn btn-primary btn-sm font-bold cursor-pointer"
@@ -405,13 +405,13 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 w-max mx-auto block">
                 PRONUNCIATION PRACTICE
               </span>
-              <p className="text-sm text-purple-300/60 font-semibold max-w-md mx-auto">
+              <p className="text-sm text-ink-secondary/60 font-semibold max-w-md mx-auto">
                 Listen to the phrase first, then record yourself repeating it. We will evaluate your accent.
               </p>
 
               {vocabulary.length > 0 ? (
-                <div className="p-6 bg-white/[0.03] border border-white/[0.08] rounded-3xl max-w-md mx-auto space-y-4 shadow-lg">
-                  <h3 className="text-2xl font-extrabold text-white font-jp">
+                <div className="p-6 bg-warm-soft border border-edge rounded-3xl max-w-md mx-auto space-y-4 shadow-lg">
+                  <h3 className="text-2xl font-extrabold text-ink font-jp">
                     {vocabulary[0].word_japanese}
                   </h3>
                   <p className="text-xs text-sakura-dark italic font-semibold">{vocabulary[0].romaji}</p>
@@ -424,7 +424,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   </button>
                 </div>
               ) : (
-                <p className="text-purple-300/55">No model phrase loaded.</p>
+                <p className="text-ink-secondary/55">No model phrase loaded.</p>
               )}
 
               {/* Speech mic waves */}
@@ -434,13 +434,13 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                   disabled={vocabulary.length === 0}
                   className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                     isRecording 
-                      ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]' 
-                      : 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-lg'
+                      ? 'bg-rose-500 text-ink animate-pulse shadow-[0_0_20px_rgba(239,68,68,0.5)]' 
+                      : 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-lg'
                   }`}
                 >
                   <Mic className="w-6 h-6" />
                 </button>
-                <p className="text-xs font-bold text-purple-300/40 uppercase tracking-widest">
+                <p className="text-xs font-bold text-ink-muted uppercase tracking-widest">
                   {isRecording ? 'Recording (Speaking)...' : 'Tap to Record'}
                 </p>
 
@@ -469,14 +469,14 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
           <div className="space-y-6 flex flex-col justify-between min-h-[350px]">
             {!quizFinished ? (
               <div className="space-y-6">
-                <div className="flex justify-between items-center text-xs font-bold text-purple-300/40 uppercase">
+                <div className="flex justify-between items-center text-xs font-bold text-ink-muted uppercase">
                   <span>Question {quizIndex + 1} of {quizQuestions.length}</span>
                   <span>SCORE: {quizScore}</span>
                 </div>
 
                 {quizQuestions.length > 0 ? (
                   <div className="space-y-5">
-                    <h3 className="text-lg font-bold text-white leading-relaxed">
+                    <h3 className="text-lg font-bold text-ink leading-relaxed">
                       {quizQuestions[quizIndex].question}
                     </h3>
 
@@ -484,7 +484,7 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                       {quizQuestions[quizIndex].options.map((opt, idx) => {
                         const isSelected = selectedQuizAnswer === idx;
                         const isCorrect = idx === quizQuestions[quizIndex].correctIdx;
-                        let optionStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-white/10 hover:bg-white/[0.04] text-purple-300';
+                        let optionStyle = 'bg-warm-soft border-edge hover:border-white/10 hover:bg-warm-soft text-ink-secondary';
                         
                         if (selectedQuizAnswer !== null) {
                           if (isCorrect) optionStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
@@ -505,10 +505,10 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
                     </div>
                   </div>
                 ) : (
-                  <p className="text-center text-purple-300/50 py-8">Generating quiz questions...</p>
+                  <p className="text-center text-ink-muted py-8">Generating quiz questions...</p>
                 )}
 
-                <div className="flex justify-end pt-6 border-t border-white/[0.08]">
+                <div className="flex justify-end pt-6 border-t border-edge">
                   <Button
                     disabled={selectedQuizAnswer === null}
                     onClick={nextQuizQuestion}
@@ -523,13 +523,13 @@ export default function LessonPlayerPage({ params }: { params: { lesson_id: stri
               <div className="text-center py-8 space-y-6 flex flex-col justify-between h-full">
                 <div className="space-y-4">
                   <Award className="w-16 h-16 text-yellow-400 mx-auto animate-bounce" />
-                  <h2 className="text-2xl font-extrabold text-white font-orbitron">Lesson Completed!</h2>
-                  <p className="text-sm text-purple-300/60 font-semibold max-w-sm mx-auto">
+                  <h2 className="text-2xl font-extrabold text-ink font-heading">Lesson Completed!</h2>
+                  <p className="text-sm text-ink-secondary/60 font-semibold max-w-sm mx-auto">
                     Great work! You scored {quizScore} out of {quizQuestions.length} correct. You earned +{lesson.xp_reward || 10} XP and +5 gems.
                   </p>
                 </div>
 
-                <div className="flex justify-center gap-4 pt-6 border-t border-white/[0.08]">
+                <div className="flex justify-center gap-4 pt-6 border-t border-edge">
                   <Button 
                     onClick={() => {
                       setQuizIndex(0);

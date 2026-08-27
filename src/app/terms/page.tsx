@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -44,23 +44,23 @@ export default function TermsPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen min-h-[100dvh] bg-[#09070F] text-white flex flex-col relative overflow-hidden"
+      className="min-h-screen min-h-[100dvh] bg-[#09070F] text-ink flex flex-col relative overflow-hidden"
     >
       <SakuraParticles />
 
       {/* Ambient background glows */}
-      <div className="absolute w-[50vw] h-[50vw] rounded-full bg-neon-purple/5 blur-[120px] pointer-events-none top-[-10%] right-[-10%]" />
+      <div className="absolute w-[50vw] h-[50vw] rounded-full bg-brand/5 blur-[120px] pointer-events-none top-[-10%] right-[-10%]" />
       <div className="absolute w-[40vw] h-[40vw] rounded-full bg-neon-pink/4 blur-[100px] pointer-events-none bottom-[-10%] left-[-10%]" />
 
       {/* Header toolbar */}
-      <header className="w-full border-b border-white/[0.08] bg-[#09070F]/80 backdrop-blur-xl z-20 sticky top-0">
+      <header className="w-full border-b border-edge bg-[#09070F]/80 backdrop-blur-xl z-20 sticky top-0">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/auth" className="flex items-center gap-2 text-xs font-bold text-purple-300/60 hover:text-white transition-colors cursor-pointer group">
+          <Link href="/auth" className="flex items-center gap-2 text-xs font-bold text-ink-secondary/60 hover:text-ink transition-colors cursor-pointer group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             <span>Back to Login</span>
           </Link>
           
-          <div className="flex items-center gap-2 text-xs font-bold text-purple-300/40 uppercase tracking-widest">
+          <div className="flex items-center gap-2 text-xs font-bold text-ink-muted uppercase tracking-widest">
             <FileText className="w-3.5 h-3.5 text-sakura-dark" />
             <span>Terms of Service</span>
           </div>
@@ -71,20 +71,20 @@ export default function TermsPage() {
       <main className="flex-1 max-w-3xl mx-auto px-6 py-12 z-10 space-y-10">
         {/* Title Block */}
         <div className="space-y-3 text-center sm:text-left">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-neon-purple/10 border border-neon-purple/20 text-[10px] font-bold text-brand-light tracking-wide uppercase">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 border border-neon-purple/20 text-[10px] font-bold text-brand-light tracking-wide uppercase">
             <Sparkles className="w-3 h-3 text-sakura-dark" />
             Platform Rules & Guidelines
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-ink font-heading">
             Terms of Service
           </h1>
-          <p className="text-xs text-purple-300/35 uppercase font-bold tracking-wider">
+          <p className="text-xs text-ink-secondary/35 uppercase font-bold tracking-wider">
             Last Updated: July 2026
           </p>
         </div>
 
         {/* Introduction */}
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-sm text-purple-200/80 leading-relaxed font-medium">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-edge text-sm text-purple-200/80 leading-relaxed font-medium">
           Please review the following rules and parameters before engaging with the MindForge interactive dashboard and AI training units.
         </div>
 
@@ -97,8 +97,8 @@ export default function TermsPage() {
         >
           {sections.map((section, idx) => (
             <motion.section key={idx} variants={itemVariants} className="space-y-2">
-              <h2 className="text-base font-extrabold text-white font-orbitron">{section.title}</h2>
-              <p className="text-xs sm:text-sm text-purple-300/70 leading-relaxed font-semibold">
+              <h2 className="text-base font-extrabold text-ink font-heading">{section.title}</h2>
+              <p className="text-xs sm:text-sm text-ink-secondary/70 leading-relaxed font-semibold">
                 {section.content}
               </p>
             </motion.section>
@@ -106,13 +106,13 @@ export default function TermsPage() {
         </motion.div>
 
         {/* Legal notice footer card */}
-        <div className="p-6 rounded-3xl bg-[#12101D] border border-white/[0.08] flex flex-col sm:flex-row items-center gap-4 shadow-lg">
+        <div className="p-6 rounded-3xl bg-[#12101D] border border-edge flex flex-col sm:flex-row items-center gap-4 shadow-lg">
           <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400">
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div className="space-y-1 text-center sm:text-left">
-            <h4 className="text-sm font-extrabold text-white">Compliance & Safeguards</h4>
-            <p className="text-[11px] text-purple-300/40 leading-relaxed font-semibold">
+            <h4 className="text-sm font-extrabold text-ink">Compliance & Safeguards</h4>
+            <p className="text-[11px] text-ink-muted leading-relaxed font-semibold">
               Failure to comply with these terms may result in account restriction or revocation of access credentials.
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function TermsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t border-white/[0.06] py-6 text-center text-[10px] text-purple-300/15 font-bold uppercase tracking-widest px-6 z-20">
+      <footer className="w-full border-t border-edge py-6 text-center text-[10px] text-ink-secondary/15 font-bold uppercase tracking-widest px-6 z-20">
         &copy; 2026 Yample Labs. All Rights Reserved.
       </footer>
     </motion.div>

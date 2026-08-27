@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -71,10 +71,10 @@ export default function SpeakingPage() {
       {/* Header title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
         <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white font-orbitron">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
             Speaking Practice
           </h1>
-          <p className="text-xs md:text-sm text-purple-300/50 font-semibold tracking-wide uppercase">
+          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
             Repeat the phrases and assess your Japanese accent and speaking flow
           </p>
         </div>
@@ -86,8 +86,8 @@ export default function SpeakingPage() {
               onClick={() => { setPhraseIdx(idx); setScore(null); setFeedback(null); }}
               className={`w-8 h-8 rounded-lg font-bold text-xs border transition-all cursor-pointer ${
                 phraseIdx === idx 
-                  ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white border-transparent' 
-                  : 'bg-white/[0.04] border-white/[0.08] text-purple-300/60 hover:text-white'
+                  ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink border-transparent' 
+                  : 'bg-white/[0.04] border-white/[0.08] text-ink-muted hover:text-ink'
               }`}
             >
               {idx + 1}
@@ -104,17 +104,17 @@ export default function SpeakingPage() {
           <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 text-center">
             
             <div className="space-y-4">
-              <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 w-max mx-auto block font-orbitron">
+              <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-3 py-1 bg-sakura-dark/15 rounded-full border border-sakura-dark/25 w-max mx-auto block font-heading">
                 TARGET PHRASE • {currentPhrase.difficulty.toUpperCase()}
               </span>
               
-              <h2 className="text-2xl md:text-3xl font-extrabold text-white leading-relaxed font-jp">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-ink leading-relaxed font-jp">
                 {currentPhrase.jp}
               </h2>
               
               <div className="space-y-1">
                 <p className="text-xs font-semibold text-sakura-dark italic">{currentPhrase.romaji}</p>
-                <p className="text-sm font-semibold text-purple-300/70">{currentPhrase.translation}</p>
+                <p className="text-sm font-semibold text-ink-secondary/70">{currentPhrase.translation}</p>
               </div>
             </div>
 
@@ -157,13 +157,13 @@ export default function SpeakingPage() {
                   onClick={handleRecordTrigger}
                   className={`w-20 h-20 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                     isRecording 
-                      ? 'bg-rose-500 text-white animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.45)]' 
-                      : 'bg-gradient-to-r from-brand-purple to-sakura-dark text-white shadow-lg hover:scale-105'
+                      ? 'bg-rose-500 text-ink animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.45)]' 
+                      : 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-lg hover:scale-105'
                   }`}
                 >
                   <Mic className="w-8 h-8" />
                 </button>
-                <p className="text-xs font-bold text-purple-300/40 uppercase tracking-widest font-orbitron">
+                <p className="text-xs font-bold text-ink-muted uppercase tracking-widest font-heading">
                   {isRecording ? 'Tap to Stop & Evaluate' : 'Tap to Start Speaking'}
                 </p>
               </div>
@@ -186,10 +186,10 @@ export default function SpeakingPage() {
                 className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] text-center py-16 space-y-4"
               >
                 <RefreshCw className="w-10 h-10 text-sakura-dark animate-spin mx-auto" />
-                <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
+                <h3 className="text-sm font-extrabold text-ink font-heading uppercase tracking-widest">
                   AI Evaluation
                 </h3>
-                <p className="text-xs text-purple-300/50 font-medium max-w-xs mx-auto leading-relaxed">
+                <p className="text-xs text-ink-muted font-medium max-w-xs mx-auto leading-relaxed">
                   Analyzing phonetic alignment, syllable pitch, and pacing...
                 </p>
               </motion.div>
@@ -202,7 +202,7 @@ export default function SpeakingPage() {
                 className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6"
               >
                 <div className="text-center space-y-2">
-                  <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
+                  <h3 className="text-sm font-extrabold text-ink font-heading uppercase tracking-widest">
                     Assessment Result
                   </h3>
                   
@@ -224,8 +224,8 @@ export default function SpeakingPage() {
                       />
                     </svg>
                     <div className="flex flex-col items-center">
-                      <span className="text-3xl font-extrabold text-white font-orbitron">{score}%</span>
-                      <span className="text-[9px] font-bold text-purple-300/40 uppercase">ACCURACY</span>
+                      <span className="text-3xl font-extrabold text-ink font-heading">{score}%</span>
+                      <span className="text-[9px] font-bold text-ink-muted uppercase">ACCURACY</span>
                     </div>
                   </div>
                 </div>
@@ -235,16 +235,16 @@ export default function SpeakingPage() {
                   <div className="flex items-start gap-2 text-xs font-semibold">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-white">Clarity</p>
-                      <p className="text-[10px] text-purple-300/50 font-medium mt-0.5">{feedback.clarity}</p>
+                      <p className="text-ink">Clarity</p>
+                      <p className="text-[10px] text-ink-muted font-medium mt-0.5">{feedback.clarity}</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-2 text-xs font-semibold">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-white">Rhythm & Flow</p>
-                      <p className="text-[10px] text-purple-300/50 font-medium mt-0.5">{feedback.rhythm}</p>
+                      <p className="text-ink">Rhythm & Flow</p>
+                      <p className="text-[10px] text-ink-muted font-medium mt-0.5">{feedback.rhythm}</p>
                     </div>
                   </div>
 
@@ -288,10 +288,10 @@ export default function SpeakingPage() {
             ) : (
               <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] text-center py-16 space-y-4">
                 <Sparkles className="w-10 h-10 text-sakura-dark animate-pulse mx-auto" />
-                <h3 className="text-sm font-extrabold text-white font-orbitron uppercase tracking-widest">
+                <h3 className="text-sm font-extrabold text-ink font-heading uppercase tracking-widest">
                   AI Assessor ready
                 </h3>
-                <p className="text-xs text-purple-300/50 font-medium max-w-xs mx-auto leading-relaxed">
+                <p className="text-xs text-ink-muted font-medium max-w-xs mx-auto leading-relaxed">
                   Record yourself reading the target sentence on the left to receive immediate accent feedback.
                 </p>
               </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -65,10 +65,10 @@ export default function ReviewPage() {
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-2xl mx-auto">
       <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white flex items-center gap-2">
-          <Brain className="w-7 h-7 text-neon-pink" /> Spaced Repetition Review
+        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
+          <Brain className="w-7 h-7 text-accent" /> Spaced Repetition Review
         </h1>
-        <p className="text-sm text-purple-300/45">{totalCards} cards due today</p>
+        <p className="text-sm text-ink-muted">{totalCards} cards due today</p>
       </motion.div>
 
       <motion.div variants={item}>
@@ -85,14 +85,14 @@ export default function ReviewPage() {
             </motion.div>
             <div>
               <h2 className="text-2xl font-bold text-white">Session Complete!</h2>
-              <p className="text-sm text-purple-300/50 mt-1">You reviewed {totalCards} cards</p>
+              <p className="text-sm text-ink-muted mt-1">You reviewed {totalCards} cards</p>
             </div>
             <div className="grid grid-cols-4 gap-3">
               {difficultyButtons.map(d => {
                 const count = Object.values(results).filter(r => r === d.key).length;
                 return (
                   <div key={d.key} className={`p-3 rounded-xl border ${d.color.split(' ').slice(0, 2).join(' ')}`}>
-                    <span className="text-xl font-bold text-white block">{count}</span>
+                    <span className="text-xl font-bold text-ink block">{count}</span>
                     <span className="text-[10px] font-bold uppercase tracking-wider">{d.label}</span>
                   </div>
                 );
@@ -120,7 +120,7 @@ export default function ReviewPage() {
                   >
                     <Badge variant="purple" size="sm">Card {currentIndex + 1}</Badge>
                     <span className="text-6xl font-jp text-white">{currentCard.kanji}</span>
-                    <p className="text-sm text-purple-300/30">Tap to reveal answer</p>
+                    <p className="text-sm text-ink-light">Tap to reveal answer</p>
                   </motion.div>
                 ) : (
                   <motion.div key="back" initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} exit={{ rotateY: 90 }} transition={{ duration: 0.3 }}
@@ -128,9 +128,9 @@ export default function ReviewPage() {
                   >
                     <span className="text-4xl font-jp text-white">{currentCard.kanji}</span>
                     <span className="text-xl text-brand-light font-semibold">{currentCard.romaji}</span>
-                    <span className="text-lg text-white font-bold">{currentCard.meaning}</span>
+                    <span className="text-lg text-ink font-bold">{currentCard.meaning}</span>
                     <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] w-full text-center">
-                      <p className="text-sm font-jp text-purple-200/60">{currentCard.example}</p>
+                      <p className="text-sm font-jp text-ink-secondary">{currentCard.example}</p>
                     </div>
                   </motion.div>
                 )}

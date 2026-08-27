@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
@@ -238,13 +238,13 @@ export default function AITutorPage() {
       <div className="xl:col-span-3 space-y-6">
         <div className="glass-card p-6 rounded-[24px] space-y-6 hidden xl:block">
           <div className="flex items-center justify-between border-b border-white/5 pb-4">
-            <h3 className="text-base font-bold text-white font-orbitron flex items-center gap-2">
+            <h3 className="text-base font-bold text-ink font-heading flex items-center gap-2">
               <History className="w-4 h-4 text-sakura-dark" />
               <span>Presets</span>
             </h3>
             <button 
               onClick={clearChat}
-              className="p-2 text-purple-300/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
+              className="p-2 text-ink-muted hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
               title="Clear Session"
             >
               <Trash2 className="w-4 h-4" />
@@ -253,7 +253,7 @@ export default function AITutorPage() {
 
           {/* Quick presets list */}
           <div className="space-y-3">
-            <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase">
+            <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
               CONVERSATIONAL
             </p>
             {[
@@ -264,13 +264,13 @@ export default function AITutorPage() {
               <button
                 key={idx}
                 onClick={() => handleSend(p.text)}
-                className="w-full text-left p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-brand-purple/40 hover:bg-brand-purple/10 text-xs font-semibold text-purple-300/70 hover:text-white transition-all cursor-pointer"
+                className="w-full text-left p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-brand-purple/40 hover:bg-brand-purple/10 text-xs font-semibold text-ink-secondary/70 hover:text-ink transition-all cursor-pointer"
               >
                 {p.label}
               </button>
             ))}
 
-            <p className="text-[10px] font-extrabold tracking-widest text-purple-300/40 uppercase pt-3">
+            <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase pt-3">
               EXPLANATIONS
             </p>
             {[
@@ -280,7 +280,7 @@ export default function AITutorPage() {
               <button
                 key={idx}
                 onClick={() => handleSend(p.text)}
-                className="w-full text-left p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-brand-purple/40 hover:bg-brand-purple/10 text-xs font-semibold text-purple-300/70 hover:text-white transition-all cursor-pointer"
+                className="w-full text-left p-3.5 rounded-xl bg-white/[0.02] border border-white/5 hover:border-brand-purple/40 hover:bg-brand-purple/10 text-xs font-semibold text-ink-secondary/70 hover:text-ink transition-all cursor-pointer"
               >
                 {p.label}
               </button>
@@ -290,17 +290,17 @@ export default function AITutorPage() {
 
         {/* AI Limit Indicator */}
         <div className="glass-card p-6 rounded-[24px] space-y-4">
-          <div className="flex justify-between items-center text-xs font-bold text-purple-300/60">
+          <div className="flex justify-between items-center text-xs font-bold text-ink-muted">
             <span>AI TUTOR USAGE</span>
             <span className="text-sakura-dark">{entitlements.aiUsedToday} / {entitlements.aiLimit} Daily Limit</span>
           </div>
-          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-warm-soft rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-brand-purple to-sakura-dark rounded-full transition-all duration-300"
               style={{ width: `${entitlements.aiLimit > 0 ? (entitlements.aiUsedToday / entitlements.aiLimit) * 100 : 0}%` }}
             />
           </div>
-          <p className="text-[10px] font-semibold text-purple-300/40 leading-relaxed">
+          <p className="text-[10px] font-semibold text-ink-muted leading-relaxed">
             Premium users get 99+ dynamic requests, advanced grammar feedback and voice assessments.
           </p>
         </div>
@@ -315,7 +315,7 @@ export default function AITutorPage() {
               <Sparkles className="w-5 h-5 text-sakura-dark animate-pulse" />
             </div>
             <div>
-              <h3 className="text-sm font-extrabold text-white font-orbitron">Sakura Sensei</h3>
+              <h3 className="text-sm font-extrabold text-ink font-heading">Sakura Sensei</h3>
               <p className="text-[10px] text-emerald-400 font-bold tracking-wider">AI TUTOR • ONLINE</p>
             </div>
           </div>
@@ -323,7 +323,7 @@ export default function AITutorPage() {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setSelectedLanguage(prev => prev === 'ja' ? 'en' : 'ja')}
-              className="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-purple-300 hover:text-white transition-all cursor-pointer"
+              className="px-3 py-1.5 rounded-lg bg-warm-soft hover:bg-white/10 border border-edge text-xs font-bold text-ink-secondary hover:text-ink transition-all cursor-pointer"
             >
               Mode: {selectedLanguage === 'ja' ? 'Japanese Helper' : 'English Only'}
             </button>
@@ -353,14 +353,14 @@ export default function AITutorPage() {
                 {/* Bubble box */}
                 <div className={`p-4 rounded-2xl shadow-md border ${
                   msg.role === 'user' 
-                    ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark border-brand-purple/30 text-white rounded-tr-sm' 
+                    ? 'bg-gradient-to-br from-brand-purple to-brand-purple-dark border-brand-purple/30 text-ink rounded-tr-sm' 
                     : 'bg-[#1A1728] border-white/[0.06] text-purple-100 rounded-tl-sm'
                 }`}>
                   {msg.role === 'model' && msg.content_ja ? (
                     <div className="space-y-2">
                       <p className="text-base font-semibold leading-relaxed font-jp">{msg.content_ja}</p>
                       {msg.content_romaji && (
-                        <p className="text-xs text-purple-300/60 font-semibold italic">{msg.content_romaji}</p>
+                        <p className="text-xs text-ink-muted font-semibold italic">{msg.content_romaji}</p>
                       )}
                       <div className="border-t border-white/5 my-2 pt-2" />
                       <p className="text-sm font-medium text-purple-200/90">{msg.content_en}</p>
@@ -383,7 +383,7 @@ export default function AITutorPage() {
                   <div className="flex items-center gap-2 pl-2">
                     <button 
                       onClick={() => speakJapanese(msg.content_ja!)}
-                      className="p-1.5 text-purple-300/40 hover:text-white rounded-lg hover:bg-white/5 transition-colors cursor-pointer"
+                      className="p-1.5 text-ink-muted hover:text-ink rounded-lg hover:bg-warm-soft transition-colors cursor-pointer"
                       title="Listen Audio"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
@@ -447,8 +447,8 @@ export default function AITutorPage() {
               onClick={handleVoiceInput}
               className={`p-3.5 rounded-xl border flex-shrink-0 transition-all cursor-pointer ${
                 isRecording 
-                  ? 'bg-rose-500 border-rose-500 text-white animate-pulse' 
-                  : 'bg-white/5 border-white/5 hover:border-white/10 hover:bg-white/[0.08] text-purple-300 hover:text-white'
+                  ? 'bg-rose-500 border-rose-500 text-ink animate-pulse' 
+                  : 'bg-warm-soft border-white/5 hover:border-edge hover:bg-white/[0.08] text-ink-secondary hover:text-ink'
               }`}
             >
               <Mic className="w-5 h-5" />
@@ -462,7 +462,7 @@ export default function AITutorPage() {
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder={isRecording ? 'Listening...' : 'Ask a question or type in Japanese...'}
                 disabled={isRecording}
-                className="w-full bg-white/[0.02] border border-white/5 hover:border-white/10 rounded-xl px-5 h-12 text-sm placeholder-purple-300/30 text-white outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+                className="w-full bg-white/[0.02] border border-white/5 hover:border-edge rounded-xl px-5 h-12 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
               />
             </div>
 
@@ -470,7 +470,7 @@ export default function AITutorPage() {
             <button
               type="submit"
               disabled={!inputText.trim() || loading}
-              className="p-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-sakura-dark text-white border-none flex-shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-115 transition-all shadow-lg"
+              className="p-3.5 rounded-xl bg-gradient-to-r from-brand-purple to-sakura-dark text-ink border-none flex-shrink-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:brightness-115 transition-all shadow-lg"
             >
               <Send className="w-5 h-5" />
             </button>
@@ -493,8 +493,8 @@ export default function AITutorPage() {
             </div>
           </div>
           <div className="space-y-1">
-            <h4 className="text-base font-extrabold text-white font-orbitron">Sakura Avatar</h4>
-            <p className="text-xs text-purple-300/60 font-medium">Your Virtual Mascot</p>
+            <h4 className="text-base font-extrabold text-ink font-heading">Sakura Avatar</h4>
+            <p className="text-xs text-ink-muted font-medium">Your Virtual Mascot</p>
           </div>
           <div className="p-3 bg-brand-purple/10 border border-brand-purple/20 rounded-2xl text-[11px] font-semibold text-purple-200/90 leading-relaxed">
             &ldquo;You are doing great! Completing the daily goals helps commit syntax rules to long term memory.&rdquo;
@@ -503,7 +503,7 @@ export default function AITutorPage() {
 
         {/* Suggestion list for user */}
         <div className="glass-card p-6 rounded-[24px] space-y-4">
-          <h4 className="text-xs font-extrabold tracking-widest text-purple-300/40 uppercase">
+          <h4 className="text-xs font-extrabold tracking-widest text-ink-muted uppercase">
             LEARNING SUGGESTIONS
           </h4>
           <div className="space-y-3">
@@ -517,7 +517,7 @@ export default function AITutorPage() {
                 className="p-3.5 bg-white/[0.02] border border-white/5 rounded-xl space-y-1"
               >
                 <p className="text-xs font-bold text-white">{item.title}</p>
-                <p className="text-[10px] font-medium text-purple-300/40">{item.desc}</p>
+                <p className="text-[10px] font-medium text-ink-muted">{item.desc}</p>
               </div>
             ))}
           </div>
