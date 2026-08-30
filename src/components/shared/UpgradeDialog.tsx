@@ -12,6 +12,7 @@ import React, { createContext, useContext, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { X, Sparkles, Zap, Crown, ArrowRight, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MFIcon } from '@/components/ui/MFIcon';
 import { useAuth } from '@/app/context/AuthContext';
 import { PLANS, PLAN_ORDER, type PlanId } from '@/lib/plans';
 
@@ -109,7 +110,7 @@ function UpgradeDialogModal({
             transition={{ type: 'spring', stiffness: 280, damping: 24 }}
             className="fixed inset-0 flex items-center justify-center z-[201] p-4"
           >
-            <div className="w-full max-w-sm bg-white border border-edge rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden">
+            <div className="w-full max-w-sm bg-card border border-edge rounded-3xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] overflow-hidden">
 
               {/* Header */}
               <div className="relative px-6 pt-6 pb-4">
@@ -168,7 +169,7 @@ function UpgradeDialogModal({
               <div className="px-6 pb-4">
                 <div className="rounded-2xl bg-warm-soft border border-edge p-4 space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl">{suggestedPlan.emoji}</span>
+                    <MFIcon name="crown" size={24} />
                     <div>
                       <p className="text-sm font-bold text-ink">{suggestedPlan.name} Plan</p>
                       <p className="text-[10px] text-ink-muted">{suggestedPlan.subtitle}</p>

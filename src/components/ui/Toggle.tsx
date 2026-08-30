@@ -66,7 +66,7 @@ export function Toggle({
         />
         <div
           className={cn(
-            'absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-md transition-all duration-300',
+            'absolute top-0.5 w-6 h-6 rounded-full bg-card shadow-md transition-all duration-300',
             checked ? 'left-[calc(100%-26px)]' : 'left-0.5'
           )}
         />

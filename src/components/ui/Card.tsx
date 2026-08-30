@@ -34,16 +34,16 @@ export function Card({
   };
 
   const variants: Record<CardVariant, string> = {
-    glass: 'bg-white border border-edge shadow-[0_2px_12px_rgba(0,0,0,0.06)]',
-    solid: 'bg-warm-cream border border-edge',
-    gradient: 'bg-gradient-to-br from-brand/5 to-cat-purple/5 border border-brand/15',
-    stat: 'bg-white border border-edge shadow-[0_2px_12px_rgba(0,0,0,0.06)]',
-    neon: 'bg-white border-2 border-brand/20 shadow-[0_4px_16px_rgba(109,60,255,0.1)]',
-    category: cn('bg-white border-2 shadow-[0_2px_12px_rgba(0,0,0,0.06)]', color || 'border-edge'),
+    glass: 'bg-card border-[1.5px] border-edge text-ink shadow-[var(--paper-shadow)]',
+    solid: 'bg-cream border-[1.5px] border-edge text-ink shadow-[var(--paper-shadow)]',
+    gradient: 'bg-brand-light border-[1.5px] border-brand/20 text-ink shadow-[var(--paper-shadow)]',
+    stat: 'bg-card border-[1.5px] border-edge text-ink shadow-[var(--paper-shadow)]',
+    neon: 'bg-card border-[1.5px] border-brand text-ink shadow-[var(--paper-shadow)]',
+    category: cn('bg-card border-[1.5px] text-ink shadow-[var(--paper-shadow)]', color || 'border-edge'),
   };
 
   const baseClasses = cn(
-    'rounded-card-lg relative overflow-hidden',
+    'rounded-[22px] relative overflow-hidden transition-colors',
     variants[variant],
     hover && 'card-hover',
     active && 'card-active',
@@ -54,9 +54,9 @@ export function Card({
   if (animate) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 100, damping: 15 }}
+        transition={{ type: 'spring', stiffness: 120, damping: 16 }}
         className={baseClasses}
         {...(props as any)}
       >

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,6 +10,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { MFIcon } from '@/components/ui/MFIcon';
 import { evaluateHandwritingCanvas, type GeometryBreakdown, type StrokeVector } from '@/lib/handwritingEvaluator';
 
 interface CharacterItem {
@@ -36,17 +37,17 @@ const WRITING_PACK: CharacterItem[] = [
 
 // Score component metadata
 const SCORE_COMPONENTS = [
-  { key: 'boundingBoxScore',     label: 'Bounding Box',    weight: '20%', icon: '▣', desc: 'Size & aspect ratio vs reference' },
-  { key: 'pixelOverlapScore',    label: 'Pixel Overlap',   weight: '30%', icon: '◈', desc: 'Ink overlapping the reference character' },
-  { key: 'strokeCountScore',     label: 'Stroke Count',    weight: '10%', icon: '✦', desc: 'Number of strokes drawn' },
-  { key: 'strokePositionScore',  label: 'Centering',       weight: '20%', icon: '⊙', desc: 'Character centred in guide zone' },
-  { key: 'strokeDirectionScore', label: 'Direction',       weight: '10%', icon: '↗', desc: 'Consistent stroke direction' },
-  { key: 'canvasOverflowScore',  label: 'Within Guide',    weight: '10%', icon: '⬜', desc: 'Ink inside the guide boundaries' },
+  { key: 'boundingBoxScore',     label: 'Bounding Box',    weight: '20%', iconName: 'kanji', desc: 'Size & aspect ratio vs reference' },
+  { key: 'pixelOverlapScore',    label: 'Pixel Overlap',   weight: '30%', iconName: 'star', desc: 'Ink overlapping the reference character' },
+  { key: 'strokeCountScore',     label: 'Stroke Count',    weight: '10%', iconName: 'edit', desc: 'Number of strokes drawn' },
+  { key: 'strokePositionScore',  label: 'Centering',       weight: '20%', iconName: 'bookmarks', desc: 'Character centred in guide zone' },
+  { key: 'strokeDirectionScore', label: 'Direction',       weight: '10%', iconName: 'share', desc: 'Consistent stroke direction' },
+  { key: 'canvasOverflowScore',  label: 'Within Guide',    weight: '10%', iconName: 'check', desc: 'Ink inside the guide boundaries' },
 ] as const;
 
 function ScoreBar({ score, color }: { score: number; color: string }) {
   return (
-    <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+    <div className="w-full h-1.5 rounded-full bg-card/10 overflow-hidden">
       <motion.div
         className={`h-full rounded-full ${color}`}
         initial={{ width: 0 }}
@@ -90,7 +91,7 @@ export default function WritingPage() {
   const [strokeHistory, setStrokeHistory] = useState<ImageData[]>([]);
   const [redoHistory, setRedoHistory] = useState<ImageData[]>([]);
 
-  // Stroke vector tracking — each completed stroke is stored here
+  // Stroke vector tracking � each completed stroke is stored here
   const currentStrokePoints = useRef<{ x: number; y: number }[]>([]);
   const [recordedStrokes, setRecordedStrokes] = useState<StrokeVector[]>([]);
 
@@ -103,7 +104,7 @@ export default function WritingPage() {
 
   const currentChar = WRITING_PACK[currentIndex];
 
-  // ── Canvas setup ────────────────────────────────────────────────────────────
+  // -- Canvas setup ------------------------------------------------------------
   const setupCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -130,7 +131,7 @@ export default function WritingPage() {
     return () => window.removeEventListener('resize', setupCanvas);
   }, [setupCanvas, currentIndex]);
 
-  // ── Canvas helpers ──────────────────────────────────────────────────────────
+  // -- Canvas helpers ----------------------------------------------------------
   const saveState = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -166,7 +167,7 @@ export default function WritingPage() {
     };
   };
 
-  // ── Drawing handlers ────────────────────────────────────────────────────────
+  // -- Drawing handlers --------------------------------------------------------
   const handleStartDraw = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
     if (isGhostPlaying) return;
     saveState();
@@ -215,7 +216,7 @@ export default function WritingPage() {
     currentStrokePoints.current = [];
   };
 
-  // ── Canvas controls ─────────────────────────────────────────────────────────
+  // -- Canvas controls ---------------------------------------------------------
   const handleClear = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -275,7 +276,7 @@ export default function WritingPage() {
     setTimeout(() => setIsGhostPlaying(false), 2500);
   };
 
-  // ── Evaluation ──────────────────────────────────────────────────────────────
+  // -- Evaluation --------------------------------------------------------------
   const handleAnalyzeHandwriting = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -310,7 +311,7 @@ export default function WritingPage() {
     }
   };
 
-  // ── UI helpers ──────────────────────────────────────────────────────────────
+  // -- UI helpers --------------------------------------------------------------
   const tierColors: Record<GeometryBreakdown['tier'], string> = {
     'Nearly Perfect':  'border-emerald-500/50 bg-emerald-500/5',
     'Minor Mistakes':  'border-sky-500/50     bg-sky-500/5',
@@ -330,11 +331,11 @@ export default function WritingPage() {
   return (
     <div className="space-y-8 max-w-5xl mx-auto pb-12">
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      {/* -- Header ----------------------------------------------------------- */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <Badge variant="purple" className="flex items-center gap-1">
+            <Badge variant="lavender" className="flex items-center gap-1">
               <PenTool className="w-3.5 h-3.5 text-accent" />
               <span>Handwriting Studio</span>
             </Badge>
@@ -348,19 +349,19 @@ export default function WritingPage() {
           </h1>
           <p className="text-xs text-ink-muted mt-1 flex items-center gap-1">
             <Info className="w-3 h-3" />
-            Geometry-based scoring — instant, deterministic, AI-free
+            Geometry-based scoring � instant, deterministic, AI-free
           </p>
         </div>
 
         {/* 50-Rep counter */}
-        <div className="w-full md:w-64 p-3 rounded-2xl bg-white/[0.03] border border-white/[0.08] space-y-1.5">
+        <div className="w-full md:w-64 p-3 rounded-2xl bg-card/[0.03] border border-white/[0.08] space-y-1.5">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-bold text-purple-200">Practice Goal</span>
+            <span className="font-bold text-ink-secondary">Practice Goal</span>
             <span className="font-extrabold text-accent">{repCount}/{maxReps} Reps</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-card/10 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-neon-purple to-neon-pink"
+              className="h-full bg-gradient-to-r from-brand to-coral"
               initial={{ width: 0 }}
               animate={{ width: `${(repCount / maxReps) * 100}%` }}
               transition={{ duration: 0.5 }}
@@ -369,16 +370,16 @@ export default function WritingPage() {
         </div>
       </div>
 
-      {/* ── Main Workspace ─────────────────────────────────────────────────── */}
+      {/* -- Main Workspace --------------------------------------------------- */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* ── Left: Character + Toolbar + Score ────────────────────────────── */}
+        {/* -- Left: Character + Toolbar + Score ------------------------------ */}
         <div className="lg:col-span-5 space-y-6">
 
           {/* Character Card */}
-          <Card variant="glass" padding="lg" className="text-center space-y-4 relative overflow-hidden bg-[#12101D]/90 backdrop-blur-2xl">
+          <Card variant="glass" padding="lg" className="text-center space-y-4 relative overflow-hidden bg-card-subtle/90 backdrop-blur-2xl">
             <div className="flex items-center justify-between text-xs text-ink-muted">
-              <span>{currentChar.type} · {currentChar.difficulty}</span>
+              <span>{currentChar.type} � {currentChar.difficulty}</span>
               <span>{currentChar.strokeCount} Strokes Expected</span>
             </div>
 
@@ -400,11 +401,11 @@ export default function WritingPage() {
             </div>
 
             {/* Mode Switcher */}
-            <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.06] text-xs font-bold">
+            <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-card/[0.04] border border-white/[0.06] text-xs font-bold">
               <button
                 onClick={() => setSelectedMode('trace')}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
-                  selectedMode === 'trace' ? 'bg-brand text-ink shadow-glow-purple' : 'text-ink-muted hover:text-ink'
+                  selectedMode === 'trace' ? 'bg-brand text-ink shadow-[var(--paper-press-shadow)]' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 Trace
@@ -412,7 +413,7 @@ export default function WritingPage() {
               <button
                 onClick={() => setSelectedMode('freewrite')}
                 className={`py-2 rounded-lg transition-all cursor-pointer ${
-                  selectedMode === 'freewrite' ? 'bg-brand text-ink shadow-glow-purple' : 'text-ink-muted hover:text-ink'
+                  selectedMode === 'freewrite' ? 'bg-brand text-ink shadow-[var(--paper-press-shadow)]' : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 Free Write
@@ -467,8 +468,8 @@ export default function WritingPage() {
                     onClick={() => setBrushSize(b.size)}
                     className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                       brushSize === b.size
-                        ? 'bg-brand/20 border-neon-purple text-brand-light'
-                        : 'bg-white/[0.02] border-white/[0.06] text-ink-muted hover:text-ink'
+                        ? 'bg-brand/20 border-brand text-brand'
+                        : 'bg-card/[0.02] border-white/[0.06] text-ink-muted hover:text-ink'
                     }`}
                   >
                     {b.label}
@@ -492,13 +493,13 @@ export default function WritingPage() {
                   max="100"
                   value={guideOpacity}
                   onChange={e => setGuideOpacity(Number(e.target.value))}
-                  className="w-full h-1.5 rounded-lg bg-white/10 accent-neon-purple cursor-pointer"
+                  className="w-full h-1.5 rounded-lg bg-card/10 accent-brand cursor-pointer"
                 />
               </div>
             )}
           </Card>
 
-          {/* ── Score Result Panel ─────────────────────────────────────────── */}
+          {/* -- Score Result Panel ------------------------------------------- */}
           <AnimatePresence>
             {scoreResult && (
               <motion.div
@@ -516,7 +517,7 @@ export default function WritingPage() {
                   {/* Header row */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 rounded-md bg-white/10 text-xs font-bold text-accent">
+                      <span className="px-2 py-0.5 rounded-md bg-card/10 text-xs font-bold text-accent">
                         {tierBadge[scoreResult.tier]}
                       </span>
                       <div>
@@ -533,7 +534,7 @@ export default function WritingPage() {
                   </div>
 
                   {/* Big overall bar */}
-                  <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div className="w-full h-2 rounded-full bg-card/10 overflow-hidden">
                     <motion.div
                       className={`h-full rounded-full ${scoreColor(scoreResult.overall)}`}
                       initial={{ width: 0 }}
@@ -560,10 +561,10 @@ export default function WritingPage() {
                       {SCORE_COMPONENTS.map(comp => {
                         const val = scoreResult[comp.key] as number;
                         return (
-                          <div key={comp.key} className="space-y-1 p-2 rounded-xl bg-white/[0.03] border border-white/[0.04]">
+                          <div key={comp.key} className="space-y-1 p-2 rounded-xl bg-card/[0.03] border border-white/[0.04]">
                             <div className="flex items-center justify-between text-[10px]">
                               <span className="text-ink-muted font-semibold flex items-center gap-1">
-                                <span>{comp.icon}</span>
+                                <span><MFIcon name={comp.iconName as any} size={14} /></span>
                                 <span>{comp.label}</span>
                               </span>
                               <span className={`font-extrabold ${scoreBadgeColor(val)}`}>{val}%</span>
@@ -591,8 +592,8 @@ export default function WritingPage() {
                               if (!insight) return null;
                               return (
                                 <div key={comp.key} className="flex gap-2 text-[11px]">
-                                  <span className={`mt-0.5 flex-shrink-0 ${scoreBadgeColor(val)}`}>{comp.icon}</span>
-                                  <p className="text-purple-200/70 leading-relaxed">
+                                  <span className={`mt-0.5 flex-shrink-0 ${scoreBadgeColor(val)}`}><MFIcon name={comp.iconName as any} size={14} /></span>
+                                  <p className="text-ink-secondary leading-relaxed">
                                     <span className="font-bold text-white">{comp.label}:</span> {insight}
                                   </p>
                                 </div>
@@ -615,7 +616,7 @@ export default function WritingPage() {
                   {/* Algorithm badge */}
                   <div className="flex items-center gap-1.5 text-[9px] text-ink-light border-t border-white/[0.04] pt-2">
                     <Target className="w-3 h-3" />
-                    <span>Deterministic geometry engine · BB 20% · Pixel 30% · Count 10% · Position 20% · Direction 10% · Overflow 10%</span>
+                    <span>Deterministic geometry engine � BB 20% � Pixel 30% � Count 10% � Position 20% � Direction 10% � Overflow 10%</span>
                   </div>
                 </Card>
               </motion.div>
@@ -623,9 +624,9 @@ export default function WritingPage() {
           </AnimatePresence>
         </div>
 
-        {/* ── Right: Canvas ─────────────────────────────────────────────────── */}
+        {/* -- Right: Canvas --------------------------------------------------- */}
         <div className="lg:col-span-7 space-y-4">
-          <Card variant="glass" padding="md" className="space-y-4 relative bg-[#0D0B18]/90 border border-edge rounded-3xl">
+          <Card variant="glass" padding="md" className="space-y-4 relative bg-card-subtle/90 border border-edge rounded-3xl">
 
             {/* Canvas Control Bar */}
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-3">
@@ -633,7 +634,7 @@ export default function WritingPage() {
                 <button
                   onClick={handleUndo}
                   disabled={strokeHistory.length === 0}
-                  className="p-2.5 rounded-xl bg-white/[0.04] text-purple-200 hover:bg-white/[0.08] disabled:opacity-30 cursor-pointer"
+                  className="p-2.5 rounded-xl bg-card/[0.04] text-ink-secondary hover:bg-card/[0.08] disabled:opacity-30 cursor-pointer"
                   title="Undo"
                 >
                   <Undo2 className="w-4 h-4" />
@@ -641,7 +642,7 @@ export default function WritingPage() {
                 <button
                   onClick={handleRedo}
                   disabled={redoHistory.length === 0}
-                  className="p-2.5 rounded-xl bg-white/[0.04] text-purple-200 hover:bg-white/[0.08] disabled:opacity-30 cursor-pointer"
+                  className="p-2.5 rounded-xl bg-card/[0.04] text-ink-secondary hover:bg-card/[0.08] disabled:opacity-30 cursor-pointer"
                   title="Redo"
                 >
                   <Redo2 className="w-4 h-4" />
@@ -656,7 +657,7 @@ export default function WritingPage() {
               </div>
 
               {/* Zoom Controls */}
-              <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+              <div className="flex items-center gap-1 px-2 py-1 rounded-xl bg-card/[0.04] border border-white/[0.06]">
                 <button
                   onClick={() => setZoomLevel(z => Math.max(0.8, z - 0.25))}
                   className="p-1 text-ink-muted hover:text-ink cursor-pointer"
@@ -686,13 +687,13 @@ export default function WritingPage() {
                   <Play className="w-3.5 h-3.5 mr-1" /> Replay Guide
                 </Button>
                 <Button
-                  variant="neon"
+                  variant="primary"
                   size="sm"
                   onClick={handleAnalyzeHandwriting}
                   disabled={isEvaluating || strokeHistory.length === 0}
                 >
                   {isEvaluating ? (
-                    <><Sparkles className="w-4 h-4 mr-1 animate-spin" /> Scoring…</>
+                    <><Sparkles className="w-4 h-4 mr-1 animate-spin" /> Scoring�</>
                   ) : (
                     <><Check className="w-4 h-4 mr-1" /> Evaluate Score</>
                   )}
@@ -702,7 +703,7 @@ export default function WritingPage() {
 
             {/* Drawing Canvas Container */}
             <div
-              className="relative w-full h-[360px] md:h-[420px] rounded-2xl bg-[#09070F] border border-white/[0.08] overflow-hidden flex items-center justify-center touch-none transition-transform duration-200"
+              className="relative w-full h-[360px] md:h-[420px] rounded-2xl bg-warm border border-white/[0.08] overflow-hidden flex items-center justify-center touch-none transition-transform duration-200"
               style={{ transform: `scale(${zoomLevel})` }}
             >
               {/* Grid Guide */}
@@ -754,8 +755,8 @@ export default function WritingPage() {
             <div className="flex items-center justify-between text-[10px] text-ink-light px-1">
               <span>
                 {recordedStrokes.length === 0
-                  ? 'Draw the character above ↑'
-                  : `${recordedStrokes.length} stroke${recordedStrokes.length !== 1 ? 's' : ''} recorded · tap Evaluate Score when done`}
+                  ? 'Draw the character above ?'
+                  : `${recordedStrokes.length} stroke${recordedStrokes.length !== 1 ? 's' : ''} recorded � tap Evaluate Score when done`}
               </span>
               <span className="flex items-center gap-1">
                 <Target className="w-3 h-3" />
@@ -770,11 +771,11 @@ export default function WritingPage() {
               <Info className="w-3 h-3" />
               How is the score calculated?
             </summary>
-            <div className="mt-2 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[11px] text-ink-muted space-y-1 leading-relaxed">
-              <p className="font-bold text-purple-200/70">Score = Σ (Component × Weight)</p>
+            <div className="mt-2 p-3 rounded-xl bg-card/[0.02] border border-white/[0.05] text-[11px] text-ink-muted space-y-1 leading-relaxed">
+              <p className="font-bold text-ink-secondary">Score = S (Component × Weight)</p>
               {SCORE_COMPONENTS.map(c => (
-                <p key={c.key}>
-                  <span className="font-semibold text-white/50">{c.icon} {c.label} ({c.weight})</span> — {c.desc}
+                <p key={c.key} className="flex items-center gap-1">
+                  <span className="font-semibold flex items-center gap-1 text-white/50"><MFIcon name={c.iconName as any} size={12} /> {c.label} ({c.weight})</span> — {c.desc}
                 </p>
               ))}
               <p className="text-ink-light pt-1 italic">

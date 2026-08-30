@@ -3,14 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Home, Map, BookOpen, Book, Volume2, Mic, FileText, PenTool,
-  Brain, LayoutGrid, Trophy, Users, Award, User, CreditCard,
-  Settings, Flame, Zap, Menu, X, ChevronRight,
-  Sparkles, LogOut, Bookmark, BarChart3
+  ChevronRight, Sparkles, LogOut, Sun, Moon, Monitor
 } from 'lucide-react';
 import { Logo } from '@/components/ui/Logo';
+import { MFIcon, MFIconType } from '@/components/ui/MFIcon';
 import { useAuth } from '@/app/context/AuthContext';
 import { useAuthModal } from '@/components/shared/AuthModal';
 import { SakuraParticles } from '@/components/animations/SakuraParticles';
@@ -20,16 +19,50 @@ import { PageTransition } from '@/components/layout/PageTransition';
 import { Badge } from '@/components/ui/Badge';
 import { Avatar } from '@/components/ui/Avatar';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { MFBottomNavigation } from '@/components/navigation/MFBottomNavigation';
 
 interface SidebarItem {
   name: string;
   href: string;
-  icon: React.ComponentType<any>;
+  iconName: MFIconType;
 }
 
 interface SidebarGroup {
   title: string;
   items: SidebarItem[];
+}
+
+// Theme toggle button
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
+  const options = [
+    { value: 'light', icon: Sun, label: 'Light' },
+    { value: 'dark', icon: Moon, label: 'Dark' },
+    { value: 'system', icon: Monitor, label: 'System' },
+  ] as const;
+
+  return (
+    <div className="flex items-center p-1 rounded-xl bg-cream border border-edge gap-0.5">
+      {options.map(({ value, icon: Icon, label }) => (
+        <button
+          key={value}
+          onClick={() => setTheme(value)}
+          title={label}
+          className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+            theme === value
+              ? 'bg-card shadow-[var(--paper-press-shadow)] text-ink'
+              : 'text-ink-muted hover:text-ink'
+          }`}
+        >
+          <Icon className="w-3.5 h-3.5" />
+        </button>
+      ))}
+    </div>
+  );
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -58,40 +91,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     {
       title: 'LEARN',
       items: [
-        { name: 'JLPT Roadmap', href: '/jlpt', icon: Map },
-        { name: 'Vocabulary', href: '/vocabulary', icon: BookOpen },
-        { name: 'Grammar', href: '/grammar', icon: Book },
-        { name: 'Kanji', href: '/kanji', icon: PenTool },
-        { name: 'Listening', href: '/listening', icon: Volume2 },
-        { name: 'Speaking', href: '/speaking', icon: Mic },
-        { name: 'Reading', href: '/reading', icon: FileText },
-        { name: 'Writing', href: '/writing', icon: PenTool },
+        { name: 'JLPT Roadmap', href: '/jlpt', iconName: 'jlpt' },
+        { name: 'Vocabulary', href: '/vocabulary', iconName: 'vocabulary' },
+        { name: 'Grammar', href: '/grammar', iconName: 'grammar' },
+        { name: 'Kanji', href: '/kanji', iconName: 'kanji' },
+        { name: 'Listening', href: '/listening', iconName: 'listening' },
+        { name: 'Speaking', href: '/speaking', iconName: 'speaking' },
+        { name: 'Reading', href: '/reading', iconName: 'reading' },
+        { name: 'Writing', href: '/writing', iconName: 'writing' },
       ]
     },
     {
       title: 'PRACTICE',
       items: [
-        { name: 'Review (SRS)', href: '/review', icon: Brain },
-        { name: 'Quiz', href: '/quiz', icon: LayoutGrid },
-        { name: 'AI Tutor', href: '/ai-tutor', icon: Sparkles },
+        { name: 'Review (SRS)', href: '/review', iconName: 'review' },
+        { name: 'Quiz', href: '/quiz', iconName: 'quiz' },
+        { name: 'AI Tutor', href: '/ai-tutor', iconName: 'ai-tutor' },
       ]
     },
     {
       title: 'COMMUNITY',
       items: [
-        { name: 'Community', href: '/community', icon: Users },
-        { name: 'Leaderboard', href: '/leaderboard', icon: Trophy },
-        { name: 'Achievements', href: '/achievements', icon: Award },
+        { name: 'Community', href: '/community', iconName: 'community' },
+        { name: 'Leaderboard', href: '/leaderboard', iconName: 'leaderboard' },
+        { name: 'Achievements', href: '/achievements', iconName: 'achievements' },
       ]
     },
     {
       title: 'ACCOUNT',
       items: [
-        { name: 'Profile', href: '/profile', icon: User },
-        { name: 'Progress', href: '/progress', icon: BarChart3 },
-        { name: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
-        { name: 'Subscription', href: '/billing', icon: CreditCard },
-        { name: 'Settings', href: '/settings', icon: Settings },
+        { name: 'Profile', href: '/profile', iconName: 'profile' },
+        { name: 'Progress', href: '/progress', iconName: 'progress' },
+        { name: 'Bookmarks', href: '/bookmarks', iconName: 'bookmarks' },
+        { name: 'Subscription', href: '/billing', iconName: 'subscription' },
+        { name: 'Settings', href: '/settings', iconName: 'settings' },
       ]
     }
   ];
@@ -152,37 +185,40 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div>
           <Link
             href="/home"
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-semibold text-sm ${
+            className={`relative flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 font-semibold text-sm overflow-hidden ${
               pathname === '/home'
-                ? 'bg-brand/8 border border-brand/15 text-brand shadow-sm'
-                : 'text-ink-secondary hover:text-ink hover:bg-warm-soft border border-transparent'
+                ? 'bg-brand/10 text-brand before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-brand'
+                : 'text-ink-secondary hover:text-ink hover:bg-cream border border-transparent'
             }`}
           >
-            <Home className="w-[18px] h-[18px] flex-shrink-0" />
+            <MFIcon name="home" size={18} className="flex-shrink-0" />
             <span>Home</span>
           </Link>
         </div>
 
         {navigationGroups.map((group) => (
           <div key={group.title} className="space-y-0.5">
-            <h3 className="px-4 mb-2 text-[9px] font-extrabold tracking-[0.2em] text-ink-light uppercase">
+            <h3 className="px-4 mb-1.5 text-[9px] font-extrabold tracking-[0.18em] text-ink-light uppercase">
               {group.title}
             </h3>
             {group.items.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-[13px] font-medium ${
+                  className={`relative flex items-center justify-between px-4 py-2.5 rounded-xl transition-all duration-200 text-[13px] font-semibold overflow-hidden ${
                     isActive
-                      ? 'bg-brand/8 border border-brand/15 text-brand font-semibold'
-                      : 'text-ink-muted hover:text-ink hover:bg-warm-soft border border-transparent'
+                      ? 'bg-brand/10 text-brand before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-brand'
+                      : 'text-ink-muted hover:text-ink hover:bg-cream border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-brand' : 'text-ink-light'}`} />
+                    <MFIcon
+                      name={item.iconName}
+                      size={17}
+                      className={`flex-shrink-0 ${isActive ? 'text-brand' : 'text-ink-light'}`}
+                    />
                     <span>{item.name}</span>
                   </div>
                   {isActive && <ChevronRight className="w-3 h-3 text-brand" />}
@@ -195,11 +231,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* User profile card */}
       <div className="p-3 border-t border-edge">
-        <div className="p-3 rounded-xl bg-warm-cream border border-edge space-y-3">
+        <div className="p-3 rounded-xl bg-cream border border-edge space-y-3">
           <div className="flex items-center gap-3">
             <Avatar
               name={userName}
-              emoji={profile?.avatarUrl}
               size="md"
               level={userLevel}
               showLevel
@@ -235,7 +270,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         ) : (
           <button
             onClick={() => openAuthModal({ title: 'Sign in to continue' })}
-            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand to-accent shadow-md hover:shadow-lg transition-all cursor-pointer"
+            className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-brand to-coral shadow-md hover:shadow-lg transition-all cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Sign In / Register</span>
@@ -246,12 +281,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-warm text-ink flex relative overflow-hidden">
+    <div className="min-h-screen min-h-[100dvh] bg-warm text-ink flex relative overflow-hidden font-sans">
       {/* Sakura Petals Background */}
       <SakuraParticles />
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex flex-col w-[260px] border-r border-edge bg-white h-screen sticky top-0 flex-shrink-0 overflow-hidden">
+      <aside className="hidden lg:flex flex-col w-[280px] border-r border-edge bg-card h-screen sticky top-0 flex-shrink-0 overflow-hidden shadow-[1px_0_0_var(--border-subtle)]">
         {renderSidebarContent()}
       </aside>
 
@@ -272,13 +307,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative flex flex-col w-[280px] border-r border-edge bg-white h-full shadow-2xl"
+              className="relative flex flex-col w-[280px] border-r border-edge bg-card h-full shadow-2xl"
             >
               <button
                 className="absolute top-4 right-4 p-2 text-ink-muted hover:text-ink transition-colors z-20 cursor-pointer"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <X className="w-5 h-5" />
+                <MFIcon name="close" size={20} />
               </button>
               {renderSidebarContent()}
             </motion.aside>
@@ -289,53 +324,53 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 h-screen h-[100dvh] overflow-y-auto scrollbar-thin">
         {/* Top Bar */}
-        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b border-edge px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top">
+        <header className="sticky top-0 z-40 bg-card/95 backdrop-blur-xl border-b border-edge px-4 md:px-6 py-3 flex items-center justify-between gap-3 safe-top min-h-[56px]">
           <div className="flex items-center gap-3">
             {/* Mobile menu trigger */}
             <button
               onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-xl bg-warm-soft hover:bg-warm-cream text-ink-muted hover:text-ink transition-all cursor-pointer"
+              className="lg:hidden p-2 rounded-xl bg-cream hover:bg-card text-ink-muted hover:text-ink border border-edge transition-all cursor-pointer"
               aria-label="Open menu"
             >
-              <Menu className="w-5 h-5" />
+              <MFIcon name="menu" size={20} />
             </button>
 
             {/* Mobile logo */}
             <Link href="/home" className="lg:hidden flex items-center gap-2">
-              <Logo size="sm" glow={false} />
-              <span className="font-bold text-sm text-ink font-heading">MindForge</span>
+              <Logo size="sm" glow={false} variant="icon" />
             </Link>
           </div>
 
           {/* Right side badges */}
-          <div className="flex items-center gap-2 md:gap-3">
-            {/* Daily Progress (desktop) */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-cat-green-light border border-cat-green/15 rounded-xl text-xs font-bold text-cat-green">
-              <span>{xpToday}/{dailyGoalXp} XP</span>
+          <div className="flex items-center gap-2">
+            {/* Hearts (lives) */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-light border border-brand/25 rounded-xl text-xs font-extrabold text-brand" title="Hearts (Display Only)">
+              <MFIcon name="heart" size={16} />
+              <span>5 Full</span>
+            </div>
+            
+            {/* XP */}
+            <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 bg-yellow-light border border-yellow/25 rounded-xl text-xs font-extrabold text-ink">
+              <MFIcon name="star" size={16} />
+              <span>{userXp} XP</span>
+              <span className="bg-yellow text-white px-1.5 py-0.5 rounded-md text-[10px] ml-1">Lv.{userLevel}</span>
             </div>
 
             {/* Streak */}
-            <Badge variant="amber" size="sm" icon={<Flame className="w-3.5 h-3.5 fill-cat-orange text-cat-orange" />}>
-              {userStreak}
-            </Badge>
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-orange-light border border-orange/25 rounded-xl text-xs font-extrabold text-ink">
+              <MFIcon name="flame" size={16} />
+              <span className="hidden sm:inline">{userStreak}</span>
+            </div>
 
-            {/* XP */}
-            <Badge variant="purple" size="sm" icon={<Zap className="w-3.5 h-3.5 fill-brand text-brand" />} className="hidden sm:inline-flex">
-              {userXp}
-            </Badge>
-
-            {/* Level */}
-            <Badge variant="neon" size="sm" className="hidden md:inline-flex">
-              <span className="font-heading font-bold">{jlptLevel}</span>
-              <span className="text-[9px] opacity-60 ml-0.5">Lv.{userLevel}</span>
-            </Badge>
+            {/* Theme toggle */}
+            <ThemeToggle />
 
             {/* Notifications */}
             <NotificationBell />
 
             {/* Profile */}
             <Link href="/profile">
-              <Avatar name={userName} emoji={profile?.avatarUrl} size="sm" />
+              <Avatar name={userName} size="sm" />
             </Link>
           </div>
         </header>
@@ -351,45 +386,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sakura Mascot Widget */}
       <SakuraMascotWidget />
 
-      {/* Mobile Bottom Navigation */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-edge px-2 py-1.5 safe-bottom">
-        <div className="flex items-center justify-around max-w-lg mx-auto">
-          {[
-            { name: 'Home', href: '/home', icon: Home },
-            { name: 'Learn', href: '/jlpt', icon: BookOpen },
-            { name: 'Practice', href: '/ai-tutor', icon: Sparkles },
-            { name: 'Progress', href: '/progress', icon: BarChart3 },
-            { name: 'Profile', href: '/profile', icon: User },
-          ].map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/home' && pathname.startsWith(item.href));
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="flex flex-col items-center gap-0.5 py-1.5 px-3 relative"
-              >
-                <div
-                  className={`p-2 rounded-xl transition-all duration-200 ${
-                    isActive
-                      ? 'bg-brand/10 text-brand scale-110'
-                      : 'text-ink-light'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                </div>
-                <span
-                  className={`text-[9px] font-bold tracking-wider ${
-                    isActive ? 'text-brand' : 'text-ink-light'
-                  }`}
-                >
-                  {item.name}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
+      {/* Mobile Bottom Navigation — MindForge Whiteboard Style */}
+      <MFBottomNavigation className="lg:hidden" />
     </div>
   );
 }

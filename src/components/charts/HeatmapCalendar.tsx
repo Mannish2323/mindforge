@@ -144,11 +144,11 @@ export function HeatmapCalendar({ data, weeks = 12, className }: HeatmapCalendar
             className="fixed z-50 pointer-events-none"
             style={{ left: hoveredCell.x, top: hoveredCell.y - 8, transform: 'translate(-50%, -100%)' }}
           >
-            <div className="bg-white border border-edge rounded-xl px-3 py-2 shadow-[0_4px_16px_rgba(0,0,0,0.12)] text-center">
+            <div className="bg-card border border-edge rounded-xl px-3 py-2 shadow-[0_4px_16px_rgba(0,0,0,0.12)] text-center">
               <p className="text-[11px] font-bold text-ink">{hoveredCell.value} XP</p>
               <p className="text-[9px] text-ink-muted font-semibold">{formatDate(hoveredCell.date)}</p>
             </div>
-            <div className="w-2 h-2 bg-white border-r border-b border-edge rotate-45 mx-auto -mt-1" />
+            <div className="w-2 h-2 bg-card border-r border-b border-edge rotate-45 mx-auto -mt-1" />
           </div>
         )}
       </div>

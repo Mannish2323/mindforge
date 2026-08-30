@@ -1,10 +1,10 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Crown, Medal, TrendingUp, Flame, Zap } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
+import { MFCard } from '@/components/ui/MFCard';
+import { MFIcon } from '@/components/ui/MFIcon';
 import { Avatar } from '@/components/ui/Avatar';
 import { useAuth } from '@/app/context/AuthContext';
 
@@ -31,37 +31,45 @@ export default function LeaderboardPage() {
   ];
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="w-5 h-5 text-amber-400 fill-amber-500" />;
-    if (rank === 2) return <Medal className="w-5 h-5 text-gray-300" />;
-    if (rank === 3) return <Medal className="w-5 h-5 text-amber-600" />;
-    return <span className="text-sm font-bold text-ink-muted w-5 text-center font-heading">{rank}</span>;
-  };
-
-  const getRankBg = (rank: number) => {
-    if (rank === 1) return 'bg-gradient-to-r from-amber-500/10 to-yellow-500/5 border-amber-500/20';
-    if (rank === 2) return 'bg-gradient-to-r from-gray-400/10 to-gray-300/5 border-gray-400/20';
-    if (rank === 3) return 'bg-gradient-to-r from-amber-700/10 to-amber-600/5 border-amber-700/20';
-    return 'border-white/[0.08]';
+    if (rank === 1) return <MFIcon name="crown" size={20} />;
+    if (rank === 2) return <div className="w-5 h-5 rounded-full bg-slate-300 text-white flex items-center justify-center text-xs font-bold shadow-sm">2</div>;
+    if (rank === 3) return <div className="w-5 h-5 rounded-full bg-orange/80 text-white flex items-center justify-center text-xs font-bold shadow-sm">3</div>;
+    return <span className="text-sm font-black text-ink-muted w-5 text-center font-heading">{rank}</span>;
   };
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04 } } };
-  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
+  const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6 max-w-2xl mx-auto">
-      <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
-          <Trophy className="w-7 h-7 text-amber-400" /> Leaderboard
-        </h1>
-        <p className="text-sm text-ink-muted">Compete with learners worldwide</p>
-      </motion.div>
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-7 md:space-y-9 max-w-2xl mx-auto pb-14">
+      {/* Top Banner */}
+      <MFCard variant="yellow" washiTape="yellow" padding="lg">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-edge text-xs font-extrabold text-brand shadow-sm">
+            <MFIcon name="crown" size={16} />
+            <span>Global League</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-ink font-heading tracking-tight">
+            MindForge Study Hall
+          </h1>
+          <p className="text-xs text-ink-secondary font-medium">Rankings refresh weekly based on total study XP earned.</p>
+        </div>
+      </MFCard>
 
       {/* Tabs */}
-      <motion.div variants={item} className="flex gap-2">
+      <motion.div variants={item} className="flex gap-2 p-1 bg-cream border border-edge rounded-2xl">
         {tabs.map(tab => (
-          <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer ${activeTab === tab.key ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.08]'}`}
-          >{tab.label}</button>
+          <button 
+            key={tab.key} 
+            onClick={() => setActiveTab(tab.key)}
+            className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === tab.key 
+                ? 'bg-card text-brand border border-edge shadow-sm' 
+                : 'text-ink-muted hover:text-ink'
+            }`}
+          >
+            {tab.label}
+          </button>
         ))}
       </motion.div>
 
@@ -72,16 +80,22 @@ export default function LeaderboardPage() {
           const u = LEADERBOARD_DATA[order[i]];
           const isFirst = order[i] === 0;
           return (
-            <div key={u.rank} className={`flex flex-col items-center gap-2 p-4 rounded-xl border border-white/[0.08] transition-all ${getRankBg(u.rank)} ${isFirst ? 'scale-105' : ''}`}>
+            <MFCard
+              key={u.rank}
+              variant={isFirst ? 'yellow' : 'paper'}
+              lifted
+              padding="sm"
+              className={`flex flex-col items-center gap-2 text-center ${isFirst ? 'scale-105 border-brand' : ''}`}
+            >
               <div className="relative">
-                <Avatar emoji={u.avatar} name={u.name} size={isFirst ? 'lg' : 'md'} />
+                <Avatar name={u.name} size={isFirst ? 'lg' : 'md'} />
                 <div className="absolute -top-2 -right-2">{getRankIcon(u.rank)}</div>
               </div>
-              <span className="text-xs font-bold text-ink truncate w-full text-center">{u.name.split(' ')[0]}</span>
-              <Badge variant={u.rank === 1 ? 'amber' : 'purple'} size="sm" icon={<Zap className="w-3 h-3" />}>
-                {u.xp.toLocaleString()}
-              </Badge>
-            </div>
+              <span className="text-xs font-bold text-ink truncate w-full">{u.name.split(' ')[0]}</span>
+              <span className="text-[11px] font-black px-2 py-0.5 rounded-md bg-card border border-edge text-ink">
+                {u.xp.toLocaleString()} XP
+              </span>
+            </MFCard>
           );
         })}
       </motion.div>
@@ -92,35 +106,32 @@ export default function LeaderboardPage() {
           const isCurrentUser = user.name === profile?.name;
           return (
             <motion.div key={user.rank} variants={item}>
-              <Card variant="glass" padding="sm"
-                className={`flex items-center gap-3 px-4 py-3 ${isCurrentUser ? 'border-brand/30 bg-brand/10' : ''} ${getRankBg(user.rank)}`}
+              <MFCard 
+                variant={isCurrentUser ? 'sakura' : 'paper'} 
+                padding="sm"
+                className={`flex items-center gap-3 px-4 py-3 ${isCurrentUser ? 'border-brand' : ''}`}
               >
-                <div className="w-8 flex justify-center">{getRankIcon(user.rank)}</div>
-                <Avatar emoji={user.avatar} name={user.name} size="sm" />
+                <div className="w-6 flex justify-center">{getRankIcon(user.rank)}</div>
+                <Avatar name={user.name} size="sm" />
                 <div className="flex-1 min-w-0">
-                  <span className="text-sm font-semibold text-ink truncate block">{user.name}</span>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-ink-muted">Lv.{user.level}</span>
-                    <span className="text-[10px] text-amber-500/60 flex items-center gap-0.5"><Flame className="w-2.5 h-2.5" />{user.streak}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-ink truncate">{user.name}</span>
+                    {isCurrentUser && (
+                      <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-brand text-white">
+                        YOU
+                      </span>
+                    )}
                   </div>
+                  <span className="text-[10px] text-ink-muted">Level {user.level}</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-sm font-bold text-ink font-heading">{user.xp.toLocaleString()}</span>
-                  <span className="text-[10px] text-ink-light block">XP</span>
+                <div className="flex items-center gap-1 text-xs font-black text-ink">
+                  <MFIcon name="xp" size={14} />
+                  <span>{user.xp.toLocaleString()}</span>
                 </div>
-              </Card>
+              </MFCard>
             </motion.div>
           );
         })}
-      </motion.div>
-
-      {/* Your Position */}
-      <motion.div variants={item}>
-        <Card variant="gradient" padding="md" className="text-center space-y-2">
-          <p className="text-xs text-ink-muted">Your Rank</p>
-          <p className="text-2xl font-bold text-ink font-heading">#42</p>
-          <p className="text-xs text-ink-muted">Keep learning to climb higher!</p>
-        </Card>
       </motion.div>
     </motion.div>
   );

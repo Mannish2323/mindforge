@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { 
@@ -34,16 +34,18 @@ export default function QuizPage() {
   const [quizFinished, setQuizFinished] = useState(false);
 
   const mcqQuestions: QuizQuestion[] = [
-    { id: '1', type: 'mcq', question: "What is the translation for おはようございます?", options: ["Good afternoon", "Good evening", "Good morning", "Goodbye"], correctAnswer: "2" },
+    { id: '1', type: 'mcq', question: "What is the translation for おはようございます (Ohayou gozaimasu)?", options: ["Good afternoon", "Good evening", "Good morning", "Goodbye"], correctAnswer: "2" },
     { id: '2', type: 'mcq', question: "Which particle acts as the direct object marker?", options: ["は (wa)", "を (wo)", "が (ga)", "に (ni)"], correctAnswer: "1" },
-    { id: '3', type: 'mcq', question: "What does 水 (mizu) mean?", options: ["Fire", "Tree", "Water", "Gold"], correctAnswer: "2" }
+    { id: '3', type: 'mcq', question: "What does 水 (mizu) mean in Japanese?", options: ["Fire", "Tree", "Water", "Gold"], correctAnswer: "2" },
+    { id: '4', type: 'mcq', question: "What is the polite present-tense of 'to eat' (食べる)?", options: ["食べます (tabemasu)", "食べました (tabemashita)", "食べない (tabenai)", "食べて (tabete)"], correctAnswer: "0" }
   ];
 
   const matchingPairs = [
     { left: "猫 (neko)", right: "Cat" },
     { left: "犬 (inu)", right: "Dog" },
     { left: "本 (hon)", right: "Book" },
-    { left: "水 (mizu)", right: "Water" }
+    { left: "水 (mizu)", right: "Water" },
+    { left: "車 (kuruma)", right: "Car" }
   ];
 
   // Timer interval hook
@@ -137,9 +139,9 @@ export default function QuizPage() {
       {activeQuizType === null ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* MCQ challenge card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand/30 hover:bg-brand/5 transition-all">
             <div className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+              <div className="w-12 h-12 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand-light">
                 <HelpCircle className="w-6 h-6" />
               </div>
               <h3 className="text-lg font-bold text-ink font-heading">MCQ challenge</h3>
@@ -157,7 +159,7 @@ export default function QuizPage() {
           </div>
 
           {/* Match Pairs Challenge card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand-purple/30 hover:bg-brand-purple/5 transition-all">
+          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] flex flex-col justify-between space-y-6 hover:border-brand/30 hover:bg-brand/5 transition-all">
             <div className="space-y-3">
               <div className="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400">
                 <Layers className="w-6 h-6" />
@@ -218,11 +220,11 @@ export default function QuizPage() {
                     {mcqQuestions[quizIndex].options?.map((opt, idx) => {
                       const isSelected = selectedAnswer === idx;
                       const isCorrect = String(idx) === mcqQuestions[quizIndex].correctAnswer;
-                      let btnStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-edge hover:bg-white/[0.04] text-ink-secondary';
+                      let btnStyle = 'mf-quiz-option';
 
                       if (selectedAnswer !== null) {
-                        if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
-                        else if (isSelected) btnStyle = 'bg-rose-500/10 border-rose-500/30 text-rose-400';
+                        if (isCorrect) btnStyle = 'mf-quiz-option-correct';
+                        else if (isSelected) btnStyle = 'mf-quiz-option-wrong';
                       }
 
                       return (
@@ -267,10 +269,10 @@ export default function QuizPage() {
                       {matchingPairs.map(p => {
                         const isMatched = matchedPairs.includes(p.left);
                         const isSelected = selectedLeft === p.left;
-                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-ink hover:bg-white/[0.05]';
+                        let itemStyle = 'mf-quiz-option';
                         
-                        if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
-                        else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
+                        if (isMatched) itemStyle = 'mf-quiz-option-correct opacity-50 cursor-not-allowed';
+                        else if (isSelected) itemStyle = 'mf-quiz-option border-brand/40 scale-102 bg-brand/10';
 
                         return (
                           <button
@@ -296,10 +298,10 @@ export default function QuizPage() {
                           return matching?.right === p.right;
                         });
                         const isSelected = selectedRight === p.right;
-                        let itemStyle = 'bg-white/[0.02] border-white/[0.08] hover:border-brand-purple/20 text-ink hover:bg-white/[0.05]';
+                        let itemStyle = 'mf-quiz-option';
                         
-                        if (isMatched) itemStyle = 'opacity-30 border-emerald-500/20 text-emerald-400 bg-emerald-500/5 cursor-not-allowed';
-                        else if (isSelected) itemStyle = 'bg-brand-purple/20 border-brand-purple/40 text-brand-purple-light shadow-[0_0_10px_rgba(124,58,237,0.2)] scale-102';
+                        if (isMatched) itemStyle = 'mf-quiz-option-correct opacity-50 cursor-not-allowed';
+                        else if (isSelected) itemStyle = 'mf-quiz-option border-brand/40 scale-102 bg-brand/10';
 
                         return (
                           <button

@@ -9,7 +9,6 @@ interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   level?: number;
   showLevel?: boolean;
-  emoji?: string;
 }
 
 export function Avatar({
@@ -18,7 +17,6 @@ export function Avatar({
   size = 'md',
   level,
   showLevel = false,
-  emoji,
   className,
   ...props
 }: AvatarProps) {
@@ -32,21 +30,16 @@ export function Avatar({
   const initial = name?.[0]?.toUpperCase() || '?';
   const sizeConfig = sizes[size];
 
-  // Check if emoji avatar (starts with an emoji or non-latin character)
-  const isEmoji = emoji || (src && src.length <= 4 && src.codePointAt(0)! > 0x2000);
-
   return (
     <div className={cn('relative inline-flex', className)} {...props}>
       <div
         className={cn(
           sizeConfig.container,
-          'rounded-xl bg-gradient-to-tr from-brand to-accent flex items-center justify-center font-bold text-white shadow-md relative overflow-hidden flex-shrink-0',
+          'rounded-full bg-cream flex items-center justify-center font-bold text-ink shadow-sm border border-edge relative overflow-hidden flex-shrink-0',
           sizeConfig.text
         )}
       >
-        {isEmoji ? (
-          <span className={sizeConfig.text}>{emoji || src}</span>
-        ) : src && !isEmoji ? (
+        {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={name || 'avatar'} className="w-full h-full object-cover" />
         ) : (
@@ -56,7 +49,7 @@ export function Avatar({
       {showLevel && level && (
         <div
           className={cn(
-            'absolute rounded-full bg-white border-2 border-brand flex items-center justify-center font-bold text-brand font-heading shadow-sm',
+            'absolute rounded-full bg-card border-2 border-brand flex items-center justify-center font-bold text-brand font-heading shadow-sm',
             sizeConfig.levelBadge
           )}
         >

@@ -1,12 +1,12 @@
 {
-  "name": "MindForge",
+  "name": "MindForge — Japanese Learning",
   "short_name": "MindForge",
-  "description": "Japanese learning platform by Yample Labs with gamified progression, AI tutor, and spaced repetition.",
+  "description": "Japanese learning platform by Yample Labs with whiteboard aesthetics, AI tutor, and spaced repetition.",
   "start_url": "/home",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0B0717",
-  "theme_color": "#6D3CFF",
+  "background_color": "#FFF9F0",
+  "theme_color": "#F47C86",
   "lang": "en",
   "categories": ["education", "language"],
   "icons": [

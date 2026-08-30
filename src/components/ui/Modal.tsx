@@ -33,7 +33,7 @@ export function Modal({ open, onClose, title, children, size = 'md', className }
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
       <div
         ref={ref}
-        className={cn('bg-white border border-edge rounded-card-lg shadow-[0_12px_40px_rgba(0,0,0,0.12)] animate-scale-in w-full overflow-hidden', sizes[size], className)}
+        className={cn('bg-card border border-edge rounded-card-lg shadow-[0_12px_40px_rgba(0,0,0,0.12)] animate-scale-in w-full overflow-hidden', sizes[size], className)}
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {title && (

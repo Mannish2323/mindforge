@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
 import { 
@@ -6,6 +6,9 @@ import {
   Trash2, Sparkles, CheckCircle2, ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MFCard } from '@/components/ui/MFCard';
+import { MFButton } from '@/components/ui/MFButton';
+import { MFIcon } from '@/components/ui/MFIcon';
 
 interface KanjiData {
   kanji: string;
@@ -13,7 +16,7 @@ interface KanjiData {
   onyomi: string;
   kunyomi: string;
   strokes: number;
-  strokeSteps: string[]; // SVGs or text steps description
+  strokeSteps: string[];
   vocabulary: { word: string; reading: string; meaning: string }[];
 }
 
@@ -91,7 +94,7 @@ export default function KanjiPage() {
       if (ctx) {
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
-        ctx.strokeStyle = '#f472b6'; // sakura color
+        ctx.strokeStyle = '#FF4D6D';
         ctx.lineWidth = 6;
       }
     }
@@ -103,10 +106,13 @@ export default function KanjiPage() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    setIsDrawing(true);
-    const coords = getCoordinates(e, canvas);
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
     ctx.beginPath();
-    ctx.moveTo(coords.x, coords.y);
+    ctx.moveTo(x * (canvas.width / rect.width), y * (canvas.height / rect.height));
+    setIsDrawing(true);
   };
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -116,30 +122,16 @@ export default function KanjiPage() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const coords = getCoordinates(e, canvas);
-    ctx.lineTo(coords.x, coords.y);
+    const rect = canvas.getBoundingClientRect();
+    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+
+    ctx.lineTo(x * (canvas.width / rect.width), y * (canvas.height / rect.height));
     ctx.stroke();
   };
 
   const stopDrawing = () => {
     setIsDrawing(false);
-  };
-
-  const getCoordinates = (
-    e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>,
-    canvas: HTMLCanvasElement
-  ) => {
-    const rect = canvas.getBoundingClientRect();
-    if ('touches' in e) {
-      return {
-        x: e.touches[0].clientX - rect.left,
-        y: e.touches[0].clientY - rect.top
-      };
-    }
-    return {
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    };
   };
 
   const clearCanvas = () => {
@@ -166,79 +158,88 @@ export default function KanjiPage() {
     setRecognizing(true);
     setTimeout(() => {
       setRecognizing(false);
-      setRecognitionScore(Math.floor(88 + Math.random() * 12));
-    }, 1500);
+      setRecognitionScore(Math.floor(90 + Math.random() * 10));
+    }, 1200);
   };
 
   return (
-    <div className="space-y-8">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
-            Kanji Writing Coach
-          </h1>
-          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
-            Learn stroke order & practice writing with AI evaluation
-          </p>
-        </div>
+    <div className="space-y-7 md:space-y-9 max-w-5xl mx-auto pb-14">
+      {/* Top Banner */}
+      <MFCard variant="yellow" washiTape="yellow" padding="lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-edge text-xs font-extrabold text-brand shadow-sm">
+              <MFIcon name="kanji" size={16} />
+              <span>Stroke Order Coach</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-ink font-heading">
+              Kanji Writing Canvas
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-secondary font-medium max-w-xl leading-relaxed">
+              Master balance and stroke order using the tactile Japanese practice grid with AI feedback.
+            </p>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setKanjiIndex(prev => Math.max(0, prev - 1))}
-            disabled={kanjiIndex === 0}
-            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-xs font-bold text-ink px-2">
-            Kanji {kanjiIndex + 1} of {kanjis.length}
-          </span>
-          <button
-            onClick={() => setKanjiIndex(prev => Math.min(kanjis.length - 1, prev + 1))}
-            disabled={kanjiIndex === kanjis.length - 1}
-            className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2 bg-card border border-edge p-1.5 rounded-2xl shadow-sm shrink-0">
+            <button
+              onClick={() => { setKanjiIndex(prev => Math.max(0, prev - 1)); clearCanvas(); }}
+              disabled={kanjiIndex === 0}
+              className="p-2 bg-cream border border-edge rounded-xl text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-xs font-bold text-ink px-2">
+              Kanji {kanjiIndex + 1} of {kanjis.length}
+            </span>
+            <button
+              onClick={() => { setKanjiIndex(prev => Math.min(kanjis.length - 1, prev + 1)); clearCanvas(); }}
+              disabled={kanjiIndex === kanjis.length - 1}
+              className="p-2 bg-cream border border-edge rounded-xl text-ink disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      </MFCard>
 
       {/* Main interactive grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Drawing Canvas */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
+        <div className="lg:col-span-7 space-y-5">
+          <MFCard variant="paper" lifted padding="lg" className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-extrabold text-ink font-heading flex items-center gap-2">
-                <PenTool className="w-4 h-4 text-sakura-dark" />
-                <span>Practice Canvas</span>
+              <h3 className="text-xs font-extrabold text-ink-muted uppercase tracking-wider flex items-center gap-2">
+                <PenTool className="w-4 h-4 text-brand" />
+                <span>Calligraphy Practice Grid</span>
               </h3>
               
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={clearCanvas}
-                  className="p-2 text-ink-muted hover:text-ink hover:bg-white/[0.06] rounded-lg transition-colors cursor-pointer"
-                  title="Reset Canvas"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                onClick={clearCanvas}
+                className="p-2 text-ink-muted hover:text-ink hover:bg-cream rounded-xl transition-colors cursor-pointer"
+                title="Reset Canvas"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Drawing Canvas Box */}
-            <div className="relative aspect-square w-full max-w-[400px] mx-auto bg-black/40 border border-white/[0.08] rounded-3xl overflow-hidden flex items-center justify-center">
-              {/* Stroke Order Trace backdrop (semi-transparent) */}
-              <div className="absolute text-[120px] font-extrabold text-ink-secondary/5 select-none font-jp pointer-events-none">
+            {/* Drawing Canvas Box with Japanese Genkouyoushi Grid */}
+            <div className="relative aspect-square w-full max-w-[360px] mx-auto bg-cream border-[2px] border-edge rounded-3xl overflow-hidden flex items-center justify-center shadow-inner">
+              {/* Center Cross Guidelines */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
+                <div className="w-full h-px bg-ink border-t border-dashed border-ink" />
+                <div className="h-full w-px bg-ink border-l border-dashed border-ink absolute" />
+              </div>
+
+              {/* Stroke Order Trace backdrop */}
+              <div className="absolute text-[130px] font-black text-ink/10 select-none font-jp pointer-events-none">
                 {currentKanji.kanji}
               </div>
 
               {/* Drawing canvas */}
               <canvas
                 ref={canvasRef}
-                width={400}
-                height={400}
+                width={360}
+                height={360}
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
@@ -250,135 +251,122 @@ export default function KanjiPage() {
               />
             </div>
 
-            {/* Action buttons */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-white/[0.08]">
-              <div className="flex items-center gap-2">
-                {recognitionScore !== null && (
-                  <div className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs font-bold flex items-center gap-1.5 animate-in fade-in">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span>Accuracy: {recognitionScore}%</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button 
-                  onClick={clearCanvas}
-                  className="flex-1 sm:flex-none btn btn-ghost btn-sm font-bold cursor-pointer"
-                >
-                  Clear
-                </button>
-                <button
-                  onClick={evaluateStrokes}
-                  disabled={recognizing}
-                  className="flex-1 sm:flex-none btn btn-primary btn-sm flex items-center justify-center gap-2 font-bold cursor-pointer"
-                >
-                  {recognizing ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      <span>Analyzing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 animate-pulse" />
-                      <span>Check Order</span>
-                    </>
-                  )}
-                </button>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 pt-2">
+              <MFButton
+                variant="primary"
+                size="md"
+                className="flex-1"
+                onClick={evaluateStrokes}
+                isLoading={recognizing}
+                leftIcon={<Sparkles className="w-4 h-4" />}
+              >
+                Evaluate Stroke Order
+              </MFButton>
+              <MFButton
+                variant="secondary"
+                size="md"
+                onClick={clearCanvas}
+              >
+                Clear
+              </MFButton>
             </div>
-          </div>
+
+            {/* AI Evaluation Score */}
+            {recognitionScore !== null && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="p-4 rounded-2xl bg-mint-light border border-mint/40 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-mint shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-ink">Stroke Balance: {recognitionScore}% Match</p>
+                    <p className="text-[11px] text-ink-secondary">Beautiful proportions and proper stroke sequence.</p>
+                  </div>
+                </div>
+                <span className="text-xs font-black px-2.5 py-1 rounded-xl bg-card border border-edge text-ink">
+                  +25 XP
+                </span>
+              </motion.div>
+            )}
+          </MFCard>
+
+          {/* Stroke-by-Stroke Step Descriptions */}
+          <MFCard variant="cream" padding="md" className="space-y-3">
+            <h4 className="font-heading font-extrabold text-xs text-ink-muted uppercase tracking-wider">
+              Step-by-Step Stroke Sequence
+            </h4>
+            <div className="space-y-2 text-xs text-ink-secondary">
+              {currentKanji.strokeSteps.map((step, idx) => (
+                <div key={idx} className="p-2.5 rounded-xl bg-card border border-edge">
+                  {step}
+                </div>
+              ))}
+            </div>
+          </MFCard>
         </div>
 
-        {/* Right Column: Kanji Information Details */}
-        <div className="lg:col-span-5 space-y-6">
-          
-          {/* Main Info Card */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="text-4xl font-extrabold text-ink font-jp">{currentKanji.kanji}</h2>
-                <p className="text-lg font-bold text-sakura-dark">{currentKanji.meaning}</p>
+        {/* Right Column: Kanji Information Card */}
+        <div className="lg:col-span-5 space-y-5">
+          <MFCard variant="paper" lifted padding="lg" className="space-y-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-wider text-brand px-2 py-0.5 rounded-md bg-brand-light border border-brand/30">
+                  JLPT N5 • {currentKanji.strokes} Strokes
+                </span>
+                <h2 className="text-5xl font-black text-ink font-jp mt-2">{currentKanji.kanji}</h2>
               </div>
-              <button 
+              <button
                 onClick={() => speakAudio(currentKanji.kanji)}
-                className="p-3 bg-white/[0.04] border border-white/[0.08] rounded-xl text-ink-secondary hover:text-ink transition-all cursor-pointer"
-                title="Speak Audio"
+                className="p-3 bg-cream border border-edge hover:border-edge-hover rounded-2xl text-ink transition-all cursor-pointer shadow-sm"
+                title="Pronounce"
               >
                 <Volume2 className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Onyomi / Kunyomi */}
-            <div className="space-y-3.5 border-t border-white/[0.08] pt-4">
-              <div>
-                <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
-                  Onyomi (Chinese Reading)
-                </p>
-                <p className="text-sm font-bold text-ink font-jp mt-1">{currentKanji.onyomi}</p>
+            <div className="p-3.5 rounded-2xl bg-cream border border-edge space-y-1">
+              <p className="text-[10px] font-extrabold text-ink-muted uppercase tracking-wider">Core Meaning</p>
+              <p className="text-base font-black text-ink">{currentKanji.meaning}</p>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="p-3 rounded-2xl bg-card border border-edge space-y-0.5">
+                <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">On&apos;yomi (Chinese Reading)</span>
+                <p className="font-bold text-ink font-jp">{currentKanji.onyomi}</p>
               </div>
-              <div>
-                <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
-                  Kunyomi (Japanese Reading)
-                </p>
-                <p className="text-sm font-bold text-ink font-jp mt-1">{currentKanji.kunyomi}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-4 pt-1">
-                <div>
-                  <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
-                    Strokes Count
-                  </p>
-                  <p className="text-sm font-bold text-ink font-heading mt-1">{currentKanji.strokes}</p>
-                </div>
+              <div className="p-3 rounded-2xl bg-card border border-edge space-y-0.5">
+                <span className="text-[10px] font-bold text-ink-muted uppercase tracking-wider">Kun&apos;yomi (Japanese Reading)</span>
+                <p className="font-bold text-ink font-jp">{currentKanji.kunyomi}</p>
               </div>
             </div>
 
-            {/* Stroke Guide Steps list */}
-            <div className="space-y-3 border-t border-white/[0.08] pt-4">
-              <p className="text-[10px] font-extrabold tracking-widest text-ink-muted uppercase">
-                Stroke Order Guide
+            {/* Vocabulary using this Kanji */}
+            <div className="space-y-2 pt-2 border-t border-dashed border-edge">
+              <p className="text-[10px] font-extrabold text-ink-muted uppercase tracking-wider">
+                Common Vocabulary Words
               </p>
-              <div className="space-y-2">
-                {currentKanji.strokeSteps.map((step, idx) => (
-                  <div key={idx} className="p-3 bg-white/[0.02] border border-white/[0.08] rounded-xl text-xs font-semibold text-purple-200 leading-relaxed">
-                    {step}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Vocabulary using the Kanji */}
-          <div className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-4">
-            <h3 className="text-xs font-extrabold tracking-widest text-ink-muted uppercase">
-              Common Vocabulary
-            </h3>
-            <div className="space-y-3">
-              {currentKanji.vocabulary.map((vocab, idx) => (
-                <div 
-                  key={idx}
-                  className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-xl flex items-center justify-between hover:border-edge transition-all"
-                >
-                  <div className="space-y-0.5">
-                    <p className="text-base font-bold text-ink font-jp">{vocab.word}</p>
-                    <p className="text-[11px] text-ink-muted font-semibold">{vocab.reading}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-sakura-dark">{vocab.meaning}</p>
-                    <button 
+              <div className="space-y-1.5">
+                {currentKanji.vocabulary.map((vocab, idx) => (
+                  <div key={idx} className="flex items-center justify-between p-2.5 rounded-xl bg-cream border border-edge">
+                    <div>
+                      <p className="text-xs font-bold text-ink font-jp">{vocab.word} ({vocab.reading})</p>
+                      <p className="text-[11px] text-ink-muted font-medium">{vocab.meaning}</p>
+                    </div>
+                    <button
                       onClick={() => speakAudio(vocab.word)}
-                      className="p-1 text-ink-muted hover:text-ink rounded transition-colors mt-1 inline-block cursor-pointer"
+                      className="p-1.5 rounded-lg bg-card border border-edge text-ink hover:text-brand cursor-pointer"
                     >
                       <Volume2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-
+          </MFCard>
         </div>
-
       </div>
     </div>
   );

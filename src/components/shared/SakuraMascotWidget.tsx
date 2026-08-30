@@ -141,7 +141,7 @@ export function SakuraMascotWidget() {
           {/* Pulsing soft glow */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-brand/40 to-accent/40 blur-md group-hover:blur-lg transition-all duration-300" />
 
-          <div className="relative w-full h-full bg-white rounded-full overflow-hidden flex items-center justify-center">
+          <div className="relative w-full h-full bg-card rounded-full overflow-hidden flex items-center justify-center">
             <Image
               src="/sakura_ai_avatar.png"
               alt="Sakura AI Tutor Mascot"
@@ -161,7 +161,7 @@ export function SakuraMascotWidget() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed bottom-28 right-6 w-[calc(100vw-48px)] sm:w-[380px] h-[480px] rounded-[24px] bg-white border border-edge shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 flex flex-col overflow-hidden"
+            className="fixed bottom-28 right-6 w-[calc(100vw-48px)] sm:w-[380px] h-[480px] rounded-[24px] bg-card border border-edge shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 flex flex-col overflow-hidden"
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
@@ -170,7 +170,7 @@ export function SakuraMascotWidget() {
             {/* Header */}
             <div className="p-4 bg-warm-cream border-b border-edge flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white border border-edge relative overflow-hidden flex-shrink-0 shadow-sm">
+                <div className="w-9 h-9 rounded-xl bg-card border border-edge relative overflow-hidden flex-shrink-0 shadow-sm">
                   <Image
                     src="/sakura_ai_avatar.png"
                     alt="Sakura mascot"
@@ -208,7 +208,7 @@ export function SakuraMascotWidget() {
                   <div className={`max-w-[85%] rounded-[18px] p-3.5 text-sm font-medium leading-relaxed ${
                     msg.role === 'user'
                       ? 'bg-gradient-to-r from-brand to-accent text-white rounded-br-sm shadow-md'
-                      : 'bg-white border border-edge text-ink rounded-bl-sm shadow-sm'
+                      : 'bg-card border border-edge text-ink rounded-bl-sm shadow-sm'
                   }`}>
                     {msg.role === 'model' && msg.content_ja ? (
                       <div className="space-y-1.5">
@@ -244,7 +244,7 @@ export function SakuraMascotWidget() {
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 p-3 bg-white border border-edge rounded-[18px] rounded-bl-sm w-fit shadow-sm"
+                  className="flex items-center gap-2 p-3 bg-card border border-edge rounded-[18px] rounded-bl-sm w-fit shadow-sm"
                 >
                   <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '0ms' }} />
                   <span className="w-2 h-2 rounded-full bg-sakura-dark" style={{ animation: 'typing-dots 1.2s ease-in-out infinite', animationDelay: '200ms' }} />
@@ -255,7 +255,7 @@ export function SakuraMascotWidget() {
             </div>
 
             {/* Input */}
-            <div className="p-3 bg-white border-t border-edge flex gap-2 items-center">
+            <div className="p-3 bg-card border-t border-edge flex gap-2 items-center">
               <motion.button
                 onClick={handleVoiceInput}
                 whileTap={{ scale: 0.9 }}

@@ -1,9 +1,4 @@
 'use client';
 
-export default function SpeakPage() {
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">Speak</h1>
-    </div>
-  );
-}
+// Re-export speaking page so both /speak and /speaking routes work seamlessly
+export { default } from '../speaking/page';

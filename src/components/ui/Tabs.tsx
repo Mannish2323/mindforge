@@ -51,7 +51,7 @@ export function Tabs({ tabs, activeTab, onChange, variant = 'pill', className }:
               className={cn(
                 'px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap cursor-pointer',
                 tab.id === activeTab
-                  ? 'bg-white text-ink shadow-sm'
+                  ? 'bg-card text-ink shadow-sm'
                   : 'text-ink-muted hover:text-ink'
               )}>
               {tab.icon && <span className="inline-block mr-1">{tab.icon}</span>}

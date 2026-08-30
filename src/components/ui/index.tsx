@@ -11,3 +11,5 @@ export { Skeleton, CardSkeleton, PageSkeleton } from './Skeleton';
 export { Avatar } from './Avatar';
 export { Toggle } from './Toggle';
 export { Accordion } from './Accordion';
+export { MFIcon, type MFIconName, type WhiteboardIconProps } from './WhiteboardIcons';
+export * from './WhiteboardIcons';

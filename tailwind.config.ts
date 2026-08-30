@@ -11,74 +11,81 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#6D3CFF',
-          dark: '#5A2AE6',
-          light: '#A87BFF',
-          muted: '#C4A0FF',
+          DEFAULT: '#F47C86',
+          hover: '#EC6B76',
+          light: '#FEF0F1',
+          dark: '#E85B67',
         },
         sakura: {
-          DEFAULT: '#FFB7C5',
-          dark: '#F472B6',
-          light: '#FFE4E1',
+          DEFAULT: '#F47C86',
+          dark: '#EC6B76',
+          light: '#FEF0F1',
         },
         accent: {
           DEFAULT: '#FF6B9D',
           light: '#FF9CBB',
           magenta: '#FF6BD6',
         },
-        // Light theme backgrounds
         warm: {
-          DEFAULT: '#FAF8F3',
-          cream: '#F5F1EA',
-          soft: '#F0ECE3',
-          white: '#FFFFFF',
+          DEFAULT: '#FFF9F0',
+          cream: '#FFF3E4',
+          soft: '#FFF6F2',
         },
-        // Text
-        ink: {
-          DEFAULT: '#1A1A2E',
-          secondary: '#4A4A68',
-          muted: '#8E8EA0',
-          light: '#B5B5C3',
-        },
-        // Borders
-        edge: {
-          DEFAULT: '#E8E4DD',
-          hover: '#D8D4CC',
-          focus: '#C4A0FF',
-        },
-        // Learning categories
-        cat: {
-          green: '#34C759',
-          'green-light': '#E8FAE8',
-          blue: '#007AFF',
-          'blue-light': '#E3F0FF',
-          teal: '#00C7BE',
-          'teal-light': '#E0FAF8',
-          orange: '#FF9500',
-          'orange-light': '#FFF3E0',
-          purple: '#AF52DE',
-          'purple-light': '#F3E8FF',
-          pink: '#FF2D55',
-          'pink-light': '#FFE4EA',
-          yellow: '#FFCC00',
-          'yellow-light': '#FFF8DC',
-        },
-        // Legacy compat — map neon-* tokens to new palette
-        neon: {
-          purple: '#6D3CFF',
-          pink: '#AF52DE',
-          magenta: '#FF6B9D',
-        },
-        bg: {
-          DEFAULT: '#FAF8F3',
-          surface: '#FFFFFF',
-          elevated: '#F5F1EA',
-          card: '#FFFFFF',
-        },
-        surface: {
+        card: {
           DEFAULT: '#FFFFFF',
-          light: '#F5F1EA',
-          lighter: '#F0ECE3',
+          subtle: '#FFF3E4',
+          hover: '#FFFDF8',
+        },
+        ink: {
+          DEFAULT: '#2F2925',
+          secondary: '#6B6359',
+          muted: '#9E9189',
+          light: '#C4B9B0',
+        },
+        edge: {
+          DEFAULT: '#EDE3D8',
+          hover: '#DDD4C7',
+          strong: '#C8BDAD',
+        },
+        coral: {
+          DEFAULT: '#F47C86',
+          light: '#FEF0F1',
+        },
+        sky: {
+          DEFAULT: '#A9D5F5',
+          light: '#EEF7FD',
+        },
+        mint: {
+          DEFAULT: '#A9DCC8',
+          light: '#EEF8F4',
+        },
+        lavender: {
+          DEFAULT: '#C8B5E8',
+          light: '#F2EEF9',
+        },
+        yellow: {
+          DEFAULT: '#F7D774',
+          light: '#FEF8E6',
+        },
+        orange: {
+          DEFAULT: '#F6B38F',
+          light: '#FDF3EC',
+        },
+        cat: {
+          green: '#A9DCC8',
+          'green-light': '#EEF8F4',
+          blue: '#A9D5F5',
+          'blue-light': '#EEF7FD',
+          teal: '#A9DCC8',
+          'teal-light': '#EEF8F4',
+          orange: '#F6B38F',
+          'orange-light': '#FDF3EC',
+          purple: '#C8B5E8',
+          'purple-light': '#F2EEF9',
+          pink: '#F47C86',
+          'pink-light': '#FEF0F1',
+          yellow: '#F7D774',
+          'yellow-light': '#FEF8E6',
         },
       },
       fontFamily: {
@@ -153,8 +160,8 @@ const config: Config = {
           '40%, 60%': { transform: 'translateX(4px)' },
         },
         'glow-pulse': {
-          '0%, 100%': { boxShadow: '0 0 5px rgba(109, 60, 255, 0.1)' },
-          '50%': { boxShadow: '0 0 15px rgba(109, 60, 255, 0.2)' },
+          '0%, 100%': { boxShadow: '0 0 5px rgba(244, 124, 134, 0.1)' },
+          '50%': { boxShadow: '0 0 15px rgba(244, 124, 134, 0.2)' },
         },
         'bounce-subtle': {
           '0%, 100%': { transform: 'translateY(0)' },

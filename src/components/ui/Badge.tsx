@@ -3,7 +3,7 @@
 import React from 'react';
 import { cn } from '@/utils';
 
-type BadgeVariant = 'default' | 'purple' | 'pink' | 'amber' | 'emerald' | 'sky' | 'rose' | 'neon' | 'green' | 'blue' | 'orange' | 'teal';
+type BadgeVariant = 'primary' | 'success' | 'warning' | 'error' | 'muted' | 'level' | 'default' | 'brand' | 'sakura' | 'yellow' | 'mint' | 'lavender' | 'coral' | 'purple' | 'pink' | 'amber' | 'emerald' | 'sky' | 'rose' | 'neon' | 'green' | 'blue' | 'orange' | 'teal';
 
 interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: BadgeVariant;
@@ -13,7 +13,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Badge({
-  variant = 'default',
+  variant = 'primary',
   size = 'md',
   icon,
   glow = false,
@@ -22,18 +22,30 @@ export function Badge({
   ...props
 }: BadgeProps) {
   const variants: Record<BadgeVariant, string> = {
-    default: 'bg-warm-soft border-edge text-ink-secondary',
-    purple: 'bg-cat-purple-light border-cat-purple/20 text-cat-purple',
-    pink: 'bg-cat-pink-light border-cat-pink/20 text-cat-pink',
-    amber: 'bg-cat-orange-light border-cat-orange/20 text-cat-orange',
-    emerald: 'bg-cat-green-light border-cat-green/20 text-cat-green',
-    sky: 'bg-cat-blue-light border-cat-blue/20 text-cat-blue',
-    rose: 'bg-cat-pink-light border-cat-pink/20 text-cat-pink',
-    neon: 'bg-gradient-to-r from-brand/10 to-accent/10 border-brand/20 text-brand',
-    green: 'bg-cat-green-light border-cat-green/20 text-cat-green',
-    blue: 'bg-cat-blue-light border-cat-blue/20 text-cat-blue',
-    orange: 'bg-cat-orange-light border-cat-orange/20 text-cat-orange',
-    teal: 'bg-cat-teal-light border-cat-teal/20 text-cat-teal',
+    primary: 'bg-brand/10 text-brand border-brand/20',
+    brand: 'bg-brand/10 text-brand border-brand/20',
+    sakura: 'bg-coral-light text-coral border-coral/30',
+    coral: 'bg-coral-light text-coral border-coral/30',
+    yellow: 'bg-yellow-light text-ink border-yellow/30',
+    mint: 'bg-mint-light text-ink border-mint/30',
+    lavender: 'bg-lavender-light text-ink border-lavender/30',
+    success: 'bg-mint-light text-ink border-mint/30',
+    warning: 'bg-yellow-light text-ink border-yellow/30',
+    error: 'bg-red-50 text-red-600 border-red-200',
+    muted: 'bg-cream text-ink-muted border-edge',
+    level: 'bg-coral-light border-coral/30 text-coral',
+    default: 'bg-cream text-ink-muted border-edge',
+    purple: 'bg-lavender-light text-ink border-lavender/30',
+    pink: 'bg-coral-light text-coral border-coral/30',
+    amber: 'bg-yellow-light text-ink border-yellow/30',
+    emerald: 'bg-mint-light text-ink border-mint/30',
+    sky: 'bg-sky-light text-ink border-sky/30',
+    rose: 'bg-coral-light border-coral/30 text-coral',
+    neon: 'bg-brand/10 text-brand border-brand/20',
+    green: 'bg-mint-light text-ink border-mint/30',
+    blue: 'bg-sky-light text-ink border-sky/30',
+    orange: 'bg-orange-light text-ink border-orange/30',
+    teal: 'bg-mint-light text-ink border-mint/30',
   };
 
   const sizes: Record<string, string> = {
@@ -46,7 +58,7 @@ export function Badge({
     <div
       className={cn(
         'inline-flex items-center font-bold rounded-full border select-none whitespace-nowrap',
-        variants[variant],
+        variants[variant] || variants.primary,
         sizes[size],
         glow && 'animate-glow-pulse',
         className

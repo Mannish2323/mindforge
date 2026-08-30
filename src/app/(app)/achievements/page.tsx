@@ -1,12 +1,12 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Award, Lock } from 'lucide-react';
-import { Card } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { BadgeIcon, resolveBadgeType, getBadgeLabel } from '@/components/ui/BadgeIcons';
+import { Award, Lock, Check } from 'lucide-react';
+import { MFCard } from '@/components/ui/MFCard';
+import { MFButton } from '@/components/ui/MFButton';
+import { MFIcon } from '@/components/ui/MFIcon';
+import { BadgeIcon } from '@/components/ui/BadgeIcons';
 import { useAuth } from '@/app/context/AuthContext';
 
 const ACHIEVEMENTS = [
@@ -36,61 +36,106 @@ export default function AchievementsPage() {
   const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.04 } } };
-  const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 120, damping: 14 } } };
+  const item = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } };
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
-      <motion.div variants={item} className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-ink flex items-center gap-2">
-          <Award className="w-7 h-7 text-amber-400" /> Achievements
-        </h1>
-        <p className="text-sm text-ink-muted">{unlockedCount}/{ACHIEVEMENTS.length} unlocked</p>
-      </motion.div>
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-7 md:space-y-9 max-w-5xl mx-auto pb-14">
+      {/* Top Banner */}
+      <MFCard variant="yellow" washiTape="yellow" padding="lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-edge text-xs font-extrabold text-brand shadow-sm">
+              <MFIcon name="trophy" size={16} />
+              <span>Study Stamps & Milestones</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-ink font-heading tracking-tight">
+              Notebook Stamps & Badges
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-secondary font-medium max-w-xl leading-relaxed">
+              Earn hand-crafted achievement stamps for daily study streaks, kanji mastery, and lesson completion.
+            </p>
+          </div>
 
-      {/* Summary */}
-      <motion.div variants={item}>
-        <ProgressBar value={(unlockedCount / ACHIEVEMENTS.length) * 100} label="Overall Progress" showLabel />
-      </motion.div>
+          <div className="px-4 py-2 bg-card border border-edge rounded-2xl text-xs font-black text-ink shadow-sm shrink-0">
+            {unlockedCount} / {ACHIEVEMENTS.length} Collected
+          </div>
+        </div>
+      </MFCard>
 
       {/* Tabs */}
       <motion.div variants={item} className="flex gap-2 overflow-x-auto pb-1">
         {tabs.map(tab => (
-          <button key={tab} onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === tab ? 'bg-brand/20 text-ink border border-brand/30' : 'bg-white/[0.03] text-ink-muted border border-white/[0.06] hover:border-edge'}`}
-          >{tab}</button>
+          <button 
+            key={tab} 
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap border ${
+              activeTab === tab 
+                ? 'bg-brand text-white border-brand shadow-[var(--paper-press-shadow)]' 
+                : 'bg-card text-ink-muted border-edge hover:text-ink hover:bg-cream'
+            }`}
+          >
+            {tab}
+          </button>
         ))}
       </motion.div>
 
-      {/* Badge Grid */}
-      <motion.div variants={container} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {filtered.map((achievement) => (
-          <motion.div key={achievement.id} variants={item}>
-            <Card variant="glass" padding="md"
-              className={`space-y-3 ${!achievement.unlocked ? 'opacity-70' : ''}`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  {/* Premium SVG Badge Icon */}
-                  <BadgeIcon
-                    type={achievement.badgeType}
-                    unlocked={achievement.unlocked}
-                    size="md"
-                  />
-                  <div>
-                    <h3 className="text-sm font-bold text-white">{achievement.name}</h3>
-                    <p className="text-[11px] text-ink-muted">{achievement.desc}</p>
+      {/* Badge Grid — Sticker Book Style */}
+      <motion.div variants={container} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((achievement, idx) => {
+          const colors = ['sakura', 'mint', 'yellow', 'lavender', 'sky', 'coral'] as const;
+          const variant = achievement.unlocked ? colors[idx % colors.length] : 'paper';
+          return (
+            <motion.div key={achievement.id} variants={item}>
+              <MFCard 
+                variant={variant}
+                lifted={achievement.unlocked}
+                padding="md"
+                className={`space-y-3 achievement-sticker ${!achievement.unlocked ? 'opacity-60 grayscale' : ''}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-1.5 rounded-2xl bg-card/70 border border-edge ${achievement.unlocked ? 'shadow-sm' : ''}`}>
+                      <BadgeIcon
+                        type={achievement.badgeType}
+                        unlocked={achievement.unlocked}
+                        size="md"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-extrabold text-ink font-heading">{achievement.name}</h3>
+                      <p className="text-[11px] text-ink-muted leading-snug">{achievement.desc}</p>
+                    </div>
                   </div>
+                  {achievement.unlocked ? (
+                    <div className="px-2 py-0.5 rounded-full bg-mint text-white text-[9px] font-black shrink-0 flex items-center gap-1">
+                      <Check className="w-3 h-3 stroke-[3]" />
+                      <span>GOT IT</span>
+                    </div>
+                  ) : (
+                    <div className="p-1.5 rounded-full bg-cream border border-edge text-ink-muted shrink-0">
+                      <Lock className="w-3 h-3" />
+                    </div>
+                  )}
                 </div>
-                {achievement.unlocked && (
-                  <Badge variant="emerald" size="sm">✓</Badge>
+
+                {!achievement.unlocked && (
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[10px] font-bold text-ink-muted">
+                      <span>Progress</span>
+                      <span className="text-brand">{achievement.progress}%</span>
+                    </div>
+                    <div className="h-2 w-full bg-card/60 rounded-full overflow-hidden border border-edge">
+                      <div 
+                        className="h-full bg-gradient-to-r from-brand to-coral rounded-full transition-all"
+                        style={{ width: `${achievement.progress}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-              </div>
-              {!achievement.unlocked && (
-                <ProgressBar value={achievement.progress} size="sm" color="purple" />
-              )}
-            </Card>
-          </motion.div>
-        ))}
+              </MFCard>
+            </motion.div>
+          );
+        })}
       </motion.div>
     </motion.div>
   );

@@ -1,54 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-jp: 'Noto Sans JP', sans-serif;
-  --font-heading: 'Outfit', 'Inter', system-ui, sans-serif;
+  --font-heading: 'Nunito', 'Inter', system-ui, sans-serif;
 
-  /* ─── Master Palette: Warm White × Playful Educational ─── */
-  --color-bg-warm: #FAF8F3;
-  --color-bg-cream: #F5F1EA;
-  --color-bg-white: #FFFFFF;
-  --color-bg-soft: #F0ECE3;
+  /* ─── Master Palette Dynamic Tokens ─── */
+  --color-warm: var(--bg-page);
+  --color-cream: var(--bg-card-subtle);
+  --color-card: var(--bg-card);
+  --color-card-subtle: var(--bg-card-subtle);
+  --color-card-hover: var(--bg-card-hover);
 
-  /* Text colors */
-  --color-text-primary: #1A1A2E;
-  --color-text-secondary: #4A4A68;
-  --color-text-muted: #8E8EA0;
-  --color-text-light: #B5B5C3;
+  /* Typography */
+  --color-ink: var(--text-primary);
+  --color-ink-primary: var(--text-primary);
+  --color-ink-secondary: var(--text-secondary);
+  --color-ink-muted: var(--text-muted);
+  --color-ink-light: var(--text-light);
 
   /* Borders */
-  --color-border-light: #E8E4DD;
-  --color-border-default: #D8D4CC;
-  --color-border-focus: #C4A0FF;
+  --color-edge: var(--border-subtle);
+  --color-edge-hover: var(--border-default);
+  --color-edge-strong: var(--border-strong);
 
-  /* Learning Category Colours */
-  --color-cat-green: #34C759;
-  --color-cat-green-light: #E8FAE8;
-  --color-cat-blue: #007AFF;
-  --color-cat-blue-light: #E3F0FF;
-  --color-cat-teal: #00C7BE;
-  --color-cat-teal-light: #E0FAF8;
-  --color-cat-orange: #FF9500;
-  --color-cat-orange-light: #FFF3E0;
-  --color-cat-purple: #AF52DE;
-  --color-cat-purple-light: #F3E8FF;
-  --color-cat-pink: #FF2D55;
-  --color-cat-pink-light: #FFE4EA;
-  --color-cat-yellow: #FFCC00;
-  --color-cat-yellow-light: #FFF8DC;
+  /* Brand Sakura & Learning Pastels */
+  --color-brand: var(--color-primary);
+  --color-brand-hover: var(--color-primary-hover);
+  --color-brand-light: var(--color-primary-light);
+  --color-brand-text: var(--color-primary-text);
 
-  /* Sakura accent */
-  --color-sakura: #FFB7C5;
-  --color-sakura-dark: #F472B6;
-  --color-sakura-light: #FFE4E1;
+  --color-coral: var(--color-coral);
+  --color-coral-light: var(--color-coral-light);
+  --color-sakura: var(--color-primary);
+  --color-sakura-dark: var(--color-primary-hover);
+  --color-sakura-light: var(--color-primary-light);
 
-  /* Brand accent */
-  --color-brand-primary: #6D3CFF;
-  --color-brand-secondary: #AF52DE;
-  --color-brand-accent: #FF6B9D;
+  --color-sky: var(--color-sky);
+  --color-sky-light: var(--color-sky-light);
 
-  /* Border radii */
+  --color-mint: var(--color-mint);
+  --color-mint-light: var(--color-mint-light);
+
+  --color-lavender: var(--color-lavender);
+  --color-lavender-light: var(--color-lavender-light);
+
+  --color-yellow: var(--color-yellow);
+  --color-yellow-light: var(--color-yellow-light);
+
+  --color-orange: var(--color-orange);
+  --color-orange-light: var(--color-orange-light);
+
+  /* Category alias compatibility */
+  --color-cat-green: var(--color-mint);
+  --color-cat-green-light: var(--color-mint-light);
+  --color-cat-blue: var(--color-sky);
+  --color-cat-blue-light: var(--color-sky-light);
+  --color-cat-purple: var(--color-lavender);
+  --color-cat-purple-light: var(--color-lavender-light);
+  --color-cat-pink: var(--color-primary);
+  --color-cat-pink-light: var(--color-primary-light);
+  --color-cat-yellow: var(--color-yellow);
+  --color-cat-yellow-light: var(--color-yellow-light);
+  --color-cat-orange: var(--color-orange);
+  --color-cat-orange-light: var(--color-orange-light);
+  --color-cat-teal: var(--color-mint);
+  --color-cat-teal-light: var(--color-mint-light);
+  --color-accent: var(--color-coral);
+  --color-accent-light: var(--color-coral-light);
+  --color-warm-soft: var(--bg-card-subtle);
+  --color-warm-cream: var(--bg-card-subtle);
+
+  /* Radii */
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
@@ -56,14 +80,7 @@
   --radius-2xl: 28px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
-  --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.08);
-  --shadow-soft: 0 1px 4px rgba(0, 0, 0, 0.04);
-  --shadow-button: 0 4px 12px rgba(109, 60, 255, 0.2);
-
-  /* Animations */
+  /* Keyframe Animations */
   --animate-petal-fall: petal-fall 12s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-shimmer: shimmer 1.8s ease-in-out infinite;
@@ -74,15 +91,120 @@
   --animate-fade-in: fade-in 0.3s ease-out;
   --animate-shake: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
   --animate-count-up: count-up 1s ease-out;
-  --animate-spin-slow: spin 3s linear infinite;
   --animate-bounce-subtle: bounce-subtle 2s ease-in-out infinite;
   --animate-card-pop: card-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --animate-check-bounce: check-bounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-xp-pop: xp-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-achievement-unlock: achievement-unlock 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-mascot-float: mascot-float 4s ease-in-out infinite;
+  --animate-typing-dots: typing-dots 1.2s ease-in-out infinite;
+}
+
+/* ─── Global Theme Variables (Light & Dark Paper) ─── */
+:root {
+  /* LIGHT THEME: Warm Paper Notebook — exact spec */
+  --bg-page: #FFF9F0;          /* Warm cream paper */
+  --bg-card: #FFFFFF;          /* Clean white card */
+  --bg-card-subtle: #FFF3E4;   /* Soft peach secondary */
+  --bg-card-hover: #FFFDF8;
+  --bg-input: #FFFFFF;
+
+  --text-primary: #2F2925;     /* Deep warm ink */
+  --text-secondary: #6B6359;   /* Medium warm */
+  --text-muted: #9E9189;       /* Muted warm */
+  --text-light: #C4B9B0;
+
+  --border-subtle: #EDE3D8;    /* Soft paper border */
+  --border-default: #DDD4C7;   /* Notebook edge */
+  --border-strong: #C8BDAD;
+
+  --paper-shadow: 0 2px 0 #EDE3D8, 0 6px 20px rgba(47, 41, 37, 0.06);
+  --paper-shadow-hover: 0 4px 0 #DDD4C7, 0 12px 28px rgba(47, 41, 37, 0.1);
+  --paper-press-shadow: 0 2px 0 #DDD4C7;
+
+  /* Pastel Inks — exact spec */
+  --color-primary: #F47C86;       /* Coral-pink primary */
+  --color-primary-hover: #EC6B76;
+  --color-primary-light: #FEF0F1;
+  --color-primary-text: #FFFFFF;
+
+  --color-coral: #F47C86;         /* Coral accent */
+  --color-coral-light: #FEF0F1;
+
+  --color-sky: #A9D5F5;           /* Sky blue */
+  --color-sky-light: #EEF7FD;
+
+  --color-mint: #A9DCC8;          /* Mint green */
+  --color-mint-light: #EEF8F4;
+
+  --color-lavender: #C8B5E8;      /* Lavender */
+  --color-lavender-light: #F2EEF9;
+
+  --color-yellow: #F7D774;        /* Warm yellow */
+  --color-yellow-light: #FEF8E6;
+
+  --color-orange: #F6B38F;        /* Peach orange */
+  --color-orange-light: #FDF3EC;
+
+  --washi-opacity: 0.9;
+
+  /* Notebook helpers */
+  --notebook-line: rgba(168, 154, 140, 0.18);
+  --notebook-margin: rgba(244, 124, 134, 0.22);
+}
+
+.dark {
+  color-scheme: dark;
+  /* DARK THEME: Genuine warm dark paper — NOT inverted colors */
+  --bg-page: #1E1C1A;          /* Deep warm charcoal */
+  --bg-card: #282522;          /* Dark warm card */
+  --bg-card-subtle: #302D2A;   /* Secondary dark surface */
+  --bg-card-hover: #342F2C;
+  --bg-input: #242120;
+
+  --text-primary: #F4EDE3;     /* Warm off-white ink */
+  --text-secondary: #B8AFA4;
+  --text-muted: #7D756C;
+  --text-light: #55504A;
+
+  --border-subtle: #3E3A36;
+  --border-default: #4A4540;
+  --border-strong: #5A544E;
+
+  --paper-shadow: 0 2px 0 #141210, 0 6px 20px rgba(0, 0, 0, 0.35);
+  --paper-shadow-hover: 0 4px 0 #0E0D0B, 0 12px 28px rgba(0, 0, 0, 0.45);
+  --paper-press-shadow: 0 2px 0 #141210;
+
+  /* Muted pastels for dark mode */
+  --color-primary: #F08A93;
+  --color-primary-hover: #F59BA3;
+  --color-primary-light: #3A2124;
+  --color-primary-text: #FFFFFF;
+
+  --color-coral: #F08A93;
+  --color-coral-light: #3A2124;
+
+  --color-sky: #88BFDF;
+  --color-sky-light: #1A2830;
+
+  --color-mint: #88C4AA;
+  --color-mint-light: #1A2C24;
+
+  --color-lavender: #AFA0D4;
+  --color-lavender-light: #252038;
+
+  --color-yellow: #E8C86C;
+  --color-yellow-light: #302610;
+
+  --color-orange: #DCA07E;
+  --color-orange-light: #2E2016;
+
+  --washi-opacity: 0.85;
+
+  --notebook-line: rgba(100, 94, 88, 0.25);
+  --notebook-margin: rgba(240, 138, 147, 0.18);
 }
 
 /* ─── Keyframes ─── */
-
 @keyframes petal-fall {
   0% { transform: translateY(-5vh) translateX(0px) rotate(0deg); opacity: 0; }
   10% { opacity: 0.5; }
@@ -92,7 +214,7 @@
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 @keyframes shimmer {
@@ -101,17 +223,17 @@
 }
 
 @keyframes ripple {
-  0% { transform: scale(0); opacity: 0.4; }
+  0% { transform: scale(0); opacity: 0.35; }
   100% { transform: scale(4); opacity: 0; }
 }
 
 @keyframes scale-in {
-  0% { transform: scale(0.9); opacity: 0; }
+  0% { transform: scale(0.92); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes slide-up {
-  0% { transform: translateY(20px); opacity: 0; }
+  0% { transform: translateY(16px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 
@@ -143,62 +265,40 @@
   50% { transform: translateY(-6px); }
 }
 
-@keyframes progress-fill {
-  0% { width: 0%; }
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0px) rotate(-1deg); }
+  25% { transform: translateY(-6px) rotate(0deg); }
+  75% { transform: translateY(-3px) rotate(1deg); }
 }
 
-@keyframes ring-fill {
-  0% { stroke-dashoffset: var(--ring-circumference, 283); }
+@keyframes xp-pop {
+  0% { transform: scale(0.6) translateY(0); opacity: 0; }
+  50% { transform: scale(1.2) translateY(-22px); opacity: 1; }
+  100% { transform: scale(1) translateY(-44px); opacity: 0; }
 }
 
-@keyframes card-pop {
-  0% { transform: scale(0.95); opacity: 0; }
-  70% { transform: scale(1.02); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes check-bounce {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes pulse-soft {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-}
-
-@keyframes toast-in {
-  0% { transform: translateX(100%) scale(0.95); opacity: 0; }
-  100% { transform: translateX(0) scale(1); opacity: 1; }
-}
-
-@keyframes toast-out {
-  0% { transform: translateX(0) scale(1); opacity: 1; }
-  100% { transform: translateX(100%) scale(0.95); opacity: 0; }
+@keyframes achievement-unlock {
+  0% { transform: scale(0.5) rotate(-15deg); opacity: 0; }
+  50% { transform: scale(1.15) rotate(4deg); opacity: 1; }
+  75% { transform: scale(0.96) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
 @keyframes typing-dots {
-  0%, 20% { opacity: 0.2; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1); }
-  80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  0%, 100% { transform: translateY(0); opacity: 0.35; }
+  50% { transform: translateY(-4px); opacity: 1; }
 }
 
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 5px rgba(109, 60, 255, 0.1); }
-  50% { box-shadow: 0 0 20px rgba(109, 60, 255, 0.2), 0 0 40px rgba(175, 82, 222, 0.1); }
+@keyframes card-pop {
+  0% { transform: scale(0.9) rotate(-2deg); opacity: 0; }
+  60% { transform: scale(1.04) rotate(0.5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 
-/* ─── Global Reset ─── */
-
+/* ─── Global Reset & Typography ─── */
 html, body {
-  background-color: #FAF8F3;
-  color: #1A1A2E;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-sans);
   min-height: 100vh;
   min-height: 100dvh;
@@ -209,249 +309,434 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Selection highlight */
+/* Apply Nunito to all headings */
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+}
+.font-jp { font-family: var(--font-jp); }
+
 ::selection {
-  background: rgba(255, 183, 197, 0.4);
-  color: #1A1A2E;
+  background: rgba(255, 143, 163, 0.3);
+  color: var(--text-primary);
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* ─── Scrollbar ─── */
-
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.1); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.18); }
+::-webkit-scrollbar-thumb { background: rgba(45, 36, 38, 0.12); border-radius: 9999px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(245, 242, 235, 0.15); }
+::-webkit-scrollbar-thumb:hover { background: rgba(45, 36, 38, 0.22); }
+* { scrollbar-width: thin; scrollbar-color: rgba(45, 36, 38, 0.12) transparent; }
 
-/* Firefox scrollbar */
-* { scrollbar-width: thin; scrollbar-color: rgba(0, 0, 0, 0.1) transparent; }
+/* ─── Paper Texture & Study Desk Utilities ─── */
+@utility bg-paper-texture {
+  background-color: var(--bg-page);
+  background-image: radial-gradient(circle, var(--border-subtle) 0.6px, transparent 0.6px);
+  background-size: 22px 22px;
+}
 
-/* ─── Card Utilities ─── */
+@utility bg-notebook-lines {
+  background-color: var(--bg-card);
+  background-image: linear-gradient(var(--notebook-line) 1px, transparent 1px);
+  background-size: 100% 30px;
+  background-position: 0 44px;
+}
 
+@utility bg-notebook-margin {
+  background-color: var(--bg-card);
+  background-image:
+    linear-gradient(var(--notebook-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--notebook-margin) 1px, transparent 1px);
+  background-size: 100% 30px, 44px 100%;
+  background-position: 0 44px, 44px 0;
+}
+
+@utility paper-sheet {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--paper-shadow);
+  border-radius: 20px;
+}
+
+@utility paper-sheet-hover {
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--paper-shadow-hover);
+    border-color: var(--border-default);
+  }
+}
+
+/* Card utilities */
 @utility card-base {
-  background: #FFFFFF;
-  border: 1px solid #E8E4DD;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--paper-shadow);
+  border-radius: 20px;
+}
+
+@utility glass-card {
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--paper-shadow);
   border-radius: 20px;
 }
 
 @utility card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--paper-shadow-hover);
     transform: translateY(-2px);
-    border-color: #D8D4CC;
+    border-color: var(--border-default);
   }
 }
 
 @utility card-active {
-  border-color: #C4A0FF;
-  box-shadow: 0 0 0 3px rgba(109, 60, 255, 0.12);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 143, 163, 0.2);
 }
 
 @utility card-elevated {
-  background: #FFFFFF;
-  border: 1px solid #E8E4DD;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--paper-shadow-hover);
 }
 
-@utility card-colored {
-  border: 2px solid transparent;
+/* ─── Washi Tape Pastel Strips ─── */
+@utility washi-tape-pink {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  width: 72px;
+  height: 20px;
+  background: var(--color-primary);
+  opacity: var(--washi-opacity);
+  border-left: 2px dashed rgba(255, 255, 255, 0.7);
+  border-right: 2px dashed rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(45, 36, 38, 0.1);
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 2px;
 }
 
-/* Legacy compat - glass-card maps to light card now */
-@utility glass-card {
-  background: #FFFFFF;
-  border: 1px solid #E8E4DD;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+@utility washi-tape-yellow {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1.2deg);
+  width: 76px;
+  height: 20px;
+  background: var(--color-yellow);
+  opacity: var(--washi-opacity);
+  border-left: 2px dashed rgba(255, 255, 255, 0.7);
+  border-right: 2px dashed rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(45, 36, 38, 0.1);
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 2px;
 }
 
-@utility glass-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+@utility washi-tape-mint {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 70px;
+  height: 20px;
+  background: var(--color-mint);
+  opacity: var(--washi-opacity);
+  border-left: 2px dashed rgba(255, 255, 255, 0.7);
+  border-right: 2px dashed rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(45, 36, 38, 0.1);
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+@utility washi-tape-lavender {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) rotate(1.8deg);
+  width: 74px;
+  height: 20px;
+  background: var(--color-lavender);
+  opacity: var(--washi-opacity);
+  border-left: 2px dashed rgba(255, 255, 255, 0.7);
+  border-right: 2px dashed rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(45, 36, 38, 0.1);
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 2px;
+}
+
+/* Sticker badge */
+@utility sticker-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: var(--color-yellow-light);
+  border: 1.5px dashed var(--color-yellow);
+  border-radius: 999px;
+  font-weight: 800;
+  color: var(--color-orange);
+  font-size: 0.75rem;
+  box-shadow: 0 2px 6px rgba(255, 146, 43, 0.18);
+  transform: rotate(-2.5deg);
+}
+
+/* ─── Tactile Paper Press Buttons ─── */
+@utility paper-press-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 16px;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: var(--paper-press-shadow);
   &:hover {
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    transform: translateY(-2px);
-    border-color: #D8D4CC;
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(45, 36, 38, 0.12);
   }
 }
 
-@utility glass-card-active {
-  border-color: #C4A0FF;
-  box-shadow: 0 0 0 3px rgba(109, 60, 255, 0.12);
-}
-
-@utility glass-input {
-  background: #FFFFFF;
-  border: 1px solid #E8E4DD;
-}
-
-/* ─── Text Glow — softer for light theme ─── */
-
-@utility text-glow-purple {
-  text-shadow: 0 0 8px rgba(109, 60, 255, 0.2);
-}
-@utility text-glow-pink {
-  text-shadow: 0 0 8px rgba(244, 114, 182, 0.3);
-}
-@utility text-glow-blue {
-  text-shadow: 0 0 8px rgba(0, 122, 255, 0.2);
-}
-
-/* ─── Neon Border — gentle gradient for light theme ─── */
-
-@utility neon-border {
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(135deg, #6D3CFF, #AF52DE, #FF6B9D);
-    border-radius: inherit;
-    opacity: 0.15;
-    z-index: -1;
-    filter: blur(4px);
-    transition: opacity 0.3s ease;
-  }
-  &:hover::before {
-    opacity: 0.3;
-  }
-}
-
-/* ─── Button System ─── */
-
+/* ─── Reusable Button System (No neon gradients) ─── */
 @utility btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   border-radius: 16px;
-  height: 56px;
-  font-weight: 600;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 52px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
   cursor: pointer;
   outline: none;
-  font-size: 16px;
-  padding-left: 24px;
-  padding-right: 24px;
+  font-size: 15px;
+  padding-left: 22px;
+  padding-right: 22px;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--paper-press-shadow);
+  &:hover {
+    transform: translateY(-1px);
+  }
   &:active {
-    transform: scale(0.97);
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(45, 36, 38, 0.12);
   }
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    &:active { transform: none; }
+    transform: none;
+    box-shadow: none;
   }
 }
 
 @utility btn-primary {
-  background: linear-gradient(135deg, #6D3CFF 0%, #AF52DE 100%);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 16px rgba(109, 60, 255, 0.25);
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 0 rgba(224, 105, 127, 0.85), 0 6px 16px rgba(255, 143, 163, 0.25);
   &:hover {
-    box-shadow: 0 6px 24px rgba(109, 60, 255, 0.35);
-    filter: brightness(1.05);
-    transform: translateY(-1px);
+    background-color: var(--color-primary-hover);
+    box-shadow: 0 5px 0 rgba(224, 105, 127, 0.95), 0 8px 20px rgba(255, 143, 163, 0.35);
+  }
+  &:active {
+    box-shadow: 0 1px 0 rgba(224, 105, 127, 0.85);
   }
 }
 
 @utility btn-accent {
-  background: linear-gradient(135deg, #FF6B9D 0%, #FF9500 100%);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 16px rgba(255, 107, 157, 0.25);
+  background-color: var(--color-yellow);
+  color: #2D2426;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 0 rgba(224, 170, 0, 0.85);
   &:hover {
-    box-shadow: 0 6px 24px rgba(255, 107, 157, 0.35);
-    filter: brightness(1.05);
-    transform: translateY(-1px);
+    background-color: #FFD43B;
   }
 }
 
 @utility btn-ghost {
-  background: transparent;
-  color: #4A4A68;
-  border: 1px solid #E8E4DD;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-subtle);
+  box-shadow: var(--paper-press-shadow);
   &:hover {
-    background: #F5F1EA;
-    border-color: #D8D4CC;
-    color: #1A1A2E;
+    background: var(--bg-card-hover);
+    border-color: var(--border-default);
   }
 }
 
 @utility btn-success {
-  background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.2);
+  background-color: var(--color-mint);
+  color: #1A1A2E;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 0 rgba(18, 184, 134, 0.85);
   &:hover {
-    box-shadow: 0 4px 18px rgba(52, 199, 89, 0.3);
-    filter: brightness(1.05);
+    background-color: #38D9A9;
   }
 }
 
 @utility btn-danger {
-  background: linear-gradient(135deg, #FF3B30 0%, #FF6B6B 100%);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.2);
+  background-color: #FF6B6B;
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 0 #E03131;
   &:hover {
-    box-shadow: 0 4px 18px rgba(255, 59, 48, 0.3);
-    filter: brightness(1.05);
-  }
-}
-
-@utility btn-neon {
-  background: linear-gradient(135deg, #6D3CFF 0%, #AF52DE 50%, #FF6B9D 100%);
-  color: #ffffff;
-  border: none;
-  box-shadow: 0 4px 20px rgba(109, 60, 255, 0.3);
-  &:hover {
-    box-shadow: 0 6px 28px rgba(109, 60, 255, 0.4);
-    filter: brightness(1.1);
-    transform: translateY(-2px);
+    background-color: #FA5252;
   }
 }
 
 @utility btn-sm {
   height: 40px;
-  padding-left: 16px;
-  padding-right: 16px;
-  font-size: 14px;
+  padding-left: 14px;
+  padding-right: 14px;
+  font-size: 13px;
   border-radius: 12px;
 }
 
 @utility btn-lg {
-  height: 64px;
-  padding-left: 32px;
-  padding-right: 32px;
-  font-size: 18px;
-  border-radius: 20px;
+  height: 58px;
+  padding-left: 28px;
+  padding-right: 28px;
+  font-size: 16px;
+  border-radius: 18px;
 }
 
 @utility btn-icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   padding: 0;
+  border-radius: 14px;
+}
+
+/* ─── Japanese Text & Quizzes ─── */
+@utility jp-text {
+  font-family: var(--font-jp), 'Noto Sans JP', sans-serif;
+  font-feature-settings: "kern" 1;
+  letter-spacing: 0.02em;
+}
+
+@utility mf-quiz-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 56px;
   border-radius: 16px;
+  border: 2px solid var(--border-subtle);
+  background-color: var(--bg-card);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--paper-press-shadow);
+  &:hover {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(45, 36, 38, 0.1);
+  }
 }
 
-/* ─── Safe Area ─── */
-
-@utility safe-top {
-  padding-top: env(safe-area-inset-top);
-}
-@utility safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
+@utility mf-quiz-option-correct {
+  border-color: var(--color-mint) !important;
+  background-color: var(--color-mint-light) !important;
+  color: var(--text-primary) !important;
+  box-shadow: 0 3px 0 var(--color-mint) !important;
 }
 
-/* ─── Reduced Motion ─── */
+@utility mf-quiz-option-wrong {
+  border-color: #FF6B6B !important;
+  background-color: #FFF5F5 !important;
+  color: #C92A2A !important;
+  box-shadow: 0 3px 0 #FF6B6B !important;
+  animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+/* ─── SRS Flashcard Buttons ─── */
+@utility srs-btn-again {
+  background: #FEE8E8; color: #B83030;
+  border: 1.5px solid #F5BFBF; box-shadow: 0 3px 0 #EFB0B0;
+  border-radius: 14px; font-family: var(--font-heading); font-weight: 800;
+  &:hover { background: #FDD6D6; } &:active { transform: translateY(2px); box-shadow: 0 1px 0 #EFB0B0; }
+}
+@utility srs-btn-hard {
+  background: #FDF3EC; color: #A0560A;
+  border: 1.5px solid #EEC89A; box-shadow: 0 3px 0 #DDB080;
+  border-radius: 14px; font-family: var(--font-heading); font-weight: 800;
+  &:hover { background: #FDE8D4; } &:active { transform: translateY(2px); }
+}
+@utility srs-btn-good {
+  background: #EEF7FD; color: #1A5280;
+  border: 1.5px solid #A4CCEE; box-shadow: 0 3px 0 #8ABCDE;
+  border-radius: 14px; font-family: var(--font-heading); font-weight: 800;
+  &:hover { background: #DCF0FD; } &:active { transform: translateY(2px); }
+}
+@utility srs-btn-easy {
+  background: #EEF8F4; color: #1A5038;
+  border: 1.5px solid #A4D8C0; box-shadow: 0 3px 0 #88C8AA;
+  border-radius: 14px; font-family: var(--font-heading); font-weight: 800;
+  &:hover { background: #D8F5EA; } &:active { transform: translateY(2px); }
+}
+
+/* ─── 3D Card Flip ─── */
+.card-flip-container { perspective: 1200px; }
+.card-flip-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+.card-flip-inner.flipped { transform: rotateY(180deg); }
+.card-flip-front, .card-flip-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+.card-flip-back { transform: rotateY(180deg); }
+
+/* ─── Mascot Float ─── */
+.mascot-float { animation: mascot-float 4s ease-in-out infinite; }
+
+/* ─── Achievement Sticker ─── */
+@utility achievement-sticker {
+  border-radius: 20px;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  &:hover { transform: rotate(-1.5deg) scale(1.05); box-shadow: var(--paper-shadow-hover); }
+}
+
+/* ─── Furigana ─── */
+ruby rt {
+  font-size: 0.5em;
+  color: var(--text-muted);
+  font-family: var(--font-jp);
+}
+
+/* ─── Scrollbar none ─── */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* ─── Safe Area & Reduced Motion ─── */
+@utility safe-top { padding-top: env(safe-area-inset-top); }
+@utility safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

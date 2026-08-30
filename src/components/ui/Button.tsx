@@ -28,38 +28,25 @@ export function Button({
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-      // Ripple effect
-      const btn = btnRef.current;
-      if (btn) {
-        const rect = btn.getBoundingClientRect();
-        const ripple = document.createElement('span');
-        const size = Math.max(rect.width, rect.height);
-        ripple.style.width = ripple.style.height = `${size}px`;
-        ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
-        ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-        ripple.className = 'absolute rounded-full bg-white/30 animate-ripple pointer-events-none';
-        btn.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 600);
-      }
       onClick?.(e);
     },
     [onClick]
   );
 
-  const base = 'btn relative overflow-hidden transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:ring-offset-2 focus-visible:ring-offset-warm active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none disabled:scale-100';
+  const base = 'btn relative select-none font-heading transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 disabled:opacity-50 disabled:pointer-events-none disabled:shadow-none';
   const variants: Record<string, string> = {
-    primary: 'btn-primary shadow-lg shadow-brand/15 hover:shadow-brand/25',
-    accent: 'btn-accent shadow-lg shadow-accent/15 hover:shadow-accent/25',
+    primary: 'btn-primary',
+    accent: 'btn-accent',
     ghost: 'btn-ghost',
-    success: 'btn-success shadow-lg shadow-cat-green/15',
-    danger: 'btn-danger shadow-lg shadow-red-500/15',
-    outline: 'btn-ghost border border-edge hover:border-edge-hover',
-    neon: 'btn-neon shadow-lg shadow-brand/20',
+    success: 'btn-success',
+    danger: 'btn-danger',
+    outline: 'btn-ghost',
+    neon: 'btn-primary',
   };
   const sizes: Record<string, string> = {
-    sm: 'btn-sm text-xs',
-    md: 'text-sm font-semibold',
-    lg: 'btn-lg text-base font-bold',
+    sm: 'btn-sm',
+    md: 'text-sm font-bold',
+    lg: 'btn-lg',
     icon: 'btn-icon',
   };
 
@@ -72,7 +59,7 @@ export function Button({
       {...props}
     >
       {loading ? <Loader2 className="w-4 h-4 animate-spin text-current" strokeWidth={2.25} /> : leftIcon}
-      {children}
+      <span>{children}</span>
       {!loading && rightIcon}
     </button>
   );

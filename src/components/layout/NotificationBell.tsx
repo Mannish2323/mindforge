@@ -136,7 +136,7 @@ export function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className="absolute right-0 top-full mt-2 w-[340px] sm:w-[380px] rounded-2xl bg-white border border-edge shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 overflow-hidden"
+            className="absolute right-0 top-full mt-2 w-[340px] sm:w-[380px] rounded-2xl bg-card border border-edge shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-50 overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-edge">

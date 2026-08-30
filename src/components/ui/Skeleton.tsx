@@ -54,7 +54,7 @@ export function Skeleton({
  */
 export function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn('bg-white border border-edge rounded-card-lg p-5 space-y-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]', className)}>
+    <div className={cn('bg-card border border-edge rounded-card-lg p-5 space-y-4 shadow-[0_2px_12px_rgba(0,0,0,0.06)]', className)}>
       <div className="flex items-center gap-3">
         <Skeleton variant="avatar" />
         <div className="flex-1 space-y-2">

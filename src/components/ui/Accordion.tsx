@@ -41,8 +41,8 @@ export function Accordion({ items, className, allowMultiple = false }: Accordion
             className={cn(
               'rounded-xl border transition-all duration-300 overflow-hidden',
               isOpen
-                ? 'bg-white border-brand/20 shadow-sm'
-                : 'bg-white border-edge hover:border-edge-hover'
+                ? 'bg-card border-brand/20 shadow-sm'
+                : 'bg-card border-edge hover:border-edge-hover'
             )}
           >
             <button

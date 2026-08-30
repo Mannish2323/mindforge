@@ -50,49 +50,49 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session (keeps it alive)
-  let user = null;
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
-    user = { id: 'dummy-user-id', email: 'test@yamplelabs.com' } as any;
-  } else {
-    try {
-      const { data } = await supabase.auth.getUser();
-      user = data.user;
-    } catch (e) {}
-  }
-
-  // ── Guard: Protected routes → redirect to /auth if not authenticated ──
-  const isProtected = PROTECTED_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
-  if (isProtected && !user) {
-    const loginUrl = new URL('/auth', request.url);
-    loginUrl.searchParams.set('next', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // ── Guard: Auth-only routes → redirect to /home if already authenticated ──
-  const isAuthOnly = AUTH_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
-  if (isAuthOnly && user) {
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://dummy.supabase.co') {
-      return NextResponse.redirect(new URL('/home', request.url));
-    }
-  }
-
-  // ── Guard: Root / → redirect to /home for both guest browsing and logged-in users ──
+  // ── Guard: Root / → redirect to /home immediately ──
   if (pathname === '/') {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-  // ── Guard: Admin routes → require admin role ──
-  if (pathname.startsWith('/admin') && user) {
-    const { data: adminRole } = await supabase
-      .from('admin_roles')
-      .select('user_id')
-      .eq('user_id', user.id)
-      .single();
-    
-    if (!adminRole) {
-      // Not an admin — redirect to /home
-      return NextResponse.redirect(new URL('/home', request.url));
+  const isProtected = PROTECTED_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
+  const isAuthOnly = AUTH_ONLY_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'));
+  const isAdmin = pathname.startsWith('/admin');
+
+  // Only perform remote session check if accessing protected, auth-only, or admin routes
+  if (isProtected || isAuthOnly || isAdmin) {
+    let user = null;
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://dummy.supabase.co') {
+      user = { id: 'dummy-user-id', email: 'test@yamplelabs.com' } as any;
+    } else {
+      try {
+        const { data } = await supabase.auth.getUser();
+        user = data?.user ?? null;
+      } catch (e) {}
+    }
+
+    if (isProtected && !user) {
+      const loginUrl = new URL('/auth', request.url);
+      loginUrl.searchParams.set('next', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (isAuthOnly && user) {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== 'https://dummy.supabase.co') {
+        return NextResponse.redirect(new URL('/home', request.url));
+      }
+    }
+
+    if (isAdmin && user) {
+      const { data: adminRole } = await supabase
+        .from('admin_roles')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!adminRole) {
+        return NextResponse.redirect(new URL('/home', request.url));
+      }
     }
   }
 

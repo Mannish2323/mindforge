@@ -73,7 +73,7 @@ export function PremiumGate({
 
       {/* Lock Overlay */}
       <div
-        className={`${preview ? 'absolute inset-0' : 'relative min-h-[200px]'} flex flex-col items-center justify-center gap-4 rounded-2xl z-10 bg-white/90 backdrop-blur-sm border border-edge shadow-md`}
+        className={`${preview ? 'absolute inset-0' : 'relative min-h-[200px]'} flex flex-col items-center justify-center gap-4 rounded-2xl z-10 bg-card/90 backdrop-blur-sm border border-edge shadow-md`}
       >
         <motion.div
           initial={{ scale: 0.85, opacity: 0 }}

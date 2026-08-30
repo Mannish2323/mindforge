@@ -13,10 +13,13 @@ export interface UserProfile {
   level: number; // computed from xp
   streak: number; // user_streaks.streak
   leafBalance: number; // gems_balance
-  isPremium: boolean; // true for starter/plus/pro/ai_max/yearly
+  isPremium: boolean; // true for starter/plus/pro/ai_max/yearly/trial_active
+  isTrial: boolean;   // true if currently in 1-day trial
   planId: string;           // 'free' | 'starter' | 'plus' | 'pro' | 'ai_max'
-  planStatus: string;       // 'free' | 'starter' | 'plus' | 'pro' | 'ai_max' | 'yearly' | 'cancelled'
+  planStatus: string;       // 'free' | 'trial_pending' | 'trial_active' | 'active' | 'payment_pending' | 'payment_failed' | 'cancelled' | 'expired'
   endsAt: string | null;    // ISO timestamp of subscription expiry
+  trialEndsAt: string | null; // ISO timestamp of trial end
+  nextBillingAt: string | null; // ISO timestamp of next recurring charge
   heartsLimit: number;      // 5 | 25 | 50 | 100
   aiLimitDaily: number;     // 5 | 15 | 30 | 99
   lessonsLimitDaily: number;// 5 | 15 | 30 | 99
@@ -224,18 +227,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })(),
         streak: streakData.streak ?? 0,
         leafBalance: statsData.gems_balance ?? 5,
-        // isPremium: active if plan is paid AND not expired
-        isPremium: ((['starter', 'plus', 'pro', 'ai_max', 'yearly'].includes(entitlementsData.status)) &&
-                    (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
-                   (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date()),
+        // isPremium: active if plan is paid/trial AND not expired
+        isPremium: (() => {
+          const s = entitlementsData.status;
+          const end = entitlementsData.ends_at;
+          const trialEnd = entitlementsData.trial_ends_at;
+          if (s === 'trial_active') {
+            return trialEnd ? new Date(trialEnd) > new Date() : (end ? new Date(end) > new Date() : true);
+          }
+          if (['starter', 'plus', 'pro', 'ai_max', 'yearly', 'active'].includes(s)) {
+            return end ? new Date(end) > new Date() : true;
+          }
+          if (s === 'cancelled' || s === 'payment_pending') {
+            return end ? new Date(end) > new Date() : false;
+          }
+          return false;
+        })(),
+        isTrial: entitlementsData.status === 'trial_active' && (!entitlementsData.trial_ends_at || new Date(entitlementsData.trial_ends_at) > new Date()),
         planId: entitlementsData.plan_id || 'free',
         planStatus: entitlementsData.status || 'free',
         endsAt: entitlementsData.ends_at || null,
+        trialEndsAt: entitlementsData.trial_ends_at || null,
+        nextBillingAt: entitlementsData.next_billing_at || null,
         heartsLimit: entitlementsData.hearts_limit ?? 25,
         aiLimitDaily: entitlementsData.ai_limit_daily ?? 5,
         lessonsLimitDaily: entitlementsData.lessons_limit_daily ?? 5,
         adsEnabled: !(
-          ((['pro', 'ai_max', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'ai_max', 'yearly'].includes(entitlementsData.status)) &&
+          ((['pro', 'ai_max', 'yearly'].includes(entitlementsData.plan_id) || ['pro', 'ai_max', 'yearly', 'active', 'trial_active'].includes(entitlementsData.status)) &&
           (entitlementsData.ends_at ? new Date(entitlementsData.ends_at) > new Date() : true)) ||
           (entitlementsData.status === 'cancelled' && entitlementsData.ends_at && new Date(entitlementsData.ends_at) > new Date())
         ),
@@ -309,9 +327,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         streak: 5,
         leafBalance: 15,
         isPremium: true,
+        isTrial: false,
         planId: 'pro',
         planStatus: 'pro',
         endsAt: null,
+        trialEndsAt: null,
+        nextBillingAt: null,
         heartsLimit: 100,
         aiLimitDaily: 99,
         lessonsLimitDaily: 99,
@@ -346,23 +367,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    // Safety fallback timer so UI never hangs indefinitely on loading screen
+    const safetyTimer = setTimeout(() => {
+      if (active) setLoading(false);
+    }, 1200);
+
     // Validate session on mount to prevent stale localstorage session loops
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!active) return;
-      setUser(user ?? null);
-      if (user) {
-        syncUserProfile(user);
-      } else {
-        setProfile(null);
-      }
-      
-      // Fetch session for access tokens and clear loading state
-      supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getUser()
+      .then(({ data }) => {
         if (!active) return;
-        setSession(session);
+        const currentUser = data?.user ?? null;
+        setUser(currentUser);
+        if (currentUser) {
+          syncUserProfile(currentUser);
+        } else {
+          setProfile(null);
+        }
+        
+        // Fetch session for access tokens and clear loading state
+        supabase.auth.getSession()
+          .then(({ data: sessionData }) => {
+            if (!active) return;
+            setSession(sessionData?.session ?? null);
+            setLoading(false);
+            clearTimeout(safetyTimer);
+          })
+          .catch((err) => {
+            console.warn('getSession error:', err);
+            if (!active) return;
+            setLoading(false);
+            clearTimeout(safetyTimer);
+          });
+      })
+      .catch((err) => {
+        console.warn('getUser error:', err);
+        if (!active) return;
         setLoading(false);
+        clearTimeout(safetyTimer);
       });
-    });
 
     // Subscribe to auth state changes for SIGNED_IN, SIGNED_OUT, etc.
     const {
@@ -385,10 +427,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setProfile(null);
       }
       setLoading(false);
+      clearTimeout(safetyTimer);
     });
 
     return () => {
       active = false;
+      clearTimeout(safetyTimer);
       subscription.unsubscribe();
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps

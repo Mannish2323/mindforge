@@ -26,12 +26,12 @@ function LoadingScreen() {
           MindForge
         </span>
         {/* Animated loading bar */}
-        <div className="w-32 h-1 rounded-full overflow-hidden bg-warm-soft">
+        <div className="w-36 h-1.5 rounded-full overflow-hidden bg-cream border border-edge">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-brand via-cat-purple to-accent"
+            className="h-full rounded-full bg-gradient-to-r from-brand via-lavender to-mint"
             initial={{ width: '0%' }}
             animate={{ width: '100%' }}
-            transition={{ duration: 1.5, ease: 'easeInOut', repeat: Infinity }}
+            transition={{ duration: 1.2, ease: 'easeInOut', repeat: Infinity }}
           />
         </div>
       </motion.div>

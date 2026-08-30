@@ -138,7 +138,7 @@ function AuthModalModal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="relative w-full max-w-md bg-white border border-edge rounded-3xl p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-[251] space-y-6 overflow-hidden focus:outline-none"
+            className="relative w-full max-w-md bg-card border border-edge rounded-3xl p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-[251] space-y-6 overflow-hidden focus:outline-none"
             tabIndex={-1}
           >
             {/* Subtle bg decoration */}
@@ -212,7 +212,7 @@ function AuthModalModal({
                 disabled={googleLoading}
                 whileHover={{ scale: 1.015 }}
                 whileTap={{ scale: 0.985 }}
-                className="w-full h-12 rounded-2xl bg-white border border-edge text-ink font-bold text-sm hover:border-edge-hover hover:shadow-md transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-brand/30"
+                className="w-full h-12 rounded-2xl bg-card border border-edge text-ink font-bold text-sm hover:border-edge-hover hover:shadow-md transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-brand/30"
               >
                 {googleLoading ? (
                   <div className="w-4 h-4 border-2 border-brand border-t-transparent rounded-full animate-spin" />

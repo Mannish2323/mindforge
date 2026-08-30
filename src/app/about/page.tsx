@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -34,7 +34,7 @@ export default function AboutPage() {
     {
       icon: ShieldCheck,
       title: 'Quality & Integrity',
-      desc: 'Native audio recordings, verified JLPT N5–N1 curriculums, and real-time handwriting evaluation.'
+      desc: 'Native audio recordings, verified JLPT N5�N1 curriculums, and real-time handwriting evaluation.'
     }
   ];
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen min-h-[100dvh] bg-[#09070F] text-ink flex flex-col relative overflow-hidden"
+      className="min-h-screen min-h-[100dvh] bg-warm text-ink flex flex-col relative overflow-hidden"
     >
       <SakuraParticles />
 
@@ -51,7 +51,7 @@ export default function AboutPage() {
       <div className="absolute w-[40vw] h-[40vw] rounded-full bg-neon-pink/4 blur-[100px] pointer-events-none bottom-[-10%] left-[-10%]" />
 
       {/* Header */}
-      <header className="w-full border-b border-edge bg-[#09070F]/80 backdrop-blur-xl z-20 sticky top-0">
+      <header className="w-full border-b border-edge bg-warm/80 backdrop-blur-xl z-20 sticky top-0">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/home" className="flex items-center gap-2 text-xs font-bold text-ink-secondary/60 hover:text-ink transition-colors cursor-pointer group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
@@ -84,7 +84,7 @@ export default function AboutPage() {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {stats.map((s, idx) => (
-            <div key={idx} className="p-5 rounded-2xl bg-white/[0.02] border border-edge text-center space-y-1">
+            <div key={idx} className="p-5 rounded-2xl bg-card/[0.02] border border-edge text-center space-y-1">
               <span className="text-2xl font-extrabold text-ink font-heading">{s.value}</span>
               <p className="text-[11px] text-ink-muted font-bold uppercase tracking-wider">{s.label}</p>
             </div>
@@ -92,7 +92,7 @@ export default function AboutPage() {
         </div>
 
         {/* Company & Founder Section */}
-        <div className="p-8 rounded-3xl bg-[#12101D] border border-edge space-y-6">
+        <div className="p-8 rounded-3xl bg-card-subtle border border-edge space-y-6">
           <div className="flex items-center gap-3">
             <div className="p-3 rounded-2xl bg-brand/10 border border-neon-purple/20 text-brand-light">
               <Building2 className="w-6 h-6" />
@@ -120,7 +120,7 @@ export default function AboutPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {values.map((v, idx) => (
-              <div key={idx} className="p-6 rounded-2xl bg-white/[0.02] border border-edge space-y-3">
+              <div key={idx} className="p-6 rounded-2xl bg-card/[0.02] border border-edge space-y-3">
                 <div className="p-3 w-fit rounded-xl bg-brand/10 border border-neon-purple/20 text-brand-light">
                   <v.icon className="w-5 h-5" />
                 </div>

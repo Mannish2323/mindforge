@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -6,6 +6,9 @@ import {
   HelpCircle, ChevronRight, CheckCircle2, ChevronLeft, Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MFCard } from '@/components/ui/MFCard';
+import { MFButton } from '@/components/ui/MFButton';
+import { MFIcon } from '@/components/ui/MFIcon';
 
 interface GrammarPoint {
   id: string;
@@ -98,187 +101,188 @@ export default function GrammarPage() {
   };
 
   const triggerQuiz = (id: string) => {
-    setActiveQuizId(id);
+    setActiveQuizId(prev => prev === id ? null : id);
     setQuizAnswer(null);
     setQuizSuccess(null);
   };
 
-  const submitAnswer = (idx: number, correctIdx: number) => {
+  const handleSelectQuizOption = (idx: number, correctIdx: number) => {
     setQuizAnswer(idx);
-    const success = idx === correctIdx;
-    setQuizSuccess(success);
+    setQuizSuccess(idx === correctIdx);
   };
 
-  const filteredGrammar = grammarList.filter(g => {
+  const filteredGrammar = grammarList.filter(item => {
     const matchesSearch = 
-      g.structure.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.meaning.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.explanation.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesCat = selectedCategory === 'all' || g.category === selectedCategory;
-    return matchesSearch && matchesCat;
+      item.structure.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.meaning.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.explanation.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.romaji.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
+    return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="space-y-8">
-      {/* Header title */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/[0.08] pb-4 gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-ink font-heading">
-            Grammar Reference
-          </h1>
-          <p className="text-xs md:text-sm text-ink-muted font-semibold tracking-wide uppercase">
-            Learn Japanese sentence structures, particles rules and grammar patterns
-          </p>
-        </div>
+    <div className="space-y-7 md:space-y-9 max-w-5xl mx-auto pb-14">
+      {/* Top Study Sheet Banner */}
+      <MFCard variant="mint" washiTape="mint" padding="lg">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-card border border-edge text-xs font-extrabold text-brand shadow-sm">
+              <MFIcon name="grammar" size={16} />
+              <span>JLPT Grammar Reference</span>
+            </div>
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-ink font-heading">
+              Japanese Grammar Patterns
+            </h1>
+            <p className="text-xs sm:text-sm text-ink-secondary font-medium max-w-xl leading-relaxed">
+              Master Japanese particles, verb conjugations, and sentence structures with authentic examples and interactive checkpoint quizzes.
+            </p>
+          </div>
 
-        <div className="flex items-center gap-1.5 p-1 bg-white/[0.04] border border-white/[0.08] rounded-2xl">
-          {(['all', 'particle', 'verb', 'adjective'] as const).map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all capitalize cursor-pointer ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-md' 
-                    : 'text-ink-muted hover:text-ink'
-                }`}
-              >
-                {cat}
-              </button>
-            );
-          })}
+          <div className="flex items-center gap-1.5 p-1 bg-card border border-edge rounded-2xl shadow-sm shrink-0">
+            {(['all', 'particle', 'verb', 'adjective'] as const).map((cat) => {
+              const isActive = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all capitalize cursor-pointer ${
+                    isActive 
+                      ? 'bg-brand text-white shadow-[var(--paper-press-shadow)]' 
+                      : 'text-ink-muted hover:text-ink hover:bg-cream'
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </MFCard>
 
       {/* Search Input filter bar */}
       <div className="relative max-w-xl">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
         <input
           type="text"
           placeholder="Search by grammar structure, definition or meanings..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.12] rounded-xl pl-11 pr-5 h-12 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all"
+          className="w-full bg-card border-[1.5px] border-edge hover:border-edge-hover rounded-2xl pl-10 pr-4 h-12 text-xs font-semibold text-ink placeholder-ink-muted outline-none focus:border-brand transition-all shadow-sm"
         />
       </div>
 
       {/* Grammar point grid timeline */}
       {filteredGrammar.length === 0 ? (
-        <div className="glass-card p-12 text-center rounded-[28px] border border-white/[0.08]">
-          <Book className="w-12 h-12 text-ink-secondary/20 mx-auto mb-3" />
-          <h3 className="text-lg font-bold text-ink font-heading">No Grammar Points found</h3>
+        <MFCard variant="cream" padding="lg" className="text-center">
+          <Book className="w-12 h-12 text-ink-muted mx-auto mb-3 opacity-40" />
+          <h3 className="text-base font-bold text-ink font-heading">No Grammar Points found</h3>
           <p className="text-xs text-ink-muted mt-1">Try a different search query.</p>
-        </div>
+        </MFCard>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {filteredGrammar.map((grammar) => {
             const isSaved = savedIds.includes(grammar.id);
             const isQuizActive = activeQuizId === grammar.id;
             const quiz = quizQuestions[grammar.id];
 
             return (
-              <div 
+              <MFCard 
                 key={grammar.id}
-                className="glass-card p-6 md:p-8 rounded-[28px] border border-white/[0.08] space-y-6 hover:border-edge transition-all"
+                variant="paper"
+                lifted
+                padding="lg"
+                className="space-y-4"
               >
                 {/* Header structure row */}
-                <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-extrabold tracking-widest text-sakura-dark uppercase px-2 py-0.5 bg-sakura-dark/15 rounded border border-sakura-dark/25">
+                    <span className="text-[10px] font-black tracking-wider text-brand uppercase px-2.5 py-0.5 bg-brand-light rounded-md border border-brand/30">
                       {grammar.category.toUpperCase()}
                     </span>
-                    <h3 className="text-xl md:text-2xl font-extrabold text-ink font-jp mt-2">{grammar.structure}</h3>
-                    <p className="text-xs text-ink-muted italic font-semibold">{grammar.romaji}</p>
+                    <h3 className="text-xl sm:text-2xl font-black text-ink font-jp mt-1.5">{grammar.structure}</h3>
+                    <p className="text-xs text-ink-muted italic font-medium">{grammar.romaji}</p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => toggleSave(grammar.id)}
-                      className="p-3 bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.12] rounded-xl text-ink-secondary hover:text-ink transition-all cursor-pointer"
+                      className="p-2.5 bg-cream border border-edge hover:border-edge-hover rounded-xl text-ink transition-all cursor-pointer"
+                      title="Bookmark"
                     >
-                      {isSaved ? <BookmarkCheck className="w-4 h-4 text-sakura-dark" /> : <Bookmark className="w-4 h-4" />}
+                      {isSaved ? <BookmarkCheck className="w-4 h-4 text-brand" /> : <Bookmark className="w-4 h-4" />}
                     </button>
-                    <button
+                    <MFButton
+                      variant={isQuizActive ? 'primary' : 'secondary'}
+                      size="sm"
                       onClick={() => triggerQuiz(grammar.id)}
-                      className="btn btn-ghost btn-sm font-bold cursor-pointer"
                     >
-                      Quiz Test
-                    </button>
+                      {isQuizActive ? 'Close Quiz' : 'Quiz Check'}
+                    </MFButton>
                   </div>
                 </div>
 
                 {/* Explanation text */}
-                <div className="space-y-2 border-t border-white/[0.08] pt-4 leading-relaxed font-semibold">
-                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">DEFINITION</p>
-                  <p className="text-sm text-purple-100/90">{grammar.meaning}</p>
-                  <p className="text-xs text-ink-muted font-medium leading-relaxed">{grammar.explanation}</p>
+                <div className="space-y-1.5 border-t border-dashed border-edge pt-3 leading-relaxed">
+                  <p className="text-[10px] font-extrabold text-ink-muted uppercase tracking-wider">Meaning & Usage</p>
+                  <p className="text-sm font-bold text-ink">{grammar.meaning}</p>
+                  <p className="text-xs text-ink-secondary font-medium leading-relaxed">{grammar.explanation}</p>
                 </div>
 
                 {/* Examples */}
-                <div className="space-y-3 pt-2">
-                  <p className="text-xs text-ink-muted font-bold uppercase tracking-wider">FOCUS EXAMPLES</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2.5 pt-2">
+                  <p className="text-[10px] font-extrabold text-ink-muted uppercase tracking-wider">Example Sentences</p>
+                  <div className="space-y-2">
                     {grammar.examples.map((ex, idx) => (
-                      <div 
-                        key={idx}
-                        className="p-4 bg-white/[0.02] border border-white/[0.08] rounded-2xl flex items-center justify-between"
-                      >
-                        <div>
+                      <div key={idx} className="flex items-center justify-between p-3 rounded-2xl bg-cream border border-edge">
+                        <div className="space-y-0.5">
                           <p className="text-sm font-bold text-ink font-jp">{ex.jp}</p>
-                          <p className="text-[10px] text-ink-muted italic font-semibold">{ex.romaji}</p>
-                          <p className="text-xs text-ink-secondary/80 font-medium mt-1">{ex.en}</p>
+                          <p className="text-[11px] text-ink-muted italic font-medium">{ex.romaji}</p>
+                          <p className="text-xs font-semibold text-ink-secondary">{ex.en}</p>
                         </div>
                         <button
                           onClick={() => speakJapanese(ex.jp)}
-                          className="p-2 text-ink-muted hover:text-ink rounded-lg hover:bg-warm-soft transition-colors cursor-pointer"
+                          className="p-2 rounded-xl bg-card border border-edge hover:border-edge-hover text-ink transition-all cursor-pointer shrink-0"
+                          title="Listen"
                         >
-                          <Volume2 className="w-4 h-4" />
+                          <Volume2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* Dynamic micro quiz */}
+                {/* Interactive Checkpoint Quiz */}
                 <AnimatePresence>
                   {isQuizActive && quiz && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="p-6 bg-brand-purple/10 border border-brand-purple/20 rounded-3xl mt-4 space-y-4 overflow-hidden"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="p-4 sm:p-5 rounded-2xl bg-yellow-light/50 border border-yellow/40 space-y-3 pt-4 overflow-hidden"
                     >
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-sm font-extrabold text-ink font-heading">Micro Quiz</h4>
-                        <button 
-                          onClick={() => setActiveQuizId(null)}
-                          className="text-xs text-ink-muted hover:text-ink cursor-pointer"
-                        >
-                          Close
-                        </button>
+                      <div className="flex items-center gap-2">
+                        <HelpCircle className="w-4 h-4 text-orange" />
+                        <h4 className="font-heading font-extrabold text-xs text-ink uppercase tracking-wider">Quick Mastery Quiz</h4>
                       </div>
-                      
-                      <p className="text-sm font-bold text-purple-100">{quiz.q}</p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                        {quiz.opts.map((opt, idx) => {
-                          const isSelected = quizAnswer === idx;
-                          const isCorrect = idx === quiz.correctIdx;
-                          let btnStyle = 'bg-white/[0.03] border-white/[0.08] hover:border-edge hover:bg-white/[0.04] text-ink-secondary';
-                          
+                      <p className="text-xs font-bold text-ink">{quiz.q}</p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {quiz.opts.map((opt, oIdx) => {
+                          const isPicked = quizAnswer === oIdx;
+                          const isCorrect = oIdx === quiz.correctIdx;
+
+                          let btnClass = 'bg-card border-edge text-ink hover:border-brand';
                           if (quizAnswer !== null) {
-                            if (isCorrect) btnStyle = 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400';
-                            else if (isSelected) btnStyle = 'bg-rose-500/10 border-rose-500/30 text-rose-400';
+                            if (isCorrect) btnClass = 'bg-mint-light border-mint text-ink font-bold';
+                            else if (isPicked) btnClass = 'bg-coral-light border-coral text-ink font-bold';
                           }
 
                           return (
                             <button
-                              key={idx}
-                              disabled={quizAnswer !== null}
-                              onClick={() => submitAnswer(idx, quiz.correctIdx)}
-                              className={`p-3.5 rounded-xl border text-left text-xs font-semibold transition-all cursor-pointer ${btnStyle}`}
+                              key={oIdx}
+                              onClick={() => handleSelectQuizOption(oIdx, quiz.correctIdx)}
+                              className={`p-2.5 rounded-xl border text-xs font-medium text-left transition-all cursor-pointer ${btnClass}`}
                             >
                               {opt}
                             </button>
@@ -287,19 +291,14 @@ export default function GrammarPage() {
                       </div>
 
                       {quizSuccess !== null && (
-                        <div className="pt-2 text-xs font-bold">
-                          {quizSuccess ? (
-                            <p className="text-emerald-400">✨ Correct answer! Excellent grammar retention!</p>
-                          ) : (
-                            <p className="text-rose-400">❌ Incorrect. Review explanation parameters and try again.</p>
-                          )}
+                        <div className={`p-2.5 rounded-xl text-xs font-bold ${quizSuccess ? 'text-mint' : 'text-coral'}`}>
+                          {quizSuccess ? 'Correct answer! Excellent Japanese grammar retention.' : 'Not quite. Check the structure rule above and try again!'}
                         </div>
                       )}
                     </motion.div>
                   )}
                 </AnimatePresence>
-
-              </div>
+              </MFCard>
             );
           })}
         </div>

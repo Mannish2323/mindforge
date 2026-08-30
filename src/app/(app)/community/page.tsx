@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState } from 'react';
 import { 
@@ -6,6 +6,7 @@ import {
   Share2, Trophy, Award, CheckSquare, Search, Sparkles
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Avatar } from '@/components/ui/Avatar';
 
 interface Post {
   id: string;
@@ -53,10 +54,10 @@ export default function CommunityPage() {
     {
       id: 'p2',
       author: 'KanjiMaster',
-      avatar: '⛩️',
+      avatar: 'KM',
       level: 'N3',
       time: '5 hours ago',
-      content: 'Quick tip for remembering the kanji 日 (day/sun): Think of it as a window look through to see the sun rising outside! ☀️ Hope this helps other beginners!',
+      content: 'Quick tip for remembering the kanji 日 (day/sun): Think of it as a window to look through to see the sun rising outside! ☀️ Hope this helps other beginners!',
       likes: 24,
       commentsCount: 1,
       liked: true,
@@ -80,7 +81,7 @@ export default function CommunityPage() {
     const newPost: Post = {
       id: `p-${Date.now()}`,
       author: 'You (Learner)',
-      avatar: '🎓',
+      avatar: 'ME',
       level: 'N5',
       time: 'Just now',
       content: newPostText,
@@ -154,8 +155,8 @@ export default function CommunityPage() {
         {/* Tab selector */}
         <div className="flex items-center gap-1.5 p-1 bg-warm-soft border border-edge rounded-2xl">
           {[
-            { id: 'feed', label: '💬 Discussion Feed', icon: MessageSquare },
-            { id: 'groups', label: '👥 Study Groups', icon: Users }
+            { id: 'feed', label: 'Discussion Feed', icon: MessageSquare },
+            { id: 'groups', label: 'Study Groups', icon: Users }
           ].map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -164,7 +165,7 @@ export default function CommunityPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
                   isActive 
-                    ? 'bg-gradient-to-r from-brand-purple to-sakura-dark text-ink shadow-md' 
+                    ? 'bg-gradient-to-r from-brand to-sakura-dark text-ink shadow-md' 
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
@@ -190,7 +191,7 @@ export default function CommunityPage() {
                   value={newPostText}
                   onChange={(e) => setNewPostText(e.target.value)}
                   placeholder="Share your Japanese study target, milestones or questions today..."
-                  className="w-full min-h-[100px] bg-white/[0.02] border border-white/5 hover:border-edge rounded-xl p-4 text-sm placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 focus:ring-1 focus:ring-brand-purple/20 transition-all resize-none"
+                  className="w-full min-h-[100px] bg-card/[0.02] border border-white/5 hover:border-edge rounded-xl p-4 text-sm placeholder-ink-light text-ink outline-none focus:border-brand/60 focus:ring-1 focus:ring-brand/20 transition-all resize-none"
                 />
                 
                 <div className="flex justify-end pt-2 border-t border-white/5">
@@ -211,13 +212,11 @@ export default function CommunityPage() {
                   <div key={post.id} className="glass-card p-6 rounded-[24px] border border-white/5 space-y-4">
                     {/* User profile metadata */}
                     <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                      <div className="w-10 h-10 rounded-xl bg-warm-soft border border-edge flex items-center justify-center text-lg select-none">
-                        {post.avatar}
-                      </div>
+                      <Avatar name={post.author} size="md" />
                       <div>
                         <div className="flex items-center gap-2">
                           <h4 className="text-sm font-bold text-ink leading-none">{post.author}</h4>
-                          <span className="text-[8px] font-bold text-brand-purple-light bg-brand-purple/20 px-1.5 py-0.5 rounded uppercase">
+                          <span className="text-[8px] font-bold text-brand-light bg-brand/20 px-1.5 py-0.5 rounded uppercase">
                             {post.level}
                           </span>
                         </div>
@@ -226,7 +225,7 @@ export default function CommunityPage() {
                     </div>
 
                     {/* Post Content */}
-                    <p className="text-sm text-purple-100 font-medium leading-relaxed font-jp">
+                    <p className="text-sm text-ink font-medium leading-relaxed font-jp">
                       {post.content}
                     </p>
 
@@ -249,11 +248,11 @@ export default function CommunityPage() {
                     </div>
 
                     {/* Comment section */}
-                    <div className="space-y-3 pt-3 border-t border-white/5 bg-white/[0.01] rounded-2xl p-3">
+                    <div className="space-y-3 pt-3 border-t border-white/5 bg-card/[0.01] rounded-2xl p-3">
                       {post.comments.map((c, idx) => (
-                        <div key={idx} className="p-3 bg-white/[0.01] border border-white/5 rounded-xl space-y-1">
+                        <div key={idx} className="p-3 bg-card/[0.01] border border-white/5 rounded-xl space-y-1">
                           <p className="text-xs font-bold text-ink font-heading">{c.author}</p>
-                          <p className="text-xs font-medium text-purple-200">{c.content}</p>
+                          <p className="text-xs font-medium text-ink-muted">{c.content}</p>
                         </div>
                       ))}
 
@@ -264,11 +263,11 @@ export default function CommunityPage() {
                           value={commentsInput[post.id] || ''}
                           onChange={(e) => setCommentsInput(prev => ({ ...prev, [post.id]: e.target.value }))}
                           placeholder="Write a comment reply..."
-                          className="flex-1 bg-white/[0.02] border border-white/5 hover:border-edge rounded-xl px-4 h-10 text-xs placeholder-purple-300/30 text-ink outline-none focus:border-brand-purple/60 transition-all"
+                          className="flex-1 bg-card/[0.02] border border-white/5 hover:border-edge rounded-xl px-4 h-10 text-xs placeholder-ink-light text-ink outline-none focus:border-brand/60 transition-all"
                         />
                         <button
                           onClick={() => handleAddComment(post.id)}
-                          className="px-4 bg-brand-purple/20 border border-brand-purple/30 text-brand-purple-light rounded-xl text-xs font-bold hover:bg-brand-purple/30 transition-all cursor-pointer"
+                          className="px-4 bg-brand/20 border border-brand/30 text-brand-light rounded-xl text-xs font-bold hover:bg-brand/30 transition-all cursor-pointer"
                         >
                           Send
                         </button>
@@ -339,7 +338,7 @@ export default function CommunityPage() {
               ].map((user) => (
                 <div 
                   key={user.rank}
-                  className={`p-3 bg-white/[0.01] border rounded-xl flex items-center justify-between ${
+                  className={`p-3 bg-card/[0.01] border rounded-xl flex items-center justify-between ${
                     user.rank <= 3 ? 'border-yellow-500/15 bg-yellow-500/[0.01]' : 'border-white/5'
                   }`}
                 >

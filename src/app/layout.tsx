@@ -34,6 +34,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -44,27 +46,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
           rel="stylesheet"
         />
-        <link rel="icon" href="/mindforge_logo.png" />
-        <link rel="apple-touch-icon" href="/mindforge_logo.png" />
+        <link rel="icon" href="/mindforge_app_logo.png" />
+        <link rel="apple-touch-icon" href="/mindforge_app_logo.png" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8150181705727957"
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-warm text-ink">
-        <AuthProvider>
-          <StoreProvider>
-            <UpgradeDialogProvider>
-              <AuthModalProvider>
-                {children}
-              </AuthModalProvider>
-            </UpgradeDialogProvider>
-          </StoreProvider>
-        </AuthProvider>
+      <body className="bg-warm text-ink transition-colors duration-200">
+        <ThemeProvider>
+          <AuthProvider>
+            <StoreProvider>
+              <UpgradeDialogProvider>
+                <AuthModalProvider>
+                  {children}
+                </AuthModalProvider>
+              </UpgradeDialogProvider>
+            </StoreProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

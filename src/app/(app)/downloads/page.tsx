@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React from 'react';
 import { motion } from 'framer-motion';
@@ -48,7 +48,7 @@ export default function DownloadsPage() {
           {/* Animated Glow Backdrop */}
           <div className="absolute -inset-0.5 bg-gradient-to-r from-neon-purple via-neon-pink to-sakura-dark rounded-3xl blur-md opacity-30 group-hover:opacity-50 transition duration-500 pointer-events-none" />
 
-          <Card variant="glass" padding="lg" className="relative rounded-3xl border border-edge space-y-6 overflow-hidden bg-[#12101D]/90 backdrop-blur-2xl">
+          <Card variant="glass" padding="lg" className="relative rounded-3xl border border-edge space-y-6 overflow-hidden bg-card-subtle/90 backdrop-blur-2xl">
             {/* Top Bar Badges */}
             <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.06] pb-5">
               <div className="flex items-center gap-3">
@@ -57,10 +57,10 @@ export default function DownloadsPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-extrabold text-white">Full Offline Mode</h2>
-                  <p className="text-xs text-ink-muted">Zero latency • Study without Wi-Fi or Data</p>
+                  <p className="text-xs text-ink-muted">Zero latency � Study without Wi-Fi or Data</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.04] border border-edge text-xs font-bold text-amber-300">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-card/[0.04] border border-edge text-xs font-bold text-amber-300">
                 <Lock className="w-3.5 h-3.5" />
                 <span>Play Store Exclusive</span>
               </div>
@@ -90,7 +90,7 @@ export default function DownloadsPage() {
               </div>
 
               {/* Illustration / Coming Soon Action Block */}
-              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-white/[0.02] border border-white/[0.05] text-center space-y-4">
+              <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-card/[0.02] border border-white/[0.05] text-center space-y-4">
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand/10 to-neon-pink/20 border border-edge flex items-center justify-center shadow-glow-purple">
                   <Download className="w-8 h-8 text-sakura-medium" />
                 </div>

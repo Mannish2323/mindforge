@@ -1,27 +1,27 @@
 /* src/styles/theme.css */
 :root {
   /* Color palette — Warm Educational Light Theme */
-  --color-brand: #6D3CFF;
-  --color-brand-dark: #5A2AE6;
-  --color-brand-light: #A87BFF;
+  --color-brand: #F47C86;
+  --color-brand-dark: #E85B67;
+  --color-brand-light: #FEF0F1;
 
-  --color-sakura: #FFB7C5;
-  --color-sakura-dark: #F472B6;
-  --color-sakura-light: #FFE4E1;
+  --color-sakura: #F47C86;
+  --color-sakura-dark: #EC6B76;
+  --color-sakura-light: #FEF0F1;
 
   --color-accent: #FF6B9D;
   --color-accent-light: #FF9CBB;
 
   /* Backgrounds */
-  --color-bg: #FAF8F3;
-  --color-bg-alt: #F5F1EA;
+  --color-bg: #FFF9F0;
+  --color-bg-alt: #FFF3E4;
   --color-bg-card: #FFFFFF;
-  --color-bg-deep: #F0ECE3;
+  --color-bg-deep: #FFF6F2;
 
   /* Text */
-  --color-text: #1A1A2E;
-  --color-text-secondary: #4A4A68;
-  --color-text-muted: #8E8EA0;
+  --color-text: #2F2925;
+  --color-text-secondary: #6B6359;
+  --color-text-muted: #9E9189;
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -40,21 +40,21 @@
   --shadow-strong: 0 12px 32px rgba(0, 0, 0, 0.08);
 
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6D3CFF, #AF52DE);
-  --gradient-sakura: linear-gradient(135deg, #FFB7C5, #FF6B9D);
+  --gradient-primary: linear-gradient(135deg, #F47C86, #FF6B9D);
+  --gradient-sakura: linear-gradient(135deg, #F47C86, #FF6B9D);
   --gradient-warm: linear-gradient(135deg, #FF9500, #FF6B9D);
 
   /* Learning category colours */
-  --color-hiragana: #34C759;
-  --color-katakana: #007AFF;
-  --color-kanji: #AF52DE;
-  --color-vocabulary: #FF9500;
-  --color-grammar: #00C7BE;
-  --color-listening: #5856D6;
-  --color-speaking: #FF2D55;
-  --color-reading: #FF9500;
+  --color-hiragana: #A9DCC8;
+  --color-katakana: #A9D5F5;
+  --color-kanji: #C8B5E8;
+  --color-vocabulary: #F6B38F;
+  --color-grammar: #A9DCC8;
+  --color-listening: #C8B5E8;
+  --color-speaking: #F47C86;
+  --color-reading: #F6B38F;
 
   /* Borders */
-  --color-border: #E8E4DD;
-  --color-border-hover: #D8D4CC;
+  --color-border: #EDE3D8;
+  --color-border-hover: #DDD4C7;
 }
